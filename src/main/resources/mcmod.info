@@ -1,0 +1,13 @@
+[
+  {
+    "modid": "sushi",
+    "name": "Sushi Client",
+    "description": "An utility client for anarchy servers",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://toshimichi.net",
+    "authorList": [
+      "Toshimichi"
+    ]
+  }
+]
