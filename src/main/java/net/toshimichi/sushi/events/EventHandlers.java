@@ -4,6 +4,7 @@ import net.toshimichi.sushi.ReflectionsHolder;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 
 public class EventHandlers {
@@ -27,6 +28,7 @@ public class EventHandlers {
             eventMaps.add(map);
         }
         map.adapters.add(adapter);
+        map.adapters.sort(Comparator.comparingInt(EventAdapter::getPriority));
     }
 
     public static void register(Object o) {

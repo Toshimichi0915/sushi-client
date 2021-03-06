@@ -4,8 +4,8 @@ public class CancellableEvent extends BaseEvent implements Cancellable {
 
     private boolean isCancelled;
 
-    public CancellableEvent(EventTiming timing) {
-        super(timing);
+    public CancellableEvent() {
+        super(EventTiming.PRE);
     }
 
     @Override
