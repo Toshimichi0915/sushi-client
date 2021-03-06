@@ -1,6 +1,7 @@
-package net.toshimichi.sushi.events;
+package net.toshimichi.sushi.events.packet;
 
 import net.minecraft.network.Packet;
+import net.toshimichi.sushi.events.CancellableEvent;
 
 public class PacketEvent extends CancellableEvent {
 

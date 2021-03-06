@@ -4,8 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.toshimichi.sushi.events.EventHandlers;
-import net.toshimichi.sushi.events.PacketReceiveEvent;
-import net.toshimichi.sushi.events.PacketSendEvent;
+import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
+import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,7 +18,7 @@ public class MixinNetworkManager {
     public void onSendPacket(Packet<?> packet, CallbackInfo info) {
         PacketSendEvent event = new PacketSendEvent(packet);
         EventHandlers.callEvent(event);
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             info.cancel();
         }
     }
@@ -27,7 +27,7 @@ public class MixinNetworkManager {
     public void onReceivePacket(ChannelHandlerContext context, Packet<?> packet, CallbackInfo info) {
         PacketReceiveEvent event = new PacketReceiveEvent(packet);
         EventHandlers.callEvent(event);
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             info.cancel();
         }
     }

@@ -4,24 +4,30 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.toshimichi.sushi.events.forge.KeyInputHandler;
-import net.toshimichi.sushi.events.forge.MouseInputHandler;
-import org.apache.logging.log4j.Logger;
+import net.toshimichi.sushi.events.EventHandlers;
+import net.toshimichi.sushi.handlers.KeybindHandler;
+import net.toshimichi.sushi.handlers.forge.KeyInputHandler;
+import net.toshimichi.sushi.handlers.forge.MouseInputHandler;
+import net.toshimichi.sushi.modules.GsonModules;
+import net.toshimichi.sushi.modules.Modules;
+
+import java.io.File;
 
 @Mod(modid = "sushi", name = "Sushi Client", version = "1.0")
 public class SushiMod {
 
-    private static Logger logger;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        logger = event.getModLog();
-    }
+    private static Modules modules;
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         MinecraftForge.EVENT_BUS.register(new MouseInputHandler());
+        EventHandlers.register(new KeybindHandler());
+        modules = new GsonModules(new File("./sushi.json"));
+        modules.load();
+    }
+
+    public static Modules getModules() {
+        return modules;
     }
 }
