@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.toshimichi.sushi.events.forge.KeyInputHandler;
+import net.toshimichi.sushi.events.forge.MouseInputHandler;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "sushi", name = "Sushi Client", version = "1.0")
@@ -21,5 +22,6 @@ public class SushiMod {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
+        MinecraftForge.EVENT_BUS.register(new MouseInputHandler());
     }
 }

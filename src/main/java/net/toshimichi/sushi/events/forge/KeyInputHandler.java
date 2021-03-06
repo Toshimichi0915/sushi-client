@@ -4,14 +4,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.toshimichi.sushi.events.CancellableEvent;
 import net.toshimichi.sushi.events.EventHandlers;
-import net.toshimichi.sushi.events.KeyPressEvent;
-import net.toshimichi.sushi.events.KeyReleaseEvent;
+import net.toshimichi.sushi.events.input.KeyPressEvent;
+import net.toshimichi.sushi.events.input.KeyReleaseEvent;
 import org.lwjgl.input.Keyboard;
 
 public class KeyInputHandler {
 
     @SubscribeEvent
-    public void onKey(InputEvent.KeyInputEvent e) {
+    public void onKeyInput(InputEvent.KeyInputEvent e) {
         if (!Keyboard.getEventKeyState()) return;
         int eventKey = Keyboard.getEventKey();
         CancellableEvent event;

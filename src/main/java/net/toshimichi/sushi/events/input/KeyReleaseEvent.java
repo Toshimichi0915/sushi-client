@@ -1,4 +1,6 @@
-package net.toshimichi.sushi.events;
+package net.toshimichi.sushi.events.input;
+
+import net.toshimichi.sushi.events.CancellableEvent;
 
 public class KeyReleaseEvent extends CancellableEvent {
     private final int keyCode;
