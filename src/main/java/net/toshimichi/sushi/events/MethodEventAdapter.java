@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.events;
 
-import net.toshimichi.sushi.ReflectionsHolder;
+
+import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,6 +13,7 @@ public class MethodEventAdapter implements EventAdapter<Event> {
     private final Class<Event> eventClass;
     private final int priority;
     private final boolean ignoreCancelled;
+    private static final Reflections reflections = new Reflections();
 
     @SuppressWarnings("unchecked")
     public MethodEventAdapter(Object obj, Method method) {
@@ -20,7 +22,7 @@ public class MethodEventAdapter implements EventAdapter<Event> {
         Class<?>[] parameters = method.getParameterTypes();
         if (parameters.length != 1)
             throw new IllegalArgumentException("Only 1 parameter type can exist");
-        if (!ReflectionsHolder.getDefault().getSubTypesOf(parameters[0]).contains(Event.class))
+        if (!reflections.getSubTypesOf(parameters[0]).contains(Event.class))
             throw new IllegalArgumentException("Parameter type must implement Event");
         eventClass = (Class<Event>) parameters[0];
         EventHandler handler = method.getAnnotation(EventHandler.class);

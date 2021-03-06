@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.events;
 
-import net.toshimichi.sushi.ReflectionsHolder;
+import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.HashSet;
 public class EventHandlers {
 
     private static final HashSet<EventMap> eventMaps = new HashSet<>();
+    private static final Reflections reflections = new Reflections();
 
     @SuppressWarnings("unchecked")
     public static <T extends Event> void callEvent(T event) {
@@ -52,7 +53,7 @@ public class EventHandlers {
     private static HashSet<EventMap> getAllEventMap(Class<?> eventClass) {
         HashSet<EventMap> result = new HashSet<>();
         for (EventMap map : eventMaps) {
-            if (ReflectionsHolder.getDefault().getSubTypesOf(eventClass).contains(map.eventClass))
+            if (reflections.getSubTypesOf(eventClass).contains(map.eventClass))
                 result.add(map);
         }
         return result;
