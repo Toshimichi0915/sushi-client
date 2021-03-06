@@ -4,5 +4,8 @@
   "package": "net.toshimichi.sushi.mixin",
   "refmap": "mixins.sushi.refmap.json",
   "client": [
+  ],
+  "mixins": [
+    "MixinNetworkManager"
   ]
 }
