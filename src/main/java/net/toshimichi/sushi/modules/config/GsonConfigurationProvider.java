@@ -5,10 +5,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
 public class GsonConfigurationProvider implements ConfigurationProvider {
 
     private final Gson gson;
     private JsonObject object;
+    private final ArrayList<GsonConfiguration<?>> list = new ArrayList<>();
 
     public GsonConfigurationProvider(Gson gson, JsonObject object) {
         this.gson = gson;
@@ -17,10 +22,24 @@ public class GsonConfigurationProvider implements ConfigurationProvider {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Configuration<T> getConfiguration(String name, Class<T> tClass, T defaultValue) {
+    public <T> Configuration<T> getConfiguration(String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid) {
         if (getRawValue(name, tClass) == null)
             setRawValue(name, defaultValue);
-        return new GsonConfiguration<>(name, tClass, this);
+        for (GsonConfiguration<?> loaded : list) {
+            if (loaded.getName().equals(name)) {
+                if (!loaded.getValueClass().equals(tClass))
+                    throw new IllegalArgumentException("Supplied class is not valid");
+                return (Configuration<T>) loaded;
+            }
+        }
+        GsonConfiguration<T> conf = new GsonConfiguration<>(name, tClass, this, isValid);
+        list.add(conf);
+        return conf;
+    }
+
+    @Override
+    public List<Configuration<?>> getConfigurations() {
+        return new ArrayList<>(list);
     }
 
     public void load(JsonObject object) {
