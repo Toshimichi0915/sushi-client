@@ -15,10 +15,6 @@ public class GsonConfigurationProvider implements ConfigurationProvider {
         this.object = object;
     }
 
-    public GsonConfigurationProvider(Gson gson) {
-        this(gson, new JsonObject());
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public <T> Configuration<T> getConfiguration(String name, Class<T> tClass, T defaultValue) {

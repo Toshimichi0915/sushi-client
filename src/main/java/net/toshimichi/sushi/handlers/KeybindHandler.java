@@ -5,11 +5,14 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.input.KeyPressEvent;
 import net.toshimichi.sushi.modules.Module;
 
+import java.util.Map;
+
 public class KeybindHandler {
 
     @EventHandler
     public void onKeyPress(KeyPressEvent e) {
-        for (Module module : SushiMod.getModules().getModules()) {
+        for (Map.Entry<String, Module> entry : SushiMod.getModules().getModules().entrySet()) {
+            Module module = entry.getValue();
             if (module.getKeybind() != e.getKeyCode()) continue;
             module.setEnabled(!module.isEnabled());
             e.setCancelled(true);
