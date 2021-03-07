@@ -8,7 +8,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EventHandler {
+
     int priority() default 1000;
 
     boolean ignoreCancelled() default true;
+
+    EventTiming[] timing() default {EventTiming.PRE, EventTiming.POST};
 }
