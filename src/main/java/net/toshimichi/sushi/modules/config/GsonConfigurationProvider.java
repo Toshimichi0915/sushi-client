@@ -22,7 +22,7 @@ public class GsonConfigurationProvider implements ConfigurationProvider {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Configuration<T> getConfiguration(String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid) {
+    public <T> Configuration<T> getConfiguration(String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, Configuration<?> parent) {
         if (getRawValue(name, tClass) == null)
             setRawValue(name, defaultValue);
         for (GsonConfiguration<?> loaded : list) {
@@ -32,7 +32,7 @@ public class GsonConfigurationProvider implements ConfigurationProvider {
                 return (Configuration<T>) loaded;
             }
         }
-        GsonConfiguration<T> conf = new GsonConfiguration<>(name, tClass, this, isValid);
+        GsonConfiguration<T> conf = new GsonConfiguration<>(name, tClass, this, isValid, parent);
         list.add(conf);
         return conf;
     }

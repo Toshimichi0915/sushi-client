@@ -10,4 +10,6 @@ public interface Configuration<T> {
     Class<T> getValueClass();
 
     boolean isValid();
+
+    Configuration<?> getParent();
 }
