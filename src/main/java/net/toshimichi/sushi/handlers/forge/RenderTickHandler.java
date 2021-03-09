@@ -6,7 +6,7 @@ import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 
-public class RenderTickEvent {
+public class RenderTickHandler {
 
     @SubscribeEvent
     public void onTick(TickEvent.RenderTickEvent e) {

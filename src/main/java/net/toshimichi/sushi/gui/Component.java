@@ -47,7 +47,9 @@ public interface Component {
 
     void onClick(int x, int y, ClickType type);
 
-    void onHold(int x, int y, ClickType type);
+    void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status);
+
+    void onScroll(int deltaX, int deltaY, ClickType type);
 
     void onKeyPressed(int keyCode);
 
