@@ -26,6 +26,5 @@ public class MouseInputHandler {
             event = new MouseReleaseEvent(clickType);
 
         EventHandlers.callEvent(event);
-        e.setCanceled(event.isCancelled());
     }
 }

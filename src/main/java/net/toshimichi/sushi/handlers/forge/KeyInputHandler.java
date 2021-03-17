@@ -12,7 +12,7 @@ public class KeyInputHandler {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent e) {
-        if (!Keyboard.getEventKeyState()) return;
+        if(Keyboard.isRepeatEvent()) return;
         int eventKey = Keyboard.getEventKey();
         CancellableEvent event;
         if (Keyboard.isKeyDown(eventKey))
@@ -20,6 +20,5 @@ public class KeyInputHandler {
         else
             event = new KeyReleaseEvent(eventKey);
         EventHandlers.callEvent(event);
-        e.setCanceled(event.isCancelled());
     }
 }

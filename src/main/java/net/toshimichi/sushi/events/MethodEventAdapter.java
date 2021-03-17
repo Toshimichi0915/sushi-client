@@ -13,7 +13,6 @@ public class MethodEventAdapter implements EventAdapter<Event> {
     private final Class<Event> eventClass;
     private final int priority;
     private final boolean ignoreCancelled;
-    private static final Reflections reflections = new Reflections();
 
     @SuppressWarnings("unchecked")
     public MethodEventAdapter(Object obj, Method method) {
@@ -22,9 +21,11 @@ public class MethodEventAdapter implements EventAdapter<Event> {
         Class<?>[] parameters = method.getParameterTypes();
         if (parameters.length != 1)
             throw new IllegalArgumentException("Only 1 parameter type can exist");
-        if (!reflections.getSubTypesOf(parameters[0]).contains(Event.class))
+        try {
+            eventClass = (Class<Event>) parameters[0];
+        } catch (ClassCastException e) {
             throw new IllegalArgumentException("Parameter type must implement Event");
-        eventClass = (Class<Event>) parameters[0];
+        }
         EventHandler handler = method.getAnnotation(EventHandler.class);
         if (handler == null)
             throw new IllegalArgumentException("@EventHandler is missing");
@@ -35,7 +36,7 @@ public class MethodEventAdapter implements EventAdapter<Event> {
     @Override
     public void call(Event event) {
         try {
-            method.invoke(obj, method);
+            method.invoke(obj, event);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

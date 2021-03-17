@@ -10,7 +10,6 @@ import java.util.HashSet;
 public class EventHandlers {
 
     private static final HashSet<EventMap> eventMaps = new HashSet<>();
-    private static final Reflections reflections = new Reflections();
 
     @SuppressWarnings("unchecked")
     public static <T extends Event> void callEvent(T event) {
@@ -53,8 +52,8 @@ public class EventHandlers {
     private static HashSet<EventMap> getAllEventMap(Class<?> eventClass) {
         HashSet<EventMap> result = new HashSet<>();
         for (EventMap map : eventMaps) {
-            if (reflections.getSubTypesOf(eventClass).contains(map.eventClass))
-                result.add(map);
+            if(!map.eventClass.isAssignableFrom(eventClass)) continue;
+            result.add(map);
         }
         return result;
     }
