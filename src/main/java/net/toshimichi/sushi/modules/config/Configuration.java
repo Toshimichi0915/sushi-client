@@ -11,5 +11,5 @@ public interface Configuration<T> {
 
     boolean isValid();
 
-    Configuration<?> getParent();
+    String getParent();
 }

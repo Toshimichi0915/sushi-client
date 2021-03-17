@@ -8,9 +8,9 @@ public class GsonConfiguration<T> implements Configuration<T> {
     private final Class<T> tClass;
     private final GsonConfigurations provider;
     private final Supplier<Boolean> isValid;
-    private final Configuration<?> parent;
+    private final String parent;
 
-    public GsonConfiguration(String name, Class<T> tClass, GsonConfigurations provider, Supplier<Boolean> isValid, Configuration<?> parent) {
+    public GsonConfiguration(String name, Class<T> tClass, GsonConfigurations provider, Supplier<Boolean> isValid, String parent) {
         this.name = name;
         this.tClass = tClass;
         this.provider = provider;
@@ -44,7 +44,7 @@ public class GsonConfiguration<T> implements Configuration<T> {
     }
 
     @Override
-    public Configuration<?> getParent() {
+    public String getParent() {
         return parent;
     }
 }

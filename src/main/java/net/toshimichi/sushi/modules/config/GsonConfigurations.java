@@ -21,7 +21,7 @@ public class GsonConfigurations implements Configurations {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Configuration<T> get(String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, Configuration<?> parent) {
+    public <T> Configuration<T> get(String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, String parent) {
         if (getRawValue(name, tClass) == null)
             setRawValue(name, defaultValue);
         for (GsonConfiguration<?> loaded : list) {
