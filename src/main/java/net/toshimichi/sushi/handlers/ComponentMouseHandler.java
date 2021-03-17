@@ -11,7 +11,7 @@ import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.MouseStatus;
 import org.lwjgl.input.Mouse;
 
-public class MouseInputHandler {
+public class ComponentMouseHandler {
 
     private static final int HOLD_DELAY = 10;
 

@@ -9,7 +9,7 @@ import net.toshimichi.sushi.gui.Components;
 import java.util.Collections;
 import java.util.List;
 
-public class RenderTickHandler {
+public class ComponentRenderHandler {
 
     @EventHandler(timing = {EventTiming.POST})
     public void onRenderTick(RenderTickEvent e) {
