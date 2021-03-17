@@ -6,8 +6,10 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.modules.BaseModule;
-import net.toshimichi.sushi.modules.ModuleCategory;
-import net.toshimichi.sushi.modules.config.ConfigurationProvider;
+import net.toshimichi.sushi.modules.Categories;
+import net.toshimichi.sushi.modules.Category;
+import net.toshimichi.sushi.modules.Modules;
+import net.toshimichi.sushi.modules.config.Configurations;
 
 import java.lang.reflect.Field;
 import java.util.Set;
@@ -27,8 +29,8 @@ public class NoRotateModule extends BaseModule {
         FLAGS_FIELD.setAccessible(true);
     }
 
-    public NoRotateModule(ConfigurationProvider provider) {
-        super(provider);
+    public NoRotateModule(String name, Modules modules, Categories categories, Configurations provider) {
+        super(name, modules, categories, provider);
     }
 
     @SuppressWarnings("unchecked")
@@ -49,8 +51,8 @@ public class NoRotateModule extends BaseModule {
     }
 
     @Override
-    public ModuleCategory getDefaultCategory() {
-        return ModuleCategory.PLAYER;
+    public Category getDefaultCategory() {
+        return Category.PLAYER;
     }
 
     @Override

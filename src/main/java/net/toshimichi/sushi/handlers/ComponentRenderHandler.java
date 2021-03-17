@@ -13,7 +13,7 @@ public class ComponentRenderHandler {
 
     @EventHandler(timing = {EventTiming.POST})
     public void onRenderTick(RenderTickEvent e) {
-        List<Component> components = Components.getComponents();
+        List<Component> components = Components.getAll();
         Collections.reverse(components);
         for(Component component : components) {
             component.onRender();

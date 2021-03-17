@@ -9,20 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class GsonConfigurationProvider implements ConfigurationProvider {
+public class GsonConfigurations implements Configurations {
 
     private final Gson gson;
     private JsonObject object;
     private final ArrayList<GsonConfiguration<?>> list = new ArrayList<>();
 
-    public GsonConfigurationProvider(Gson gson, JsonObject object) {
+    public GsonConfigurations(Gson gson) {
         this.gson = gson;
-        this.object = object;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Configuration<T> getConfiguration(String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, Configuration<?> parent) {
+    public <T> Configuration<T> get(String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, Configuration<?> parent) {
         if (getRawValue(name, tClass) == null)
             setRawValue(name, defaultValue);
         for (GsonConfiguration<?> loaded : list) {
@@ -38,7 +37,7 @@ public class GsonConfigurationProvider implements ConfigurationProvider {
     }
 
     @Override
-    public List<Configuration<?>> getConfigurations() {
+    public List<Configuration<?>> getAll() {
         return new ArrayList<>(list);
     }
 

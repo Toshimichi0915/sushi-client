@@ -2,20 +2,31 @@ package net.toshimichi.sushi.modules;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.toshimichi.sushi.modules.config.Configuration;
-import net.toshimichi.sushi.modules.config.ConfigurationProvider;
+import net.toshimichi.sushi.modules.config.Configurations;
 
 abstract public class BaseModule implements Module {
 
-    private final ConfigurationProvider provider;
-    private final Configuration<ModuleCategory> category;
+    private final String name;
+    private final Configurations provider;
+    private final Modules modules;
+    private final Categories categories;
+    private final Configuration<String> category;
     private final Configuration<Integer> keybind;
     private boolean isEnabled;
     private boolean isPaused;
 
-    public BaseModule(ConfigurationProvider provider) {
+    public BaseModule(String name, Modules modules, Categories categories, Configurations provider) {
+        this.name = name;
         this.provider = provider;
-        this.category = provider.getConfiguration("category", ModuleCategory.class, getDefaultCategory());
-        this.keybind = provider.getConfiguration("keybind", Integer.class, getDefaultKeybind());
+        this.modules = modules;
+        this.categories = categories;
+        this.category = provider.get("category", String.class, getDefaultCategory().getName());
+        this.keybind = provider.get("keybind", Integer.class, getDefaultKeybind());
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -58,7 +69,7 @@ abstract public class BaseModule implements Module {
     }
 
     @Override
-    public ConfigurationProvider getConfigurationProvider() {
+    public Configurations getConfigurationProvider() {
         return provider;
     }
 
@@ -67,16 +78,18 @@ abstract public class BaseModule implements Module {
         return new ConflictType[0];
     }
 
-    abstract public ModuleCategory getDefaultCategory();
+    abstract public Category getDefaultCategory();
 
     @Override
-    public ModuleCategory getCategory() {
-        return category.getValue();
+    public Category getCategory() {
+        Category result = categories.getModuleCategory(name);
+        if (result != null) return result;
+        return getDefaultCategory();
     }
 
     @Override
-    public void setCategory(ModuleCategory category) {
-        this.category.setValue(category);
+    public void setCategory(Category category) {
+        this.category.setValue(category.getName());
     }
 
     abstract public int getDefaultKeybind();

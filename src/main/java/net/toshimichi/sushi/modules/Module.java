@@ -1,8 +1,10 @@
 package net.toshimichi.sushi.modules;
 
-import net.toshimichi.sushi.modules.config.ConfigurationProvider;
+import net.toshimichi.sushi.modules.config.Configurations;
 
 public interface Module {
+
+    String getName();
 
     boolean isEnabled();
 
@@ -14,13 +16,13 @@ public interface Module {
 
     ConflictType[] getConflictTypes();
 
-    ModuleCategory getCategory();
+    Category getCategory();
 
-    void setCategory(ModuleCategory category);
+    void setCategory(Category category);
 
     int getKeybind();
 
     void setKeybind(int key);
 
-    ConfigurationProvider getConfigurationProvider();
+    Configurations getConfigurationProvider();
 }
