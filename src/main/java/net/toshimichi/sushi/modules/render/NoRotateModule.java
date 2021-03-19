@@ -29,8 +29,8 @@ public class NoRotateModule extends BaseModule {
         FLAGS_FIELD.setAccessible(true);
     }
 
-    public NoRotateModule(String name, Modules modules, Categories categories, Configurations provider) {
-        super(name, modules, categories, provider);
+    public NoRotateModule(String id, String name, Modules modules, Categories categories, Configurations provider) {
+        super(id, name, modules, categories, provider);
     }
 
     @SuppressWarnings("unchecked")

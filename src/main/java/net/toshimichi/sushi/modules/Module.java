@@ -4,6 +4,8 @@ import net.toshimichi.sushi.modules.config.Configurations;
 
 public interface Module {
 
+    String getId();
+
     String getName();
 
     boolean isEnabled();

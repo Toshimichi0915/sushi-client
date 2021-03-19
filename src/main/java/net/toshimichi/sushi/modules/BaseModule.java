@@ -6,6 +6,7 @@ import net.toshimichi.sushi.modules.config.Configurations;
 
 abstract public class BaseModule implements Module {
 
+    private final String id;
     private final String name;
     private final Configurations provider;
     private final Modules modules;
@@ -15,13 +16,19 @@ abstract public class BaseModule implements Module {
     private boolean isEnabled;
     private boolean isPaused;
 
-    public BaseModule(String name, Modules modules, Categories categories, Configurations provider) {
+    public BaseModule(String id, String name, Modules modules, Categories categories, Configurations provider) {
+        this.id = id;
         this.name = name;
         this.provider = provider;
         this.modules = modules;
         this.categories = categories;
-        this.category = provider.get("category", String.class, getDefaultCategory().getName());
-        this.keybind = provider.get("keybind", Integer.class, getDefaultKeybind());
+        this.category = provider.get("module." + id + ".category", "Category", String.class, getDefaultCategory().getName());
+        this.keybind = provider.get("module." + id + ".keybind", "Keybind", Integer.class, getDefaultKeybind());
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     @Override

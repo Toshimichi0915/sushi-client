@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.modules;
 
-import java.awt.*;
+import java.awt.Image;
 
 public interface Category {
 

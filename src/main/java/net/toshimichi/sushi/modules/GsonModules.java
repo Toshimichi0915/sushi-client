@@ -1,7 +1,6 @@
 package net.toshimichi.sushi.modules;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
@@ -12,7 +11,8 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class GsonModules implements Modules {
@@ -28,14 +28,14 @@ public class GsonModules implements Modules {
         this.conf = conf;
         this.categories = categories;
         this.gson = gson;
-        addModule("NoRotate", NoRotateModule::new);
-        addModule("ClickGUI", ClickGuiModule::new);
+        addModule("norotate", "NoRotate", NoRotateModule::new);
+        addModule("clickgui", "ClickGUI", ClickGuiModule::new);
     }
 
     @Override
-    public Module getModule(String name) {
+    public Module getModule(String id) {
         for (ModuleGroup group : groups) {
-            if (group.module.getName().equals(name))
+            if (group.module.getId().equals(id))
                 return group.module;
         }
         return null;
@@ -44,22 +44,22 @@ public class GsonModules implements Modules {
     @Override
     public List<Module> getAll() {
         return groups.stream()
-                .map(group->group.module)
+                .map(group -> group.module)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void addModule(String name, ModuleFactory factory) {
+    public void addModule(String id, String name, ModuleFactory factory) {
         GsonConfigurations provider = new GsonConfigurations(gson);
-        provider.load(loadJson(name));
-        groups.add(new ModuleGroup(factory.newModule(name, this, categories, provider), provider));
+        provider.load(loadJson(id));
+        groups.add(new ModuleGroup(factory.newModule(id, name, this, categories, provider), provider));
     }
 
     @Override
     public void save() {
         try {
             JsonObject savedRoot = new JsonObject();
-            for(ModuleGroup group : groups) {
+            for (ModuleGroup group : groups) {
                 savedRoot.add(group.module.getName(), group.provider.save());
             }
             FileUtils.writeStringToFile(conf, gson.toJson(savedRoot), StandardCharsets.UTF_8);
@@ -78,7 +78,7 @@ public class GsonModules implements Modules {
                 root = gson.fromJson(contents, JsonObject.class);
             }
             for (ModuleGroup group : groups) {
-                group.provider.load(loadJson(group.module.getName()));
+                group.provider.load(loadJson(group.module.getId()));
             }
         } catch (IOException | JsonParseException e) {
             e.printStackTrace();
