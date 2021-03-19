@@ -22,7 +22,7 @@ public class GsonConfiguration<T> implements Configuration<T> {
 
     @Override
     public T getValue() {
-        return provider.getRawValue(name, tClass);
+        return provider.getRawValue(id, tClass);
     }
 
     @Override

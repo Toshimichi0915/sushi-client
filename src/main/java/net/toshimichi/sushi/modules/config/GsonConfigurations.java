@@ -49,13 +49,13 @@ public class GsonConfigurations implements Configurations {
         return object;
     }
 
-    protected <T> T getRawValue(String name, Class<T> tClass) {
-        JsonElement element = object.get(name);
+    protected <T> T getRawValue(String id, Class<T> tClass) {
+        JsonElement element = object.get(id);
         if (element == null) {
             return null;
         } else {
             try {
-                return gson.fromJson(object.get(name), tClass);
+                return gson.fromJson(object.get(id), tClass);
             } catch (JsonParseException e) {
                 e.printStackTrace();
                 return null;
@@ -63,8 +63,8 @@ public class GsonConfigurations implements Configurations {
         }
     }
 
-    protected void setRawValue(String name, Object o) {
-        object.add(name, gson.toJsonTree(o));
+    protected void setRawValue(String id, Object o) {
+        object.add(id, gson.toJsonTree(o));
     }
 
 }
