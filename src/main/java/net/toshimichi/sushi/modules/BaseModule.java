@@ -22,8 +22,8 @@ abstract public class BaseModule implements Module {
         this.provider = provider;
         this.modules = modules;
         this.categories = categories;
-        this.category = provider.get("module." + id + ".category", "Category", String.class, getDefaultCategory().getName());
-        this.keybind = provider.get("module." + id + ".keybind", "Keybind", Integer.class, getDefaultKeybind());
+        this.category = provider.get("module." + id + ".category", "Category", "Module Category", String.class, getDefaultCategory().getName());
+        this.keybind = provider.get("module." + id + ".keybind", "Keybind", "Keybind for this module", Integer.class, getDefaultKeybind());
     }
 
     @Override

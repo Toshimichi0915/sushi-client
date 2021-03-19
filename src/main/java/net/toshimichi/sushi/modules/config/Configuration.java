@@ -9,9 +9,11 @@ public interface Configuration<T> {
 
     String getName();
 
+    String getDescription();
+
     Class<T> getValueClass();
 
     boolean isValid();
 
-    String getParent();
+    String getCategory();
 }

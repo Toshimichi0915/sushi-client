@@ -6,14 +6,16 @@ public class GsonConfiguration<T> implements Configuration<T> {
 
     private final String id;
     private final String name;
+    private final String description;
     private final Class<T> tClass;
     private final GsonConfigurations provider;
     private final Supplier<Boolean> isValid;
     private final String parent;
 
-    public GsonConfiguration(String id, String name, Class<T> tClass, GsonConfigurations provider, Supplier<Boolean> isValid, String parent) {
+    public GsonConfiguration(String id, String name, String description, Class<T> tClass, GsonConfigurations provider, Supplier<Boolean> isValid, String parent) {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.tClass = tClass;
         this.provider = provider;
         this.isValid = isValid;
@@ -41,6 +43,11 @@ public class GsonConfiguration<T> implements Configuration<T> {
     }
 
     @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
     public Class<T> getValueClass() {
         return tClass;
     }
@@ -51,7 +58,7 @@ public class GsonConfiguration<T> implements Configuration<T> {
     }
 
     @Override
-    public String getParent() {
+    public String getCategory() {
         return parent;
     }
 }

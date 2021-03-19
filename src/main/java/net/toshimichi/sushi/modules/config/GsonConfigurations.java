@@ -14,6 +14,7 @@ public class GsonConfigurations implements Configurations {
     private final Gson gson;
     private JsonObject object;
     private final ArrayList<GsonConfiguration<?>> list = new ArrayList<>();
+    private final ArrayList<ConfigurationCategory> categories = new ArrayList<>();
 
     public GsonConfigurations(Gson gson) {
         this.gson = gson;
@@ -21,7 +22,7 @@ public class GsonConfigurations implements Configurations {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Configuration<T> get(String id, String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, String parent) {
+    public <T> Configuration<T> get(String id, String name, String description, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, String category) {
         if (getRawValue(id, tClass) == null)
             setRawValue(id, defaultValue);
         for (GsonConfiguration<?> loaded : list) {
@@ -31,7 +32,7 @@ public class GsonConfigurations implements Configurations {
                 return (Configuration<T>) loaded;
             }
         }
-        GsonConfiguration<T> conf = new GsonConfiguration<>(id, name, tClass, this, isValid, parent);
+        GsonConfiguration<T> conf = new GsonConfiguration<>(id, name, description, tClass, this, isValid, category);
         list.add(conf);
         return conf;
     }
@@ -39,6 +40,18 @@ public class GsonConfigurations implements Configurations {
     @Override
     public List<Configuration<?>> getAll() {
         return new ArrayList<>(list);
+    }
+
+    @Override
+    public ConfigurationCategory newCategory(String id, String name, String description) {
+        GsonConfigurationCategory category = new GsonConfigurationCategory(id, name, description);
+        categories.add(category);
+        return category;
+    }
+
+    @Override
+    public List<ConfigurationCategory> getCategories() {
+        return categories;
     }
 
     public void load(JsonObject object) {
