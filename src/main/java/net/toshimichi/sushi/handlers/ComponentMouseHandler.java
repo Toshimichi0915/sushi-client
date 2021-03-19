@@ -47,6 +47,8 @@ public class ComponentMouseHandler {
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
         for (ClickType type : ClickType.values()) {
+
+            // fetch/update statuses
             ClickStatus status = getClickStatus(type);
             if (status == null) return;
             status.lastX = status.x;
@@ -57,32 +59,31 @@ public class ComponentMouseHandler {
             Component lastComponent = Components.getTopComponent(status.lastX, status.lastY);
             Component component = Components.getTopComponent(status.x, status.y);
             if (lastComponent == null) return;
-            if (!lastComponent.equals(component)) {
-                int lastComponentX = lastComponent.getWindowX() - status.lastX;
-                int lastComponentY = lastComponent.getWindowY() - status.lastY;
+
+            // component changed
+            if (!lastComponent.equals(component) && status.isLastClicked) {
                 if (HOLD_DELAY < System.currentTimeMillis() - status.clickMillis) {
-                    lastComponent.onHold(lastComponentX, lastComponentY, lastComponentX, lastComponentY, type, MouseStatus.CANCEL);
+                    lastComponent.onHold(status.lastX, status.lastY, status.x, status.y, type, MouseStatus.CANCEL);
                 } else {
-                    lastComponent.onClick(lastComponentX, lastComponentY, type);
+                    lastComponent.onClick(status.lastX, status.lastY, type);
                 }
-                return;
             }
 
-            int componentLastX = component.getWindowX() - status.lastX;
-            int componentLastY = component.getWindowY() - status.lastY;
-            int componentX = component.getWindowX() - status.x;
-            int componentY = component.getWindowY() - status.y;
-
+            // component not changed
+            if (component == null) return;
             MouseStatus mouseStatus;
             if (status.isClicked && !status.isLastClicked) mouseStatus = MouseStatus.START;
             else if (!status.isClicked && status.isLastClicked) mouseStatus = MouseStatus.END;
             else mouseStatus = MouseStatus.IN_PROGRESS;
 
             if (HOLD_DELAY < System.currentTimeMillis() - status.clickMillis) {
-                component.onHold(componentLastX, componentLastY, componentX, componentY, type, mouseStatus);
+                component.onHold(status.lastX, status.lastY, status.x, status.y, type, mouseStatus);
             } else if (mouseStatus == MouseStatus.END) {
-                component.onClick(componentX, componentY, type);
+                component.onClick(status.x, status.y, type);
             }
+
+            // update click status
+            status.isLastClicked = status.isClicked;
         }
     }
 

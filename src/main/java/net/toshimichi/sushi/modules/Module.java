@@ -24,5 +24,5 @@ public interface Module {
 
     void setKeybind(int key);
 
-    Configurations getConfigurationProvider();
+    Configurations getConfigurations();
 }

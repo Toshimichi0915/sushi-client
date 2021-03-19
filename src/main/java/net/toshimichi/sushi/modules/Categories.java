@@ -6,7 +6,7 @@ public interface Categories {
 
     Category getModuleCategory(String name);
 
-    List<Category> getModuleCategories();
+    List<Category> getAll();
 
     void addModuleCategory(Category category);
 

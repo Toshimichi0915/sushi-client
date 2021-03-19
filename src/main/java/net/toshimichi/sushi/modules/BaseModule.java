@@ -69,7 +69,7 @@ abstract public class BaseModule implements Module {
     }
 
     @Override
-    public Configurations getConfigurationProvider() {
+    public Configurations getConfigurations() {
         return provider;
     }
 

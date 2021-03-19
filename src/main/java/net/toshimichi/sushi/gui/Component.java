@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.gui;
 
+import net.minecraft.client.Minecraft;
 import net.toshimichi.sushi.events.input.ClickType;
 
 public interface Component {
@@ -17,31 +18,43 @@ public interface Component {
 
     default int getWindowX() {
         if (getOrigin() == null)
-            return getX();
-        return (int) (getOrigin().getX() * getAnchor().getX() + getX());
+            return (int)(Minecraft.getMinecraft().displayWidth * getAnchor().getX() + getX());
+        return (int) (getOrigin().getWindowX() * getAnchor().getX() + getX());
     }
 
     default int getWindowY() {
         if (getOrigin() == null)
-            return getY();
-        return (int) (getOrigin().getY() * getAnchor().getY() + getY());
+            return (int)(Minecraft.getMinecraft().displayHeight * getAnchor().getY() + getY());
+        return (int) (getOrigin().getWindowY() * getAnchor().getY() + getY());
     }
 
     default void setWindowX(int x) {
         if (getOrigin() == null)
             setX(x);
-        setX((int) (x - getOrigin().getX() * getAnchor().getX()));
+        setX((int) (x - getOrigin().getWindowX() * getAnchor().getX()));
     }
 
     default void setWindowY(int y) {
         if (getOrigin() == null)
             setY(y);
-        setY((int) (y - getOrigin().getY() * getAnchor().getY()));
+        setY((int) (y - getOrigin().getWindowY() * getAnchor().getY()));
     }
 
     Anchor getAnchor();
 
+    void setAnchor(Anchor anchor);
+
     Component getOrigin();
+
+    void setOrigin(Component component);
+
+    boolean isFocused();
+
+    void setFocused(boolean focused);
+
+    boolean isVisible();
+
+    void setVisible(boolean visible);
 
     void onRender();
 

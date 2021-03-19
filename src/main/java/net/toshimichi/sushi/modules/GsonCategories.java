@@ -35,7 +35,7 @@ public class GsonCategories implements Categories {
 
     @Override
     public Category getModuleCategory(String name) {
-        for (Category element : getModuleCategories()) {
+        for (Category element : getAll()) {
             if (element.getName().equals(name)) {
                 return element;
             }
@@ -44,7 +44,7 @@ public class GsonCategories implements Categories {
     }
 
     @Override
-    public List<Category> getModuleCategories() {
+    public List<Category> getAll() {
         List<Category> list = new ArrayList<>(defaultCategories);
         list.addAll(categories);
         return list;

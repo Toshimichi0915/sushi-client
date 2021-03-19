@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.modules.client;
 
-import net.toshimichi.sushi.gui.ClickGuiComponent;
+import net.toshimichi.sushi.gui.clickgui.ClickGuiComponent;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.modules.BaseModule;
 import net.toshimichi.sushi.modules.Categories;
@@ -11,7 +11,7 @@ import org.lwjgl.input.Keyboard;
 
 public class ClickGuiModule extends BaseModule {
 
-    private ClickGuiComponent component = new ClickGuiComponent();
+    private ClickGuiComponent component;
 
     public ClickGuiModule(String name, Modules modules, Categories categories, Configurations provider) {
         super(name, modules, categories, provider);
@@ -19,6 +19,7 @@ public class ClickGuiModule extends BaseModule {
 
     @Override
     public void onEnable() {
+        component = new ClickGuiComponent(getConfigurations());
         Components.show(component, true);
     }
 

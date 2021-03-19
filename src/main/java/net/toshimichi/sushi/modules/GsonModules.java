@@ -12,9 +12,8 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GsonModules implements Modules {
 
@@ -43,12 +42,10 @@ public class GsonModules implements Modules {
     }
 
     @Override
-    public Map<String, Module> getAll() {
-        HashMap<String, Module> result = new HashMap<>();
-        for (ModuleGroup group : groups) {
-            result.put(group.module.getName(), group.module);
-        }
-        return result;
+    public List<Module> getAll() {
+        return groups.stream()
+                .map(group->group.module)
+                .collect(Collectors.toList());
     }
 
     @Override
