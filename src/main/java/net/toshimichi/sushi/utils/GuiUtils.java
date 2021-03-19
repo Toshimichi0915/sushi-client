@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;

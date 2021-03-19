@@ -1,8 +1,6 @@
 package net.toshimichi.sushi.events;
 
 
-import org.reflections.Reflections;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

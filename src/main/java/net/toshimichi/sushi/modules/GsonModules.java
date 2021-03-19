@@ -60,7 +60,7 @@ public class GsonModules implements Modules {
         try {
             JsonObject savedRoot = new JsonObject();
             for (ModuleGroup group : groups) {
-                savedRoot.add(group.module.getName(), group.provider.save());
+                savedRoot.add(group.module.getId(), group.provider.save());
             }
             FileUtils.writeStringToFile(conf, gson.toJson(savedRoot), StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -71,7 +71,7 @@ public class GsonModules implements Modules {
     @Override
     public void load() {
         try {
-            if (conf == null) {
+            if (!conf.exists()) {
                 root = new JsonObject();
             } else {
                 String contents = FileUtils.readFileToString(conf, StandardCharsets.UTF_8);

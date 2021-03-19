@@ -1,7 +1,5 @@
 package net.toshimichi.sushi.events;
 
-import org.reflections.Reflections;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,7 +50,7 @@ public class EventHandlers {
     private static HashSet<EventMap> getAllEventMap(Class<?> eventClass) {
         HashSet<EventMap> result = new HashSet<>();
         for (EventMap map : eventMaps) {
-            if(!map.eventClass.isAssignableFrom(eventClass)) continue;
+            if (!map.eventClass.isAssignableFrom(eventClass)) continue;
             result.add(map);
         }
         return result;

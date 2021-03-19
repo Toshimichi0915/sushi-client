@@ -1,6 +1,7 @@
-package net.toshimichi.sushi.gui;
+package net.toshimichi.sushi.gui.base;
 
 import net.toshimichi.sushi.events.input.ClickType;
+import net.toshimichi.sushi.gui.*;
 import org.lwjgl.input.Keyboard;
 
 public class BaseComponent implements Component, Resizable {

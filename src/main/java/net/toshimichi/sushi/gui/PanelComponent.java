@@ -1,27 +1,29 @@
 package net.toshimichi.sushi.gui;
 
 import net.toshimichi.sushi.events.input.ClickType;
+import net.toshimichi.sushi.gui.base.BaseListComponent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class PanelComponent extends BaseComponent implements List<Component> {
+public class PanelComponent extends BaseListComponent<Component> {
 
-    private final ArrayList<Component> children = new ArrayList<>();
-    private final Function<Component, Component> frameFunction;
+    private final Function<Component, FrameComponent> frameFunction;
 
-    public PanelComponent(Function<Component, Component> frameFunction) {
+    public PanelComponent(Function<Component, FrameComponent> frameFunction) {
+        super(new ArrayList<>());
         this.frameFunction = frameFunction;
     }
 
-    public PanelComponent(int x, int y, int width, int height, Anchor anchor, Component origin, Function<Component, Component> frameFunction) {
-        super(x, y, width, height, anchor, origin);
+    public PanelComponent(int x, int y, int width, int height, Anchor anchor, Component origin, Function<Component, FrameComponent> frameFunction) {
+        super(x, y, width, height, anchor, origin, new ArrayList<>());
         this.frameFunction = frameFunction;
     }
 
     private Component getFocusedComponent() {
-        for (Component component : children) {
+        for (Component component : this) {
             if (component.isFocused()) return component;
         }
         return null;
@@ -35,13 +37,13 @@ public class PanelComponent extends BaseComponent implements List<Component> {
     }
 
     private void setFocusedComponent(Component component) {
-        children.forEach(c -> c.setFocused(false));
+        forEach(c -> c.setFocused(false));
         component.setFocused(true);
     }
 
     private Component getTopComponent(int x, int y) {
-        for (Component child : children) {
-            if(!child.isVisible()) continue;
+        for (Component child : this) {
+            if (!child.isVisible()) continue;
             if (child.getWindowX() > x) continue;
             if (child.getWindowX() + child.getWidth() > x) continue;
             if (child.getWindowY() > y) continue;
@@ -53,10 +55,18 @@ public class PanelComponent extends BaseComponent implements List<Component> {
 
     @Override
     public void onRender() {
-        ArrayList<Component> clone = new ArrayList<>(children);
+        ArrayList<Component> clone = new ArrayList<>(this);
         Collections.reverse(clone);
         for (Component component : clone) {
             component.onRender();
+        }
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        for (Component child : this) {
+            child.setVisible(true);
         }
     }
 
@@ -98,132 +108,13 @@ public class PanelComponent extends BaseComponent implements List<Component> {
 
     @Override
     public boolean add(Component component) {
-        component = frameFunction.apply(component);
+        if (frameFunction != null)
+            component = frameFunction.apply(component);
         int windowX = component.getWindowX();
         int windowY = component.getWindowY();
         component.setOrigin(this);
         component.setWindowX(windowX);
         component.setWindowY(windowY);
-        return children.add(component);
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        return children.remove(o);
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return children.contains(c);
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends Component> c) {
-        return children.addAll(c);
-    }
-
-    @Override
-    public boolean addAll(int index, Collection<? extends Component> c) {
-        return children.addAll(index, c);
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        return children.removeAll(c);
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        return children.retainAll(c);
-    }
-
-    @Override
-    public void clear() {
-        children.clear();
-    }
-
-    @Override
-    public Component get(int index) {
-        return children.get(index);
-    }
-
-    @Override
-    public Component set(int index, Component element) {
-        return children.set(index, element);
-    }
-
-    @Override
-    public void add(int index, Component element) {
-        children.add(index, element);
-    }
-
-    @Override
-    public Component remove(int index) {
-        return children.remove(index);
-    }
-
-    @Override
-    public int indexOf(Object o) {
-        return children.indexOf(o);
-    }
-
-    @Override
-    public int lastIndexOf(Object o) {
-        return children.lastIndexOf(o);
-    }
-
-    @Override
-    public ListIterator<Component> listIterator() {
-        return children.listIterator();
-    }
-
-    @Override
-    public ListIterator<Component> listIterator(int index) {
-        return children.listIterator(index);
-    }
-
-    @Override
-    public List<Component> subList(int fromIndex, int toIndex) {
-        return children.subList(fromIndex, toIndex);
-    }
-
-    @Override
-    public int size() {
-        return children.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return children.isEmpty();
-    }
-
-    @Override
-    public boolean contains(Object o) {
-        return children.contains(o);
-    }
-
-    @Override
-    public Iterator<Component> iterator() {
-        return children.iterator();
-    }
-
-    @Override
-    public Object[] toArray() {
-        return children.toArray();
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return children.toArray(a);
-    }
-
-    @Override
-    public void forEach(Consumer<? super Component> action) {
-        children.forEach(action);
-    }
-
-    @Override
-    public Spliterator<Component> spliterator() {
-        return children.spliterator();
+        return super.add(component);
     }
 }

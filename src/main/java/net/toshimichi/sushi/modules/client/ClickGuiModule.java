@@ -1,8 +1,9 @@
 package net.toshimichi.sushi.modules.client;
 
 import net.minecraft.client.Minecraft;
+import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.gui.Components;
-import net.toshimichi.sushi.gui.clickgui.ClickGuiComponent;
+import net.toshimichi.sushi.gui.PanelComponent;
 import net.toshimichi.sushi.modules.BaseModule;
 import net.toshimichi.sushi.modules.Categories;
 import net.toshimichi.sushi.modules.Category;
@@ -13,7 +14,7 @@ import org.lwjgl.input.Keyboard;
 
 public class ClickGuiModule extends BaseModule {
 
-    private ClickGuiComponent component;
+    private PanelComponent component;
 
     public ClickGuiModule(String id, String name, Modules modules, Categories categories, Configurations provider) {
         super(id, name, modules, categories, provider);
@@ -22,7 +23,7 @@ public class ClickGuiModule extends BaseModule {
     @Override
     public void onEnable() {
         GuiUtils.lockGame();
-        component = new ClickGuiComponent(getConfigurations());
+        component = Sushi.getProfile().getTheme().newClickGui();
         Components.show(component, true);
     }
 

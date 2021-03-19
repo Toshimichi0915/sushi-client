@@ -2,7 +2,6 @@ package net.toshimichi.sushi.handlers.forge;
 
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.RenderTickEvent;

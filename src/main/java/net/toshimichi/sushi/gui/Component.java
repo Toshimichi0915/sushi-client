@@ -18,26 +18,26 @@ public interface Component {
 
     default int getWindowX() {
         if (getOrigin() == null)
-            return (int)(Minecraft.getMinecraft().displayWidth * getAnchor().getX() + getX());
-        return (int) (getOrigin().getWindowX() * getAnchor().getX() + getX());
+            return (int) (Minecraft.getMinecraft().displayWidth * getAnchor().getX() + getX());
+        return (int) (getX() + getOrigin().getWindowX() + getOrigin().getWidth() * getAnchor().getX());
     }
 
     default int getWindowY() {
         if (getOrigin() == null)
-            return (int)(Minecraft.getMinecraft().displayHeight * getAnchor().getY() + getY());
-        return (int) (getOrigin().getWindowY() * getAnchor().getY() + getY());
+            return (int) (Minecraft.getMinecraft().displayHeight * getAnchor().getY() + getY());
+        return (int) (getY() + getOrigin().getWindowY() + getOrigin().getHeight() * getAnchor().getY());
     }
 
     default void setWindowX(int x) {
         if (getOrigin() == null)
             setX(x);
-        setX((int) (x - getOrigin().getWindowX() * getAnchor().getX()));
+        setX((int) (x - getOrigin().getWindowX() - getOrigin().getWidth() * getAnchor().getX()));
     }
 
     default void setWindowY(int y) {
         if (getOrigin() == null)
             setY(y);
-        setY((int) (y - getOrigin().getWindowY() * getAnchor().getY()));
+        setY((int) (y - getOrigin().getWindowY() - getOrigin().getHeight() * getAnchor().getY()));
     }
 
     Anchor getAnchor();

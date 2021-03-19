@@ -15,7 +15,7 @@ public class ComponentRenderHandler {
     public void onRenderTick(RenderTickEvent e) {
         List<Component> components = Components.getAll();
         Collections.reverse(components);
-        for(Component component : components) {
+        for (Component component : components) {
             component.onRender();
         }
     }

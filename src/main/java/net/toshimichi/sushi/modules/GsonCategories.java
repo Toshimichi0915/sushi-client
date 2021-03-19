@@ -58,7 +58,7 @@ public class GsonCategories implements Categories {
     @Override
     public void load() {
         try {
-            if (conf == null) return;
+            if (!conf.exists()) return;
             String contents = FileUtils.readFileToString(conf, StandardCharsets.UTF_8);
             Type type = new TypeToken<ArrayList<Category>>() {
             }.getType();
