@@ -5,6 +5,8 @@ public interface Configuration<T> {
 
     void setValue(T value);
 
+    String getId();
+
     String getName();
 
     Class<T> getValueClass();

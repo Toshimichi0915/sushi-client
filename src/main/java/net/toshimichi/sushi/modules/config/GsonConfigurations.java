@@ -21,17 +21,17 @@ public class GsonConfigurations implements Configurations {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Configuration<T> get(String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, String parent) {
-        if (getRawValue(name, tClass) == null)
-            setRawValue(name, defaultValue);
+    public <T> Configuration<T> get(String id, String name, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, String parent) {
+        if (getRawValue(id, tClass) == null)
+            setRawValue(id, defaultValue);
         for (GsonConfiguration<?> loaded : list) {
-            if (loaded.getName().equals(name)) {
+            if (loaded.getId().equals(id)) {
                 if (!loaded.getValueClass().equals(tClass))
                     throw new IllegalArgumentException("Supplied class is not valid");
                 return (Configuration<T>) loaded;
             }
         }
-        GsonConfiguration<T> conf = new GsonConfiguration<>(name, tClass, this, isValid, parent);
+        GsonConfiguration<T> conf = new GsonConfiguration<>(id, name, tClass, this, isValid, parent);
         list.add(conf);
         return conf;
     }
