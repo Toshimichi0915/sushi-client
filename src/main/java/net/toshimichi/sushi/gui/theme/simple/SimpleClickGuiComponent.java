@@ -7,7 +7,6 @@ import net.toshimichi.sushi.gui.PanelComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.modules.Module;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
 
@@ -42,9 +41,8 @@ public class SimpleClickGuiComponent extends PanelComponent {
     }
 
     @Override
-    public void onKeyReleased(int keyCode) {
-        if (keyCode == Keyboard.KEY_ESCAPE) {
-            module.setEnabled(false);
-        }
+    public void onClose() {
+        super.onClose();
+        module.setEnabled(false);
     }
 }

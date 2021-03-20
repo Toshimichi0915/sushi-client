@@ -27,4 +27,6 @@ public interface Module {
     void setKeybind(int key);
 
     Configurations getConfigurations();
+
+    ModuleFactory getModuleFactory();
 }

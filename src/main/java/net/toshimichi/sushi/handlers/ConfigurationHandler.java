@@ -9,6 +9,5 @@ public class ConfigurationHandler {
     @EventHandler
     public void onLoadWorld(LoadWorldEvent e) {
         Sushi.getProfile().save();
-        System.out.println("saved!");
     }
 }

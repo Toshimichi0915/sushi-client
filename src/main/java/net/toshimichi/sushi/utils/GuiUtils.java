@@ -13,15 +13,19 @@ public class GuiUtils {
     private static boolean locked;
 
     public static void lockGame() {
+        if (isGameLocked()) return;
+        Minecraft.getMinecraft().displayGuiScreen(new LockGuiScreen(Minecraft.getMinecraft().currentScreen));
         locked = true;
-        Minecraft.getMinecraft().displayGuiScreen(new EmptyGuiScreen());
         Minecraft.getMinecraft().setIngameNotInFocus();
     }
 
     public static void unlockGame() {
-        locked = false;
+        if (!isGameLocked()) return;
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-        if (screen instanceof EmptyGuiScreen) screen.onGuiClosed();
+        if (screen instanceof LockGuiScreen)
+            ((LockGuiScreen) screen).close();
+        if (Minecraft.getMinecraft().currentScreen instanceof LockGuiScreen) return; // still locked!
+        locked = false;
         Minecraft.getMinecraft().setIngameFocus();
     }
 

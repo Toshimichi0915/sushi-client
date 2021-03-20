@@ -6,23 +6,25 @@ import net.toshimichi.sushi.config.Configurations;
 abstract public class BaseModule implements Module {
 
     private final String id;
-    private final String name;
     private final Configurations provider;
     private final Modules modules;
     private final Categories categories;
+    private final Configuration<String> name;
     private final Configuration<String> category;
     private final Configuration<Integer> keybind;
+    private final ModuleFactory factory;
     private boolean isEnabled;
     private boolean isPaused;
 
-    public BaseModule(String id, String name, Modules modules, Categories categories, Configurations provider) {
+    public BaseModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         this.id = id;
-        this.name = name;
         this.provider = provider;
         this.modules = modules;
         this.categories = categories;
-        this.category = provider.get("module." + id + ".category", "Category", "Module Category", String.class, getDefaultCategory().getName());
-        this.keybind = provider.get("module." + id + ".keybind", "Keybind", "Keybind for this module", Integer.class, getDefaultKeybind());
+        this.factory = factory;
+        this.name = provider.get("name", "Name", "Module Name", String.class, getDefaultName());
+        this.category = provider.get("category", "Category", "Module Category", String.class, getDefaultCategory().getName());
+        this.keybind = provider.get("keybind", "Keybind", "Keybind for this module", Integer.class, getDefaultKeybind());
     }
 
     @Override
@@ -32,7 +34,7 @@ abstract public class BaseModule implements Module {
 
     @Override
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     @Override
@@ -82,11 +84,9 @@ abstract public class BaseModule implements Module {
         return new ConflictType[0];
     }
 
-    abstract public Category getDefaultCategory();
-
     @Override
     public Category getCategory() {
-        Category result = categories.getModuleCategory(name);
+        Category result = categories.getModuleCategory(category.getValue());
         if (result != null) return result;
         return getDefaultCategory();
     }
@@ -95,8 +95,6 @@ abstract public class BaseModule implements Module {
     public void setCategory(Category category) {
         this.category.setValue(category.getName());
     }
-
-    abstract public int getDefaultKeybind();
 
     @Override
     public int getKeybind() {
@@ -107,4 +105,15 @@ abstract public class BaseModule implements Module {
     public void setKeybind(int key) {
         keybind.setValue(key);
     }
+
+    @Override
+    public ModuleFactory getModuleFactory() {
+        return factory;
+    }
+
+    abstract public String getDefaultName();
+
+    abstract public int getDefaultKeybind();
+
+    abstract public Category getDefaultCategory();
 }

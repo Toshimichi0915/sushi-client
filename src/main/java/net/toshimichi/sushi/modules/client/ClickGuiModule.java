@@ -2,13 +2,10 @@ package net.toshimichi.sushi.modules.client;
 
 import net.minecraft.client.Minecraft;
 import net.toshimichi.sushi.Sushi;
+import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.PanelComponent;
-import net.toshimichi.sushi.modules.BaseModule;
-import net.toshimichi.sushi.modules.Categories;
-import net.toshimichi.sushi.modules.Category;
-import net.toshimichi.sushi.modules.Modules;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.GuiUtils;
 import org.lwjgl.input.Keyboard;
 
@@ -16,15 +13,15 @@ public class ClickGuiModule extends BaseModule {
 
     private PanelComponent component;
 
-    public ClickGuiModule(String id, String name, Modules modules, Categories categories, Configurations provider) {
-        super(id, name, modules, categories, provider);
+    public ClickGuiModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+        super(id, modules, categories, provider, factory);
     }
 
     @Override
     public void onEnable() {
-        GuiUtils.lockGame();
-        component = Sushi.getProfile().getTheme().newClickGui();
+        component = Sushi.getProfile().getTheme().newClickGui(this);
         Components.show(component, true);
+        GuiUtils.lockGame();
     }
 
     @Override
@@ -32,6 +29,11 @@ public class ClickGuiModule extends BaseModule {
         GuiUtils.unlockGame();
         Minecraft.getMinecraft().setIngameFocus();
         Components.close(component);
+    }
+
+    @Override
+    public String getDefaultName() {
+        return "ClickGUI";
     }
 
     @Override

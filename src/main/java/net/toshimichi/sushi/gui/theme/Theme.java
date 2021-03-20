@@ -3,6 +3,7 @@ package net.toshimichi.sushi.gui.theme;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.FrameComponent;
 import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.modules.Module;
 
 public interface Theme {
 
@@ -10,5 +11,5 @@ public interface Theme {
 
     FrameComponent newFrame(Component component);
 
-    PanelComponent newClickGui();
+    PanelComponent newClickGui(Module caller);
 }

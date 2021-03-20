@@ -25,7 +25,7 @@ public class GsonCategories implements Categories {
         defaultCategories.add(Category.CLIENT);
     }
 
-    private final ArrayList<Category> categories = new ArrayList<>();
+    private final ArrayList<GsonCategory> categories = new ArrayList<>();
     private final File conf;
 
     public GsonCategories(File conf, Gson gson) {
@@ -51,16 +51,11 @@ public class GsonCategories implements Categories {
     }
 
     @Override
-    public void addModuleCategory(Category category) {
-        categories.add(category);
-    }
-
-    @Override
     public void load() {
         try {
             if (!conf.exists()) return;
             String contents = FileUtils.readFileToString(conf, StandardCharsets.UTF_8);
-            Type type = new TypeToken<ArrayList<Category>>() {
+            Type type = new TypeToken<ArrayList<GsonCategory>>() {
             }.getType();
             categories.addAll(gson.fromJson(contents, type));
         } catch (IOException e) {

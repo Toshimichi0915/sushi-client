@@ -16,9 +16,11 @@ public interface Modules {
 
     Module getModule(String id);
 
+    ModuleFactory getModuleFactory(String id);
+
     List<Module> getAll();
 
-    void addModule(String id, String name, ModuleFactory factory);
+    void addModule(String id, ModuleFactory factory);
 
     void save();
 

@@ -41,21 +41,22 @@ public class Components {
     }
 
     public static void show(Component component, boolean close) {
-        if (close)
-            components.clear();
+        if (close) closeAll();
         component.setVisible(true);
         component.onShow();
         components.add(0, component);
     }
 
     public static void close(Component component) {
-        component.setVisible(false);
-        component.onClose();
+        if (!component.isClosed()) {
+            component.setVisible(false);
+            component.onClose();
+        }
         components.remove(component);
     }
 
     public static void closeAll() {
-        components.clear();
+        new ArrayList<>(components).forEach(Components::close);
     }
 
     public static List<Component> getAll() {

@@ -8,6 +8,7 @@ public class BaseComponent implements Component, Resizable {
 
     private boolean focused;
     private boolean visible;
+    private boolean closed;
     private Anchor anchor;
     private Component origin;
     private int x;
@@ -109,6 +110,11 @@ public class BaseComponent implements Component, Resizable {
     }
 
     @Override
+    public boolean isClosed() {
+        return closed;
+    }
+
+    @Override
     public void onRender() {
     }
 
@@ -146,5 +152,6 @@ public class BaseComponent implements Component, Resizable {
 
     @Override
     public void onClose() {
+        closed = true;
     }
 }

@@ -7,6 +7,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTheme;
@@ -15,8 +17,6 @@ import net.toshimichi.sushi.handlers.forge.ClientTickHandler;
 import net.toshimichi.sushi.handlers.forge.KeyInputHandler;
 import net.toshimichi.sushi.handlers.forge.MouseInputHandler;
 import net.toshimichi.sushi.handlers.forge.RenderTickHandler;
-import net.toshimichi.sushi.config.Configurations;
-import net.toshimichi.sushi.config.GsonConfigurations;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

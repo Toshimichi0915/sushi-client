@@ -3,14 +3,11 @@ package net.toshimichi.sushi.modules.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
-import net.toshimichi.sushi.modules.BaseModule;
-import net.toshimichi.sushi.modules.Categories;
-import net.toshimichi.sushi.modules.Category;
-import net.toshimichi.sushi.modules.Modules;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.modules.*;
 
 import java.lang.reflect.Field;
 import java.util.Set;
@@ -30,8 +27,8 @@ public class NoRotateModule extends BaseModule {
         FLAGS_FIELD.setAccessible(true);
     }
 
-    public NoRotateModule(String id, String name, Modules modules, Categories categories, Configurations provider) {
-        super(id, name, modules, categories, provider);
+    public NoRotateModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+        super(id, modules, categories, provider, factory);
     }
 
     @Override
@@ -59,6 +56,11 @@ public class NoRotateModule extends BaseModule {
         } catch (IllegalAccessException e1) {
             e1.printStackTrace();
         }
+    }
+
+    @Override
+    public String getDefaultName() {
+        return "NoRotate";
     }
 
     @Override

@@ -1,12 +1,19 @@
 package net.toshimichi.sushi.utils;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.toshimichi.sushi.events.input.KeyEvent;
 import net.toshimichi.sushi.events.input.MouseEvent;
 
 import java.io.IOException;
 
-class EmptyGuiScreen extends GuiScreen {
+class LockGuiScreen extends GuiScreen {
+
+    private final GuiScreen parent;
+
+    public LockGuiScreen(GuiScreen parent) {
+        this.parent = parent;
+    }
 
     @Override
     public void handleKeyboardInput() throws IOException {
@@ -25,5 +32,13 @@ class EmptyGuiScreen extends GuiScreen {
     @Override
     public boolean doesGuiPauseGame() {
         return false;
+    }
+
+    public GuiScreen getParent() {
+        return parent;
+    }
+
+    public void close() {
+        Minecraft.getMinecraft().displayGuiScreen(parent);
     }
 }

@@ -4,11 +4,9 @@ import java.util.List;
 
 public interface Categories {
 
-    Category getModuleCategory(String name);
+    Category getModuleCategory(String id);
 
     List<Category> getAll();
-
-    void addModuleCategory(Category category);
 
     void load();
 

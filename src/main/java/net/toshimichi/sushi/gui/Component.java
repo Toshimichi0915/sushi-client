@@ -56,6 +56,8 @@ public interface Component {
 
     void setVisible(boolean visible);
 
+    boolean isClosed();
+
     void onRender();
 
     void onClick(int x, int y, ClickType type);

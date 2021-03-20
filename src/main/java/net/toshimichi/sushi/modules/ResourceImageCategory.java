@@ -8,7 +8,6 @@ import java.io.InputStream;
 
 public class ResourceImageCategory implements Category {
 
-    private static final BufferedImage emptyImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
     private final String name;
     private final Image icon;
 
@@ -19,11 +18,11 @@ public class ResourceImageCategory implements Category {
 
     private static BufferedImage readImage(String resource) {
         try (InputStream in = ResourceImageCategory.class.getResourceAsStream(resource)) {
-            if (in == null) return emptyImage;
+            if (in == null) return null;
             else return ImageIO.read(in);
         } catch (IOException e) {
             e.printStackTrace();
-            return emptyImage;
+            return null;
         }
     }
 
