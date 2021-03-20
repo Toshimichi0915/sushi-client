@@ -15,8 +15,8 @@ import net.toshimichi.sushi.handlers.forge.ClientTickHandler;
 import net.toshimichi.sushi.handlers.forge.KeyInputHandler;
 import net.toshimichi.sushi.handlers.forge.MouseInputHandler;
 import net.toshimichi.sushi.handlers.forge.RenderTickHandler;
-import net.toshimichi.sushi.modules.config.Configurations;
-import net.toshimichi.sushi.modules.config.GsonConfigurations;
+import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.GsonConfigurations;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

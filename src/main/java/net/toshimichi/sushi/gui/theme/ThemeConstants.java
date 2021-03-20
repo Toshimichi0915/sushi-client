@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.gui.theme;
 
-import net.toshimichi.sushi.modules.config.Configuration;
-import net.toshimichi.sushi.modules.config.Configurations;
+import net.toshimichi.sushi.config.Configuration;
+import net.toshimichi.sushi.config.Configurations;
 
 import java.awt.Color;
 

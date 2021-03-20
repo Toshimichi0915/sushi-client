@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.modules;
 
-import net.toshimichi.sushi.modules.config.Configurations;
+import net.toshimichi.sushi.config.Configurations;
 
 public interface Module {
 

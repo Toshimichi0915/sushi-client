@@ -7,7 +7,7 @@ import net.toshimichi.sushi.gui.PanelComponent;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Module;
-import net.toshimichi.sushi.modules.config.Configurations;
+import net.toshimichi.sushi.config.Configurations;
 
 public class SimpleTheme implements Theme {
 

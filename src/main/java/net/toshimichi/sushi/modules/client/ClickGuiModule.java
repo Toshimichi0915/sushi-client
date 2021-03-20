@@ -8,7 +8,7 @@ import net.toshimichi.sushi.modules.BaseModule;
 import net.toshimichi.sushi.modules.Categories;
 import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.modules.Modules;
-import net.toshimichi.sushi.modules.config.Configurations;
+import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.utils.GuiUtils;
 import org.lwjgl.input.Keyboard;
 

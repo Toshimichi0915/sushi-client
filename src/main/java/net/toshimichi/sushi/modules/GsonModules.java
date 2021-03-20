@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
-import net.toshimichi.sushi.modules.config.GsonConfigurations;
+import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.render.NoRotateModule;
 import org.apache.commons.io.FileUtils;
 

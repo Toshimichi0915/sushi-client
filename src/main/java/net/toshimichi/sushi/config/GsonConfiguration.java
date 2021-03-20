@@ -1,4 +1,4 @@
-package net.toshimichi.sushi.modules.config;
+package net.toshimichi.sushi.config;
 
 import java.util.function.Supplier;
 

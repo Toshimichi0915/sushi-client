@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.modules;
 
-import net.toshimichi.sushi.modules.config.Configuration;
-import net.toshimichi.sushi.modules.config.Configurations;
+import net.toshimichi.sushi.config.Configuration;
+import net.toshimichi.sushi.config.Configurations;
 
 abstract public class BaseModule implements Module {
 
