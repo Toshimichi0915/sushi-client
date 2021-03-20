@@ -4,10 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
-import net.toshimichi.sushi.modules.combat.AntiBotModule;
-import net.toshimichi.sushi.modules.combat.CriticalsModule;
-import net.toshimichi.sushi.modules.combat.ReachModule;
-import net.toshimichi.sushi.modules.combat.VelocityModule;
 import net.toshimichi.sushi.modules.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.render.NoRotateModule;
 import org.apache.commons.io.FileUtils;
@@ -32,10 +28,6 @@ public class GsonModules implements Modules {
         this.conf = conf;
         this.categories = categories;
         this.gson = gson;
-        addModule("antibot", "AntiBot", AntiBotModule::new);
-        addModule("criticals", "Criticals", CriticalsModule::new);
-        addModule("reach", "Reach", ReachModule::new);
-        addModule("velocity", "Velocity", VelocityModule::new);
         addModule("norotate", "NoRotate", NoRotateModule::new);
         addModule("clickgui", "ClickGUI", ClickGuiModule::new);
     }

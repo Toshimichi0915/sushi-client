@@ -7,6 +7,7 @@ import net.toshimichi.sushi.events.input.MouseEvent;
 import java.io.IOException;
 
 class EmptyGuiScreen extends GuiScreen {
+
     @Override
     public void handleKeyboardInput() throws IOException {
         KeyEvent event = InputUtils.callKeyEvent();

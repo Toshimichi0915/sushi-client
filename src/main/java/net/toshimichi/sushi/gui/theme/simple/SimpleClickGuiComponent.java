@@ -6,15 +6,19 @@ import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.PanelComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
+import net.toshimichi.sushi.modules.Module;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
 
 public class SimpleClickGuiComponent extends PanelComponent {
 
+    private final Module module;
     private final ThemeConstants constants;
 
-    public SimpleClickGuiComponent(ThemeConstants constants) {
+    public SimpleClickGuiComponent(Module module, ThemeConstants constants) {
         super(0, 0, Display.getWidth(), Display.getHeight(), Anchor.TOP_LEFT, null, null);
+        this.module = module;
         this.constants = constants;
     }
 
@@ -35,5 +39,12 @@ public class SimpleClickGuiComponent extends PanelComponent {
         }
 
         super.onRender();
+    }
+
+    @Override
+    public void onKeyReleased(int keyCode) {
+        if (keyCode == Keyboard.KEY_ESCAPE) {
+            module.setEnabled(false);
+        }
     }
 }

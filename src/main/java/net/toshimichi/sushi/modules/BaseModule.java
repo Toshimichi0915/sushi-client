@@ -1,6 +1,5 @@
 package net.toshimichi.sushi.modules;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.toshimichi.sushi.modules.config.Configuration;
 import net.toshimichi.sushi.modules.config.Configurations;
 
@@ -68,11 +67,9 @@ abstract public class BaseModule implements Module {
     }
 
     public void onEnable() {
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void onDisable() {
-        MinecraftForge.EVENT_BUS.unregister(this);
     }
 
     @Override

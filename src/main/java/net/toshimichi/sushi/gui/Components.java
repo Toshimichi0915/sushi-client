@@ -44,11 +44,13 @@ public class Components {
         if (close)
             components.clear();
         component.setVisible(true);
+        component.onShow();
         components.add(0, component);
     }
 
     public static void close(Component component) {
         component.setVisible(false);
+        component.onClose();
         components.remove(component);
     }
 

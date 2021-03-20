@@ -130,8 +130,16 @@ public class BaseComponent implements Component, Resizable {
 
     @Override
     public void onKeyReleased(int keyCode) {
-        if (keyCode == Keyboard.KEY_END) {
+        if (keyCode == Keyboard.KEY_ESCAPE) {
             Components.close(this);
         }
+    }
+
+    @Override
+    public void onShow() {
+    }
+
+    @Override
+    public void onClose() {
     }
 }

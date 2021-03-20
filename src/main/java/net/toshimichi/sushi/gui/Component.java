@@ -60,6 +60,8 @@ public interface Component {
 
     void onClick(int x, int y, ClickType type);
 
+    void onHover(int x, int y);
+
     void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status);
 
     void onScroll(int deltaX, int deltaY, ClickType type);
@@ -67,4 +69,8 @@ public interface Component {
     void onKeyPressed(int keyCode);
 
     void onKeyReleased(int keyCode);
+
+    void onShow();
+
+    void onClose();
 }
