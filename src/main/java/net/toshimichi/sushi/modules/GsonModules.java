@@ -20,6 +20,7 @@ import java.util.Map;
 
 public class GsonModules implements Modules {
 
+    private static final String ENABLED_TAG = "enabled";
     private static final String FACTORY_TAG = "base";
 
     private final Gson gson;
@@ -77,8 +78,11 @@ public class GsonModules implements Modules {
         GsonConfigurations provider = new GsonConfigurations(gson);
         JsonObject object = loadJson(id);
         object.add(FACTORY_TAG, new JsonPrimitive(factory.getId()));
+        if (!object.has(ENABLED_TAG)) object.add(ENABLED_TAG, new JsonPrimitive(false));
         provider.load(object);
-        modules.add(factory.getConstructor().newModule(id, this, categories, provider, factory));
+        Module module = factory.getConstructor().newModule(id, this, categories, provider, factory);
+        if (object.getAsJsonPrimitive(ENABLED_TAG).getAsBoolean()) module.setEnabled(true);
+        modules.add(module);
     }
 
     @Override
@@ -88,6 +92,9 @@ public class GsonModules implements Modules {
             for (Module module : modules) {
                 Configurations conf = module.getConfigurations();
                 if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
+                JsonObject obj = ((GsonConfigurations) conf).save();
+                obj.add(FACTORY_TAG, new JsonPrimitive(module.getModuleFactory().getId()));
+                obj.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
                 savedRoot.add(module.getId(), ((GsonConfigurations) conf).save());
             }
             FileUtils.writeStringToFile(conf, gson.toJson(savedRoot), StandardCharsets.UTF_8);
@@ -111,7 +118,8 @@ public class GsonModules implements Modules {
             }
             modules.clear();
             for (Map.Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
-                String factoryId = entry.getValue().getAsJsonObject().getAsJsonPrimitive(FACTORY_TAG).getAsString();
+                JsonObject moduleJson = entry.getValue().getAsJsonObject();
+                String factoryId = moduleJson.getAsJsonPrimitive(FACTORY_TAG).getAsString();
                 addModule(entry.getKey(), getModuleFactory(factoryId));
             }
         } catch (IOException e) {
