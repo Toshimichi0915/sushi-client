@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.toshimichi.sushi.events.EventHandler;
+import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.modules.BaseModule;
 import net.toshimichi.sushi.modules.Categories;
@@ -31,6 +32,16 @@ public class NoRotateModule extends BaseModule {
 
     public NoRotateModule(String id, String name, Modules modules, Categories categories, Configurations provider) {
         super(id, name, modules, categories, provider);
+    }
+
+    @Override
+    public void onEnable() {
+        EventHandlers.register(this);
+    }
+
+    @Override
+    public void onDisable() {
+        EventHandlers.unregister(this);
     }
 
     @SuppressWarnings("unchecked")
