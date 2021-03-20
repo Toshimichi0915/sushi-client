@@ -117,6 +117,11 @@ public class BaseComponent implements Component, Resizable {
     }
 
     @Override
+    public void onHover(int x, int y) {
+
+    }
+
+    @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
     }
 

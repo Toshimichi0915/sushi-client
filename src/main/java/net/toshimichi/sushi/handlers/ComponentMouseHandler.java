@@ -7,7 +7,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.events.input.MousePressEvent;
 import net.toshimichi.sushi.events.input.MouseReleaseEvent;
-import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.events.tick.RenderTickEvent;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.MouseStatus;
@@ -55,13 +55,12 @@ public class ComponentMouseHandler {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onClientTick(ClientTickEvent e) {
+    public void onRenderTick(RenderTickEvent e) {
         for (ClickType type : ClickType.values()) {
 
             // fetch/update statuses
             ClickStatus status = getClickStatus(type);
             if (status == null) continue;
-            if (!status.isClicked && !status.isLastClicked) continue;
             status.lastX = status.x;
             status.lastY = status.y;
             status.x = toWindowX(Mouse.getEventX());
@@ -69,6 +68,11 @@ public class ComponentMouseHandler {
 
             Component lastComponent = Components.getTopComponent(status.lastX, status.lastY);
             Component component = Components.getTopComponent(status.x, status.y);
+
+            if (!status.isClicked && !status.isLastClicked) {
+                if (component != null) component.onHover(status.x, status.y);
+                continue;
+            }
             if (lastComponent == null) continue;
 
             // component changed

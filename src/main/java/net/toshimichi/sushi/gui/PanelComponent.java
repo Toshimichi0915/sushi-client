@@ -83,6 +83,13 @@ public class PanelComponent extends BaseListComponent<Component> {
     }
 
     @Override
+    public void onHover(int x, int y) {
+        Component topComponent = getTopComponent(x, y);
+        if (topComponent == null) return;
+        topComponent.onHover(x, y);
+    }
+
+    @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
         Component from = getTopComponent(fromX, fromY);
         Component to = getTopComponent(toX, toY);

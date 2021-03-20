@@ -12,6 +12,7 @@ public class SimpleModuleComponent extends BaseComponent {
 
     private final Module module;
     private final ThemeConstants constants;
+    private boolean hover;
 
     public SimpleModuleComponent(Module module, ThemeConstants constants) {
         this.module = module;
@@ -22,8 +23,14 @@ public class SimpleModuleComponent extends BaseComponent {
     @Override
     public void onRender() {
         Color color;
-        if (module.isEnabled()) color = constants.enabledColor.getValue();
-        else color = constants.disabledColor.getValue();
+        if (hover) {
+            if (module.isEnabled()) color = constants.selectedHoverColor.getValue();
+            else color = constants.unselectedHoverColor.getValue();
+        } else {
+            if (module.isEnabled()) color = constants.enabledColor.getValue();
+            else color = constants.disabledColor.getValue();
+        }
+        hover = false;
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
         GuiUtils.drawText(getWindowX() + 10, getWindowY() + 2, module.getName(), null, constants.textColor.getValue(), 9, false);
     }
@@ -37,5 +44,10 @@ public class SimpleModuleComponent extends BaseComponent {
         if (type == ClickType.LEFT) {
             module.setEnabled(!module.isEnabled());
         }
+    }
+
+    @Override
+    public void onHover(int x, int y) {
+        hover = true;
     }
 }
