@@ -1,9 +1,11 @@
 package net.toshimichi.sushi.mixin;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.GameFocusEvent;
+import net.toshimichi.sushi.events.client.LoadWorldEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,5 +38,15 @@ public class MixinMinecraft {
     @Inject(at = @At("TAIL"), method = "setIngameNotInFocus", cancellable = true)
     public void onNotInFocusTail(CallbackInfo info) {
         if (callGameFocusEvent(EventTiming.POST, false)) info.cancel();
+    }
+
+    @Inject(at = @At("HEAD"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;)V")
+    public void onLoadWorldHead(WorldClient client, CallbackInfo info) {
+        EventHandlers.callEvent(new LoadWorldEvent(EventTiming.PRE, client));
+    }
+
+    @Inject(at = @At("TAIL"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;)V")
+    public void onLoadWorldTail(WorldClient client, CallbackInfo info) {
+        EventHandlers.callEvent(new LoadWorldEvent(EventTiming.POST, client));
     }
 }

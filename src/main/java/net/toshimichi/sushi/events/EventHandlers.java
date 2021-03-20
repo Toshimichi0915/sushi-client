@@ -20,11 +20,7 @@ public class EventHandlers {
         }
         adapters.sort(Comparator.comparingInt(EventAdapter::getPriority));
         for (EventAdapter<T> adapter : adapters) {
-            try {
-                adapter.call(event);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            adapter.call(event);
         }
     }
 

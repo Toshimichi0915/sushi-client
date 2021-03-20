@@ -55,6 +55,15 @@ public class SushiMod {
         configs.put(file, conf);
         Theme theme = func.apply(conf);
         Sushi.getThemes().add(theme);
+
+        if (!file.exists()) {
+            try {
+                FileUtils.writeStringToFile(file, gson.toJson(conf.save()), StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         return theme;
     }
 
@@ -83,8 +92,10 @@ public class SushiMod {
 
         // load profile
         GsonProfiles profiles = new GsonProfiles(new File(baseDir, "profiles"), gson);
+        Profile profile = profiles.load(modConfig.name);
+        profile.load();
         Sushi.setProfiles(profiles);
-        Sushi.setProfile(profiles.load(modConfig.name));
+        Sushi.setProfile(profile);
 
         // register events
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
@@ -96,6 +107,7 @@ public class SushiMod {
         EventHandlers.register(new ComponentRenderHandler());
         EventHandlers.register(new ComponentKeyHandler());
         EventHandlers.register(new GameFocusHandler());
+        EventHandlers.register(new ConfigurationHandler());
     }
 
     private static class ModConfig {

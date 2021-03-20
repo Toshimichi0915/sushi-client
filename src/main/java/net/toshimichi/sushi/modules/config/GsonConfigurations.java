@@ -6,7 +6,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class GsonConfigurations implements Configurations {
@@ -15,6 +17,7 @@ public class GsonConfigurations implements Configurations {
     private JsonObject object;
     private final ArrayList<GsonConfiguration<?>> list = new ArrayList<>();
     private final ArrayList<ConfigurationCategory> categories = new ArrayList<>();
+    private final HashMap<String, Object> defaults = new HashMap<>();
 
     public GsonConfigurations(Gson gson) {
         this.gson = gson;
@@ -23,8 +26,9 @@ public class GsonConfigurations implements Configurations {
     @SuppressWarnings("unchecked")
     @Override
     public <T> Configuration<T> get(String id, String name, String description, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, String category) {
-        if (getRawValue(id, tClass) == null)
-            setRawValue(id, defaultValue);
+        if (getRawValue(id, tClass) == null) {
+            defaults.put(id, defaultValue);
+        }
         for (GsonConfiguration<?> loaded : list) {
             if (loaded.getId().equals(id)) {
                 if (!loaded.getValueClass().equals(tClass))
@@ -59,21 +63,23 @@ public class GsonConfigurations implements Configurations {
     }
 
     public JsonObject save() {
+        for (Map.Entry<String, Object> entry : defaults.entrySet())
+            object.add(entry.getKey(), gson.toJsonTree(entry.getValue()));
         return object;
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> T getRawValue(String id, Class<T> tClass) {
         JsonElement element = object.get(id);
-        if (element == null) {
-            return null;
-        } else {
-            try {
-                return gson.fromJson(object.get(id), tClass);
-            } catch (JsonParseException e) {
-                e.printStackTrace();
-                return null;
-            }
+        if (element == null) return null;
+        try {
+            return gson.fromJson(object.get(id), tClass);
+        } catch (JsonParseException e) {
+            // use default
         }
+        Object result = defaults.get(id);
+        if (result.getClass().isAssignableFrom(tClass)) return (T) result;
+        return null;
     }
 
     protected void setRawValue(String id, Object o) {

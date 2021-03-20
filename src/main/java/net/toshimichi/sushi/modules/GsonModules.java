@@ -28,7 +28,7 @@ public class GsonModules implements Modules {
         this.conf = conf;
         this.categories = categories;
         this.gson = gson;
-        addModule("norotate", "NoRotate", NoRotateModule::new);
+        addModule("no_rotate", "NoRotate", NoRotateModule::new);
         addModule("clickgui", "ClickGUI", ClickGuiModule::new);
     }
 
