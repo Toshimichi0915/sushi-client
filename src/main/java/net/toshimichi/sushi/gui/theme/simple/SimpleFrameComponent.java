@@ -3,23 +3,20 @@ package net.toshimichi.sushi.gui.theme.simple;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.Resizable;
 import net.toshimichi.sushi.gui.base.EmptyFrameComponent;
-import net.toshimichi.sushi.modules.config.Configuration;
-import net.toshimichi.sushi.modules.config.Configurations;
+import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.GuiUtils;
-
-import java.awt.Color;
 
 public class SimpleFrameComponent extends EmptyFrameComponent {
 
     private static final int LINE_WIDTH = 1;
     private static final int FRAME_HEIGHT = 20;
     private final Component component;
-    private final Configuration<Color> frameColor;
+    private final ThemeConstants constants;
 
-    public SimpleFrameComponent(Configurations configurations, Component component) {
+    public SimpleFrameComponent(ThemeConstants constants, Component component) {
         super(component);
         this.component = component;
-        this.frameColor = configurations.get("gui.frame.color", "Frame Color", Color.class, new Color(200, 90, 30));
+        this.constants = constants;
     }
 
     @Override
@@ -53,7 +50,7 @@ public class SimpleFrameComponent extends EmptyFrameComponent {
 
     @Override
     public void onRender() {
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), frameColor.getValue());
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.frameColor.getValue());
         component.onRender();
     }
 }

@@ -12,6 +12,10 @@ public class PanelComponent extends BaseListComponent<Component> {
 
     private final Function<Component, FrameComponent> frameFunction;
 
+    public PanelComponent() {
+        this(null);
+    }
+
     public PanelComponent(Function<Component, FrameComponent> frameFunction) {
         super(new ArrayList<>());
         this.frameFunction = frameFunction;
@@ -45,9 +49,9 @@ public class PanelComponent extends BaseListComponent<Component> {
         for (Component child : this) {
             if (!child.isVisible()) continue;
             if (child.getWindowX() > x) continue;
-            if (child.getWindowX() + child.getWidth() > x) continue;
+            if (child.getWindowX() + child.getWidth() < x) continue;
             if (child.getWindowY() > y) continue;
-            if (child.getWindowY() + child.getHeight() > y) continue;
+            if (child.getWindowY() + child.getHeight() < y) continue;
             return child;
         }
         return null;
@@ -83,6 +87,10 @@ public class PanelComponent extends BaseListComponent<Component> {
         Component from = getTopComponent(fromX, fromY);
         Component to = getTopComponent(toX, toY);
         if (from == null) return;
+        if (status == MouseStatus.END) {
+            from.onHold(fromX, fromY, toX, toY, type, status);
+            return;
+        }
         if (!from.equals(to) && status != MouseStatus.START) {
             from.onHold(fromX, fromY, toX, toY, type, MouseStatus.CANCEL);
         }

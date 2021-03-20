@@ -17,7 +17,7 @@ public class InputUtils {
     }
 
     public static MouseEvent callMouseEvent() {
-        if (!Mouse.getEventButtonState()) return null;
+        if (Mouse.getEventButton() == -1) return null;
         int mouse = Mouse.getEventButton();
         ClickType clickType;
         if (mouse == 0) clickType = ClickType.LEFT;

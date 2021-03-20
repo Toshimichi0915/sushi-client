@@ -20,4 +20,9 @@ class EmptyGuiScreen extends GuiScreen {
         if (event != null && !event.isCancelled())
             super.handleMouseInput();
     }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
+    }
 }

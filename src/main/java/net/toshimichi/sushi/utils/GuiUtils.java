@@ -5,13 +5,11 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.awt.Color;
-import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class GuiUtils {
 
-    private static final HashMap<Integer, Boolean> enableBits = new HashMap<>();
     private static boolean locked;
 
     public static void lockGame() {
@@ -29,12 +27,6 @@ public class GuiUtils {
 
     public static boolean isGameLocked() {
         return locked;
-    }
-
-    private static void setEnabled(int key, boolean value) {
-        enableBits.put(key, glIsEnabled(key));
-        if (value) glEnable(key);
-        else glDisable(key);
     }
 
     private static void prepare2D() {

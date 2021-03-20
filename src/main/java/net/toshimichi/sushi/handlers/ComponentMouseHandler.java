@@ -1,5 +1,7 @@
 package net.toshimichi.sushi.handlers;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.input.ClickType;
@@ -13,7 +15,7 @@ import org.lwjgl.input.Mouse;
 
 public class ComponentMouseHandler {
 
-    private static final int HOLD_DELAY = 10;
+    private static final int HOLD_DELAY = 100;
 
     private final ClickStatus[] types = {new ClickStatus(ClickType.LEFT), new ClickStatus(ClickType.RIGHT)};
 
@@ -25,22 +27,30 @@ public class ComponentMouseHandler {
         return null;
     }
 
+    private int toWindowX(int x) {
+        ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+        return (int) ((double) res.getScaledWidth() / Minecraft.getMinecraft().displayWidth * x);
+    }
+
+    private int toWindowY(int y) {
+        ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+        return (int) (res.getScaledHeight() - (double) res.getScaledHeight() / Minecraft.getMinecraft().displayHeight * y);
+    }
+
     @EventHandler
     public void onMousePress(MousePressEvent e) {
         ClickStatus status = getClickStatus(e.getClickType());
         if (status == null) return;
-        status.isLastClicked = status.isClicked;
         status.isClicked = true;
         status.clickMillis = System.currentTimeMillis();
-        status.clickX = Mouse.getX();
-        status.clickY = Mouse.getY();
+        status.clickX = toWindowX(Mouse.getEventX());
+        status.clickY = toWindowY(Mouse.getEventY());
     }
 
     @EventHandler
     public void onMouseRelease(MouseReleaseEvent e) {
         ClickStatus status = getClickStatus(e.getClickType());
         if (status == null) return;
-        status.isLastClicked = status.isClicked;
         status.isClicked = false;
     }
 
@@ -50,19 +60,20 @@ public class ComponentMouseHandler {
 
             // fetch/update statuses
             ClickStatus status = getClickStatus(type);
-            if (status == null) return;
+            if (status == null) continue;
+            if (!status.isClicked && !status.isLastClicked) continue;
             status.lastX = status.x;
             status.lastY = status.y;
-            status.x = Mouse.getX();
-            status.y = Mouse.getY();
+            status.x = toWindowX(Mouse.getEventX());
+            status.y = toWindowY(Mouse.getEventY());
 
             Component lastComponent = Components.getTopComponent(status.lastX, status.lastY);
             Component component = Components.getTopComponent(status.x, status.y);
-            if (lastComponent == null) return;
+            if (lastComponent == null) continue;
 
             // component changed
             if (!lastComponent.equals(component) && status.isLastClicked) {
-                if (HOLD_DELAY < System.currentTimeMillis() - status.clickMillis) {
+                if (HOLD_DELAY < status.lastTickMillis - status.clickMillis) {
                     lastComponent.onHold(status.lastX, status.lastY, status.x, status.y, type, MouseStatus.CANCEL);
                 } else {
                     lastComponent.onClick(status.lastX, status.lastY, type);
@@ -70,27 +81,37 @@ public class ComponentMouseHandler {
             }
 
             // component not changed
-            if (component == null) return;
+            if (component == null) continue;
             MouseStatus mouseStatus;
             if (status.isClicked && !status.isLastClicked) mouseStatus = MouseStatus.START;
             else if (!status.isClicked && status.isLastClicked) mouseStatus = MouseStatus.END;
             else mouseStatus = MouseStatus.IN_PROGRESS;
 
-            if (HOLD_DELAY < System.currentTimeMillis() - status.clickMillis) {
-                component.onHold(status.lastX, status.lastY, status.x, status.y, type, mouseStatus);
+            if (HOLD_DELAY < status.tickMillis - status.clickMillis) {
+                if (HOLD_DELAY >= status.lastTickMillis - status.clickMillis)
+                    component.onHold(status.lastX, status.lastY, status.x, status.y, type, MouseStatus.START);
+                else
+                    component.onHold(status.lastX, status.lastY, status.x, status.y, type, mouseStatus);
             } else if (mouseStatus == MouseStatus.END) {
                 component.onClick(status.x, status.y, type);
             }
+        }
 
-            // update click status
+        for (ClickType type : ClickType.values()) {
+            ClickStatus status = getClickStatus(type);
+            if (status == null) continue;
             status.isLastClicked = status.isClicked;
+            status.lastTickMillis = status.tickMillis;
+            status.tickMillis = System.currentTimeMillis();
         }
     }
 
     private static class ClickStatus {
         ClickType type;
-        boolean isLastClicked;
         boolean isClicked;
+        boolean isLastClicked;
+        long tickMillis;
+        long lastTickMillis;
         long clickMillis;
         int clickX;
         int clickY;

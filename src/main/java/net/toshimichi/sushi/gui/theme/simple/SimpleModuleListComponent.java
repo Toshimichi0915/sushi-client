@@ -1,54 +1,55 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.Sushi;
-import net.toshimichi.sushi.gui.base.BaseComponent;
+import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.modules.Module;
-import net.toshimichi.sushi.modules.config.Configurations;
 import net.toshimichi.sushi.utils.GuiUtils;
 
-import java.awt.Color;
-import java.util.ArrayList;
-
-public class SimpleModuleListComponent extends BaseComponent {
+public class SimpleModuleListComponent extends PanelComponent {
 
     private static final int MARGIN_1 = 10;
     private static final int MARGIN_2 = 5;
 
-    private final Configurations configurations;
     private final Category category;
-    private final ArrayList<SimpleModuleComponent> components = new ArrayList<>();
+    private final ThemeConstants constants;
 
-    public SimpleModuleListComponent(Category category, Configurations configurations) {
+    public SimpleModuleListComponent(Category category, ThemeConstants constants) {
         this.category = category;
-        this.configurations = configurations;
+        this.constants = constants;
     }
 
     @Override
     public void onRender() {
         addModule:
         for (Module module : Sushi.getProfile().getModules().getModules(category)) {
-            for (SimpleModuleComponent component : components) {
-                if (component.getModule().equals(module)) continue addModule;
+            for (Component component : this) {
+                if (!(component instanceof SimpleModuleComponent)) continue;
+                if (((SimpleModuleComponent) component).getModule().equals(module)) continue addModule;
             }
-            SimpleModuleComponent component = new SimpleModuleComponent(module, configurations);
+            SimpleModuleComponent component = new SimpleModuleComponent(module, constants);
             component.setOrigin(this);
             component.setWidth(getWidth());
             component.setVisible(true);
-            components.add(component);
+            add(component);
         }
 
         int currentY = 0;
-        int height = 20;
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), height, new Color(255, 0, 0));
-        GuiUtils.drawText(getWindowX() + 10, getWindowY() + 10, category.getName(), null, new Color(0, 0, 0), 10, false);
+        int height = 12;
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), height, constants.menuBarColor.getValue());
+        GuiUtils.drawText(getWindowX() + 12, getWindowY() + 2, category.getName(), null, constants.textColor.getValue(), 9, false);
         currentY += height;
 
-        for (SimpleModuleComponent component : components) {
+        for (Component c : this) {
+            if (!(c instanceof SimpleModuleComponent)) continue;
+            SimpleModuleComponent component = (SimpleModuleComponent) c;
             component.setY(currentY);
             component.onRender();
             currentY += component.getHeight();
         }
+        setHeight(currentY);
     }
 
     public Category getCategory() {
