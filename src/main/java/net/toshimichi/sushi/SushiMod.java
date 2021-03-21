@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Function;
 
@@ -54,7 +55,6 @@ public class SushiMod {
         conf.load(object);
         configs.put(file, conf);
         Theme theme = func.apply(conf);
-        Sushi.getThemes().add(theme);
 
         if (!file.exists()) {
             try {
@@ -79,8 +79,9 @@ public class SushiMod {
         }
 
         // add themes
+        ArrayList<Theme> themes = new ArrayList<>();
         Theme fallbackTheme = loadTheme(new File(themeDir, "simple.json"), SimpleTheme::new);
-        // TODO Add more themes
+        themes.add(fallbackTheme);
 
         for (Theme theme : Sushi.getThemes()) {
             if (theme.getId().equals(modConfig.themeName)) {
@@ -88,6 +89,7 @@ public class SushiMod {
                 break;
             }
         }
+        Sushi.setThemes(themes);
         Sushi.setDefaultTheme(fallbackTheme);
 
         // load profile
