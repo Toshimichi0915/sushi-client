@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class GsonConfigurations implements Configurations {
 
     private final Gson gson;
-    private JsonObject object;
+    private JsonObject root;
     private final ArrayList<GsonConfiguration<?>> list = new ArrayList<>();
     private final ArrayList<ConfigurationCategory> categories = new ArrayList<>();
     private final HashMap<String, Object> defaults = new HashMap<>();
@@ -59,31 +59,57 @@ public class GsonConfigurations implements Configurations {
     }
 
     public void load(JsonObject object) {
-        this.object = object;
+        this.root = object;
+    }
+
+    private void setRawValue(JsonObject obj, String key, Object o, boolean override) {
+        if (key.contains(".")) {
+            String child = key.split("\\.")[0];
+            JsonElement childObj = obj.get(child);
+            if (childObj == null || !childObj.isJsonObject()) {
+                childObj = new JsonObject();
+                obj.add(child, childObj);
+            }
+            setRawValue(childObj.getAsJsonObject(), key.replaceFirst(child + "\\.", ""), o, override);
+        } else if (obj.get(key) == null) {
+            obj.add(key, gson.toJsonTree(o));
+        }
     }
 
     public JsonObject save() {
-        for (Map.Entry<String, Object> entry : defaults.entrySet())
-            object.add(entry.getKey(), gson.toJsonTree(entry.getValue()));
-        return object;
+        for (Map.Entry<String, Object> entry : defaults.entrySet()) {
+            setRawValue(root, entry.getKey(), entry.getValue(), false);
+        }
+        return root;
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T getRawValue(String id, Class<T> tClass) {
-        JsonElement element = object.get(id);
-        if (element == null) return null;
+    protected <T> T getRawValue(JsonObject object, String id, Class<T> tClass, boolean checkDefault) {
         try {
-            return gson.fromJson(object.get(id), tClass);
+            if (id.contains(".")) {
+                String key = id.split("\\.")[0];
+                JsonElement element = object.get(key);
+                if (element != null && element.isJsonObject())
+                    return getRawValue(element.getAsJsonObject(), id.replaceFirst(key + "\\.", ""), tClass, false);
+            } else {
+                return gson.fromJson(object.get(id), tClass);
+            }
         } catch (JsonParseException e) {
             // use default
         }
-        Object result = defaults.get(id);
-        if (result.getClass().isAssignableFrom(tClass)) return (T) result;
+        if (checkDefault) {
+            Object result = this.defaults.get(id);
+            if (result != null && result.getClass().isAssignableFrom(tClass)) return (T) result;
+        }
         return null;
     }
 
+    protected <T> T getRawValue(String id, Class<T> tClass) {
+        return getRawValue(root, id, tClass, true);
+    }
+
     protected void setRawValue(String id, Object o) {
-        object.add(id, gson.toJsonTree(o));
+        setRawValue(root, id, o, true);
     }
 
 }
