@@ -17,7 +17,7 @@ public class SimpleModuleComponent extends BaseComponent {
     public SimpleModuleComponent(Module module, ThemeConstants constants) {
         this.module = module;
         this.constants = constants;
-        setHeight(12);
+        setHeight(16);
     }
 
     @Override
@@ -32,7 +32,8 @@ public class SimpleModuleComponent extends BaseComponent {
         }
         hover = false;
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
-        GuiUtils.drawText(getWindowX() + 10, getWindowY() + 2, module.getName(), null, constants.textColor.getValue(), 9, false);
+        GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true)
+                .draw(getWindowX() + 12, getWindowY() + 2);
     }
 
     public Module getModule() {

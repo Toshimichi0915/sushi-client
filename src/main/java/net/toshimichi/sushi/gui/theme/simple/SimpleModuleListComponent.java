@@ -37,9 +37,10 @@ public class SimpleModuleListComponent extends PanelComponent {
         }
 
         int currentY = 0;
-        int height = 12;
+        int height = 16;
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), height, constants.menuBarColor.getValue());
-        GuiUtils.drawText(getWindowX() + 12, getWindowY() + 2, category.getName(), null, constants.textColor.getValue(), 9, false);
+        GuiUtils.prepareText(category.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true)
+                .draw(getWindowX() + 12, getWindowY() + 2);
         currentY += height;
 
         for (Component c : this) {

@@ -93,9 +93,9 @@ public class SushiMod {
         // load profile
         GsonProfiles profiles = new GsonProfiles(new File(baseDir, "profiles"), gson);
         Profile profile = profiles.load(modConfig.name);
-        profile.load();
         Sushi.setProfiles(profiles);
         Sushi.setProfile(profile);
+        profile.load();
 
         // register events
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());

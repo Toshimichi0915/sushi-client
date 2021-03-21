@@ -61,6 +61,10 @@ dependencies {
 
     implementation 'cabaletta:baritone-api:1.2'
     implementation 'com.github.cabaletta:baritone:1.2.14'
+    implementation('org.slick2d:slick2d-core:1.0.2') {
+        exclude module: 'lwjgl'
+    }
+    implementation 'slick-util:slick-util:1.0.0'
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
 }
 
@@ -87,7 +91,9 @@ shadowJar {
     dependencies {
         include(dependency('org.spongepowered:mixin'))
         include(dependency('org.reflections:reflections'))
-        include(dependency('cabaletta:baritone-api:1.2'))
+        include(dependency('cabaletta:baritone-api'))
+        include(dependency('org.slick2d:slick2d-core'))
+        include(dependency('slick-util:slick-util'))
     }
     exclude 'LICENSE.txt'
 }

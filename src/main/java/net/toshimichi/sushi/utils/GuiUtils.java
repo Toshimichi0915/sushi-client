@@ -1,7 +1,6 @@
 package net.toshimichi.sushi.utils;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.awt.Color;
@@ -33,7 +32,7 @@ public class GuiUtils {
         return locked;
     }
 
-    private static void prepare2D() {
+    public static void prepare2D() {
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
 
         glEnable(GL_LINE_SMOOTH);
@@ -41,26 +40,21 @@ public class GuiUtils {
         glDisable(GL_CULL_FACE);
     }
 
-    private static void release2D() {
+    public static void release2D() {
         glPopAttrib();
     }
 
-    private static void setColor(Color color) {
+    public static void setColor(Color color) {
         glColor4d((double) color.getRed() / 255, (double) color.getGreen() / 255, (double) color.getBlue() / 255, (double) color.getAlpha() / 255);
     }
 
-    public static void drawText(int x, int y, String text, String font, Color color, int pts, boolean shadow) {
-        setColor(color);
-        if (font == null) {
-            FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
-            int oldHeight = renderer.FONT_HEIGHT;
-            renderer.FONT_HEIGHT = pts;
-            Minecraft.getMinecraft().fontRenderer.drawString(text, x, y, color.getRGB(), shadow);
-            renderer.FONT_HEIGHT = oldHeight;
-            return;
+    public static TextPreview prepareText(String text, String font, Color color, int pts, boolean shadow) {
+        if (font != null) {
+            TtfTextPreview preview = TtfTextPreview.newTextPreview(text, font, color, pts, shadow);
+            if (preview != null) return preview;
         }
 
-        // TODO: support other fonts
+        return new VanillaTextPreview(text, color, pts, shadow);
     }
 
     public static void drawLine(int x1, int y1, int x2, int y2, Color color, double width) {
