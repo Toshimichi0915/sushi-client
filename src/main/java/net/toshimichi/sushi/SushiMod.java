@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.events.EventHandlers;
+import net.toshimichi.sushi.events.EventTiming;
+import net.toshimichi.sushi.events.client.LoadWorldEvent;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTheme;
 import net.toshimichi.sushi.handlers.*;
@@ -84,7 +86,7 @@ public class SushiMod {
         themes.add(fallbackTheme);
 
         for (Theme theme : Sushi.getThemes()) {
-            if (theme.getId().equals(modConfig.themeName)) {
+            if (theme.getId().equals(modConfig.theme)) {
                 fallbackTheme = theme;
                 break;
             }
@@ -110,10 +112,21 @@ public class SushiMod {
         EventHandlers.register(new ComponentKeyHandler());
         EventHandlers.register(new GameFocusHandler());
         EventHandlers.register(new ConfigurationHandler());
+        EventHandlers.register(this);
+    }
+
+    @net.toshimichi.sushi.events.EventHandler(timing = EventTiming.PRE)
+    public void onLoadWorld(LoadWorldEvent e) {
+        if (e.getClient() != null) return;
+        try {
+            FileUtils.writeStringToFile(modConfigFile, gson.toJson(modConfig), StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private static class ModConfig {
         String name = "default";
-        String themeName = "simple";
+        String theme = "simple";
     }
 }
