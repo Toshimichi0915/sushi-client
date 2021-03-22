@@ -8,7 +8,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.player.SpinModule;
-import net.toshimichi.sushi.modules.render.NoRotateModule;
+import net.toshimichi.sushi.modules.player.NoRotateModule;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

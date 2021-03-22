@@ -1,4 +1,4 @@
-package net.toshimichi.sushi.modules.render;
+package net.toshimichi.sushi.modules.player;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
