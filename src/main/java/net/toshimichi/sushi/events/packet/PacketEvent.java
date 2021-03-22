@@ -5,7 +5,7 @@ import net.toshimichi.sushi.events.CancellableEvent;
 
 public class PacketEvent extends CancellableEvent {
 
-    private final Packet<?> packet;
+    private Packet<?> packet;
 
     public PacketEvent(Packet<?> packet) {
         this.packet = packet;
@@ -13,5 +13,9 @@ public class PacketEvent extends CancellableEvent {
 
     public Packet<?> getPacket() {
         return packet;
+    }
+
+    public void setPacket(Packet<?> packet) {
+        this.packet = packet;
     }
 }

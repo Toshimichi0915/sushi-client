@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
+import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.modules.*;
 
@@ -42,7 +43,7 @@ public class NoRotateModule extends BaseModule {
     }
 
     @SuppressWarnings("unchecked")
-    @EventHandler
+    @EventHandler(timing = EventTiming.PRE)
     public void onPacketReceive(PacketReceiveEvent e) {
         if (!(e.getPacket() instanceof SPacketPlayerPosLook)) return;
         Minecraft minecraft = Minecraft.getMinecraft();

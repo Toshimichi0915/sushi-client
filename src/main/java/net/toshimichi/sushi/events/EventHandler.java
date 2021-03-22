@@ -13,5 +13,5 @@ public @interface EventHandler {
 
     boolean ignoreCancelled() default true;
 
-    EventTiming[] timing() default {EventTiming.PRE, EventTiming.POST};
+    EventTiming[] timing();
 }

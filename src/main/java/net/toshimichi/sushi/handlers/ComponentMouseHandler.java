@@ -37,7 +37,7 @@ public class ComponentMouseHandler {
         return (int) (res.getScaledHeight() - (double) res.getScaledHeight() / Minecraft.getMinecraft().displayHeight * y);
     }
 
-    @EventHandler
+    @EventHandler(timing = EventTiming.PRE)
     public void onMousePress(MousePressEvent e) {
         ClickStatus status = getClickStatus(e.getClickType());
         if (status == null) return;
@@ -47,7 +47,7 @@ public class ComponentMouseHandler {
         status.clickY = toWindowY(Mouse.getEventY());
     }
 
-    @EventHandler
+    @EventHandler(timing = EventTiming.PRE)
     public void onMouseRelease(MouseReleaseEvent e) {
         ClickStatus status = getClickStatus(e.getClickType());
         if (status == null) return;

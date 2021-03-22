@@ -3,12 +3,15 @@ package net.toshimichi.sushi.events;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 public class MethodEventAdapter implements EventAdapter<Event> {
 
     private final Object obj;
     private final Method method;
     private final Class<Event> eventClass;
+    private final List<EventTiming> timings;
     private final int priority;
     private final boolean ignoreCancelled;
 
@@ -27,6 +30,7 @@ public class MethodEventAdapter implements EventAdapter<Event> {
         EventHandler handler = method.getAnnotation(EventHandler.class);
         if (handler == null)
             throw new IllegalArgumentException("@EventHandler is missing");
+        this.timings = Arrays.asList(handler.timing());
         this.priority = handler.priority();
         this.ignoreCancelled = handler.ignoreCancelled();
     }
@@ -34,7 +38,8 @@ public class MethodEventAdapter implements EventAdapter<Event> {
     @Override
     public void call(Event event) {
         try {
-            method.invoke(obj, event);
+            if (timings.contains(event.getTiming()))
+                method.invoke(obj, event);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

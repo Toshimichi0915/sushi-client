@@ -5,6 +5,7 @@ import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
+import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.LoadWorldEvent;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.PanelComponent;
@@ -38,7 +39,7 @@ public class ClickGuiModule extends BaseModule {
         Components.close(component);
     }
 
-    @EventHandler
+    @EventHandler(timing = EventTiming.PRE)
     public void onLoadWorld(LoadWorldEvent e) {
         onDisable();
     }
