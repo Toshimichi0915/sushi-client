@@ -25,4 +25,8 @@ public interface Modules {
     void save();
 
     void load();
+
+    void enable();
+
+    void disable();
 }

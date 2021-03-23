@@ -7,7 +7,6 @@ import com.google.gson.JsonPrimitive;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
-import net.toshimichi.sushi.modules.movement.SpeedModule;
 import net.toshimichi.sushi.modules.player.NoRotateModule;
 import net.toshimichi.sushi.modules.player.SpinModule;
 import net.toshimichi.sushi.modules.player.TimerModule;
@@ -88,7 +87,6 @@ public class GsonModules implements Modules {
         if (!object.has(ENABLED_TAG)) object.add(ENABLED_TAG, new JsonPrimitive(false));
         provider.load(object);
         Module module = factory.getConstructor().newModule(id, this, categories, provider, factory);
-        if (object.getAsJsonPrimitive(ENABLED_TAG).getAsBoolean()) module.setEnabled(true);
         modules.add(module);
     }
 
@@ -132,6 +130,20 @@ public class GsonModules implements Modules {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void enable() {
+        for (Module module : modules) {
+            if (!(module.getConfigurations() instanceof GsonConfigurations)) return;
+            JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
+            if (object.getAsJsonPrimitive(ENABLED_TAG).getAsBoolean()) module.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void disable() {
+        modules.forEach(m -> m.setEnabled(false));
     }
 
     private JsonObject loadJson(String name) {
