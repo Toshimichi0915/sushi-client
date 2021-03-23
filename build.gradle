@@ -98,3 +98,8 @@ shadowJar {
     exclude 'LICENSE.txt'
 }
 
+sourceSets {
+    main {
+        output.resourcesDir = output.classesDir
+    }
+}

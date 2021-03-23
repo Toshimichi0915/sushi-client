@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Function;
 
-@Mod(modid = "sushi", name = "Sushi Client", version = "1.0")
+@Mod(modid = "sushi", name = "Sushi Client", version = "1")
 public class SushiMod {
 
     private static final Gson gson;
