@@ -1,5 +1,7 @@
 package net.toshimichi.sushi.config;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class GsonConfiguration<T> implements Configuration<T> {
@@ -11,6 +13,7 @@ public class GsonConfiguration<T> implements Configuration<T> {
     private final GsonConfigurations provider;
     private final Supplier<Boolean> isValid;
     private final String parent;
+    private final ArrayList<Consumer<T>> handlers = new ArrayList<>();
 
     public GsonConfiguration(String id, String name, String description, Class<T> tClass, GsonConfigurations provider, Supplier<Boolean> isValid, String parent) {
         this.id = id;
@@ -29,7 +32,8 @@ public class GsonConfiguration<T> implements Configuration<T> {
 
     @Override
     public void setValue(T value) {
-        provider.setRawValue(name, value);
+        handlers.forEach(c -> c.accept(value));
+        provider.setRawValue(id, value);
     }
 
     @Override
@@ -60,5 +64,10 @@ public class GsonConfiguration<T> implements Configuration<T> {
     @Override
     public String getCategory() {
         return parent;
+    }
+
+    @Override
+    public void addHandler(Consumer<T> handler) {
+        handlers.add(handler);
     }
 }

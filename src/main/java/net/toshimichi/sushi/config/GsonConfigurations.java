@@ -71,7 +71,7 @@ public class GsonConfigurations implements Configurations {
                 obj.add(child, childObj);
             }
             setRawValue(childObj.getAsJsonObject(), key.replaceFirst(child + "\\.", ""), o, override);
-        } else if (obj.get(key) == null) {
+        } else if (obj.get(key) == null || override) {
             obj.add(key, gson.toJsonTree(o));
         }
     }

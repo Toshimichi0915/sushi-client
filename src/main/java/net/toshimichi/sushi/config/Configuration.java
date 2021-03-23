@@ -1,5 +1,7 @@
 package net.toshimichi.sushi.config;
 
+import java.util.function.Consumer;
+
 public interface Configuration<T> {
     T getValue();
 
@@ -16,4 +18,6 @@ public interface Configuration<T> {
     boolean isValid();
 
     String getCategory();
+
+    void addHandler(Consumer<T> handler);
 }
