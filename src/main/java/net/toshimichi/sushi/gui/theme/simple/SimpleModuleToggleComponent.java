@@ -39,9 +39,10 @@ public class SimpleModuleToggleComponent extends SimpleToggleComponent<Module> {
                 .draw(getWindowX() + 5, getWindowY() + 2);
         int x = getWindowX() + getWidth() - 10;
         int y = getWindowY() + getHeight() / 2;
-        int midY = getWindowY() + (int) (((component.getProgress() - 0.5) * getHeight() + getHeight()) / 2);
-        GuiUtils.drawLine(x, y, x + 3, midY, Color.WHITE, 3);
-        GuiUtils.drawLine(x + 3, midY, x + 6, y, Color.WHITE, 3);
+        int midY = (int) (getWindowY() + getHeight() / 2 + (component.getProgress() - 0.5) * getHeight() * 1 / 3);
+        if (component.getProgress() == 1) midY++;
+        GuiUtils.drawLine(x, y, x + 3, midY, Color.WHITE, 2);
+        GuiUtils.drawLine(x + 3, midY, x + 6, y, Color.WHITE, 2);
         GuiUtils.releaseArea();
     }
 
