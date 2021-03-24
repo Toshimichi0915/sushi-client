@@ -3,7 +3,6 @@ package net.toshimichi.sushi.gui.theme.simple;
 import net.toshimichi.sushi.gui.base.BaseComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.GuiUtils;
-import net.toshimichi.sushi.utils.TextPreview;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.event.KeyEvent;
@@ -56,9 +55,10 @@ abstract public class SimpleTextComponent extends BaseComponent {
             append(holdKeyCode, holdKey);
             holdMillis = System.currentTimeMillis();
         }
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.textBoxBackgroundColor.getValue());
-        TextPreview preview = GuiUtils.prepareText(text.toString(), constants.font.getValue(), constants.textColor.getValue(), fontSize, shadow);
-        preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 2);
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
+        GuiUtils.drawRect(getWindowX() + 1, getWindowY() + 1, getWidth() - 2, getHeight() - 2, constants.textBoxBackgroundColor.getValue());
+        GuiUtils.prepareText(text.toString(), constants.font.getValue(), constants.textColor.getValue(), fontSize, shadow)
+                .draw(getWindowX() + 2, getWindowY() + 2);
     }
 
     @Override

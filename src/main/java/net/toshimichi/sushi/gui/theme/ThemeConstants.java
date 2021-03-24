@@ -18,6 +18,7 @@ public class ThemeConstants {
     public final Configuration<Color> barBackgroundColor;
     public final Configuration<Color> textBoxBackgroundColor;
     public final Configuration<Color> textBoxTextColor;
+    public final Configuration<Color> outlineColor;
     public final Configuration<String> font;
 
     public ThemeConstants(Configurations c) {
@@ -33,6 +34,7 @@ public class ThemeConstants {
         barBackgroundColor = c.get("gui.bar_background_color", "Menu Bar Background Color", null, Color.class, new Color(30, 30, 30));
         textBoxBackgroundColor = c.get("gui.text_box_background_color", "Text Background Color", null, Color.class, new Color(30, 30, 30));
         textBoxTextColor = c.get("gui.text_box_text_color", "Text Color in Text Box", null, Color.class, new Color(30, 30, 30));
+        outlineColor = c.get("gui.outline_color", "Outline Color", null, Color.class, new Color(60, 60, 60));
         font = c.get("gui.font", "Font", null, String.class, "Calibri");
     }
 }

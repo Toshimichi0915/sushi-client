@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public class PanelComponent<T extends Component> extends BaseListComponent<T> {
 
-    private boolean scissorEnabled = true;
+    private boolean scissorEnabled;
     private Layout layout = new NullLayout(this);
 
     public PanelComponent() {
@@ -59,6 +59,11 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
 
     public void setScissorEnabled(boolean scissorEnabled) {
         this.scissorEnabled = scissorEnabled;
+        for (Component child : this) {
+            if (child instanceof PanelComponent<?>) {
+                ((PanelComponent<?>) child).setScissorEnabled(scissorEnabled);
+            }
+        }
     }
 
     @Override
@@ -128,6 +133,8 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
     @Override
     public boolean add(T component) {
         boolean success = super.add(component);
+        if (component instanceof PanelComponent<?>)
+            ((PanelComponent<?>) component).setScissorEnabled(isScissorEnabled());
         layout.relocate();
         return success;
     }

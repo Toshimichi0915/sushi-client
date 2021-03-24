@@ -22,9 +22,9 @@ abstract public class BaseModule implements Module {
         this.modules = modules;
         this.categories = categories;
         this.factory = factory;
-        this.name = provider.get("name", "Name", "Module Name", String.class, getDefaultName());
-        this.category = provider.get("category", "Category", "Module Category", String.class, getDefaultCategory().getName());
-        this.keybind = provider.get("keybind", "Keybind", "Keybind for this module", Integer.class, getDefaultKeybind());
+        this.name = provider.get("name", "Module Name", "Module name", String.class, getDefaultName());
+        this.category = provider.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName());
+        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Integer.class, getDefaultKeybind());
     }
 
     @Override

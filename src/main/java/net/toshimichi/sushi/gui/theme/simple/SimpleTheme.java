@@ -52,7 +52,7 @@ public class SimpleTheme implements Theme {
     @Override
     public <T> ConfigComponent<T> newConfigComponent(Configuration<T> conf) {
         for (Map.Entry<Class<?>, ConfigComponentFactory<?>> entry : factories.entrySet()) {
-            if (entry.getKey().isAssignableFrom(conf.getValueClass()))
+            if (entry.getKey().equals(conf.getValueClass()))
                 return ((ConfigComponentFactory<T>) entry.getValue()).newConfigComponent(conf);
         }
         return null;
