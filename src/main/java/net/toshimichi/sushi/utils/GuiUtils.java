@@ -84,6 +84,7 @@ public class GuiUtils {
     public static void prepare2D() {
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
 
+        glEnable(GL_LINE_SMOOTH);
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_CULL_FACE);
     }

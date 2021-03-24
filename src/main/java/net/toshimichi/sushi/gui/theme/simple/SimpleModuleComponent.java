@@ -24,8 +24,8 @@ public class SimpleModuleComponent extends PanelComponent<Component> {
         this.constants = constants;
         this.module = module;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
-        toggleComponent = new SimpleModuleToggleComponent(constants, module, this);
         configComponent = new CollapseComponent(new SimpleModuleConfigComponent(theme, module), CollapseMode.DOWN);
+        toggleComponent = new SimpleModuleToggleComponent(constants, module, this, configComponent);
         add(toggleComponent);
         add(configComponent);
         setHeight(16);
