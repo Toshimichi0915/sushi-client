@@ -3,8 +3,6 @@ package net.toshimichi.sushi.gui;
 import net.minecraft.util.math.MathHelper;
 import net.toshimichi.sushi.utils.GuiUtils;
 
-import static org.lwjgl.opengl.GL11.*;
-
 public class CollapseComponent extends PanelComponent<Component> implements FrameComponent {
 
     private final Component component;
@@ -32,17 +30,16 @@ public class CollapseComponent extends PanelComponent<Component> implements Fram
 
     @Override
     public void onRender() {
-        glEnable(GL_SCISSOR_TEST);
-        GuiUtils.scissor(this);
+        component.setWidth(getWidth());
+        GuiUtils.prepareArea(this);
         super.onRender();
-        glDisable(GL_SCISSOR_TEST);
+        GuiUtils.releaseArea();
 
         setHeight((int) (progress * component.getHeight()));
         if (mode == CollapseMode.UP)
             component.setY(0);
         else
             component.setY(getHeight() - component.getHeight());
-        component.setWidth(getWidth());
     }
 
     @Override

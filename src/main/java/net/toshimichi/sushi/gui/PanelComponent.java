@@ -4,13 +4,10 @@ import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.base.BaseListComponent;
 import net.toshimichi.sushi.gui.layout.Layout;
 import net.toshimichi.sushi.gui.layout.NullLayout;
-import net.toshimichi.sushi.utils.GuiUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Consumer;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class PanelComponent<T extends Component> extends BaseListComponent<T> {
 
@@ -60,10 +57,7 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
         ArrayList<T> clone = new ArrayList<>(this);
         Collections.reverse(clone);
         for (T component : clone) {
-            glEnable(GL_SCISSOR_TEST);
-            GuiUtils.scissor(component);
             component.onRender();
-            glDisable(GL_SCISSOR_TEST);
         }
     }
 
@@ -108,14 +102,14 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
     }
 
     @Override
-    public void onKeyPressed(int keyCode) {
-        execFocus(c -> c.onKeyPressed(keyCode));
+    public void onKeyPressed(int keyCode, char key) {
+        execFocus(c -> c.onKeyPressed(keyCode, key));
     }
 
     @Override
     public void onKeyReleased(int keyCode) {
         super.onKeyReleased(keyCode);
-        execFocus(c -> c.onKeyPressed(keyCode));
+        execFocus(c -> c.onKeyReleased(keyCode));
     }
 
     @Override

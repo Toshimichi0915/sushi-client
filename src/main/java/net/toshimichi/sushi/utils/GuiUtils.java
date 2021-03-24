@@ -54,9 +54,15 @@ public class GuiUtils {
         return new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
     }
 
-    public static void scissor(Component component) {
+    public static void prepareArea(Component component) {
+        glPushAttrib(GL_SCISSOR_BIT);
+        glEnable(GL_SCISSOR_TEST);
         glScissor(GuiUtils.toWindowX(component.getWindowX()) - 1, GuiUtils.getWindowHeight() - GuiUtils.toWindowY(component.getWindowY() + component.getHeight()) - 1,
                 GuiUtils.toWindowX(component.getWidth()) + 1, GuiUtils.toWindowY(component.getHeight()) + 1);
+    }
+
+    public static void releaseArea() {
+        glPopAttrib();
     }
 
     public static int toWindowX(int x) {
