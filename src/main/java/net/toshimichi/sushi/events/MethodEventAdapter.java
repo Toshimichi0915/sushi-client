@@ -40,7 +40,9 @@ public class MethodEventAdapter implements EventAdapter<Event> {
         try {
             if (timings.contains(event.getTiming()))
                 method.invoke(obj, event);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
+            e.getTargetException().printStackTrace();
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
