@@ -58,10 +58,6 @@ public interface Component {
 
     void setFocused(boolean focused);
 
-    boolean isVisible();
-
-    void setVisible(boolean visible);
-
     boolean isClosed();
 
     void onRender();

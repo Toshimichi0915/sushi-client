@@ -7,17 +7,9 @@ public class Components {
 
     private static final ArrayList<Component> components = new ArrayList<>();
 
-    public static Component getTopComponent(boolean visibleOnly) {
+    public static Component getTopComponent() {
         if (components.isEmpty()) return null;
-        if (visibleOnly) {
-            for (Component component : components) {
-                if (component.isVisible())
-                    return component;
-            }
-            return null;
-        } else {
-            return components.get(0);
-        }
+        return components.get(0);
     }
 
     public static void setTopComponent(Component component) {
@@ -29,7 +21,6 @@ public class Components {
 
     public static Component getTopComponent(int x, int y) {
         for (Component component : components) {
-            if (!component.isVisible()) continue;
             int minX = component.getWindowX();
             int minY = component.getWindowY();
             int maxX = minX + component.getWidth();
@@ -42,14 +33,12 @@ public class Components {
 
     public static void show(Component component, boolean close) {
         if (close) closeAll();
-        component.setVisible(true);
         component.onShow();
         components.add(0, component);
     }
 
     public static void close(Component component) {
         if (!component.isClosed()) {
-            component.setVisible(false);
             component.onClose();
         }
         components.remove(component);

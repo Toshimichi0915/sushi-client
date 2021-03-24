@@ -10,7 +10,6 @@ import org.lwjgl.input.Keyboard;
 public class BaseComponent implements Component {
 
     private boolean focused;
-    private boolean visible = true;
     private boolean closed;
     private Anchor anchor;
     private Component origin;
@@ -100,16 +99,6 @@ public class BaseComponent implements Component {
     @Override
     public void setFocused(boolean focused) {
         this.focused = focused;
-    }
-
-    @Override
-    public boolean isVisible() {
-        return visible;
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        this.visible = visible;
     }
 
     @Override

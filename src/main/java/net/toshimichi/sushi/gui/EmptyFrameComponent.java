@@ -107,16 +107,6 @@ public class EmptyFrameComponent extends BaseFrameComponent {
     }
 
     @Override
-    public boolean isVisible() {
-        return component.isVisible();
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        component.setVisible(visible);
-    }
-
-    @Override
     public void onClick(int x, int y, ClickType type) {
         component.onClick(x, y, type);
     }

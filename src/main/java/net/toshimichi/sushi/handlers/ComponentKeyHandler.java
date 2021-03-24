@@ -11,7 +11,7 @@ public class ComponentKeyHandler {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onKeyPress(KeyPressEvent e) {
-        Component topComponent = Components.getTopComponent(true);
+        Component topComponent = Components.getTopComponent();
         if (topComponent == null) return;
         topComponent.onKeyPressed(e.getKeyCode());
         e.setCancelled(true);
@@ -19,7 +19,7 @@ public class ComponentKeyHandler {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onKeyRelease(KeyReleaseEvent e) {
-        Component topComponent = Components.getTopComponent(true);
+        Component topComponent = Components.getTopComponent();
         if (topComponent == null) return;
         topComponent.onKeyReleased(e.getKeyCode());
         e.setCancelled(true);

@@ -45,7 +45,6 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
 
     private T getTopComponent(int x, int y) {
         for (T child : this) {
-            if (!child.isVisible()) continue;
             if (child.getWindowX() > x) continue;
             if (child.getWindowX() + child.getWidth() < x) continue;
             if (child.getWindowY() > y) continue;
@@ -65,14 +64,6 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
             GuiUtils.scissor(component);
             component.onRender();
             glDisable(GL_SCISSOR_TEST);
-        }
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        super.setVisible(visible);
-        for (T child : this) {
-            child.setVisible(visible);
         }
     }
 
