@@ -1,7 +1,5 @@
 package net.toshimichi.sushi.utils;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
@@ -35,12 +33,12 @@ public class TtfTextPreview implements TextPreview {
 
     @Override
     public int getWidth() {
-        return (int)(1D / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor() * font.getWidth(text));
+        return (int) (1D / GuiUtils.getScaleFactor() * font.getWidth(text));
     }
 
     @Override
     public int getHeight() {
-        return (int)(1D / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor() * font.getHeight(text));
+        return (int) (1D / GuiUtils.getScaleFactor() * font.getHeight(text));
     }
 
     @Override

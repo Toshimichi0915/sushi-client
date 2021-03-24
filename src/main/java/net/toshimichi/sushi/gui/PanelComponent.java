@@ -2,51 +2,49 @@ package net.toshimichi.sushi.gui;
 
 import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.base.BaseListComponent;
+import net.toshimichi.sushi.gui.layout.Layout;
+import net.toshimichi.sushi.gui.layout.NullLayout;
+import net.toshimichi.sushi.utils.GuiUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-public class PanelComponent extends BaseListComponent<Component> {
+import static org.lwjgl.opengl.GL11.*;
 
-    private final Function<Component, FrameComponent> frameFunction;
+public class PanelComponent<T extends Component> extends BaseListComponent<T> {
+
+    private Layout layout = new NullLayout(this);
 
     public PanelComponent() {
-        this(null);
-    }
-
-    public PanelComponent(Function<Component, FrameComponent> frameFunction) {
         super(new ArrayList<>());
-        this.frameFunction = frameFunction;
     }
 
-    public PanelComponent(int x, int y, int width, int height, Anchor anchor, Component origin, Function<Component, FrameComponent> frameFunction) {
+    public PanelComponent(int x, int y, int width, int height, Anchor anchor, Component origin) {
         super(x, y, width, height, anchor, origin, new ArrayList<>());
-        this.frameFunction = frameFunction;
     }
 
-    private Component getFocusedComponent() {
-        for (Component component : this) {
+    public T getFocusedComponent() {
+        for (T component : this) {
             if (component.isFocused()) return component;
         }
         return null;
     }
 
-    private void execFocus(Consumer<Component> consumer) {
-        Component focused = getFocusedComponent();
+    public void setFocusedComponent(T component) {
+        forEach(c -> c.setFocused(false));
+        component.setFocused(true);
+    }
+
+    private void execFocus(Consumer<T> consumer) {
+        T focused = getFocusedComponent();
         if (focused != null) {
             consumer.accept(focused);
         }
     }
 
-    private void setFocusedComponent(Component component) {
-        forEach(c -> c.setFocused(false));
-        component.setFocused(true);
-    }
-
-    private Component getTopComponent(int x, int y) {
-        for (Component child : this) {
+    private T getTopComponent(int x, int y) {
+        for (T child : this) {
             if (!child.isVisible()) continue;
             if (child.getWindowX() > x) continue;
             if (child.getWindowX() + child.getWidth() < x) continue;
@@ -59,24 +57,28 @@ public class PanelComponent extends BaseListComponent<Component> {
 
     @Override
     public void onRender() {
-        ArrayList<Component> clone = new ArrayList<>(this);
+        layout.relocate();
+        ArrayList<T> clone = new ArrayList<>(this);
         Collections.reverse(clone);
-        for (Component component : clone) {
+        for (T component : clone) {
+            glEnable(GL_SCISSOR_TEST);
+            GuiUtils.scissor(component);
             component.onRender();
+            glDisable(GL_SCISSOR_TEST);
         }
     }
 
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        for (Component child : this) {
-            child.setVisible(true);
+        for (T child : this) {
+            child.setVisible(visible);
         }
     }
 
     @Override
     public void onClick(int x, int y, ClickType type) {
-        Component topComponent = getTopComponent(x, y);
+        T topComponent = getTopComponent(x, y);
         if (topComponent == null) return;
         setFocusedComponent(topComponent);
         topComponent.onClick(x, y, type);
@@ -84,24 +86,28 @@ public class PanelComponent extends BaseListComponent<Component> {
 
     @Override
     public void onHover(int x, int y) {
-        Component topComponent = getTopComponent(x, y);
+        T topComponent = getTopComponent(x, y);
         if (topComponent == null) return;
         topComponent.onHover(x, y);
     }
 
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
-        Component from = getTopComponent(fromX, fromY);
-        Component to = getTopComponent(toX, toY);
+        T from = getTopComponent(fromX, fromY);
+        T to = getTopComponent(toX, toY);
         if (from == null) return;
         if (status == MouseStatus.END) {
             from.onHold(fromX, fromY, toX, toY, type, status);
             return;
         }
         if (!from.equals(to) && status != MouseStatus.START) {
-            from.onHold(fromX, fromY, toX, toY, type, MouseStatus.CANCEL);
+            from.onHold(fromX, fromY, toX, toY, type, MouseStatus.IN_PROGRESS);
+            to = getTopComponent(toX, toY);
+            if (!from.equals(to))
+                from.onHold(toX, toY, toX, toY, type, MouseStatus.CANCEL);
         }
         if (to == null) return;
+        setFocusedComponent(to);
         to.onHold(fromX, fromY, toX, toY, type, status);
     }
 
@@ -122,14 +128,17 @@ public class PanelComponent extends BaseListComponent<Component> {
     }
 
     @Override
-    public boolean add(Component component) {
-        if (frameFunction != null)
-            component = frameFunction.apply(component);
-        int windowX = component.getWindowX();
-        int windowY = component.getWindowY();
-        component.setOrigin(this);
-        component.setWindowX(windowX);
-        component.setWindowY(windowY);
-        return super.add(component);
+    public boolean add(T component) {
+        boolean success = super.add(component);
+        layout.relocate();
+        return success;
+    }
+
+    public Layout getLayout() {
+        return layout;
+    }
+
+    public void setLayout(Layout layout) {
+        this.layout = layout;
     }
 }

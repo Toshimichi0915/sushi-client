@@ -3,6 +3,7 @@ package net.toshimichi.sushi.utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.toshimichi.sushi.gui.Component;
 
 import java.awt.Color;
 
@@ -33,6 +34,14 @@ public class GuiUtils {
         return locked;
     }
 
+    public static int getWindowWidth() {
+        return Minecraft.getMinecraft().displayWidth;
+    }
+
+    public static int getWindowHeight() {
+        return Minecraft.getMinecraft().displayHeight;
+    }
+
     public static int getWidth() {
         return new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth();
     }
@@ -43,6 +52,11 @@ public class GuiUtils {
 
     public static int getScaleFactor() {
         return new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+    }
+
+    public static void scissor(Component component) {
+        glScissor(GuiUtils.toWindowX(component.getWindowX()) - 1, GuiUtils.getWindowHeight() - GuiUtils.toWindowY(component.getWindowY() + component.getHeight()) - 1,
+                GuiUtils.toWindowX(component.getWidth()) + 1, GuiUtils.toWindowY(component.getHeight()) + 1);
     }
 
     public static int toWindowX(int x) {

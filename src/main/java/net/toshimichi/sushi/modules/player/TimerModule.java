@@ -5,6 +5,7 @@ import net.minecraft.util.Timer;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.modules.*;
 
 import java.lang.reflect.Field;
@@ -21,11 +22,15 @@ public class TimerModule extends BaseModule {
         TICK_LENGTH_FIELD.setAccessible(true);
     }
 
-    private final Configuration<Double> timer;
+    private final Configuration<DoubleRange> timer;
 
     public TimerModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        timer = provider.get("multiplier", "Multiplier", "Timer multiplier", Double.class, 1.5);
+        timer = provider.get("multiplier", "Multiplier", "Timer multiplier", DoubleRange.class, new DoubleRange(1.5, 10, 0.1, 0.1, 1));
+        timer.addHandler(timer -> {
+            if (isEnabled())
+                setTimer(timer.getCurrent());
+        });
     }
 
     private void setTimer(double multiplier) {
@@ -39,7 +44,7 @@ public class TimerModule extends BaseModule {
 
     @Override
     public void onEnable() {
-        setTimer(timer.getValue());
+        setTimer(timer.getValue().getCurrent());
     }
 
     @Override

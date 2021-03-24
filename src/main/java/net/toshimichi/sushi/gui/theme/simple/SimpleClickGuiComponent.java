@@ -1,40 +1,47 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.Sushi;
-import net.toshimichi.sushi.gui.Anchor;
-import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.modules.Module;
-import org.lwjgl.opengl.Display;
+import net.toshimichi.sushi.utils.GuiUtils;
 
 
-public class SimpleClickGuiComponent extends PanelComponent {
+public class SimpleClickGuiComponent extends PanelComponent<SimpleCategoryComponent> {
 
     private final Module module;
     private final ThemeConstants constants;
+    private final Theme theme;
 
-    public SimpleClickGuiComponent(Module module, ThemeConstants constants) {
-        super(0, 0, Display.getWidth(), Display.getHeight(), Anchor.TOP_LEFT, null, null);
-        this.module = module;
+    public SimpleClickGuiComponent(ThemeConstants constants, Theme theme, Module module) {
         this.constants = constants;
+        this.theme = theme;
+        this.module = module;
+    }
+
+    @Override
+    public void setFocusedComponent(SimpleCategoryComponent component) {
+        super.setFocusedComponent(component);
+        remove(component);
+        add(0, component);
     }
 
     @Override
     public void onRender() {
+        setWidth(GuiUtils.getWidth());
+        setHeight(GuiUtils.getHeight());
         addCategory:
         for (Category category : Sushi.getProfile().getCategories().getAll()) {
-            for (Component component : this) {
-                if (!(component instanceof SimpleModuleListComponent)) continue;
-                if (((SimpleModuleListComponent) component).getCategory().equals(category)) continue addCategory;
+            for (SimpleCategoryComponent component : this) {
+                if (component.getCategory().equals(category)) continue addCategory;
             }
-            SimpleModuleListComponent newComponent = new SimpleModuleListComponent(category, constants);
-            newComponent.setWidth(100);
-            newComponent.setX(size() * 102 + 100);
-            newComponent.setY(20);
-            newComponent.setVisible(true);
+            SimpleCategoryComponent newComponent = new SimpleCategoryComponent(constants, theme, category);
             add(newComponent);
+            newComponent.setWidth(100);
+            newComponent.setX(size() * 102 - 50);
+            newComponent.setY(20);
         }
 
         super.onRender();

@@ -76,7 +76,7 @@ public class GsonProfiles implements Profiles {
         private final GsonModules modules;
         private final GsonCategories categories;
 
-        public GsonProfile(File configFile, ProfileConfig config, GsonModules modules, GsonCategories categories) {
+        GsonProfile(File configFile, ProfileConfig config, GsonModules modules, GsonCategories categories) {
             this.configFile = configFile;
             this.config = config;
             this.modules = modules;

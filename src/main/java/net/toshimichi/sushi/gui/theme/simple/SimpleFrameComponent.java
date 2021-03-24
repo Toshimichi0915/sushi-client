@@ -1,8 +1,7 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.gui.Component;
-import net.toshimichi.sushi.gui.Resizable;
-import net.toshimichi.sushi.gui.base.EmptyFrameComponent;
+import net.toshimichi.sushi.gui.EmptyFrameComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.GuiUtils;
 
@@ -31,16 +30,12 @@ public class SimpleFrameComponent extends EmptyFrameComponent {
 
     @Override
     public void setWidth(int width) {
-        if (component instanceof Resizable) {
-            ((Resizable) component).setWidth(width - 2 * LINE_WIDTH);
-        }
+        component.setWidth(width - 2 * LINE_WIDTH);
     }
 
     @Override
     public void setHeight(int height) {
-        if (component instanceof Resizable) {
-            ((Resizable) component).setHeight(height - FRAME_HEIGHT - LINE_WIDTH);
-        }
+        component.setHeight(height - FRAME_HEIGHT - LINE_WIDTH);
     }
 
     @Override

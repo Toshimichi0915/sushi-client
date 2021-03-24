@@ -1,21 +1,32 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
+import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
-import net.toshimichi.sushi.gui.Component;
-import net.toshimichi.sushi.gui.FrameComponent;
-import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.config.data.DoubleRange;
+import net.toshimichi.sushi.config.data.IntRange;
+import net.toshimichi.sushi.gui.*;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Module;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SimpleTheme implements Theme {
 
     private final Configurations configurations;
     private final ThemeConstants constants;
+    private final HashMap<Class<?>, ConfigComponentFactory<?>> factories = new HashMap<>();
 
     public SimpleTheme(Configurations configurations) {
         this.configurations = configurations;
         this.constants = new ThemeConstants(configurations);
+        newFactory(IntRange.class, c -> new SimpleIntRangeComponent(constants, c, 9, true));
+        newFactory(DoubleRange.class, c -> new SimpleDoubleRangeComponent(constants, c, 9, true));
+    }
+
+    public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {
+        factories.put(c, factory);
     }
 
     @Override
@@ -24,13 +35,23 @@ public class SimpleTheme implements Theme {
     }
 
     @Override
-    public FrameComponent newFrame(Component component) {
+    public FrameComponent newFrameComponent(Component component) {
         return new SimpleFrameComponent(constants, component);
     }
 
     @Override
-    public PanelComponent newClickGui(Module caller) {
-        return new SimpleClickGuiComponent(caller, constants);
+    public PanelComponent<?> newClickGui(Module caller) {
+        return new SimpleClickGuiComponent(constants, this, caller);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> ConfigComponent<T> newConfigComponent(Configuration<T> conf) {
+        for (Map.Entry<Class<?>, ConfigComponentFactory<?>> entry : factories.entrySet()) {
+            if (entry.getKey().isAssignableFrom(conf.getValueClass()))
+                return ((ConfigComponentFactory<T>) entry.getValue()).newConfigComponent(conf);
+        }
+        return null;
     }
 
 }

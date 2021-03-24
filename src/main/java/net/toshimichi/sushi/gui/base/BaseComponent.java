@@ -1,13 +1,16 @@
 package net.toshimichi.sushi.gui.base;
 
 import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.gui.*;
+import net.toshimichi.sushi.gui.Anchor;
+import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.Components;
+import net.toshimichi.sushi.gui.MouseStatus;
 import org.lwjgl.input.Keyboard;
 
-public class BaseComponent implements Component, Resizable {
+public class BaseComponent implements Component {
 
     private boolean focused;
-    private boolean visible;
+    private boolean visible = true;
     private boolean closed;
     private Anchor anchor;
     private Component origin;
@@ -124,7 +127,6 @@ public class BaseComponent implements Component, Resizable {
 
     @Override
     public void onHover(int x, int y) {
-
     }
 
     @Override

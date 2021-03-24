@@ -13,6 +13,9 @@ public class ThemeConstants {
     public final Configuration<Color> unselectedHoverColor;
     public final Configuration<Color> selectedHoverColor;
     public final Configuration<Color> textColor;
+    public final Configuration<Color> backgroundColor;
+    public final Configuration<Color> barColor;
+    public final Configuration<Color> barBackgroundColor;
     public final Configuration<String> font;
 
     public ThemeConstants(Configurations c) {
@@ -23,6 +26,9 @@ public class ThemeConstants {
         unselectedHoverColor = c.get("gui.unselected_hover_color", "Unselected Hover Color", null, Color.class, new Color(30, 30, 30));
         selectedHoverColor = c.get("gui.selected_hover_color", "Unselected Hover Color", null, Color.class, new Color(100, 100, 230));
         textColor = c.get("gui.text_color", "Text Color", null, Color.class, new Color(255, 255, 255));
+        backgroundColor = c.get("gui.background_color", "Background Color", null, Color.class, new Color(30, 30, 30));
+        barColor = c.get("gui.selected_color", "Selected Color", null, Color.class, new Color(140, 140, 255));
+        barBackgroundColor = c.get("gui.menu_bar_color", "Menu Bar Color", null, Color.class, new Color(30, 30, 30));
         font = c.get("gui.font", "Font", null, String.class, "Calibri");
     }
 }

@@ -1,10 +1,7 @@
-package net.toshimichi.sushi.gui.base;
+package net.toshimichi.sushi.gui;
 
 import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.gui.Anchor;
-import net.toshimichi.sushi.gui.Component;
-import net.toshimichi.sushi.gui.MouseStatus;
-import net.toshimichi.sushi.gui.Resizable;
+import net.toshimichi.sushi.gui.base.BaseFrameComponent;
 
 public class EmptyFrameComponent extends BaseFrameComponent {
 
@@ -51,12 +48,12 @@ public class EmptyFrameComponent extends BaseFrameComponent {
 
     @Override
     public void setWidth(int width) {
-        if (component instanceof Resizable) ((Resizable) component).setWidth(width);
+        component.setWidth(width);
     }
 
     @Override
     public void setHeight(int height) {
-        if (component instanceof Resizable) ((Resizable) component).setHeight(height);
+        component.setHeight(height);
     }
 
     @Override

@@ -1,54 +1,54 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
-import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.gui.base.BaseComponent;
+import net.toshimichi.sushi.gui.CollapseComponent;
+import net.toshimichi.sushi.gui.CollapseMode;
+import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.gui.layout.FlowDirection;
+import net.toshimichi.sushi.gui.layout.FlowLayout;
+import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Module;
-import net.toshimichi.sushi.utils.GuiUtils;
 
-import java.awt.Color;
+public class SimpleModuleComponent extends PanelComponent<Component> {
 
-public class SimpleModuleComponent extends BaseComponent {
+    private static final double COLLAPSE_SPEED = 0.1;
 
-    private final Module module;
     private final ThemeConstants constants;
-    private boolean hover;
+    private final Module module;
+    private final SimpleModuleToggleComponent toggleComponent;
+    private final CollapseComponent configComponent;
+    private boolean collapsed;
 
-    public SimpleModuleComponent(Module module, ThemeConstants constants) {
-        this.module = module;
+    public SimpleModuleComponent(ThemeConstants constants, Theme theme, Module module) {
         this.constants = constants;
+        this.module = module;
+        setLayout(new FlowLayout(this, FlowDirection.DOWN));
+        toggleComponent = new SimpleModuleToggleComponent(constants, module, this);
+        configComponent = new CollapseComponent(new SimpleModuleConfigComponent(theme, module), CollapseMode.DOWN);
+        add(toggleComponent);
+        add(configComponent);
         setHeight(16);
+    }
+
+    public boolean isCollapsed() {
+        return collapsed;
+    }
+
+    public void setCollapsed(boolean collapse) {
+        this.collapsed = collapse;
     }
 
     @Override
     public void onRender() {
-        Color color;
-        if (hover) {
-            if (module.isEnabled()) color = constants.selectedHoverColor.getValue();
-            else color = constants.unselectedHoverColor.getValue();
-        } else {
-            if (module.isEnabled()) color = constants.enabledColor.getValue();
-            else color = constants.disabledColor.getValue();
-        }
-        hover = false;
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
-        GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true)
-                .draw(getWindowX() + 12, getWindowY() + 2);
+        double progress;
+        if (collapsed) progress = configComponent.getProgress() + COLLAPSE_SPEED;
+        else progress = configComponent.getProgress() - COLLAPSE_SPEED;
+        configComponent.setProgress(progress);
+        super.onRender();
     }
 
     public Module getModule() {
         return module;
-    }
-
-    @Override
-    public void onClick(int x, int y, ClickType type) {
-        if (type == ClickType.LEFT) {
-            module.setEnabled(!module.isEnabled());
-        }
-    }
-
-    @Override
-    public void onHover(int x, int y) {
-        hover = true;
     }
 }

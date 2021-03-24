@@ -159,7 +159,7 @@ public class GsonModules implements Modules {
         String id;
         String factory;
 
-        public DefaultModule(String id, String factory) {
+        DefaultModule(String id, String factory) {
             this.id = id;
             this.factory = factory;
         }

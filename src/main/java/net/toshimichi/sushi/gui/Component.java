@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.gui;
 
-import net.minecraft.client.Minecraft;
 import net.toshimichi.sushi.events.input.ClickType;
+import net.toshimichi.sushi.utils.GuiUtils;
 
 public interface Component {
     int getX();
@@ -16,28 +16,34 @@ public interface Component {
 
     int getHeight();
 
+    void setWidth(int width);
+
+    void setHeight(int height);
+
     default int getWindowX() {
         if (getOrigin() == null)
-            return (int) (Minecraft.getMinecraft().displayWidth * getAnchor().getX() + getX());
+            return (int) (getX() + GuiUtils.getWidth() * getAnchor().getX());
         return (int) (getX() + getOrigin().getWindowX() + getOrigin().getWidth() * getAnchor().getX());
     }
 
     default int getWindowY() {
         if (getOrigin() == null)
-            return (int) (Minecraft.getMinecraft().displayHeight * getAnchor().getY() + getY());
+            return (int) (getY() + GuiUtils.getHeight() * getAnchor().getY());
         return (int) (getY() + getOrigin().getWindowY() + getOrigin().getHeight() * getAnchor().getY());
     }
 
     default void setWindowX(int x) {
         if (getOrigin() == null)
             setX(x);
-        setX((int) (x - getOrigin().getWindowX() - getOrigin().getWidth() * getAnchor().getX()));
+        else
+            setX((int) (x - getOrigin().getWindowX() - getOrigin().getWidth() * getAnchor().getX()));
     }
 
     default void setWindowY(int y) {
         if (getOrigin() == null)
             setY(y);
-        setY((int) (y - getOrigin().getWindowY() - getOrigin().getHeight() * getAnchor().getY()));
+        else
+            setY((int) (y - getOrigin().getWindowY() - getOrigin().getHeight() * getAnchor().getY()));
     }
 
     Anchor getAnchor();

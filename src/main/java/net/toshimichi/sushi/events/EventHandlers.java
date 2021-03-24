@@ -70,7 +70,7 @@ public class EventHandlers {
         final Class<?> eventClass;
         final ArrayList<EventAdapter<?>> adapters;
 
-        public EventMap(Object obj, Class<?> eventClass, ArrayList<EventAdapter<?>> adapters) {
+        EventMap(Object obj, Class<?> eventClass, ArrayList<EventAdapter<?>> adapters) {
             this.obj = obj;
             this.eventClass = eventClass;
             this.adapters = adapters;
