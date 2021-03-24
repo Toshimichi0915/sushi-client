@@ -2,7 +2,14 @@ package net.toshimichi.sushi.events.input;
 
 public class KeyPressEvent extends KeyEvent {
 
-    public KeyPressEvent(int keyCode) {
+    private final char key;
+
+    public KeyPressEvent(int keyCode, char key) {
         super(keyCode);
+        this.key = key;
+    }
+
+    public char getKey() {
+        return key;
     }
 }

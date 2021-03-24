@@ -10,7 +10,7 @@ public class InputUtils {
         if (Keyboard.isRepeatEvent()) return null;
         int eventKey = Keyboard.getEventKey();
         KeyEvent event;
-        if (Keyboard.isKeyDown(eventKey)) event = new KeyPressEvent(eventKey);
+        if (Keyboard.isKeyDown(eventKey)) event = new KeyPressEvent(eventKey, Keyboard.getEventCharacter());
         else event = new KeyReleaseEvent(eventKey);
         EventHandlers.callEvent(event);
         return event;

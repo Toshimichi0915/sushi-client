@@ -127,7 +127,7 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public void onKeyPressed(int keyCode) {
+    public void onKeyPressed(int keyCode, char key) {
     }
 
     @Override

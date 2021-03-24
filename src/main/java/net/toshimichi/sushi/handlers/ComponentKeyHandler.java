@@ -13,7 +13,7 @@ public class ComponentKeyHandler {
     public void onKeyPress(KeyPressEvent e) {
         Component topComponent = Components.getTopComponent();
         if (topComponent == null) return;
-        topComponent.onKeyPressed(e.getKeyCode());
+        topComponent.onKeyPressed(e.getKeyCode(), e.getKey());
         e.setCancelled(true);
     }
 

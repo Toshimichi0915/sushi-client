@@ -70,7 +70,7 @@ public interface Component {
 
     void onScroll(int deltaX, int deltaY, ClickType type);
 
-    void onKeyPressed(int keyCode);
+    void onKeyPressed(int keyCode, char key);
 
     void onKeyReleased(int keyCode);
 

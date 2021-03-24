@@ -16,19 +16,23 @@ public class ThemeConstants {
     public final Configuration<Color> backgroundColor;
     public final Configuration<Color> barColor;
     public final Configuration<Color> barBackgroundColor;
+    public final Configuration<Color> textBoxBackgroundColor;
+    public final Configuration<Color> textBoxTextColor;
     public final Configuration<String> font;
 
     public ThemeConstants(Configurations c) {
         frameColor = c.get("gui.frame_color", "Frame Color", null, Color.class, new Color(200, 90, 30));
         menuBarColor = c.get("gui.menu_bar_color", "Menu Bar Color", null, Color.class, new Color(30, 30, 30));
-        disabledColor = c.get("gui.background_color", "Background Color", null, Color.class, new Color(40, 40, 40));
-        enabledColor = c.get("gui.selected_color", "Selected Color", null, Color.class, new Color(140, 140, 255));
+        disabledColor = c.get("gui.disabled_color", "Disabled Color", null, Color.class, new Color(40, 40, 40));
+        enabledColor = c.get("gui.enabled_color", "Enabled Color", null, Color.class, new Color(140, 140, 255));
         unselectedHoverColor = c.get("gui.unselected_hover_color", "Unselected Hover Color", null, Color.class, new Color(30, 30, 30));
-        selectedHoverColor = c.get("gui.selected_hover_color", "Unselected Hover Color", null, Color.class, new Color(100, 100, 230));
+        selectedHoverColor = c.get("gui.selected_hover_color", "Selected Hover Color", null, Color.class, new Color(100, 100, 230));
         textColor = c.get("gui.text_color", "Text Color", null, Color.class, new Color(255, 255, 255));
         backgroundColor = c.get("gui.background_color", "Background Color", null, Color.class, new Color(30, 30, 30));
-        barColor = c.get("gui.selected_color", "Selected Color", null, Color.class, new Color(140, 140, 255));
-        barBackgroundColor = c.get("gui.menu_bar_color", "Menu Bar Color", null, Color.class, new Color(30, 30, 30));
+        barColor = c.get("gui.bar_color", "Bar Color", null, Color.class, new Color(140, 140, 255));
+        barBackgroundColor = c.get("gui.bar_background_color", "Menu Bar Background Color", null, Color.class, new Color(30, 30, 30));
+        textBoxBackgroundColor = c.get("gui.text_box_background_color", "Text Background Color", null, Color.class, new Color(30, 30, 30));
+        textBoxTextColor = c.get("gui.text_box_text_color", "Text Color in Text Box", null, Color.class, new Color(30, 30, 30));
         font = c.get("gui.font", "Font", null, String.class, "Calibri");
     }
 }

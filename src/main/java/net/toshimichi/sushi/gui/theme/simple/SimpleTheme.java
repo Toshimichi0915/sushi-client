@@ -9,6 +9,7 @@ import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.gui.theme.simple.config.SimpleDoubleRangeComponent;
 import net.toshimichi.sushi.gui.theme.simple.config.SimpleIntRangeComponent;
+import net.toshimichi.sushi.gui.theme.simple.config.SimpleStringComponent;
 import net.toshimichi.sushi.modules.Module;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class SimpleTheme implements Theme {
         this.constants = new ThemeConstants(configurations);
         newFactory(IntRange.class, c -> new SimpleIntRangeComponent(constants, c, 9, true));
         newFactory(DoubleRange.class, c -> new SimpleDoubleRangeComponent(constants, c, 9, true));
+        newFactory(String.class, c -> new SimpleStringComponent(constants, c, 9, true));
     }
 
     public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {

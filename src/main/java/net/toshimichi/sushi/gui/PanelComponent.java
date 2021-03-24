@@ -68,9 +68,9 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
         Collections.reverse(clone);
         for (T component : clone) {
             boolean scissorEnabled = this.scissorEnabled;
-            if(scissorEnabled) GuiUtils.prepareArea(component);
+            if (scissorEnabled) GuiUtils.prepareArea(component);
             component.onRender();
-            if(scissorEnabled) GuiUtils.releaseArea();
+            if (scissorEnabled) GuiUtils.releaseArea();
         }
     }
 
