@@ -20,7 +20,7 @@ public class SimpleCategoryComponent extends PanelComponent<Component> {
         this.constants = constants;
         this.theme = theme;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
-        add(new SimpleModuleHeaderComponent(constants, category, this));
+        add(new SimpleCategoryHeaderComponent(constants, category, this));
         add(new SimpleModuleListComponent(constants, category, theme));
     }
 

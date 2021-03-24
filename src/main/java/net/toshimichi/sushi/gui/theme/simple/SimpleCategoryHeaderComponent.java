@@ -9,7 +9,7 @@ import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.utils.GuiUtils;
 import net.toshimichi.sushi.utils.TextPreview;
 
-public class SimpleModuleHeaderComponent extends BaseComponent {
+public class SimpleCategoryHeaderComponent extends BaseComponent {
 
     private final ThemeConstants constants;
     private final Component parent;
@@ -17,7 +17,7 @@ public class SimpleModuleHeaderComponent extends BaseComponent {
     private int holdX;
     private int holdY;
 
-    public SimpleModuleHeaderComponent(ThemeConstants constants, Category category, Component parent) {
+    public SimpleCategoryHeaderComponent(ThemeConstants constants, Category category, Component parent) {
         this.constants = constants;
         this.category = category;
         this.parent = parent;

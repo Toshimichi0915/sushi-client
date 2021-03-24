@@ -32,6 +32,7 @@ public class SimpleModuleToggleComponent extends SimpleToggleComponent<Module> {
 
     @Override
     public void onRender() {
+        GuiUtils.prepareArea(this);
         setToggled(module.isEnabled());
         super.onRender();
         GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true)
@@ -41,6 +42,7 @@ public class SimpleModuleToggleComponent extends SimpleToggleComponent<Module> {
         int midY = getWindowY() + (int) (((component.getProgress() - 0.5) * getHeight() + getHeight()) / 2);
         GuiUtils.drawLine(x, y, x + 3, midY, Color.WHITE, 3);
         GuiUtils.drawLine(x + 3, midY, x + 6, y, Color.WHITE, 3);
+        GuiUtils.releaseArea();
     }
 
     @Override

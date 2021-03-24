@@ -4,7 +4,6 @@ import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.base.BaseListComponent;
 import net.toshimichi.sushi.gui.layout.Layout;
 import net.toshimichi.sushi.gui.layout.NullLayout;
-import net.toshimichi.sushi.utils.GuiUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +11,6 @@ import java.util.function.Consumer;
 
 public class PanelComponent<T extends Component> extends BaseListComponent<T> {
 
-    private boolean scissorEnabled;
     private Layout layout = new NullLayout(this);
 
     public PanelComponent() {
@@ -53,29 +51,13 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
         return null;
     }
 
-    public boolean isScissorEnabled() {
-        return scissorEnabled;
-    }
-
-    public void setScissorEnabled(boolean scissorEnabled) {
-        this.scissorEnabled = scissorEnabled;
-        for (Component child : this) {
-            if (child instanceof PanelComponent<?>) {
-                ((PanelComponent<?>) child).setScissorEnabled(scissorEnabled);
-            }
-        }
-    }
-
     @Override
     public void onRender() {
         layout.relocate();
         ArrayList<T> clone = new ArrayList<>(this);
         Collections.reverse(clone);
         for (T component : clone) {
-            boolean scissorEnabled = this.scissorEnabled;
-            if (scissorEnabled) GuiUtils.prepareArea(component);
             component.onRender();
-            if (scissorEnabled) GuiUtils.releaseArea();
         }
     }
 
@@ -133,8 +115,6 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
     @Override
     public boolean add(T component) {
         boolean success = super.add(component);
-        if (component instanceof PanelComponent<?>)
-            ((PanelComponent<?>) component).setScissorEnabled(isScissorEnabled());
         layout.relocate();
         return success;
     }
