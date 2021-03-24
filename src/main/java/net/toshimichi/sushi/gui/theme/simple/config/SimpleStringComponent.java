@@ -16,19 +16,19 @@ public class SimpleStringComponent extends PanelComponent<Component> implements 
 
     private final Configuration<String> config;
 
-    public SimpleStringComponent(ThemeConstants constants, Configuration<String> config, int fontSize, boolean shadow) {
+    public SimpleStringComponent(ThemeConstants constants, Configuration<String> config) {
         this.config = config;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
         add(new BaseComponent() {
             @Override
             public void onRender() {
-                setHeight(fontSize + 1);
+                setHeight(10);
                 GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
-                TextPreview preview = GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), fontSize, true);
+                TextPreview preview = GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), 9, true);
                 preview.draw(getWindowX() + (getWidth() - preview.getWidth()) / 2 - 1, getWindowY() + (getHeight() - preview.getHeight()) / 2 - 1);
             }
         });
-        add(new SimpleTextComponent(constants, config.getValue(), fontSize, shadow) {
+        add(new SimpleTextComponent(constants, config.getValue()) {
             @Override
             protected void onChange(String text) {
                 config.setValue(text);

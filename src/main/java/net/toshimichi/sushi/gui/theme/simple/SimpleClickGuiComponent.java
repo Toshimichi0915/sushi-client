@@ -2,7 +2,6 @@ package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.gui.PanelComponent;
-import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.modules.Module;
@@ -13,11 +12,9 @@ public class SimpleClickGuiComponent extends PanelComponent<SimpleCategoryCompon
 
     private final Module module;
     private final ThemeConstants constants;
-    private final Theme theme;
 
-    public SimpleClickGuiComponent(ThemeConstants constants, Theme theme, Module module) {
+    public SimpleClickGuiComponent(ThemeConstants constants, Module module) {
         this.constants = constants;
-        this.theme = theme;
         this.module = module;
     }
 
@@ -37,7 +34,7 @@ public class SimpleClickGuiComponent extends PanelComponent<SimpleCategoryCompon
             for (SimpleCategoryComponent component : this) {
                 if (component.getCategory().equals(category)) continue addCategory;
             }
-            SimpleCategoryComponent newComponent = new SimpleCategoryComponent(constants, theme, category);
+            SimpleCategoryComponent newComponent = new SimpleCategoryComponent(constants, category);
             add(newComponent);
             newComponent.setWidth(100);
             newComponent.setX(size() * 102 - 50);

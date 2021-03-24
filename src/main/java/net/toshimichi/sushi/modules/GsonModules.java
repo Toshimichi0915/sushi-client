@@ -80,7 +80,7 @@ public class GsonModules implements Modules {
     }
 
     @Override
-    public void addModule(String id, ModuleFactory factory) {
+    public Module addModule(String id, ModuleFactory factory) {
         GsonConfigurations provider = new GsonConfigurations(gson);
         JsonObject object = loadJson(id);
         object.add(FACTORY_TAG, new JsonPrimitive(factory.getId()));
@@ -88,6 +88,25 @@ public class GsonModules implements Modules {
         provider.load(object);
         Module module = factory.getConstructor().newModule(id, this, categories, provider, factory);
         modules.add(module);
+        return module;
+    }
+
+    @Override
+    public Module cloneModule(String id, String newId) {
+        Module original = getModule(id);
+        if (original == null) return null;
+
+        // deep copy JsonElement
+        root.add(newId, gson.fromJson(gson.toJson(root.get(id)), JsonElement.class));
+        return addModule(newId, original.getModuleFactory());
+    }
+
+    @Override
+    public void removeModule(String id) {
+        Module module = getModule(id);
+        if (module == null) return;
+        modules.remove(module);
+        root.remove(module.getId());
     }
 
     @Override
@@ -146,11 +165,11 @@ public class GsonModules implements Modules {
         modules.forEach(m -> m.setEnabled(false));
     }
 
-    private JsonObject loadJson(String name) {
-        JsonObject object = root.getAsJsonObject(name);
+    private JsonObject loadJson(String id) {
+        JsonObject object = root.getAsJsonObject(id);
         if (object == null) {
             object = new JsonObject();
-            root.add(name, object);
+            root.add(id, object);
         }
         return object;
     }

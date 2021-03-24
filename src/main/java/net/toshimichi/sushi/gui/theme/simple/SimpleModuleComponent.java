@@ -6,7 +6,6 @@ import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.PanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
-import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Module;
 
@@ -16,20 +15,19 @@ public class SimpleModuleComponent extends PanelComponent<Component> {
 
     private final ThemeConstants constants;
     private final Module module;
-    private final SimpleModuleToggleComponent toggleComponent;
     private final CollapseComponent configComponent;
     private boolean collapsed;
 
-    public SimpleModuleComponent(ThemeConstants constants, Theme theme, Module module) {
+    public SimpleModuleComponent(ThemeConstants constants, Module module) {
         this.constants = constants;
         this.module = module;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
-        configComponent = new CollapseComponent(new SimpleModuleConfigComponent(theme, module), CollapseMode.DOWN);
-        toggleComponent = new SimpleModuleToggleComponent(constants, module, this, configComponent);
-        add(toggleComponent);
+        configComponent = new CollapseComponent(new SimpleModuleConfigComponent(constants, module), CollapseMode.DOWN);
+        add(new SimpleModuleToggleComponent(constants, module, this, configComponent));
         add(configComponent);
-        setHeight(16);
+
     }
+
 
     public boolean isCollapsed() {
         return collapsed;

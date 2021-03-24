@@ -12,8 +12,6 @@ abstract public class SimpleTextComponent extends BaseComponent {
     private static final int START_HOLD_DELAY = 500;
     private static final int HOLD_DELAY = 50;
     private final ThemeConstants constants;
-    private final int fontSize;
-    private final boolean shadow;
 
     private final StringBuilder text;
     private long pressMillis;
@@ -21,11 +19,9 @@ abstract public class SimpleTextComponent extends BaseComponent {
     private int holdKeyCode;
     private char holdKey;
 
-    public SimpleTextComponent(ThemeConstants constants, String text, int fontSize, boolean shadow) {
+    public SimpleTextComponent(ThemeConstants constants, String text) {
         this.constants = constants;
         this.text = new StringBuilder(text);
-        this.fontSize = fontSize;
-        this.shadow = shadow;
         setHeight(14);
     }
 
@@ -57,7 +53,7 @@ abstract public class SimpleTextComponent extends BaseComponent {
         }
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
         GuiUtils.drawRect(getWindowX() + 1, getWindowY() + 1, getWidth() - 2, getHeight() - 2, constants.textBoxBackgroundColor.getValue());
-        GuiUtils.prepareText(text.toString(), constants.font.getValue(), constants.textColor.getValue(), fontSize, shadow)
+        GuiUtils.prepareText(text.toString(), constants.font.getValue(), constants.textColor.getValue(), 9, true)
                 .draw(getWindowX() + 2, getWindowY() + 2);
     }
 

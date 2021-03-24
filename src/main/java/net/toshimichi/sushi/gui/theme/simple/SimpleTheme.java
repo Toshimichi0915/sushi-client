@@ -17,16 +17,14 @@ import java.util.Map;
 
 public class SimpleTheme implements Theme {
 
-    private final Configurations configurations;
     private final ThemeConstants constants;
     private final HashMap<Class<?>, ConfigComponentFactory<?>> factories = new HashMap<>();
 
     public SimpleTheme(Configurations configurations) {
-        this.configurations = configurations;
         this.constants = new ThemeConstants(configurations);
         newFactory(IntRange.class, c -> new SimpleIntRangeComponent(constants, c, 9, true));
         newFactory(DoubleRange.class, c -> new SimpleDoubleRangeComponent(constants, c, 9, true));
-        newFactory(String.class, c -> new SimpleStringComponent(constants, c, 9, true));
+        newFactory(String.class, c -> new SimpleStringComponent(constants, c));
     }
 
     public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {
@@ -45,7 +43,7 @@ public class SimpleTheme implements Theme {
 
     @Override
     public PanelComponent<?> newClickGui(Module caller) {
-        return new SimpleClickGuiComponent(constants, this, caller);
+        return new SimpleClickGuiComponent(constants, caller);
     }
 
     @SuppressWarnings("unchecked")

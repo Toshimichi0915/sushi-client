@@ -20,7 +20,11 @@ public interface Modules {
 
     List<Module> getAll();
 
-    void addModule(String id, ModuleFactory factory);
+    Module addModule(String id, ModuleFactory factory);
+
+    Module cloneModule(String id, String newId);
+
+    void removeModule(String id);
 
     void save();
 

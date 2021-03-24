@@ -114,9 +114,7 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
 
     @Override
     public boolean add(T component) {
-        boolean success = super.add(component);
-        layout.relocate();
-        return success;
+        return super.add(component);
     }
 
     public Layout getLayout() {
