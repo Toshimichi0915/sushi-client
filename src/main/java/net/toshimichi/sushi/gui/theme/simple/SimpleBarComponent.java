@@ -3,11 +3,11 @@ package net.toshimichi.sushi.gui.theme.simple;
 import net.minecraft.util.math.MathHelper;
 import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.MouseStatus;
-import net.toshimichi.sushi.gui.base.BaseSettingComponent;
+import net.toshimichi.sushi.gui.base.BaseComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.GuiUtils;
 
-abstract public class SimpleBarComponent<T> extends BaseSettingComponent<T> {
+abstract public class SimpleBarComponent extends BaseComponent {
 
     private final ThemeConstants constants;
     private double progress;

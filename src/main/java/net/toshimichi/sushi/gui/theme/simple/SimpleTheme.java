@@ -7,6 +7,8 @@ import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.gui.*;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
+import net.toshimichi.sushi.gui.theme.simple.config.SimpleDoubleRangeComponent;
+import net.toshimichi.sushi.gui.theme.simple.config.SimpleIntRangeComponent;
 import net.toshimichi.sushi.modules.Module;
 
 import java.util.HashMap;

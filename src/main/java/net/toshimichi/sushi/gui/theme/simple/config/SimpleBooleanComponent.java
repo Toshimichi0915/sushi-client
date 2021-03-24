@@ -1,8 +1,9 @@
-package net.toshimichi.sushi.gui.theme.simple;
+package net.toshimichi.sushi.gui.theme.simple.config;
 
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.gui.ConfigComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
+import net.toshimichi.sushi.gui.theme.simple.SimpleToggleComponent;
 
 public class SimpleBooleanComponent extends SimpleToggleComponent<Configuration<Boolean>> implements ConfigComponent<Boolean> {
 

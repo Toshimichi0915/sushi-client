@@ -1,13 +1,14 @@
-package net.toshimichi.sushi.gui.theme.simple;
+package net.toshimichi.sushi.gui.theme.simple.config;
 
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.gui.ConfigComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
+import net.toshimichi.sushi.gui.theme.simple.SimpleBarComponent;
 import net.toshimichi.sushi.utils.GuiUtils;
 import net.toshimichi.sushi.utils.TextPreview;
 
-public class SimpleIntRangeComponent extends SimpleBarComponent<Configuration<IntRange>> implements ConfigComponent<IntRange> {
+public class SimpleIntRangeComponent extends SimpleBarComponent implements ConfigComponent<IntRange> {
 
     private final ThemeConstants constants;
     private final Configuration<IntRange> config;
