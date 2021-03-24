@@ -32,16 +32,17 @@ public class CollapseComponent extends PanelComponent<Component> implements Fram
 
     @Override
     public void onRender() {
+        glEnable(GL_SCISSOR_TEST);
+        GuiUtils.scissor(this);
+        super.onRender();
+        glDisable(GL_SCISSOR_TEST);
+
         setHeight((int) (progress * component.getHeight()));
         if (mode == CollapseMode.UP)
             component.setY(0);
         else
             component.setY(getHeight() - component.getHeight());
         component.setWidth(getWidth());
-        glEnable(GL_SCISSOR_TEST);
-        GuiUtils.scissor(this);
-        super.onRender();
-        glDisable(GL_SCISSOR_TEST);
     }
 
     @Override
