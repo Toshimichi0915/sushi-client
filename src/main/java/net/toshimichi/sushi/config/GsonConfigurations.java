@@ -84,15 +84,18 @@ public class GsonConfigurations implements Configurations {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T getRawValue(JsonObject object, String id, Class<T> tClass, boolean checkDefault) {
+    private <T> T getRawValue(JsonObject object, String id, Class<T> tClass, boolean checkDefault) {
         try {
             if (id.contains(".")) {
                 String key = id.split("\\.")[0];
                 JsonElement element = object.get(key);
-                if (element != null && element.isJsonObject())
-                    return getRawValue(element.getAsJsonObject(), id.replaceFirst(key + "\\.", ""), tClass, false);
+                if (element != null && element.isJsonObject()) {
+                    T rawValue = getRawValue(element.getAsJsonObject(), id.replaceFirst(key + "\\.", ""), tClass, false);
+                    if (rawValue != null) return rawValue;
+                }
             } else {
-                return gson.fromJson(object.get(id), tClass);
+                JsonElement element = object.get(id);
+                if (element != null) return gson.fromJson(object.get(id), tClass);
             }
         } catch (JsonParseException e) {
             // use default
