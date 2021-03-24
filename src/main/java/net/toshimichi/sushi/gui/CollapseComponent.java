@@ -13,6 +13,7 @@ public class CollapseComponent extends PanelComponent<Component> implements Fram
     public CollapseComponent(Component component, CollapseMode mode) {
         this.component = component;
         this.mode = mode;
+        setScissorEnabled(false);
         add(component);
     }
 
