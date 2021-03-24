@@ -2,6 +2,7 @@ package net.toshimichi.sushi.utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.Color;
 
@@ -30,6 +31,34 @@ public class GuiUtils {
 
     public static boolean isGameLocked() {
         return locked;
+    }
+
+    public static int getWidth() {
+        return new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth();
+    }
+
+    public static int getHeight() {
+        return new ScaledResolution(Minecraft.getMinecraft()).getScaledHeight();
+    }
+
+    public static int getScaleFactor() {
+        return new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+    }
+
+    public static int toWindowX(int x) {
+        return (int) ((double) Minecraft.getMinecraft().displayWidth / getWidth() * x);
+    }
+
+    public static int toWindowY(int y) {
+        return (int) ((double) Minecraft.getMinecraft().displayHeight / getHeight() * y);
+    }
+
+    public static int toScaledX(int x) {
+        return (int) ((double) getWidth() / Minecraft.getMinecraft().displayWidth * x);
+    }
+
+    public static int toScaledY(int y) {
+        return (int) (getHeight() - (double) getHeight() / Minecraft.getMinecraft().displayHeight * y);
     }
 
     public static void prepare2D() {
