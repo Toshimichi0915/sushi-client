@@ -25,9 +25,7 @@ public class SimpleModuleComponent extends PanelComponent<Component> {
         configComponent = new CollapseComponent(new SimpleModuleConfigComponent(constants, module), CollapseMode.DOWN);
         add(new SimpleModuleToggleComponent(constants, module, this, configComponent));
         add(configComponent);
-
     }
-
 
     public boolean isCollapsed() {
         return collapsed;

@@ -122,13 +122,13 @@ public class EmptyFrameComponent extends BaseFrameComponent {
     }
 
     @Override
-    public void onKeyPressed(int keyCode, char key) {
-        component.onKeyPressed(keyCode, key);
+    public boolean onKeyPressed(int keyCode, char key) {
+        return component.onKeyPressed(keyCode, key);
     }
 
     @Override
-    public void onKeyReleased(int keyCode) {
-        component.onKeyReleased(keyCode);
+    public boolean onKeyReleased(int keyCode) {
+        return component.onKeyReleased(keyCode);
     }
 
     @Override

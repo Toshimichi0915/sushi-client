@@ -24,7 +24,7 @@ public class ClickComponent extends BaseComponent {
 
     @Override
     public void onRender() {
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.disabledColor.getValue());
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.backgroundColor.getValue());
         Color textColor;
         if (clicked) textColor = constants.enabledColor.getValue();
         else if (hover) textColor = constants.selectedHoverColor.getValue();

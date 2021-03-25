@@ -7,6 +7,7 @@ import net.toshimichi.sushi.gui.layout.NullLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class PanelComponent<T extends Component> extends BaseListComponent<T> {
@@ -83,7 +84,6 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
         if (from == null) return;
         if (status == MouseStatus.END) {
             from.onHold(fromX, fromY, toX, toY, type, status);
-            return;
         }
         if (!from.equals(to) && status != MouseStatus.START) {
             from.onHold(fromX, fromY, toX, toY, type, MouseStatus.IN_PROGRESS);
@@ -102,14 +102,20 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
     }
 
     @Override
-    public void onKeyPressed(int keyCode, char key) {
-        execFocus(c -> c.onKeyPressed(keyCode, key));
+    public boolean onKeyPressed(int keyCode, char key) {
+        AtomicBoolean result = new AtomicBoolean();
+        execFocus(c -> result.set(c.onKeyPressed(keyCode, key)));
+        if (result.get()) return true;
+        else return super.onKeyPressed(keyCode, key);
     }
 
     @Override
-    public void onKeyReleased(int keyCode) {
-        super.onKeyReleased(keyCode);
-        execFocus(c -> c.onKeyReleased(keyCode));
+    public boolean onKeyReleased(int keyCode) {
+        AtomicBoolean result = new AtomicBoolean();
+        execFocus(c -> result.set(c.onKeyReleased(keyCode)));
+
+        if (result.get()) return true;
+        else return super.onKeyReleased(keyCode);
     }
 
     @Override

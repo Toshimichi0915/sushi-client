@@ -58,16 +58,18 @@ abstract public class SimpleTextComponent extends BaseComponent {
     }
 
     @Override
-    public void onKeyPressed(int keyCode, char key) {
+    public boolean onKeyPressed(int keyCode, char key) {
         holdKeyCode = keyCode;
         holdKey = key;
         pressMillis = System.currentTimeMillis();
         append(holdKeyCode, key);
+        return true;
     }
 
     @Override
-    public void onKeyReleased(int keyCode) {
+    public boolean onKeyReleased(int keyCode) {
         holdKey = 0;
+        return true;
     }
 
     protected void onChange(String text) {

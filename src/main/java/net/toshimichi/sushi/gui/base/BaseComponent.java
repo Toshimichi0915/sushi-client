@@ -135,14 +135,17 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public void onKeyPressed(int keyCode, char key) {
+    public boolean onKeyPressed(int keyCode, char key) {
+        return false;
     }
 
     @Override
-    public void onKeyReleased(int keyCode) {
+    public boolean onKeyReleased(int keyCode) {
         if (keyCode == Keyboard.KEY_ESCAPE) {
             Components.close(this);
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -152,5 +155,7 @@ public class BaseComponent implements Component {
     @Override
     public void onClose() {
         closed = true;
+        if (getOrigin() != null)
+            Components.close(getOrigin());
     }
 }
