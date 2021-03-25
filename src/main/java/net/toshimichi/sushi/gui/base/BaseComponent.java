@@ -1,10 +1,7 @@
 package net.toshimichi.sushi.gui.base;
 
 import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.gui.Anchor;
-import net.toshimichi.sushi.gui.Component;
-import net.toshimichi.sushi.gui.Components;
-import net.toshimichi.sushi.gui.MouseStatus;
+import net.toshimichi.sushi.gui.*;
 import org.lwjgl.input.Keyboard;
 
 public class BaseComponent implements Component {
@@ -17,6 +14,7 @@ public class BaseComponent implements Component {
     private int y;
     private int width;
     private int height;
+    private Insets margin = new Insets(0, 0, 0, 0);
 
     public BaseComponent() {
         this.anchor = Anchor.TOP_LEFT;
@@ -69,6 +67,16 @@ public class BaseComponent implements Component {
     @Override
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    @Override
+    public Insets getMargin() {
+        return margin;
+    }
+
+    @Override
+    public void setMargin(Insets margin) {
+        this.margin = margin;
     }
 
     @Override

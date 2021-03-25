@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.Sushi;
+import net.toshimichi.sushi.gui.Insets;
 import net.toshimichi.sushi.gui.PanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
@@ -21,6 +22,11 @@ public class SimpleModuleListComponent extends PanelComponent<SimpleModuleCompon
 
     @Override
     public void onRender() {
+        if (isEmpty())
+            setMargin(new Insets(0, 0, 0, 0));
+        else
+            setMargin(new Insets(0, 2, 2, 2));
+
         addModule:
         for (Module module : Sushi.getProfile().getModules().getModules(category)) {
             for (SimpleModuleComponent component : this) {

@@ -20,6 +20,10 @@ public interface Component {
 
     void setHeight(int height);
 
+    Insets getMargin();
+
+    void setMargin(Insets margin);
+
     default int getWindowX() {
         if (getOrigin() == null)
             return (int) (getX() + GuiUtils.getWidth() * getAnchor().getX());
