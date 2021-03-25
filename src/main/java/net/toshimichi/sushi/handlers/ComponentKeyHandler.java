@@ -9,7 +9,7 @@ import net.toshimichi.sushi.gui.Components;
 
 public class ComponentKeyHandler {
 
-    @EventHandler(timing = EventTiming.PRE)
+    @EventHandler(timing = EventTiming.PRE, priority = 1500)
     public void onKeyPress(KeyPressEvent e) {
         ComponentContext<?> topComponent = Components.getTopContext();
         if (topComponent == null) return;
@@ -17,7 +17,7 @@ public class ComponentKeyHandler {
         e.setCancelled(true);
     }
 
-    @EventHandler(timing = EventTiming.PRE)
+    @EventHandler(timing = EventTiming.PRE, priority = 1500)
     public void onKeyRelease(KeyReleaseEvent e) {
         ComponentContext<?> topComponent = Components.getTopContext();
         if (topComponent == null) return;

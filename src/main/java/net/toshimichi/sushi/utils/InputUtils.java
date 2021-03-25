@@ -9,6 +9,7 @@ public class InputUtils {
     public static KeyEvent callKeyEvent() {
         if (Keyboard.isRepeatEvent()) return null;
         int eventKey = Keyboard.getEventKey();
+        if (eventKey == 0) return null;
         KeyEvent event;
         if (Keyboard.isKeyDown(eventKey)) event = new KeyPressEvent(eventKey, Keyboard.getEventCharacter());
         else event = new KeyReleaseEvent(eventKey);

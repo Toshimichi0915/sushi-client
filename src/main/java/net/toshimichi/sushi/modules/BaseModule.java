@@ -2,7 +2,6 @@ package net.toshimichi.sushi.modules;
 
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
-import net.toshimichi.sushi.config.data.KeyCode;
 
 abstract public class BaseModule implements Module {
 
@@ -12,7 +11,7 @@ abstract public class BaseModule implements Module {
     private final Categories categories;
     private final Configuration<String> name;
     private final Configuration<String> category;
-    private final Configuration<KeyCode> keybind;
+    private final Configuration<Keybind> keybind;
     private final ModuleFactory factory;
     private boolean isEnabled;
     private boolean isPaused;
@@ -25,7 +24,7 @@ abstract public class BaseModule implements Module {
         this.factory = factory;
         this.name = provider.get("name", "Module Name", "Module name", String.class, getDefaultName());
         this.category = provider.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName());
-        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", KeyCode.class, new KeyCode(getDefaultKeybind()));
+        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind());
     }
 
     @Override
@@ -98,13 +97,13 @@ abstract public class BaseModule implements Module {
     }
 
     @Override
-    public int getKeybind() {
-        return keybind.getValue().getKeyCode();
+    public Keybind getKeybind() {
+        return keybind.getValue();
     }
 
     @Override
-    public void setKeybind(int key) {
-        keybind.setValue(new KeyCode(key));
+    public void setKeybind(Keybind bind) {
+        keybind.setValue(bind);
     }
 
     @Override
@@ -114,7 +113,9 @@ abstract public class BaseModule implements Module {
 
     abstract public String getDefaultName();
 
-    abstract public int getDefaultKeybind();
+    public Keybind getDefaultKeybind() {
+        return new Keybind(ActivationType.TOGGLE, 0);
+    }
 
     abstract public Category getDefaultCategory();
 }

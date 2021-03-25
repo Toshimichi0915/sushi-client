@@ -24,7 +24,7 @@ public class SimpleModuleConfigComponent extends PanelComponent<Component> {
             add(component);
         }
         Modules modules = Sushi.getProfile().getModules();
-        add(new ClickComponent(constants, "Clone this module", () -> {
+        add(new SipmleClickComponent(constants, "Clone this module", () -> {
             String[] split = module.getId().split("_");
             String id = String.join("_", Arrays.copyOfRange(split, 0, split.length - 1));
             int counter = 0;
@@ -34,7 +34,7 @@ public class SimpleModuleConfigComponent extends PanelComponent<Component> {
             } while (modules.getModule(newId) != null);
             modules.cloneModule(module.getId(), newId);
         }));
-        add(new ClickComponent(constants, "Remove this module", () -> modules.removeModule(module.getId())));
+        add(new SipmleClickComponent(constants, "Remove this module", () -> modules.removeModule(module.getId())));
         setHeight(16);
     }
 }

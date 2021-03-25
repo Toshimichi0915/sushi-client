@@ -8,14 +8,14 @@ import net.toshimichi.sushi.utils.GuiUtils;
 
 import java.awt.Color;
 
-public class ClickComponent extends BaseComponent {
+public class SipmleClickComponent extends BaseComponent {
     private final ThemeConstants constants;
     private final String text;
     private final Runnable onClick;
     private boolean clicked;
     private boolean hover;
 
-    public ClickComponent(ThemeConstants constants, String text, Runnable onClick) {
+    public SipmleClickComponent(ThemeConstants constants, String text, Runnable onClick) {
         this.constants = constants;
         this.text = text;
         this.onClick = onClick;

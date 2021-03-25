@@ -69,8 +69,4 @@ public class NoRotateModule extends BaseModule {
         return Category.PLAYER;
     }
 
-    @Override
-    public int getDefaultKeybind() {
-        return 0;
-    }
 }

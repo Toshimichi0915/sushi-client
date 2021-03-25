@@ -48,7 +48,7 @@ public class ClickGuiModule extends BaseModule {
     }
 
     @Override
-    public int getDefaultKeybind() {
-        return Keyboard.KEY_RSHIFT;
+    public Keybind getDefaultKeybind() {
+        return new Keybind(ActivationType.TOGGLE, Keyboard.KEY_RSHIFT);
     }
 }

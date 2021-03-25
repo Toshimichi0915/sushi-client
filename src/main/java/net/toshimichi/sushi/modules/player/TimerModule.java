@@ -58,11 +58,6 @@ public class TimerModule extends BaseModule {
     }
 
     @Override
-    public int getDefaultKeybind() {
-        return 0;
-    }
-
-    @Override
     public Category getDefaultCategory() {
         return Category.PLAYER;
     }

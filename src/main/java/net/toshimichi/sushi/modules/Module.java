@@ -22,9 +22,9 @@ public interface Module {
 
     void setCategory(Category category);
 
-    int getKeybind();
+    Keybind getKeybind();
 
-    void setKeybind(int key);
+    void setKeybind(Keybind bind);
 
     Configurations getConfigurations();
 
