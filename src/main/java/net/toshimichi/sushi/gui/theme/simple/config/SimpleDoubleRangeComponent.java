@@ -13,22 +13,17 @@ public class SimpleDoubleRangeComponent extends SimpleBarComponent implements Co
     private final ThemeConstants constants;
     private final Configuration<DoubleRange> config;
 
-    private final int fontSize;
-    private final boolean shadow;
-
-    public SimpleDoubleRangeComponent(ThemeConstants constants, Configuration<DoubleRange> config, int fontSize, boolean shadow) {
+    public SimpleDoubleRangeComponent(ThemeConstants constants, Configuration<DoubleRange> config) {
         super(constants, (config.getValue().getCurrent() - config.getValue().getBottom()) / (config.getValue().getTop() - config.getValue().getBottom()));
         this.config = config;
         this.constants = constants;
-        this.fontSize = fontSize;
-        this.shadow = shadow;
     }
 
     @Override
     public void onRender() {
         super.onRender();
-        GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), fontSize, shadow).draw(getWindowX() + 1, getWindowY() + 2);
-        TextPreview preview = GuiUtils.prepareText(String.format("%." + config.getValue().getDigits() + "f", config.getValue().getCurrent()), constants.font.getValue(), constants.textColor.getValue(), fontSize, shadow);
+        GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), 9, true).draw(getWindowX() + 1, getWindowY() + 2);
+        TextPreview preview = GuiUtils.prepareText(String.format("%." + config.getValue().getDigits() + "f", config.getValue().getCurrent()), constants.font.getValue(), constants.textColor.getValue(), 9, true);
         preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 2);
     }
 

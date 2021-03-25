@@ -24,8 +24,8 @@ public class SimpleTheme implements Theme {
 
     public SimpleTheme(Configurations configurations) {
         this.constants = new ThemeConstants(configurations);
-        newFactory(IntRange.class, c -> new SimpleIntRangeComponent(constants, c, 9, true));
-        newFactory(DoubleRange.class, c -> new SimpleDoubleRangeComponent(constants, c, 9, true));
+        newFactory(IntRange.class, c -> new SimpleIntRangeComponent(constants, c));
+        newFactory(DoubleRange.class, c -> new SimpleDoubleRangeComponent(constants, c));
         newFactory(String.class, c -> new SimpleStringComponent(constants, c));
         newFactory(Keybind.class, c -> new SimpleKeybindComponent(constants, c));
     }
