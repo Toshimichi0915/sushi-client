@@ -65,7 +65,7 @@ public class ComponentMouseHandler {
             Component component = context == null ? null : context.getOrigin();
 
             if (!status.isClicked && !status.isLastClicked) {
-                if (component != null && component.getOrigin() != null) component.onHover(status.x, status.y);
+                if (component != null) component.onHover(status.x, status.y);
                 continue;
             }
             if (lastComponent == null) continue;
