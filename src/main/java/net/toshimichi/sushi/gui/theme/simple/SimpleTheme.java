@@ -9,7 +9,7 @@ import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.gui.theme.simple.config.SimpleDoubleRangeComponent;
 import net.toshimichi.sushi.gui.theme.simple.config.SimpleIntRangeComponent;
-import net.toshimichi.sushi.gui.theme.simple.config.SimpleKeyCodeComponent;
+import net.toshimichi.sushi.gui.theme.simple.config.SimpleKeybindComponent;
 import net.toshimichi.sushi.gui.theme.simple.config.SimpleStringComponent;
 import net.toshimichi.sushi.modules.Keybind;
 import net.toshimichi.sushi.modules.Module;
@@ -27,7 +27,7 @@ public class SimpleTheme implements Theme {
         newFactory(IntRange.class, c -> new SimpleIntRangeComponent(constants, c, 9, true));
         newFactory(DoubleRange.class, c -> new SimpleDoubleRangeComponent(constants, c, 9, true));
         newFactory(String.class, c -> new SimpleStringComponent(constants, c));
-        newFactory(Keybind.class, c -> new SimpleKeyCodeComponent(constants, c));
+        newFactory(Keybind.class, c -> new SimpleKeybindComponent(constants, c));
     }
 
     public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {

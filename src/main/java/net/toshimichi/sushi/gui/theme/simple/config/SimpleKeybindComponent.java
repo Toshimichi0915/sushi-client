@@ -11,14 +11,14 @@ import net.toshimichi.sushi.modules.Keybind;
 import net.toshimichi.sushi.utils.GuiUtils;
 import org.lwjgl.input.Keyboard;
 
-public class SimpleKeyCodeComponent extends BaseConfigComponent<Keybind> {
+public class SimpleKeybindComponent extends BaseConfigComponent<Keybind> {
 
     private final ThemeConstants constants;
     private final Configuration<Keybind> conf;
     private final IntArrayList heldKeys = new IntArrayList();
     private boolean listening;
 
-    public SimpleKeyCodeComponent(ThemeConstants constants, Configuration<Keybind> configuration) {
+    public SimpleKeybindComponent(ThemeConstants constants, Configuration<Keybind> configuration) {
         super(configuration);
         this.constants = constants;
         this.conf = configuration;

@@ -82,9 +82,6 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
         T from = getTopComponent(fromX, fromY);
         T to = getTopComponent(toX, toY);
         if (from == null) return;
-        if (status == MouseStatus.END) {
-            from.onHold(fromX, fromY, toX, toY, type, status);
-        }
         if (!from.equals(to) && status != MouseStatus.START) {
             from.onHold(fromX, fromY, toX, toY, type, MouseStatus.IN_PROGRESS);
             to = getTopComponent(toX, toY);
