@@ -6,7 +6,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.input.KeyPressEvent;
 import net.toshimichi.sushi.events.input.KeyReleaseEvent;
-import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.events.tick.RenderTickEvent;
 import org.lwjgl.input.Keyboard;
 
 public class KeyFixHandler {
@@ -24,7 +24,7 @@ public class KeyFixHandler {
     }
 
     @EventHandler(timing = EventTiming.PRE, priority = 100)
-    public void onClientTick(ClientTickEvent e) {
+    public void onRenderTick(RenderTickEvent e) {
         for (int keyCode : new IntArrayList(heldKeys)) {
             if (Keyboard.isKeyDown(keyCode)) return;
             KeyReleaseEvent event = new KeyReleaseEvent(keyCode);

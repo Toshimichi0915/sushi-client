@@ -33,15 +33,14 @@ public class KeybindHandler {
         heldKeys.add(e.getKeyCode());
         if (!Minecraft.getMinecraft().inGameHasFocus) return;
         for (Module module : Sushi.getProfile().getModules().getAll()) {
-            if (!checkKeybind(module))
+            if (!checkKeybind(module) || heldModules.contains(module))
                 continue;
+            heldModules.add(module);
             ActivationType type = module.getKeybind().getActivationType();
-            if (type == ActivationType.HOLD) {
-                heldModules.add(module);
+            if (type == ActivationType.HOLD)
                 module.setEnabled(true);
-            } else if (type == ActivationType.TOGGLE) {
+            else if (type == ActivationType.TOGGLE)
                 module.setEnabled(!module.isEnabled());
-            }
             e.setCancelled(true);
         }
     }
@@ -51,9 +50,10 @@ public class KeybindHandler {
         heldKeys.rem(e.getKeyCode());
         for (Module module : new ArrayList<>(heldModules)) {
             if (checkKeybind(module)) continue;
-            module.setEnabled(false);
             e.setCancelled(true);
             heldModules.remove(module);
+            if (module.getKeybind().getActivationType() == ActivationType.HOLD)
+                module.setEnabled(false);
         }
     }
 }

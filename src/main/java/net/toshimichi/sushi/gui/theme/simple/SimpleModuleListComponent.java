@@ -9,6 +9,8 @@ import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.modules.Module;
 
+import java.util.ArrayList;
+
 public class SimpleModuleListComponent extends PanelComponent<SimpleModuleComponent> {
 
     private final ThemeConstants constants;
@@ -32,7 +34,7 @@ public class SimpleModuleListComponent extends PanelComponent<SimpleModuleCompon
         }
 
         removeModule:
-        for (SimpleModuleComponent component : this) {
+        for (SimpleModuleComponent component : new ArrayList<>(this)) {
             for (Module module : Sushi.getProfile().getModules().getModules(category)) {
                 if (component.getModule().equals(module)) continue removeModule;
             }
