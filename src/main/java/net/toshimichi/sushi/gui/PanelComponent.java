@@ -120,7 +120,15 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
 
     @Override
     public boolean add(T component) {
+        component.setContext(getContext());
         return super.add(component);
+    }
+
+    @Override
+    public void setContext(ComponentContext<?> context) {
+        super.setContext(context);
+        for (T child : this)
+            child.setContext(context);
     }
 
     public Layout getLayout() {

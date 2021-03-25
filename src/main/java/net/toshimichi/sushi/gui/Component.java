@@ -58,6 +58,10 @@ public interface Component {
 
     void setOrigin(Component component);
 
+    ComponentContext<?> getContext();
+
+    void setContext(ComponentContext<?> context);
+
     boolean isFocused();
 
     void setFocused(boolean focused);

@@ -10,6 +10,7 @@ public class BaseComponent implements Component {
     private boolean closed;
     private Anchor anchor;
     private Component origin;
+    private ComponentContext<?> context;
     private int x;
     private int y;
     private int width;
@@ -100,6 +101,16 @@ public class BaseComponent implements Component {
     }
 
     @Override
+    public ComponentContext<?> getContext() {
+        return context;
+    }
+
+    @Override
+    public void setContext(ComponentContext<?> context) {
+        this.context = context;
+    }
+
+    @Override
     public boolean isFocused() {
         return focused;
     }
@@ -142,7 +153,7 @@ public class BaseComponent implements Component {
     @Override
     public boolean onKeyReleased(int keyCode) {
         if (keyCode == Keyboard.KEY_ESCAPE) {
-            Components.close(this);
+            getContext().close();
             return true;
         }
         return false;
@@ -155,7 +166,5 @@ public class BaseComponent implements Component {
     @Override
     public void onClose() {
         closed = true;
-        if (getOrigin() != null)
-            Components.close(getOrigin());
     }
 }

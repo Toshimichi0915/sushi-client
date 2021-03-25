@@ -4,24 +4,24 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.input.KeyPressEvent;
 import net.toshimichi.sushi.events.input.KeyReleaseEvent;
-import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
 
 public class ComponentKeyHandler {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onKeyPress(KeyPressEvent e) {
-        Component topComponent = Components.getTopComponent();
+        ComponentContext<?> topComponent = Components.getTopContext();
         if (topComponent == null) return;
-        topComponent.onKeyPressed(e.getKeyCode(), e.getKey());
+        topComponent.getOrigin().onKeyPressed(e.getKeyCode(), e.getKey());
         e.setCancelled(true);
     }
 
     @EventHandler(timing = EventTiming.PRE)
     public void onKeyRelease(KeyReleaseEvent e) {
-        Component topComponent = Components.getTopComponent();
+        ComponentContext<?> topComponent = Components.getTopContext();
         if (topComponent == null) return;
-        topComponent.onKeyReleased(e.getKeyCode());
+        topComponent.getOrigin().onKeyReleased(e.getKeyCode());
         e.setCancelled(true);
     }
 }

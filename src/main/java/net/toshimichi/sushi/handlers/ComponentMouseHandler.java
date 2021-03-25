@@ -8,6 +8,7 @@ import net.toshimichi.sushi.events.input.MousePressEvent;
 import net.toshimichi.sushi.events.input.MouseReleaseEvent;
 import net.toshimichi.sushi.events.tick.RenderTickEvent;
 import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.utils.GuiUtils;
@@ -58,11 +59,13 @@ public class ComponentMouseHandler {
             status.x = GuiUtils.toScaledX(Mouse.getX());
             status.y = GuiUtils.toScaledY(Mouse.getY());
 
-            Component lastComponent = Components.getTopComponent(status.lastX, status.lastY);
-            Component component = Components.getTopComponent(status.x, status.y);
+            ComponentContext<?> lastContext = Components.getTopContext(status.lastX, status.lastY);
+            ComponentContext<?> context = Components.getTopContext(status.x, status.y);
+            Component lastComponent = lastContext == null ? null : lastContext.getOrigin();
+            Component component = context == null ? null : context.getOrigin();
 
             if (!status.isClicked && !status.isLastClicked) {
-                if (component != null) component.onHover(status.x, status.y);
+                if (component != null && component.getOrigin() != null) component.onHover(status.x, status.y);
                 continue;
             }
             if (lastComponent == null) continue;
@@ -72,7 +75,8 @@ public class ComponentMouseHandler {
                 if (HOLD_DELAY < status.lastTickMillis - status.clickMillis ||
                         CLICK_THRESHOLD < MathHelper.sqrt(Math.pow(status.lastX - status.clickX, 2) + Math.pow(status.lastY - status.clickY, 2))) {
                     lastComponent.onHold(status.lastX, status.lastY, status.x, status.y, type, MouseStatus.IN_PROGRESS);
-                    component = Components.getTopComponent(status.x, status.y);
+                    context = Components.getTopContext(status.x, status.y);
+                    component = context == null ? null : context.getOrigin();
                     if (!lastComponent.equals(component))
                         lastComponent.onHold(status.x, status.y, status.x, status.y, type, MouseStatus.CANCEL);
                 } else {
