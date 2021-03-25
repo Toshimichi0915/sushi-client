@@ -48,13 +48,15 @@ public class SimpleEnumComponent<T extends Named> extends BaseComponent {
 
     @Override
     public void onClick(int x, int y, ClickType type) {
-        onChange(getNamed(counter++));
+        onChange(getNamed(counter + 1));
+        counter++;
     }
 
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
         if (status != MouseStatus.END) return;
-        onChange(getNamed(counter++));
+        onChange(getNamed(counter + 1));
+        counter++;
     }
 
     private T getNamed(int counter) {
