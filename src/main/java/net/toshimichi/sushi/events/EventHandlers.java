@@ -20,6 +20,8 @@ public class EventHandlers {
         }
         adapters.sort(Comparator.comparingInt(EventAdapter::getPriority));
         for (EventAdapter<T> adapter : adapters) {
+            if (event instanceof Cancellable && ((Cancellable) event).isCancelled() && adapter.isIgnoreCancelled())
+                continue;
             adapter.call(event);
         }
     }
