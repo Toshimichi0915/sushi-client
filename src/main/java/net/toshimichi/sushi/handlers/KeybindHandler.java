@@ -8,6 +8,7 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.input.KeyPressEvent;
 import net.toshimichi.sushi.events.input.KeyReleaseEvent;
+import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.ActivationType;
 import net.toshimichi.sushi.modules.Module;
 
@@ -33,7 +34,7 @@ public class KeybindHandler {
         heldKeys.add(e.getKeyCode());
         if (!Minecraft.getMinecraft().inGameHasFocus) return;
         for (Module module : Sushi.getProfile().getModules().getAll()) {
-            if (!checkKeybind(module) || heldModules.contains(module))
+            if (!checkKeybind(module) || (heldModules.contains(module) && module.isEnabled()))
                 continue;
             heldModules.add(module);
             ActivationType type = module.getKeybind().getActivationType();
@@ -45,9 +46,10 @@ public class KeybindHandler {
         }
     }
 
-    @EventHandler(timing = EventTiming.PRE, priority = 1500)
+    @EventHandler(timing = EventTiming.PRE)
     public void onKeyRelease(KeyReleaseEvent e) {
         heldKeys.rem(e.getKeyCode());
+        if (!Minecraft.getMinecraft().inGameHasFocus) return;
         for (Module module : new ArrayList<>(heldModules)) {
             if (checkKeybind(module)) continue;
             e.setCancelled(true);
@@ -55,5 +57,15 @@ public class KeybindHandler {
             if (module.getKeybind().getActivationType() == ActivationType.HOLD)
                 module.setEnabled(false);
         }
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onClientTick(ClientTickEvent e) {
+        if (Minecraft.getMinecraft().inGameHasFocus) return;
+        for (Module module : new ArrayList<>(heldModules)) {
+            if (module.getKeybind().getActivationType() == ActivationType.HOLD)
+                module.setEnabled(false);
+        }
+        heldModules.clear();
     }
 }

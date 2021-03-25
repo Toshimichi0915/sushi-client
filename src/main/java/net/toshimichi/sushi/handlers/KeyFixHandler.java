@@ -26,7 +26,7 @@ public class KeyFixHandler {
     @EventHandler(timing = EventTiming.PRE, priority = 100)
     public void onRenderTick(RenderTickEvent e) {
         for (int keyCode : new IntArrayList(heldKeys)) {
-            if (Keyboard.isKeyDown(keyCode)) return;
+            if (Keyboard.isKeyDown(keyCode)) continue;
             KeyReleaseEvent event = new KeyReleaseEvent(keyCode);
             EventHandlers.callEvent(event);
         }

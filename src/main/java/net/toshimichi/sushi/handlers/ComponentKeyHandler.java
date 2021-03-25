@@ -14,7 +14,6 @@ public class ComponentKeyHandler {
         ComponentContext<?> topComponent = Components.getTopContext();
         if (topComponent == null) return;
         topComponent.getOrigin().onKeyPressed(e.getKeyCode(), e.getKey());
-        e.setCancelled(true);
     }
 
     @EventHandler(timing = EventTiming.PRE, priority = 1500)
@@ -22,6 +21,5 @@ public class ComponentKeyHandler {
         ComponentContext<?> topComponent = Components.getTopContext();
         if (topComponent == null) return;
         topComponent.getOrigin().onKeyReleased(e.getKeyCode());
-        e.setCancelled(true);
     }
 }
