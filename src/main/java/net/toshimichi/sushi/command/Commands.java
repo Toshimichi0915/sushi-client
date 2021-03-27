@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Commands {
     private static final HashSet<CommandMap> maps = new HashSet<>();
@@ -19,6 +20,10 @@ public class Commands {
         addTypeParser(new IntParser());
         addTypeParser(new StringParser());
         addTypeParser(new MessageHandlerParser());
+    }
+
+    public static List<Command> getCommands() {
+        return maps.stream().map(map -> map.command).collect(Collectors.toList());
     }
 
     public static void register(Object obj) {

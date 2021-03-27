@@ -11,5 +11,6 @@ public class ClientChatHandler {
     public void onChat(ClientChatEvent e) {
         ChatSendEvent event = new ChatSendEvent(e.getMessage());
         EventHandlers.callEvent(event);
+        e.setCanceled(event.isCancelled());
     }
 }

@@ -73,6 +73,7 @@ public class AnnotationCommand extends BaseCommand {
                 index += stackSize - stack.size();
             } catch (ParseException e) {
                 out.send(e.getMessage(), LogLevel.ERROR);
+                return;
             }
         }
         try {

@@ -26,7 +26,7 @@ abstract public class BaseCommand implements Command {
         if (args.isEmpty()) {
             String syntax = getSyntax();
             if (syntax == null)
-                return Collections.emptyList();
+                return Collections.singletonList(getName());
             else
                 return Arrays.asList(getSyntax().split("\\s+"));
         }
@@ -35,7 +35,7 @@ abstract public class BaseCommand implements Command {
         if (command == null) return Collections.emptyList();
         List<String> complete = command.complete(args.subList(1, args.size()));
         ArrayList<String> result = new ArrayList<>(complete.size() + 1);
-        result.add(command.getName());
+        result.add(getName());
         result.addAll(complete);
         return result;
     }
@@ -57,13 +57,13 @@ abstract public class BaseCommand implements Command {
     abstract protected String getSyntax();
 
     protected void executeDefault(MessageHandler out, List<String> args, List<String> original) {
-        out.send("Sub commands:", LogLevel.ERROR);
+        out.send("Sub commands:", LogLevel.INFO);
         for (SubCommand subCommand : getSubCommands()) {
             String description = subCommand.getDescription();
             if (description == null)
-                out.send(subCommand.getName(), LogLevel.ERROR);
+                out.send("  " + subCommand.getName(), LogLevel.INFO);
             else
-                out.send(subCommand.getName() + " - " + subCommand.getDescription(), LogLevel.ERROR);
+                out.send("  " + subCommand.getName() + " - " + subCommand.getDescription(), LogLevel.INFO);
         }
     }
 }
