@@ -18,8 +18,8 @@ public class PanelComponent<T extends Component> extends BaseListComponent<T> {
         super(new ArrayList<>());
     }
 
-    public PanelComponent(int x, int y, int width, int height, Anchor anchor, Component origin) {
-        super(x, y, width, height, anchor, origin, new ArrayList<>());
+    public PanelComponent(int x, int y, int width, int height, Anchor anchor, Origin origin, Component parent) {
+        super(x, y, width, height, anchor, origin, parent, new ArrayList<>());
     }
 
     public T getFocusedComponent() {

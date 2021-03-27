@@ -3,6 +3,7 @@ package net.toshimichi.sushi.gui.base;
 import net.toshimichi.sushi.gui.Anchor;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ListComponent;
+import net.toshimichi.sushi.gui.Origin;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -16,8 +17,8 @@ public class BaseListComponent<T> extends BaseComponent implements ListComponent
         this.internal = internal;
     }
 
-    public BaseListComponent(int x, int y, int width, int height, Anchor anchor, Component origin, ArrayList<T> internal) {
-        super(x, y, width, height, anchor, origin);
+    public BaseListComponent(int x, int y, int width, int height, Anchor anchor, Origin origin, Component parent, ArrayList<T> internal) {
+        super(x, y, width, height, anchor, origin, parent);
         this.internal = internal;
     }
 

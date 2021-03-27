@@ -9,7 +9,8 @@ public class BaseComponent implements Component {
     private boolean focused;
     private boolean closed;
     private Anchor anchor;
-    private Component origin;
+    private Origin origin;
+    private Component parent;
     private ComponentContext<?> context;
     private int x;
     private int y;
@@ -19,15 +20,17 @@ public class BaseComponent implements Component {
 
     public BaseComponent() {
         this.anchor = Anchor.TOP_LEFT;
+        this.origin = Origin.TOP_LEFT;
     }
 
-    public BaseComponent(int x, int y, int width, int height, Anchor anchor, Component origin) {
+    public BaseComponent(int x, int y, int width, int height, Anchor anchor, Origin origin, Component parent) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.anchor = anchor;
         this.origin = origin;
+        this.parent = parent;
     }
 
     @Override
@@ -91,13 +94,23 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public Component getOrigin() {
+    public Origin getOrigin() {
         return origin;
     }
 
     @Override
-    public void setOrigin(Component origin) {
+    public void setOrigin(Origin origin) {
         this.origin = origin;
+    }
+
+    @Override
+    public Component getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setOrigin(Component origin) {
+        this.parent = origin;
     }
 
     @Override

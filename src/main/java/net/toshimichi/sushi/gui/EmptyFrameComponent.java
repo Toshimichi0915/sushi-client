@@ -87,8 +87,8 @@ public class EmptyFrameComponent extends BaseFrameComponent {
     }
 
     @Override
-    public Component getOrigin() {
-        return component.getOrigin();
+    public Component getParent() {
+        return component.getParent();
     }
 
     @Override

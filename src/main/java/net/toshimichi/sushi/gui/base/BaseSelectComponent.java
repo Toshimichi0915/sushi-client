@@ -2,6 +2,7 @@ package net.toshimichi.sushi.gui.base;
 
 import net.toshimichi.sushi.gui.Anchor;
 import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.Origin;
 import net.toshimichi.sushi.gui.SelectComponent;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ abstract public class BaseSelectComponent<T> extends BaseListComponent<T> implem
         this.maxSelect = maxSelect;
     }
 
-    public BaseSelectComponent(int x, int y, int width, int height, Anchor anchor, Component origin, ArrayList<T> internal, int maxSelect) {
-        super(x, y, width, height, anchor, origin, internal);
+    public BaseSelectComponent(int x, int y, int width, int height, Anchor anchor, Origin origin, Component parent, ArrayList<T> internal, int maxSelect) {
+        super(x, y, width, height, anchor, origin, parent, internal);
         this.maxSelect = maxSelect;
     }
 
