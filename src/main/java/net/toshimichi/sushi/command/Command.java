@@ -7,15 +7,6 @@ import java.util.List;
  */
 public interface Command extends SubCommand {
 
-    String getName();
-
-
-    String[] getAliases();
-
-    String getDescription();
-
-    List<String> complete(List<String> args);
-
     /**
      * Executes the command.
      *
