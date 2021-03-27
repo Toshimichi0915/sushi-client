@@ -15,10 +15,7 @@ import net.toshimichi.sushi.events.client.WorldLoadEvent;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTheme;
 import net.toshimichi.sushi.handlers.*;
-import net.toshimichi.sushi.handlers.forge.ClientTickHandler;
-import net.toshimichi.sushi.handlers.forge.KeyInputHandler;
-import net.toshimichi.sushi.handlers.forge.MouseInputHandler;
-import net.toshimichi.sushi.handlers.forge.RenderTickHandler;
+import net.toshimichi.sushi.handlers.forge.*;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -106,6 +103,7 @@ public class SushiMod {
         MinecraftForge.EVENT_BUS.register(new MouseInputHandler());
         MinecraftForge.EVENT_BUS.register(new ClientTickHandler());
         MinecraftForge.EVENT_BUS.register(new RenderTickHandler());
+        MinecraftForge.EVENT_BUS.register(new ClientChatHandler());
         EventHandlers.register(new KeyFixHandler());
         EventHandlers.register(new KeybindHandler());
         EventHandlers.register(new ComponentMouseHandler());
@@ -113,6 +111,7 @@ public class SushiMod {
         EventHandlers.register(new ComponentKeyHandler());
         EventHandlers.register(new GameFocusHandler());
         EventHandlers.register(new ConfigurationHandler());
+        EventHandlers.register(new CommandHandler());
         EventHandlers.register(new RotateHandler());
         EventHandlers.register(this);
     }
