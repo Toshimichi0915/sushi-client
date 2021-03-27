@@ -11,7 +11,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.client.LoadWorldEvent;
+import net.toshimichi.sushi.events.client.WorldLoadEvent;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTheme;
 import net.toshimichi.sushi.handlers.*;
@@ -118,7 +118,7 @@ public class SushiMod {
     }
 
     @net.toshimichi.sushi.events.EventHandler(timing = EventTiming.PRE)
-    public void onLoadWorld(LoadWorldEvent e) {
+    public void onLoadWorld(WorldLoadEvent e) {
         if (e.getClient() != null) return;
         try {
             FileUtils.writeStringToFile(modConfigFile, gson.toJson(modConfig), StandardCharsets.UTF_8);

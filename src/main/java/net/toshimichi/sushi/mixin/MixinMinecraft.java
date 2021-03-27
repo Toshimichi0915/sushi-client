@@ -5,7 +5,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.GameFocusEvent;
-import net.toshimichi.sushi.events.client.LoadWorldEvent;
+import net.toshimichi.sushi.events.client.WorldLoadEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -42,11 +42,11 @@ public class MixinMinecraft {
 
     @Inject(at = @At("HEAD"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;)V")
     public void onLoadWorldHead(WorldClient client, CallbackInfo info) {
-        EventHandlers.callEvent(new LoadWorldEvent(EventTiming.PRE, client));
+        EventHandlers.callEvent(new WorldLoadEvent(EventTiming.PRE, client));
     }
 
     @Inject(at = @At("TAIL"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;)V")
     public void onLoadWorldTail(WorldClient client, CallbackInfo info) {
-        EventHandlers.callEvent(new LoadWorldEvent(EventTiming.POST, client));
+        EventHandlers.callEvent(new WorldLoadEvent(EventTiming.POST, client));
     }
 }
