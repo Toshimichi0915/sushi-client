@@ -27,7 +27,7 @@ public class SetCommand extends BaseCommand {
     @SuppressWarnings("unchecked")
     private <T> TypeParser<T> findParser(Class<T> c) throws ParseException {
         return (TypeParser<T>) Commands.getTypeParsers().stream()
-                .filter(p -> p.getType().equals(c))
+                .filter(p -> c.isAssignableFrom(p.getType()))
                 .min(Comparator.comparingInt(TypeParser::getPriority))
                 .orElseThrow(() -> new ParseException("This setting cannot be changed"));
     }

@@ -13,7 +13,7 @@ public class IntParser implements TypeParser<Integer> {
         try {
             return Integer.parseInt(args.pop());
         } catch (NumberFormatException e) {
-            throw new ParseException("Invalid integer at " + index);
+            throw new ParseException("Invalid integer at index " + index);
         }
     }
 

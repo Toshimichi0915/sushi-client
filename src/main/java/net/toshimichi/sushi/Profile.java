@@ -15,6 +15,8 @@ public interface Profile {
 
     char getPrefix();
 
+    void setPrefix(char prefix);
+
     MessageHandler getMessageHandler();
 
     void load();

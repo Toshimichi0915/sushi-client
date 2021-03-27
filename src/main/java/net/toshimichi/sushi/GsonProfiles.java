@@ -111,6 +111,11 @@ public class GsonProfiles implements Profiles {
         }
 
         @Override
+        public void setPrefix(char prefix) {
+            config.prefix = prefix;
+        }
+
+        @Override
         public MessageHandler getMessageHandler() {
             return new ChatMessageHandler();
         }
