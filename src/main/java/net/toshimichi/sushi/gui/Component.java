@@ -64,7 +64,7 @@ public interface Component {
 
     Component getParent();
 
-    void setOrigin(Component component);
+    void setParent(Component component);
 
     ComponentContext<?> getContext();
 

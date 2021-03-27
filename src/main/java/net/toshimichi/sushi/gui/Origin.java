@@ -1,15 +1,19 @@
 package net.toshimichi.sushi.gui;
 
-public enum Origin {
-    TOP_LEFT(false, false),
-    BOTTOM_LEFT(false, true),
-    TOP_RIGHT(true, false),
-    BOTTOM_RIGHT(true, true);
+import net.toshimichi.sushi.config.data.Named;
 
+public enum Origin implements Named {
+    TOP_LEFT("Top Left", false, false),
+    BOTTOM_LEFT("Bottom Right", false, true),
+    TOP_RIGHT("Top Right", true, false),
+    BOTTOM_RIGHT("Bottom Right", true, true);
+
+    private final String name;
     private final boolean fromRight;
     private final boolean fromBottom;
 
-    Origin(boolean fromRight, boolean fromBottom) {
+    Origin(String name, boolean fromRight, boolean fromBottom) {
+        this.name = name;
         this.fromRight = fromRight;
         this.fromBottom = fromBottom;
     }
@@ -20,5 +24,10 @@ public enum Origin {
 
     public boolean isFromBottom() {
         return fromBottom;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

@@ -92,8 +92,8 @@ public class EmptyFrameComponent<T extends Component> extends BaseFrameComponent
     }
 
     @Override
-    public void setOrigin(Component component) {
-        this.component.setOrigin(component);
+    public void setParent(Component component) {
+        this.component.setParent(component);
     }
 
     @Override

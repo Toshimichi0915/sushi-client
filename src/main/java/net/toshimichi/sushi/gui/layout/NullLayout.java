@@ -14,7 +14,7 @@ public class NullLayout implements Layout {
     @Override
     public void relocate() {
         for (Component component : target) {
-            component.setOrigin(target);
+            component.setParent(target);
         }
     }
 }

@@ -21,7 +21,7 @@ class FlowDownLayout implements Layout {
         for (Component component : getComponents()) {
             Insets margin = component.getMargin();
             int marginTop = Math.max(marginBottom, margin.getTop());
-            component.setOrigin(target);
+            component.setParent(target);
             component.setX(margin.getLeft());
             component.setY(height + marginTop);
             component.setWidth(target.getWidth() - margin.getLeft() - margin.getRight());

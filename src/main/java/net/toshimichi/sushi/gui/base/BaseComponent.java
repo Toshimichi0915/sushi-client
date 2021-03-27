@@ -109,7 +109,7 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public void setOrigin(Component origin) {
+    public void setParent(Component origin) {
         this.parent = origin;
     }
 
