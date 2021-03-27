@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Mod(modid = "sushi", name = "Sushi Client", version = "1")
@@ -58,17 +59,8 @@ public class SushiMod {
         GsonConfigurations conf = new GsonConfigurations(gson);
         conf.load(object);
         configs.put(file, conf);
-        Theme theme = func.apply(conf);
 
-        if (!file.exists()) {
-            try {
-                FileUtils.writeStringToFile(file, gson.toJson(conf.save()), StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return theme;
+        return func.apply(conf);
     }
 
     @EventHandler
@@ -131,6 +123,13 @@ public class SushiMod {
         if (e.getClient() != null) return;
         try {
             FileUtils.writeStringToFile(modConfigFile, gson.toJson(modConfig), StandardCharsets.UTF_8);
+            for (Map.Entry<File, GsonConfigurations> entry : configs.entrySet()) {
+                try {
+                    FileUtils.writeStringToFile(entry.getKey(), gson.toJson(entry.getValue().save()), StandardCharsets.UTF_8);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }

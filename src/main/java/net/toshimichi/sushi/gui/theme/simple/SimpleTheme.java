@@ -20,10 +20,12 @@ import java.util.Map;
 public class SimpleTheme implements Theme {
 
     private final ThemeConstants constants;
+    private final Configurations configurations;
     private final HashMap<Class<?>, ConfigComponentFactory<?>> factories = new HashMap<>();
 
     public SimpleTheme(Configurations configurations) {
         this.constants = new ThemeConstants(configurations);
+        this.configurations = configurations;
         newFactory(IntRange.class, c -> new SimpleIntRangeComponent(constants, c));
         newFactory(DoubleRange.class, c -> new SimpleDoubleRangeComponent(constants, c));
         newFactory(String.class, c -> new SimpleStringComponent(constants, c));
@@ -46,7 +48,7 @@ public class SimpleTheme implements Theme {
 
     @Override
     public PanelComponent<?> newClickGui(Module caller) {
-        return new SimpleClickGuiComponent(constants, caller);
+        return new SimpleClickGuiComponent(constants, configurations, caller);
     }
 
     @SuppressWarnings("unchecked")
