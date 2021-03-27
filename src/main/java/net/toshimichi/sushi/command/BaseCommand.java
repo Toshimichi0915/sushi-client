@@ -26,7 +26,7 @@ abstract public class BaseCommand implements Command {
         if (args.isEmpty()) {
             String syntax = getSyntax();
             if (syntax == null)
-                return Collections.singletonList(getName());
+                return Collections.emptyList();
             else
                 return Arrays.asList(getSyntax().split("\\s+"));
         }
@@ -35,7 +35,7 @@ abstract public class BaseCommand implements Command {
         if (command == null) return Collections.emptyList();
         List<String> complete = command.complete(args.subList(1, args.size()));
         ArrayList<String> result = new ArrayList<>(complete.size() + 1);
-        result.add(getName());
+        result.add(args.get(0));
         result.addAll(complete);
         return result;
     }

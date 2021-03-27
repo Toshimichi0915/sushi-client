@@ -3,10 +3,9 @@ package net.toshimichi.sushi.command;
 import net.toshimichi.sushi.command.annotation.AnnotationCommand;
 import net.toshimichi.sushi.command.parser.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Commands {
@@ -35,28 +34,68 @@ public class Commands {
         maps.removeIf(map -> map.object.equals(o));
     }
 
-    private static CommandMap getCommandMap(String name, boolean equals) {
-        name = name.toLowerCase();
+    private static CommandMap getCommandMap(String name) {
         for (CommandMap map : maps) {
             for (String alias : map.command.getAliases()) {
-                if (alias.equalsIgnoreCase(name) || (!equals && alias.toLowerCase().startsWith(name))) {
+                if (alias.equalsIgnoreCase(name)) {
                     return map;
                 }
             }
-            if (map.command.getName().equalsIgnoreCase(name) || (!equals && map.command.getName().toLowerCase().startsWith(name)))
+            if (map.command.getName().equalsIgnoreCase(name))
                 return map;
         }
         return null;
     }
 
-    public static List<String> complete(String name, List<String> args) {
-        CommandMap map = getCommandMap(name, false);
-        if (map == null) return Collections.emptyList();
-        return map.command.complete(new ArrayList<>(args));
+    private static String completeCommand(String name) {
+        name = name.toLowerCase();
+        for (CommandMap map : maps) {
+            for (String alias : map.command.getAliases()) {
+                if (alias.toLowerCase().startsWith(name)) {
+                    return alias;
+                }
+            }
+            if (map.command.getName().toLowerCase().startsWith(name))
+                return map.command.getName();
+        }
+        return null;
+    }
+
+    public static String complete(String command) {
+        if (command.isEmpty()) return "";
+        boolean lastEmpty = command.charAt(command.length() - 1) == ' ';
+        List<String> args = Arrays.asList(command.split("\\s+"));
+        String name = args.get(0);
+        args = args.size() > 1 ? args.subList(1, args.size()) : Collections.emptyList();
+        CommandMap map;
+        String commandName;
+        if (lastEmpty) {
+            map = getCommandMap(name);
+            commandName = name;
+        } else {
+            String completedCommand = completeCommand(name);
+            if (completedCommand == null) return "";
+            map = getCommandMap(completedCommand);
+            commandName = completedCommand;
+        }
+        if (map == null) return "";
+
+        List<String> completed = map.command.complete(args);
+        ArrayList<String> list = new ArrayList<>(completed.size() + 1);
+        list.add(commandName);
+        list.addAll(completed);
+        Matcher matcher = Pattern.compile("(\\s+)").matcher(command);
+        StringBuilder builder = new StringBuilder();
+        for (String s : list) {
+            builder.append(s);
+            if (matcher.find()) builder.append(matcher.group());
+            builder.append(' ');
+        }
+        return builder.toString();
     }
 
     public static boolean execute(MessageHandler out, String name, List<String> args) {
-        CommandMap map = getCommandMap(name, true);
+        CommandMap map = getCommandMap(name);
         if (map != null) {
             map.command.execute(out, new ArrayList<>(args));
             return true;
