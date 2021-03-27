@@ -6,7 +6,7 @@ import net.toshimichi.sushi.command.annotation.CommandAlias;
 import net.toshimichi.sushi.command.annotation.Default;
 import net.toshimichi.sushi.modules.Module;
 
-@CommandAlias(value = "toggle", aliases = "t", description = "Toggles a module")
+@CommandAlias(value = "toggle", aliases = "t", description = "Toggles a module", syntax = "<module>")
 public class ToggleCommand {
 
     @Default

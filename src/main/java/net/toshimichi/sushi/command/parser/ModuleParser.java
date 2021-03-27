@@ -16,7 +16,7 @@ public class ModuleParser implements TypeParser<Module> {
             if (!module.getName().equalsIgnoreCase(name) && !module.getId().equalsIgnoreCase(name)) continue;
             return module;
         }
-        return null;
+        throw new ParseException("A module named " + name + " was not found");
     }
 
     @Override
