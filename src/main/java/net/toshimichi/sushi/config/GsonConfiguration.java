@@ -70,4 +70,9 @@ public class GsonConfiguration<T> implements Configuration<T> {
     public void addHandler(Consumer<T> handler) {
         handlers.add(handler);
     }
+
+    @Override
+    public void removeHandler(Consumer<T> handler) {
+        handlers.remove(handler);
+    }
 }

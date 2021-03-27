@@ -20,4 +20,6 @@ public interface Configuration<T> {
     String getCategory();
 
     void addHandler(Consumer<T> handler);
+
+    void removeHandler(Consumer<T> handler);
 }
