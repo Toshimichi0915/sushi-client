@@ -90,10 +90,10 @@ public class AnnotationCommand extends BaseCommand {
         for (Parameter parameter : method.getParameters()) {
             Token token = parameter.getAnnotation(Token.class);
             Stream<TypeParser<?>> stream = parsers.stream()
-                    .filter(p -> p.getType().equals(parameter.getType()))
+                    .filter(p -> parameter.getType().isAssignableFrom(p.getType()))
                     .sorted(Comparator.comparingInt(TypeParser::getPriority));
             if (token != null)
-                stream = stream.filter(p -> p.getType().equals(parameter.getType()));
+                stream = stream.filter(p -> p.getToken().equals(token.value()));
             Optional<TypeParser<?>> parser = stream.findAny();
             if (!parser.isPresent())
                 throw new IllegalArgumentException("No matching parser for method " + method.getDeclaringClass().getCanonicalName() + "#" + method.getName());
