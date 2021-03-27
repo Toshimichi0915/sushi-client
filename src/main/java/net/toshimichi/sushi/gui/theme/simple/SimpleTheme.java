@@ -42,13 +42,13 @@ public class SimpleTheme implements Theme {
     }
 
     @Override
-    public FrameComponent newFrameComponent(Component component) {
-        return new SimpleFrameComponent(constants, component);
+    public FrameComponent<Component> newFrameComponent(Component component) {
+        return new SimpleFrameComponent<>(constants, component);
     }
 
     @Override
     public PanelComponent<?> newClickGui(Module caller) {
-        return new SimpleClickGuiComponent(constants, configurations, caller);
+        return new SimpleClickGuiComponent(constants, this, configurations, caller);
     }
 
     @SuppressWarnings("unchecked")

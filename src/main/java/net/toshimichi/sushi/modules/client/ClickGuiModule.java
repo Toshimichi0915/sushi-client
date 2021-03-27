@@ -2,28 +2,41 @@ package net.toshimichi.sushi.modules.client;
 
 import net.minecraft.client.Minecraft;
 import net.toshimichi.sushi.Sushi;
+import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.GuiUtils;
 import org.lwjgl.input.Keyboard;
 
 public class ClickGuiModule extends BaseModule {
 
+    private final Theme fallbackTheme;
+    private final Configuration<String> theme;
     private ComponentContext<PanelComponent<?>> context;
 
     public ClickGuiModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        fallbackTheme = Sushi.getDefaultTheme();
+        theme = provider.get("theme", "Theme", "ClickGUI Theme", String.class, fallbackTheme.getId());
     }
 
     @Override
     public void onEnable() {
         EventHandlers.register(this);
 
-        PanelComponent<?> component = Sushi.getProfile().getTheme().newClickGui(this);
+        Theme theme = fallbackTheme;
+        for (Theme t : Sushi.getThemes()) {
+            if (t.getId().equalsIgnoreCase(this.theme.getId())) {
+                theme = t;
+                break;
+            }
+        }
+        PanelComponent<?> component = theme.newClickGui(this);
         context = Components.show(component, true);
         GuiUtils.lockGame();
     }

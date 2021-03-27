@@ -3,7 +3,6 @@ package net.toshimichi.sushi;
 import com.google.gson.Gson;
 import net.toshimichi.sushi.command.ChatMessageHandler;
 import net.toshimichi.sushi.command.MessageHandler;
-import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.modules.Categories;
 import net.toshimichi.sushi.modules.GsonCategories;
 import net.toshimichi.sushi.modules.GsonModules;
@@ -49,7 +48,6 @@ public class GsonProfiles implements Profiles {
     }
 
     private class ProfileConfig {
-        String theme;
         char prefix = '.';
 
         void load(File file) {
@@ -57,7 +55,6 @@ public class GsonProfiles implements Profiles {
                 if (!file.exists()) return;
                 String contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 ProfileConfig config = gson.fromJson(contents, ProfileConfig.class);
-                this.theme = config.theme;
                 this.prefix = config.prefix;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -85,14 +82,6 @@ public class GsonProfiles implements Profiles {
             this.config = config;
             this.modules = modules;
             this.categories = categories;
-        }
-
-        @Override
-        public Theme getTheme() {
-            for (Theme t : Sushi.getThemes()) {
-                if (t.getId().equals(config.theme)) return t;
-            }
-            return Sushi.getDefaultTheme();
         }
 
         @Override

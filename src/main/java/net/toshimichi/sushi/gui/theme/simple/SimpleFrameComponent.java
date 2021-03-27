@@ -5,14 +5,14 @@ import net.toshimichi.sushi.gui.EmptyFrameComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.GuiUtils;
 
-public class SimpleFrameComponent extends EmptyFrameComponent {
+public class SimpleFrameComponent<T extends Component> extends EmptyFrameComponent<T> {
 
     private static final int LINE_WIDTH = 1;
     private static final int FRAME_HEIGHT = 20;
-    private final Component component;
+    private final T component;
     private final ThemeConstants constants;
 
-    public SimpleFrameComponent(ThemeConstants constants, Component component) {
+    public SimpleFrameComponent(ThemeConstants constants, T component) {
         super(component);
         this.component = component;
         this.constants = constants;
@@ -39,7 +39,7 @@ public class SimpleFrameComponent extends EmptyFrameComponent {
     }
 
     @Override
-    public Component getValue() {
+    public T getValue() {
         return component;
     }
 
