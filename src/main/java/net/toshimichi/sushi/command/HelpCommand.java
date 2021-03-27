@@ -3,7 +3,7 @@ package net.toshimichi.sushi.command;
 import net.toshimichi.sushi.command.annotation.CommandAlias;
 import net.toshimichi.sushi.command.annotation.Default;
 
-@CommandAlias(value = "help")
+@CommandAlias(value = "help", description = "Show all commands")
 public class HelpCommand {
 
     @Default
