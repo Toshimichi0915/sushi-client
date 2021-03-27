@@ -1,5 +1,9 @@
-package net.toshimichi.sushi.command;
+package net.toshimichi.sushi.command.client;
 
+import net.toshimichi.sushi.command.Command;
+import net.toshimichi.sushi.command.Commands;
+import net.toshimichi.sushi.command.LogLevel;
+import net.toshimichi.sushi.command.MessageHandler;
 import net.toshimichi.sushi.command.annotation.CommandAlias;
 import net.toshimichi.sushi.command.annotation.Default;
 

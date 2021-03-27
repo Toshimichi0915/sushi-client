@@ -8,7 +8,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.toshimichi.sushi.command.Commands;
-import net.toshimichi.sushi.command.HelpCommand;
+import net.toshimichi.sushi.command.client.HelpCommand;
+import net.toshimichi.sushi.command.client.ToggleCommand;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -118,6 +119,7 @@ public class SushiMod {
         EventHandlers.register(this);
 
         Commands.register(new HelpCommand());
+        Commands.register(new ToggleCommand());
     }
 
     @net.toshimichi.sushi.events.EventHandler(timing = EventTiming.PRE)

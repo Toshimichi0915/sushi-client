@@ -1,10 +1,7 @@
 package net.toshimichi.sushi.command;
 
 import net.toshimichi.sushi.command.annotation.AnnotationCommand;
-import net.toshimichi.sushi.command.parser.IntParser;
-import net.toshimichi.sushi.command.parser.MessageHandlerParser;
-import net.toshimichi.sushi.command.parser.StringParser;
-import net.toshimichi.sushi.command.parser.TypeParser;
+import net.toshimichi.sushi.command.parser.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +17,7 @@ public class Commands {
         addTypeParser(new IntParser());
         addTypeParser(new StringParser());
         addTypeParser(new MessageHandlerParser());
+        addTypeParser(new ModuleParser());
     }
 
     public static List<Command> getCommands() {
