@@ -15,7 +15,6 @@ public class CommandHandler {
     @EventHandler(timing = EventTiming.PRE)
     public void onChatSend(ChatSendEvent e) {
         String message = e.getMessage();
-        System.out.println("sent message!: " + message);
         if (message.isEmpty()) return;
         if (message.charAt(0) != Sushi.getProfile().getPrefix()) return;
         e.setCancelled(true);
