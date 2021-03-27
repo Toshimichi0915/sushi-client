@@ -63,7 +63,9 @@ public class AnnotationCommand extends BaseCommand {
             return;
         }
         Stack<String> stack = new Stack<>();
-        stack.addAll(args);
+        ArrayList<String> reversed = new ArrayList<>(args);
+        Collections.reverse(reversed);
+        stack.addAll(reversed);
         Object[] objects = new Object[parsers.length];
         int index = original.size() - args.size();
         for (int i = 0; i < parsers.length; i++) {
@@ -102,7 +104,8 @@ public class AnnotationCommand extends BaseCommand {
         return result;
     }
 
-    public static AnnotationCommand newCommand(Object o, Collection<TypeParser<?>> parsers) {
+    public static AnnotationCommand newCommand(Object o) {
+        Set<TypeParser<?>> parsers = Commands.getTypeParsers();
         Class<?> c = o.getClass();
         CommandAlias alias = c.getAnnotation(CommandAlias.class);
         if (alias == null) return null;

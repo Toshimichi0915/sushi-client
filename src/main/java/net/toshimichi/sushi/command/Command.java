@@ -22,5 +22,7 @@ public interface Command extends SubCommand {
      *
      * @return all sub commands of the command
      */
-    SubCommand[] getSubCommands();
+    default SubCommand[] getSubCommands() {
+        return new SubCommand[0];
+    }
 }

@@ -17,7 +17,9 @@ public interface SubCommand {
      *
      * @return the aliases of this command
      */
-    String[] getAliases();
+    default String[] getAliases() {
+        return new String[0];
+    }
 
     /**
      * Gets the description of this command.

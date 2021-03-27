@@ -23,10 +23,18 @@ public class Commands {
         return maps.stream().map(map -> map.command).collect(Collectors.toList());
     }
 
+    public static Set<TypeParser<?>> getTypeParsers() {
+        return new HashSet<>(parsers);
+    }
+
     public static void register(Object obj) {
-        AnnotationCommand command = AnnotationCommand.newCommand(obj, parsers);
+        AnnotationCommand command = AnnotationCommand.newCommand(obj);
         if (command == null)
             throw new IllegalArgumentException(obj.getClass().getCanonicalName() + " is not valid command handler");
+        maps.add(new CommandMap(obj, command));
+    }
+
+    public static void register(Object obj, Command command) {
         maps.add(new CommandMap(obj, command));
     }
 
