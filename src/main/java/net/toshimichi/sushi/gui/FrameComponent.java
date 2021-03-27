@@ -1,4 +1,4 @@
 package net.toshimichi.sushi.gui;
 
-public interface FrameComponent extends SettingComponent<Component> {
+public interface FrameComponent<T extends Component> extends SettingComponent<T> {
 }

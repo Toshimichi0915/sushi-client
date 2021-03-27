@@ -3,16 +3,16 @@ package net.toshimichi.sushi.gui;
 import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.base.BaseFrameComponent;
 
-public class EmptyFrameComponent extends BaseFrameComponent {
+public class EmptyFrameComponent<T extends Component> extends BaseFrameComponent<T> {
 
-    private final Component component;
+    private final T component;
 
-    public EmptyFrameComponent(Component component) {
+    public EmptyFrameComponent(T component) {
         this.component = component;
     }
 
     @Override
-    public Component getValue() {
+    public T getValue() {
         return component;
     }
 
