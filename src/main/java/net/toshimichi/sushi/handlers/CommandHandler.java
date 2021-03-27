@@ -1,10 +1,11 @@
 package net.toshimichi.sushi.handlers;
 
+import net.minecraft.network.play.client.CPacketChatMessage;
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.command.Commands;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.client.ChatSendEvent;
+import net.toshimichi.sushi.events.packet.PacketSendEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,8 +14,9 @@ import java.util.List;
 public class CommandHandler {
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onChatSend(ChatSendEvent e) {
-        String message = e.getMessage();
+    public void onChatSend(PacketSendEvent e) {
+        if (!(e.getPacket() instanceof CPacketChatMessage)) return;
+        String message = ((CPacketChatMessage) e.getPacket()).getMessage();
         if (message.isEmpty()) return;
         if (message.charAt(0) != Sushi.getProfile().getPrefix()) return;
         e.setCancelled(true);
