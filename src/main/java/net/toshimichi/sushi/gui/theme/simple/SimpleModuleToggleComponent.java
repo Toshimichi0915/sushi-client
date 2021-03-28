@@ -14,9 +14,9 @@ public class SimpleModuleToggleComponent extends SimpleToggleComponent<Module> {
     private final ThemeConstants constants;
     private final Module module;
     private final SimpleModuleComponent parent;
-    private final CollapseComponent component;
+    private final CollapseComponent<?> component;
 
-    public SimpleModuleToggleComponent(ThemeConstants constants, Module module, SimpleModuleComponent parent, CollapseComponent component) {
+    public SimpleModuleToggleComponent(ThemeConstants constants, Module module, SimpleModuleComponent parent, CollapseComponent<?> component) {
         super(constants, module.isEnabled());
         this.constants = constants;
         this.module = module;

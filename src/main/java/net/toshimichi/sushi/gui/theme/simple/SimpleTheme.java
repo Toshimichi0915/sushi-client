@@ -5,6 +5,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.gui.*;
+import net.toshimichi.sushi.gui.hud.HudComponent;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.gui.theme.simple.config.SimpleDoubleRangeComponent;
@@ -42,13 +43,18 @@ public class SimpleTheme implements Theme {
     }
 
     @Override
-    public FrameComponent<Component> newFrameComponent(Component component) {
+    public <T extends Component> FrameComponent<T> newFrameComponent(T component) {
         return new SimpleFrameComponent<>(constants, component);
     }
 
     @Override
     public PanelComponent<?> newClickGui(Module caller) {
         return new SimpleClickGuiComponent(constants, this, configurations, caller);
+    }
+
+    @Override
+    public HudComponent newHudComponent() {
+        return null;
     }
 
     @SuppressWarnings("unchecked")

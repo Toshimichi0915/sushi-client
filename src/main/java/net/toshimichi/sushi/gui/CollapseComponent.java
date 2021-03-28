@@ -3,14 +3,14 @@ package net.toshimichi.sushi.gui;
 import net.minecraft.util.math.MathHelper;
 import net.toshimichi.sushi.utils.GuiUtils;
 
-public class CollapseComponent extends PanelComponent<Component> implements FrameComponent {
+public class CollapseComponent<T extends Component> extends PanelComponent<T> implements FrameComponent<T> {
 
-    private final Component component;
+    private final T component;
     private final CollapseMode mode;
     private int height;
     private double progress;
 
-    public CollapseComponent(Component component, CollapseMode mode) {
+    public CollapseComponent(T component, CollapseMode mode) {
         this.component = component;
         this.mode = mode;
         add(component);
@@ -53,7 +53,7 @@ public class CollapseComponent extends PanelComponent<Component> implements Fram
     }
 
     @Override
-    public Component getValue() {
+    public T getValue() {
         return component;
     }
 }

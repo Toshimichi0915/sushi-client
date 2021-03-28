@@ -26,9 +26,9 @@ public class SimpleCategoryComponent extends PanelComponent<Component> {
         add(new SimpleCategoryHeaderComponent(constants, category, this));
         add(new SimpleModuleListComponent(constants, theme, category));
         x = configurations.get("gui.category." + category.getName().toLowerCase() + ".x",
-                category.getName() + " X", "x coordinates of " + category.getName(), Integer.class, defaultX);
+                category.getName() + " X", "X coordinate of " + category.getName(), Integer.class, defaultX);
         y = configurations.get("gui.category." + category.getName().toLowerCase() + ".y",
-                category.getName() + " Y", "y coordinates of " + category.getName(), Integer.class, defaultY);
+                category.getName() + " Y", "Y coordinate of " + category.getName(), Integer.class, defaultY);
     }
 
     @Override
