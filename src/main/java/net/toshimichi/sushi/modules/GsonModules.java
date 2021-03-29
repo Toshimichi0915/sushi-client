@@ -33,6 +33,7 @@ public class GsonModules implements Modules {
     private final ArrayList<Module> modules = new ArrayList<>();
     private final ArrayList<DefaultModule> defaults = new ArrayList<>();
     private JsonObject root = new JsonObject();
+    private boolean enabled;
 
     public GsonModules(File conf, Categories categories, Gson gson) {
         this.conf = conf;
@@ -156,8 +157,9 @@ public class GsonModules implements Modules {
 
     @Override
     public void enable() {
+        if (enabled) return;
         for (Module module : modules) {
-            if (!(module.getConfigurations() instanceof GsonConfigurations)) return;
+            if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
             JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
             if (object.getAsJsonPrimitive(ENABLED_TAG).getAsBoolean()) module.setEnabled(true);
         }
@@ -165,7 +167,13 @@ public class GsonModules implements Modules {
 
     @Override
     public void disable() {
-        modules.forEach(m -> m.setEnabled(false));
+        if (!enabled) return;
+        for (Module module : modules) {
+            if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
+            JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
+            object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
+            module.setEnabled(false);
+        }
     }
 
     private JsonObject loadJson(String id) {
