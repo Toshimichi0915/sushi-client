@@ -7,6 +7,7 @@ import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.EmptyFrameComponent;
 import net.toshimichi.sushi.gui.Origin;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ConfigHudElementComponent<T extends HudElementComponent> extends EmptyFrameComponent<T> implements HudElementComponent {
@@ -63,33 +64,42 @@ public class ConfigHudElementComponent<T extends HudElementComponent> extends Em
 
     @Override
     public void setX(int x) {
+        if (getX() == x) return;
         super.setX(x);
         this.x.setValue(x);
     }
 
     @Override
     public void setY(int y) {
+        if (getY() == y) return;
         super.setY(y);
         this.y.setValue(y);
     }
 
     @Override
     public void setAnchor(Anchor anchor) {
+        if (getAnchor().equals(anchor)) return;
         super.setAnchor(anchor);
         this.anchor.setValue(anchor);
     }
 
     @Override
     public void setOrigin(Origin origin) {
+        if (getOrigin() == origin) return;
         super.setOrigin(origin);
         this.origin.setValue(origin);
     }
 
     @Override
     public void setParent(Component component) {
-        if (!(component instanceof HudElementComponent)) return;
-        super.setParent(component);
-        parent.setValue(((HudElementComponent) component).getId());
+        if (Objects.equals(getParent(), component)) return;
+        if (component == null) {
+            super.setParent(null);
+            parent.setValue("");
+        } else if (component instanceof HudElementComponent) {
+            super.setParent(component);
+            parent.setValue(((HudElementComponent) component).getId());
+        }
     }
 
     @Override
