@@ -1,9 +1,10 @@
 package net.toshimichi.sushi.gui;
 
 import net.minecraft.util.math.MathHelper;
+import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.utils.GuiUtils;
 
-public class CollapseComponent<T extends Component> extends PanelComponent<T> implements FrameComponent<T> {
+public class CollapseComponent<T extends Component> extends BasePanelComponent<T> implements FrameComponent<T> {
 
     private final T component;
     private final CollapseMode mode;

@@ -4,7 +4,7 @@ import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ConfigComponent;
-import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.gui.theme.Theme;
@@ -14,7 +14,7 @@ import net.toshimichi.sushi.modules.Modules;
 
 import java.util.Arrays;
 
-public class SimpleModuleConfigComponent extends PanelComponent<Component> {
+public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
 
     public SimpleModuleConfigComponent(ThemeConstants constants, Theme theme, Module module) {
         setLayout(new FlowLayout(this, FlowDirection.DOWN));

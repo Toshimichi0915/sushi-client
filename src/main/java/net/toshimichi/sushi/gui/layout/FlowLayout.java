@@ -6,7 +6,7 @@ public class FlowLayout implements Layout {
 
     private final Layout layout;
 
-    public FlowLayout(PanelComponent<?> target, FlowDirection direction) {
+    public FlowLayout(PanelComponent<? extends net.toshimichi.sushi.gui.Component> target, FlowDirection direction) {
         layout = direction.getFactory().apply(target);
     }
 

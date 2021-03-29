@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
-import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.PanelComponent;
@@ -17,7 +16,7 @@ public class ClickGuiModule extends BaseModule {
 
     private final Theme fallbackTheme;
     private final Configuration<String> theme;
-    private ComponentContext<PanelComponent<?>> context;
+    private ComponentContext<PanelComponent<? extends net.toshimichi.sushi.gui.Component>> context;
 
     public ClickGuiModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -27,8 +26,6 @@ public class ClickGuiModule extends BaseModule {
 
     @Override
     public void onEnable() {
-        EventHandlers.register(this);
-
         Theme theme = fallbackTheme;
         for (Theme t : Sushi.getThemes()) {
             if (t.getId().equalsIgnoreCase(this.theme.getId())) {
@@ -37,14 +34,12 @@ public class ClickGuiModule extends BaseModule {
             }
         }
         PanelComponent<?> component = theme.newClickGui(this);
-        context = Components.show(component, true);
+        context = Components.show(component, false);
         GuiUtils.lockGame();
     }
 
     @Override
     public void onDisable() {
-        EventHandlers.register(this);
-
         GuiUtils.unlockGame();
         Minecraft.getMinecraft().setIngameFocus();
         context.close();

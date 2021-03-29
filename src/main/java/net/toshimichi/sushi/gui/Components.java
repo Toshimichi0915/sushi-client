@@ -32,13 +32,17 @@ public class Components {
         return null;
     }
 
-    public static <T extends Component> ComponentContext<T> show(T component, boolean close) {
+    public static <T extends Component> ComponentContext<T> show(T component, boolean close, int index) {
         if (close) closeAll();
         BaseComponentContext<T> context = new BaseComponentContext<>(component);
-        components.add(0, context);
+        components.add(index, context);
         component.setContext(context);
         component.onShow();
         return context;
+    }
+
+    public static <T extends Component> ComponentContext<T> show(T component, boolean close) {
+        return show(component, close, 0);
     }
 
     private static void close(ComponentContext<?> component) {

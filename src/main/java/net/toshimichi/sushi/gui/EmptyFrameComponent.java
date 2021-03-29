@@ -107,6 +107,51 @@ public class EmptyFrameComponent<T extends Component> extends BaseFrameComponent
     }
 
     @Override
+    public Insets getMargin() {
+        return component.getMargin();
+    }
+
+    @Override
+    public void setMargin(Insets margin) {
+        super.setMargin(margin);
+    }
+
+    @Override
+    public Origin getOrigin() {
+        return super.getOrigin();
+    }
+
+    @Override
+    public void setOrigin(Origin origin) {
+        super.setOrigin(origin);
+    }
+
+    @Override
+    public ComponentContext<?> getContext() {
+        return super.getContext();
+    }
+
+    @Override
+    public void setContext(ComponentContext<?> context) {
+        super.setContext(context);
+    }
+
+    @Override
+    public boolean isClosed() {
+        return super.isClosed();
+    }
+
+    @Override
+    public void onShow() {
+        super.onShow();
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+    }
+
+    @Override
     public void onClick(int x, int y, ClickType type) {
         component.onClick(x, y, type);
     }
@@ -114,6 +159,11 @@ public class EmptyFrameComponent<T extends Component> extends BaseFrameComponent
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
         component.onHold(fromX, fromY, toX, toY, type, status);
+    }
+
+    @Override
+    public void onHover(int x, int y) {
+        component.onHover(x, y);
     }
 
     @Override

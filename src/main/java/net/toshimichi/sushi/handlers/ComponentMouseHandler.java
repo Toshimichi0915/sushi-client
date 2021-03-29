@@ -32,6 +32,7 @@ public class ComponentMouseHandler {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onMousePress(MousePressEvent e) {
+        if (!GuiUtils.isGameLocked()) return;
         ClickStatus status = getClickStatus(e.getClickType());
         if (status == null) return;
         status.isClicked = true;
@@ -42,6 +43,7 @@ public class ComponentMouseHandler {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onMouseRelease(MouseReleaseEvent e) {
+        if (!GuiUtils.isGameLocked()) return;
         ClickStatus status = getClickStatus(e.getClickType());
         if (status == null) return;
         status.isClicked = false;
@@ -49,6 +51,7 @@ public class ComponentMouseHandler {
 
     @EventHandler(timing = EventTiming.POST, priority = 500)
     public void onRenderTick(RenderTickEvent e) {
+        if (!GuiUtils.isGameLocked()) return;
         for (ClickType type : ClickType.values()) {
 
             // fetch/update statuses

@@ -3,14 +3,14 @@ package net.toshimichi.sushi.gui.theme.simple;
 import net.toshimichi.sushi.gui.CollapseComponent;
 import net.toshimichi.sushi.gui.CollapseMode;
 import net.toshimichi.sushi.gui.Component;
-import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Module;
 
-public class SimpleModuleComponent extends PanelComponent<Component> {
+public class SimpleModuleComponent extends BasePanelComponent<Component> {
 
     private static final double COLLAPSE_SPEED = 0.1;
 

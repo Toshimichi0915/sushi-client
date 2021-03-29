@@ -2,7 +2,7 @@ package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configurations;
-import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
@@ -10,7 +10,7 @@ import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
 
 
-public class SimpleClickGuiComponent extends PanelComponent<SimpleCategoryComponent> {
+public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryComponent> {
 
     private final ThemeConstants constants;
     private final Theme theme;

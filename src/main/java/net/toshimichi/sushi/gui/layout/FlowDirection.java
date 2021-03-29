@@ -10,13 +10,13 @@ public enum FlowDirection {
     RIGHT(FlowRightLayout::new),
     DOWN(FlowDownLayout::new);
 
-    private final Function<PanelComponent<?>, Layout> factory;
+    private final Function<PanelComponent<? extends net.toshimichi.sushi.gui.Component>, Layout> factory;
 
-    FlowDirection(Function<PanelComponent<?>, Layout> factory) {
+    FlowDirection(Function<PanelComponent<? extends net.toshimichi.sushi.gui.Component>, Layout> factory) {
         this.factory = factory;
     }
 
-    public Function<PanelComponent<?>, Layout> getFactory() {
+    public Function<PanelComponent<? extends net.toshimichi.sushi.gui.Component>, Layout> getFactory() {
         return factory;
     }
 }

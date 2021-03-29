@@ -7,87 +7,108 @@ import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.EmptyFrameComponent;
 import net.toshimichi.sushi.gui.Origin;
 
-public class ConfigHudElementComponent<T extends Component> extends EmptyFrameComponent<T> implements HudElementComponent {
+import java.util.function.Consumer;
 
-    private final String id;
-    private final String name;
+public class ConfigHudElementComponent<T extends HudElementComponent> extends EmptyFrameComponent<T> implements HudElementComponent {
+
     private final HudComponent hud;
     private final Configuration<Integer> x;
     private final Configuration<Integer> y;
     private final Configuration<Anchor> anchor;
     private final Configuration<Origin> origin;
-    private final Configuration<String> parentId;
+    private final Configuration<String> parent;
 
-    public ConfigHudElementComponent(T component, String id, String name, HudComponent hud, Configurations configurations) {
+    private final Consumer<Integer> xHandler = this::setX;
+    private final Consumer<Integer> yHandler = this::setY;
+    private final Consumer<Anchor> anchorHandler = this::setAnchor;
+    private final Consumer<Origin> originHandler = this::setOrigin;
+    private final Consumer<String> parentHandler = this::setParent;
+
+    public ConfigHudElementComponent(T component, HudComponent hud, Configurations configurations) {
         super(component);
-        this.id = id;
-        this.name = name;
+        String id = component.getId();
+        String name = component.getName();
         this.hud = hud;
         this.x = configurations.get("element." + id + ".x", name + " X", "X coordinate of " + name, Integer.class, component.getX());
         this.y = configurations.get("element." + id + ".y", name + " Y", "Y coordinate of " + name, Integer.class, component.getY());
         this.anchor = configurations.get("element." + id + ".anchor", name + " Anchor", "Anchor of " + name, Anchor.class, component.getAnchor());
         this.origin = configurations.get("element." + id + ".origin", name + " Origin", "Origin of " + name, Origin.class, component.getOrigin());
-        this.parentId = configurations.get("element." + id + "parent", name + " Parent", "Parent of " + name, String.class, null);
+        this.parent = configurations.get("element." + id + "parent", name + " Parent", "Parent of " + name, String.class, "");
+        setX(x.getValue());
+        setY(y.getValue());
+        setAnchor(anchor.getValue());
+        setOrigin(origin.getValue());
+        setParent(parent.getValue());
+    }
+
+    private void setParent(String parentId) {
+        if (parentId.isEmpty()) {
+            setParent((Component) null);
+            return;
+        }
+        HudElementComponent element = hud.getHudElementComponent(parentId);
+        if (element == null) return;
+        setParent(element);
     }
 
     @Override
     public String getId() {
-        return id;
+        return getValue().getId();
     }
 
     @Override
     public String getName() {
-        return name;
-    }
-
-    @Override
-    public int getX() {
-        return x.getValue();
-    }
-
-    @Override
-    public int getY() {
-        return y.getValue();
+        return getValue().getName();
     }
 
     @Override
     public void setX(int x) {
+        super.setX(x);
         this.x.setValue(x);
     }
 
     @Override
     public void setY(int y) {
+        super.setY(y);
         this.y.setValue(y);
     }
 
     @Override
-    public Anchor getAnchor() {
-        return anchor.getValue();
-    }
-
-    @Override
     public void setAnchor(Anchor anchor) {
+        super.setAnchor(anchor);
         this.anchor.setValue(anchor);
     }
 
     @Override
-    public Origin getOrigin() {
-        return origin.getValue();
-    }
-
-    @Override
     public void setOrigin(Origin origin) {
+        super.setOrigin(origin);
         this.origin.setValue(origin);
     }
 
     @Override
-    public Component getParent() {
-        return hud.getHudComponent(parentId.getValue());
+    public void setParent(Component component) {
+        if (!(component instanceof HudElementComponent)) return;
+        super.setParent(component);
+        parent.setValue(((HudElementComponent) component).getId());
     }
 
     @Override
-    public void setParent(Component component) {
-        if (!(component instanceof ConfigHudElementComponent)) return;
-        parentId.setValue(((ConfigHudElementComponent<?>) component).getId());
+    public void onShow() {
+        super.onShow();
+        x.addHandler(xHandler);
+        y.addHandler(yHandler);
+        anchor.addHandler(anchorHandler);
+        origin.addHandler(originHandler);
+        parent.addHandler(parentHandler);
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+        x.removeHandler(xHandler);
+        y.removeHandler(yHandler);
+        anchor.removeHandler(anchorHandler);
+        origin.removeHandler(originHandler);
+        parent.removeHandler(parentHandler);
     }
 }

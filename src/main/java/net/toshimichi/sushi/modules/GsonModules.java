@@ -7,6 +7,7 @@ import com.google.gson.JsonPrimitive;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
+import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.player.NoRotateModule;
 import net.toshimichi.sushi.modules.player.SpinModule;
 import net.toshimichi.sushi.modules.player.TimerModule;
@@ -41,11 +42,13 @@ public class GsonModules implements Modules {
         addModuleFactory("clickgui", ClickGuiModule::new);
         addModuleFactory("spin", SpinModule::new);
         addModuleFactory("timer", TimerModule::new);
+        addModuleFactory("hud", HudModule::new);
 
         addDefaultModule("no_rotate", "no_rotate");
         addDefaultModule("clickgui", "clickgui");
         addDefaultModule("spin", "spin");
         addDefaultModule("timer", "timer");
+        addDefaultModule("hud", "hud");
     }
 
     private void addDefaultModule(String id, String factory) {

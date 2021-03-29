@@ -3,7 +3,7 @@ package net.toshimichi.sushi.gui.theme.simple.config;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ConfigComponent;
-import net.toshimichi.sushi.gui.PanelComponent;
+import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
@@ -11,7 +11,7 @@ import net.toshimichi.sushi.gui.theme.simple.SimpleEnumComponent;
 import net.toshimichi.sushi.modules.ActivationType;
 import net.toshimichi.sushi.modules.Keybind;
 
-public class SimpleKeybindComponent extends PanelComponent<Component> implements ConfigComponent<Keybind> {
+public class SimpleKeybindComponent extends BasePanelComponent<Component> implements ConfigComponent<Keybind> {
 
     private final Configuration<Keybind> conf;
     private ActivationType type;
