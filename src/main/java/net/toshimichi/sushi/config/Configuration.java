@@ -19,6 +19,10 @@ public interface Configuration<T> {
 
     String getCategory();
 
+    boolean isTemporary();
+
+    T getDefaultValue();
+
     void addHandler(Consumer<T> handler);
 
     void removeHandler(Consumer<T> handler);
