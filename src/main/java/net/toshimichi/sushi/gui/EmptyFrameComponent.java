@@ -137,11 +137,6 @@ public class EmptyFrameComponent<T extends Component> extends BaseFrameComponent
     }
 
     @Override
-    public boolean isClosed() {
-        return super.isClosed();
-    }
-
-    @Override
     public void onShow() {
         super.onShow();
     }

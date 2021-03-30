@@ -22,8 +22,8 @@ public class SimpleModuleComponent extends BasePanelComponent<Component> {
         this.module = module;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
         configComponent = new CollapseComponent<>(new SimpleModuleConfigComponent(constants, theme, module), CollapseMode.DOWN);
-        add(new SimpleModuleToggleComponent(constants, module, this, configComponent));
-        add(configComponent);
+        add(new SimpleModuleToggleComponent(constants, module, this, configComponent), true);
+        add(configComponent, true);
     }
 
     public boolean isCollapsed() {

@@ -7,7 +7,6 @@ import org.lwjgl.input.Keyboard;
 public class BaseComponent implements Component {
 
     private boolean focused;
-    private boolean closed;
     private Anchor anchor;
     private Origin origin;
     private Component parent;
@@ -16,6 +15,7 @@ public class BaseComponent implements Component {
     private int y;
     private int width;
     private int height;
+    private boolean visible;
     private Insets margin = new Insets(0, 0, 0, 0);
 
     public BaseComponent() {
@@ -134,8 +134,18 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public boolean isClosed() {
-        return closed;
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        boolean currentVisible = this.visible;
+        this.visible = visible;
+        if (!currentVisible && visible)
+            onShow();
+        if (currentVisible && !visible)
+            onClose();
     }
 
     @Override
@@ -178,6 +188,5 @@ public class BaseComponent implements Component {
 
     @Override
     public void onClose() {
-        closed = true;
     }
 }

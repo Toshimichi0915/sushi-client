@@ -37,7 +37,7 @@ public class Components {
         BaseComponentContext<T> context = new BaseComponentContext<>(component);
         components.add(index, context);
         component.setContext(context);
-        component.onShow();
+        component.setVisible(true);
         return context;
     }
 
@@ -46,9 +46,7 @@ public class Components {
     }
 
     private static void close(ComponentContext<?> component) {
-        if (!component.getOrigin().isClosed()) {
-            component.getOrigin().onClose();
-        }
+        component.getOrigin().setVisible(false);
         components.remove(component);
     }
 

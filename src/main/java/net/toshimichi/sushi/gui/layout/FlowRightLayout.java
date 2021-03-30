@@ -19,6 +19,7 @@ class FlowRightLayout implements Layout {
         int width = 0;
         int marginRight = 0;
         for (Component component : getComponents()) {
+            if (!component.isVisible()) continue;
             Insets margin = component.getMargin();
             int marginLeft = Math.max(marginRight, margin.getLeft());
             component.setParent(target);

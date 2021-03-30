@@ -10,4 +10,9 @@ public interface PanelComponent<T extends Component> extends ListComponent<T> {
     Layout getLayout();
 
     void setLayout(Layout layout);
+
+    default void add(T component, boolean visible) {
+        add(component);
+        component.setVisible(visible);
+    }
 }

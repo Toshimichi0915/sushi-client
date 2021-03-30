@@ -60,7 +60,8 @@ public class BasePanelComponent<T extends Component> extends BaseListComponent<T
         ArrayList<T> clone = new ArrayList<>(this);
         Collections.reverse(clone);
         for (T component : clone) {
-            component.onRender();
+            if (component.isVisible())
+                component.onRender();
         }
     }
 
@@ -131,17 +132,11 @@ public class BasePanelComponent<T extends Component> extends BaseListComponent<T
     }
 
     @Override
-    public void onShow() {
-        super.onShow();
-        for (T child : this)
-            child.onShow();
-    }
-
-    @Override
-    public void onClose() {
-        super.onClose();
-        for (T child : this)
-            child.onClose();
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        for (T child : this) {
+            child.setVisible(visible);
+        }
     }
 
     @Override
