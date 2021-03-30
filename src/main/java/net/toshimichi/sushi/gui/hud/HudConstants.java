@@ -10,7 +10,7 @@ public class HudConstants {
     public final Configuration<String> font;
 
     public HudConstants(Configurations c) {
-        textColor = c.get("hud.text_color", "Text Color", null, Color.class, Color.WHITE);
-        font = c.get("hud.font", "Font", null, String.class, "Calibri");
+        textColor = c.get("theme.text_color", "Text Color", null, Color.class, Color.WHITE);
+        font = c.get("theme.font", "Font", null, String.class, "Calibri");
     }
 }

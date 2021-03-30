@@ -33,12 +33,12 @@ public class HudEditComponent extends BaseComponent {
         HudElementComponent component = hud.getTopComponent(fromX, fromY);
         if (component == null) return;
         if (status == MouseStatus.START) {
-            this.holdX = fromX - component.getWindowX();
-            this.holdY = fromY - component.getWindowY();
+            this.holdX = fromX - component.getX();
+            this.holdY = fromY - component.getY();
             return;
         }
-        component.setWindowX(toX - holdX);
-        component.setWindowY(toY - holdY);
+        component.setX(toX - holdX);
+        component.setY(toY - holdY);
     }
 
     @Override

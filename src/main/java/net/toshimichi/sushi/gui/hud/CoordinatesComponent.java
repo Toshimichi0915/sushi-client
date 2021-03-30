@@ -29,8 +29,8 @@ public class CoordinatesComponent extends BaseComponent implements HudElementCom
                 .replace("{z}", FORMATTER.format(player.posZ));
         TextPreview preview = GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, true);
         preview.draw(getWindowX() + 1, getWindowY() + 1);
-        setWidth(preview.getWidth() + 2);
-        setHeight(preview.getHeight() + 3);
+        setWidth(preview.getWidth() + 3);
+        setHeight(preview.getHeight() + 4);
     }
 
     @Override
