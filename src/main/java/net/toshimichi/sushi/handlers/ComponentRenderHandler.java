@@ -16,7 +16,7 @@ public class ComponentRenderHandler {
         List<ComponentContext<?>> components = Components.getAll();
         Collections.reverse(components);
         for (ComponentContext<?> component : components) {
-            if (component.getOrigin() != null)
+            if (component.getOrigin() != null && component.getOrigin().isVisible())
                 component.getOrigin().onRender();
         }
     }
