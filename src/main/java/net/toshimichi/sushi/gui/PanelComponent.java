@@ -7,6 +7,8 @@ public interface PanelComponent<T extends Component> extends ListComponent<T> {
 
     void setFocusedComponent(T component);
 
+    T getTopComponent(int x, int y);
+
     Layout getLayout();
 
     void setLayout(Layout layout);

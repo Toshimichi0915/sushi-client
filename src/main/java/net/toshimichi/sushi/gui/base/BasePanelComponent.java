@@ -43,7 +43,8 @@ public class BasePanelComponent<T extends Component> extends BaseListComponent<T
         }
     }
 
-    private T getTopComponent(int x, int y) {
+    @Override
+    public T getTopComponent(int x, int y) {
         for (T child : this) {
             if (child.getWindowX() > x) continue;
             if (child.getWindowX() + child.getWidth() < x) continue;

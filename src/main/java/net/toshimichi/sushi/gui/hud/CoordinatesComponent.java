@@ -6,6 +6,7 @@ import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.gui.base.BaseComponent;
 import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.TextPreview;
 
 import java.text.DecimalFormat;
 
@@ -26,8 +27,10 @@ public class CoordinatesComponent extends BaseComponent implements HudElementCom
         String text = format.getValue().replace("{x}", FORMATTER.format(player.posX))
                 .replace("{y}", FORMATTER.format(player.posY))
                 .replace("{z}", FORMATTER.format(player.posZ));
-        GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, true)
-                .draw(getWindowX(), getWindowY());
+        TextPreview preview = GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, true);
+        preview.draw(getWindowX() + 1, getWindowY() + 1);
+        setWidth(preview.getWidth() + 2);
+        setHeight(preview.getHeight() + 3);
     }
 
     @Override

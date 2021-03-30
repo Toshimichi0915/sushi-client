@@ -34,7 +34,7 @@ public class ConfigHudElementComponent<T extends HudElementComponent> extends Em
         this.y = configurations.get("element." + id + ".y", name + " Y", "Y coordinate of " + name, Integer.class, component.getY());
         this.anchor = configurations.get("element." + id + ".anchor", name + " Anchor", "Anchor of " + name, Anchor.class, component.getAnchor());
         this.origin = configurations.get("element." + id + ".origin", name + " Origin", "Origin of " + name, Origin.class, component.getOrigin());
-        this.parent = configurations.get("element." + id + "parent", name + " Parent", "Parent of " + name, String.class, "");
+        this.parent = configurations.get("element." + id + ".parent", name + " Parent", "Parent of " + name, String.class, "");
         setX(x.getValue());
         setY(y.getValue());
         setAnchor(anchor.getValue());

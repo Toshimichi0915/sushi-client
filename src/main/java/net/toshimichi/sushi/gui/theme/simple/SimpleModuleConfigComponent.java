@@ -22,7 +22,7 @@ public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
             if (!conf.isValid()) continue;
             ConfigComponent<?> component = theme.newConfigComponent(conf);
             if (component == null) continue;
-            add(component);
+            add(component, true);
         }
         Modules modules = Sushi.getProfile().getModules();
         add(new SipmleClickComponent(constants, "Clone this module", () -> {

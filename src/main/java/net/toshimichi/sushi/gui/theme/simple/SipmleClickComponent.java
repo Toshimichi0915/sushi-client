@@ -12,7 +12,7 @@ public class SipmleClickComponent extends BaseComponent {
     private final ThemeConstants constants;
     private final String text;
     private final Runnable onClick;
-    private boolean clicked;
+    private boolean hold;
     private boolean hover;
 
     public SipmleClickComponent(ThemeConstants constants, String text, Runnable onClick) {
@@ -24,16 +24,15 @@ public class SipmleClickComponent extends BaseComponent {
 
     @Override
     public void onRender() {
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.backgroundColor.getValue());
-        Color textColor;
-        if (clicked) textColor = constants.enabledColor.getValue();
-        else if (hover) textColor = constants.selectedHoverColor.getValue();
-        else textColor = constants.textColor.getValue();
-        GuiUtils.prepareText(text, constants.font.getValue(), textColor, 10, false)
-                .draw(getWindowX() + 1, getWindowY() + 2);
-
+        Color color;
+        if (hover) color = constants.selectedHoverColor.getValue();
+        else if (hold) color = constants.enabledColor.getValue();
+        else color = constants.backgroundColor.getValue();
         hover = false;
-        clicked = false;
+        hold = false;
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
+        GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, false)
+                .draw(getWindowX() + 1, getWindowY() + 2);
     }
 
     @Override
@@ -43,13 +42,13 @@ public class SipmleClickComponent extends BaseComponent {
 
     @Override
     public void onClick(int x, int y, ClickType type) {
-        clicked = true;
+        hold = true;
         onClick.run();
     }
 
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
-        clicked = true;
+        hold = true;
         if (status == MouseStatus.END)
             onClick.run();
     }

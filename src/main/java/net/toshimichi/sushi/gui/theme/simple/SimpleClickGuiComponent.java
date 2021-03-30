@@ -55,7 +55,6 @@ public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryCo
 
     @Override
     public void onClose() {
-        super.onClose();
         module.setEnabled(false);
     }
 }
