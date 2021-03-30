@@ -28,6 +28,7 @@ public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleCo
 
     @Override
     public void onRender() {
+        find();
         if (isEmpty()) setMargin(new Insets(0, 0, 0, 0));
         else setMargin(new Insets(0, 2, 2, 2));
         super.onRender();
