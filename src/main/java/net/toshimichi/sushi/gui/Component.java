@@ -3,6 +3,8 @@ package net.toshimichi.sushi.gui;
 import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.utils.GuiUtils;
 
+import java.util.List;
+
 public interface Component {
     int getX();
 
@@ -95,4 +97,10 @@ public interface Component {
     void onShow();
 
     void onClose();
+
+    void addHandler(ComponentHandler handler);
+
+    void removeHandler(ComponentHandler handler);
+
+    List<ComponentHandler> getHandlers();
 }

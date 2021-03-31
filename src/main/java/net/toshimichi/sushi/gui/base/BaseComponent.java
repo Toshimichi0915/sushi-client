@@ -4,6 +4,9 @@ import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.*;
 import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BaseComponent implements Component {
 
     private boolean focused;
@@ -17,6 +20,7 @@ public class BaseComponent implements Component {
     private int height;
     private boolean visible;
     private Insets margin = new Insets(0, 0, 0, 0);
+    private final ArrayList<ComponentHandler> handlers = new ArrayList<>();
 
     public BaseComponent() {
         this.anchor = Anchor.TOP_LEFT;
@@ -46,11 +50,13 @@ public class BaseComponent implements Component {
     @Override
     public void setX(int x) {
         this.x = x;
+        handlers.forEach(c -> c.setX(x));
     }
 
     @Override
     public void setY(int y) {
         this.y = y;
+        handlers.forEach(c -> c.setY(y));
     }
 
     @Override
@@ -66,11 +72,13 @@ public class BaseComponent implements Component {
     @Override
     public void setWidth(int width) {
         this.width = width;
+        handlers.forEach(c -> c.setWidth(width));
     }
 
     @Override
     public void setHeight(int height) {
         this.height = height;
+        handlers.forEach(c -> c.setHeight(height));
     }
 
     @Override
@@ -81,6 +89,7 @@ public class BaseComponent implements Component {
     @Override
     public void setMargin(Insets margin) {
         this.margin = margin;
+        handlers.forEach(c -> c.setMargin(margin));
     }
 
     @Override
@@ -91,6 +100,7 @@ public class BaseComponent implements Component {
     @Override
     public void setAnchor(Anchor anchor) {
         this.anchor = anchor;
+        handlers.forEach(c -> c.setAnchor(anchor));
     }
 
     @Override
@@ -101,6 +111,7 @@ public class BaseComponent implements Component {
     @Override
     public void setOrigin(Origin origin) {
         this.origin = origin;
+        handlers.forEach(c -> c.setOrigin(origin));
     }
 
     @Override
@@ -109,8 +120,9 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public void setParent(Component origin) {
-        this.parent = origin;
+    public void setParent(Component parent) {
+        this.parent = parent;
+        handlers.forEach(c -> c.setParent(parent));
     }
 
     @Override
@@ -121,6 +133,7 @@ public class BaseComponent implements Component {
     @Override
     public void setContext(ComponentContext<?> context) {
         this.context = context;
+        handlers.forEach(c -> c.setContext(context));
     }
 
     @Override
@@ -131,6 +144,7 @@ public class BaseComponent implements Component {
     @Override
     public void setFocused(boolean focused) {
         this.focused = focused;
+        handlers.forEach(c -> c.setFocused(focused));
     }
 
     @Override
@@ -146,30 +160,37 @@ public class BaseComponent implements Component {
             onShow();
         if (currentVisible && !visible)
             onClose();
+        handlers.forEach(c -> c.setVisible(visible));
     }
 
     @Override
     public void onRender() {
+        handlers.forEach(ComponentHandler::onRender);
     }
 
     @Override
     public void onClick(int x, int y, ClickType type) {
+        handlers.forEach(c -> c.onClick(x, y, type));
     }
 
     @Override
     public void onHover(int x, int y) {
+        handlers.forEach(c -> c.onHover(x, y));
     }
 
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
+        handlers.forEach(c -> c.onHold(fromX, fromY, toX, toY, type, status));
     }
 
     @Override
     public void onScroll(int deltaX, int deltaY, ClickType type) {
+        handlers.forEach(c -> c.onScroll(deltaX, deltaY, type));
     }
 
     @Override
     public boolean onKeyPressed(int keyCode, char key) {
+        handlers.forEach(c -> c.onKeyPressed(keyCode, key));
         return false;
     }
 
@@ -179,14 +200,32 @@ public class BaseComponent implements Component {
             getContext().close();
             return true;
         }
+        handlers.forEach(c -> c.onKeyReleased(keyCode));
         return false;
     }
 
     @Override
     public void onShow() {
+        handlers.forEach(ComponentHandler::onShow);
     }
 
     @Override
     public void onClose() {
+        handlers.forEach(ComponentHandler::onClose);
+    }
+
+    @Override
+    public void addHandler(ComponentHandler handler) {
+        handlers.add(handler);
+    }
+
+    @Override
+    public void removeHandler(ComponentHandler handler) {
+        handlers.remove(handler);
+    }
+
+    @Override
+    public List<ComponentHandler> getHandlers() {
+        return handlers;
     }
 }

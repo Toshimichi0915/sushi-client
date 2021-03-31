@@ -2,8 +2,8 @@ package net.toshimichi.sushi.gui.base;
 
 import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.*;
+import net.toshimichi.sushi.gui.layout.EmptyLayout;
 import net.toshimichi.sushi.gui.layout.Layout;
-import net.toshimichi.sushi.gui.layout.NullLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public class BasePanelComponent<T extends Component> extends BaseListComponent<T> implements PanelComponent<T> {
 
-    private Layout layout = new NullLayout(this);
+    private Layout layout = new EmptyLayout(this);
 
     public BasePanelComponent() {
         super(new ArrayList<>());

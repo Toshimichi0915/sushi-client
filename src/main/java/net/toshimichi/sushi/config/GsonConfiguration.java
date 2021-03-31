@@ -41,8 +41,8 @@ public class GsonConfiguration<T> implements Configuration<T> {
     public void setValue(T value) {
         if (temporary)
             throw new IllegalStateException("Could not set value of temporary configuration: " + id);
-        handlers.forEach(c -> c.accept(value));
         provider.setRawValue(id, value);
+        handlers.forEach(c -> c.accept(value));
     }
 
     @Override

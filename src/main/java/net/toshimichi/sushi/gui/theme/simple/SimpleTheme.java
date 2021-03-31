@@ -4,10 +4,8 @@ import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.config.data.IntRange;
-import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ConfigComponent;
 import net.toshimichi.sushi.gui.ConfigComponentFactory;
-import net.toshimichi.sushi.gui.FrameComponent;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
@@ -41,11 +39,6 @@ public class SimpleTheme implements Theme {
     @Override
     public String getId() {
         return "simple";
-    }
-
-    @Override
-    public <T extends Component> FrameComponent<T> newFrameComponent(T component) {
-        return new SimpleFrameComponent<>(constants, component);
     }
 
     @Override
