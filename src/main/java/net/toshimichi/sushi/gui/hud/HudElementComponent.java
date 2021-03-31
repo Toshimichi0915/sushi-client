@@ -7,4 +7,5 @@ public interface HudElementComponent extends Component {
     String getId();
 
     String getName();
+
 }

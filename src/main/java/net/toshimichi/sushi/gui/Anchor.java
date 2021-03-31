@@ -32,6 +32,10 @@ public class Anchor {
         return y;
     }
 
+    public Anchor getOpposite() {
+        return new Anchor(1 - x, 1 - y);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,8 +1,8 @@
 package net.toshimichi.sushi.gui.hud;
 
 import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
-import net.toshimichi.sushi.gui.layout.NullLayout;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
 
@@ -12,11 +12,13 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
 
     public HudComponent(Configurations conf, Module module) {
         this.module = module;
-        setLayout(new NullLayout());
-
         HudConstants constants = new HudConstants(conf);
-        add(new HotbarHudElementComponent(), true);
+        addVirtual(new HotbarHudElementComponent());
         addElement(new CoordinatesComponent(constants, conf), conf);
+    }
+
+    private void addVirtual(VirtualHudElementComponent component) {
+        add(component, true);
     }
 
     private void addElement(HudElementComponent component, Configurations conf) {
@@ -25,9 +27,10 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
     }
 
     public HudElementComponent getHudElementComponent(String id) {
-        for (HudElementComponent component : this) {
-            if (component.getId().equals(id))
-                return component;
+        for (Component component : this) {
+            if (!(component instanceof HudElementComponent)) continue;
+            if (((HudElementComponent) component).getId().equals(id))
+                return (HudElementComponent) component;
         }
         return null;
     }

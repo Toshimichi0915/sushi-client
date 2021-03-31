@@ -41,12 +41,6 @@ public class ConfigHandler implements ComponentHandler {
         anchorHandler = component::setAnchor;
         originHandler = component::setOrigin;
         parentHandler = this::setParent;
-
-        setX(x.getValue());
-        setY(y.getValue());
-        setAnchor(anchor.getValue());
-        setOrigin(origin.getValue());
-        setParent(parent.getValue());
     }
 
     private void setParent(String parentId) {
@@ -96,6 +90,12 @@ public class ConfigHandler implements ComponentHandler {
 
     @Override
     public void onShow() {
+        component.setX(x.getValue());
+        component.setY(y.getValue());
+        component.setAnchor(anchor.getValue());
+        component.setOrigin(origin.getValue());
+        setParent(parent.getValue());
+
         x.addHandler(xHandler);
         y.addHandler(yHandler);
         anchor.addHandler(anchorHandler);

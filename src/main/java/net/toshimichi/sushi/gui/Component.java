@@ -29,31 +29,31 @@ public interface Component {
     default int getWindowX() {
         int deltaX = getOrigin().isFromRight() ? getWidth() : 0;
         if (getParent() == null)
-            return (int) (getX() + GuiUtils.getWidth() * getAnchor().getX() - deltaX);
-        return (int) (getX() + getParent().getWindowX() + getParent().getWidth() * getAnchor().getX() - deltaX);
+            return (int) (getX() - deltaX + GuiUtils.getWidth() * getAnchor().getX());
+        return (int) (getX() - deltaX + getParent().getWindowX() + getParent().getWidth() * getAnchor().getX());
     }
 
     default int getWindowY() {
         int deltaY = getOrigin().isFromBottom() ? getHeight() : 0;
         if (getParent() == null)
-            return (int) (getY() + GuiUtils.getHeight() * getAnchor().getY() - deltaY);
-        return (int) (getY() + getParent().getWindowY() + getParent().getHeight() * getAnchor().getY() - deltaY);
+            return (int) (getY() - deltaY + GuiUtils.getHeight() * getAnchor().getY());
+        return (int) (getY() - deltaY + getParent().getWindowY() + getParent().getHeight() * getAnchor().getY());
     }
 
     default void setWindowX(int x) {
         int deltaX = getOrigin().isFromRight() ? getWidth() : 0;
         if (getParent() == null)
-            setX((int) (x - deltaX - GuiUtils.getWidth() * getAnchor().getX()));
+            setX((int) (x + deltaX - GuiUtils.getWidth() * getAnchor().getX()));
         else
-            setX((int) (x - -deltaX - getParent().getWindowX() - getParent().getWidth() * getAnchor().getX()));
+            setX((int) (x + deltaX - getParent().getWindowX() - getParent().getWidth() * getAnchor().getX()));
     }
 
     default void setWindowY(int y) {
         int deltaY = getOrigin().isFromBottom() ? getHeight() : 0;
         if (getParent() == null)
-            setY((int) (y - deltaY - GuiUtils.getHeight() * getAnchor().getY()));
+            setY((int) (y + deltaY - GuiUtils.getHeight() * getAnchor().getY()));
         else
-            setY((int) (y - deltaY - getParent().getWindowY() - getParent().getHeight() * getAnchor().getY()));
+            setY((int) (y + deltaY - getParent().getWindowY() - getParent().getHeight() * getAnchor().getY()));
     }
 
     Anchor getAnchor();
