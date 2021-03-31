@@ -34,10 +34,6 @@ public interface ComponentHandler {
     default void setFocused(boolean focused) {
     }
 
-    default void setVisible(boolean visible) {
-    }
-
-
     default void onRender() {
     }
 

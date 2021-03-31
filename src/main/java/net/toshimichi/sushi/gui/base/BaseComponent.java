@@ -160,7 +160,6 @@ public class BaseComponent implements Component {
             onShow();
         if (currentVisible && !visible)
             onClose();
-        handlers.forEach(c -> c.setVisible(visible));
     }
 
     @Override
