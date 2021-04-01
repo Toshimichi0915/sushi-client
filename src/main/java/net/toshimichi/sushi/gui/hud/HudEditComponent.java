@@ -1,10 +1,6 @@
 package net.toshimichi.sushi.gui.hud;
 
-import net.toshimichi.sushi.events.EventHandler;
-import net.toshimichi.sushi.events.EventHandlers;
-import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.gui.Origin;
@@ -95,6 +91,24 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
         return null;
     }
 
+    private void calculateWindowComponent(Component target) {
+        int oldWindowX = target.getWindowX();
+        int oldWindowY = target.getWindowY();
+        boolean left = getCenterWindowX(target) < GuiUtils.getWidth() / 2;
+        boolean top = getCenterWindowY(target) < GuiUtils.getHeight() / 2;
+        Origin origin;
+        if (left && top) origin = Origin.TOP_LEFT;
+        else if (left) origin = Origin.BOTTOM_LEFT;
+        else if (top) origin = Origin.TOP_RIGHT;
+        else origin = Origin.BOTTOM_RIGHT;
+
+        target.setOrigin(origin);
+        target.setAnchor(origin.toAnchor());
+        target.setParent(null);
+        target.setWindowX(oldWindowX);
+        target.setWindowY(oldWindowY);
+    }
+
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
 
@@ -108,6 +122,8 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
             if (this.corner == null) {
                 component.setWindowX(toX - holdX);
                 component.setWindowY(toY - holdY);
+                if (component.getParent() == null)
+                    calculateWindowComponent(component);
             }
         }
 
@@ -120,26 +136,17 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
         } else if (this.corner != null && status == MouseStatus.END || status == MouseStatus.CANCEL) {
             CornerComponent connected = getTopComponent(toX, toY);
             Component target = this.corner.getParent();
-            int oldWindowX = target.getWindowX();
-            int oldWindowY = target.getWindowY();
             if (connected == null) {
-                target.setParent(null);
-                Origin origin;
-                boolean left = getCenterWindowX(target) < GuiUtils.getWidth() / 2;
-                boolean top = getCenterWindowY(target) < GuiUtils.getHeight() / 2;
-                if (left && top) origin = Origin.TOP_LEFT;
-                else if (left) origin = Origin.BOTTOM_LEFT;
-                else if (top) origin = Origin.TOP_RIGHT;
-                else origin = Origin.BOTTOM_RIGHT;
-                target.setOrigin(origin);
-                target.setAnchor(origin.toAnchor().getOpposite());
+                calculateWindowComponent(target);
             } else if (!connected.equals(this.corner)) {
+                int oldWindowX = target.getWindowX();
+                int oldWindowY = target.getWindowY();
                 target.setOrigin(this.corner.getOrigin().getOpposite());
                 target.setAnchor(connected.getAnchor());
                 target.setParent(connected.getParent());
+                target.setWindowX(oldWindowX);
+                target.setWindowY(oldWindowY);
             }
-            target.setWindowX(oldWindowX);
-            target.setWindowY(oldWindowY);
             this.corner = null;
         }
         if (this.corner != null) {
