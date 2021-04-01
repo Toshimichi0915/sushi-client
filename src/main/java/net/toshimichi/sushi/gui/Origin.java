@@ -36,4 +36,12 @@ public enum Origin implements Named {
     public Anchor toAnchor() {
         return anchor;
     }
+
+    public Origin getOpposite() {
+        for (Origin origin : values()) {
+            if (isFromRight() != origin.isFromRight() && isFromBottom() != origin.isFromBottom())
+                return origin;
+        }
+        return null;
+    }
 }
