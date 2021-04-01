@@ -69,6 +69,9 @@ abstract public class SimpleTextComponent extends BaseComponent {
     @Override
     public boolean onKeyReleased(int keyCode) {
         holdKey = 0;
+        if (keyCode == Keyboard.KEY_ESCAPE) {
+            getContext().close();
+        }
         return true;
     }
 
