@@ -23,7 +23,6 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
     private int currentX;
     private int currentY;
     private CornerComponent corner;
-    private int tick;
 
     public HudEditComponent(HudComponent hud) {
         this.hud = hud;
@@ -154,18 +153,11 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
         GuiUtils.lockGame();
         for (HudElementComponent element : hud)
             addCornerComponents(element);
-        EventHandlers.register(this);
     }
 
     @Override
     public void onClose() {
         GuiUtils.unlockGame();
         clear();
-        EventHandlers.unregister(this);
-    }
-
-    @EventHandler(timing = EventTiming.PRE)
-    public void onClientTick(ClientTickEvent e) {
-        tick++;
     }
 }
