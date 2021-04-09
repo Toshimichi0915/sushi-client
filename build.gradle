@@ -73,7 +73,6 @@ mixin {
     add sourceSets.main, 'mixins.sushi.refmap.json'
 }
 
-jar.finalizedBy('reobfJar')
 jar {
     manifest.attributes(
             'Manifest-Version': 1.0,
@@ -99,7 +98,5 @@ shadowJar {
 }
 
 sourceSets {
-    main {
-        output.resourcesDir = output.classesDir
-    }
+    sourceSets -> main
 }

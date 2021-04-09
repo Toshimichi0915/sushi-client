@@ -7,11 +7,15 @@ import org.spongepowered.asm.mixin.Mixins;
 
 import java.util.Map;
 
+@IFMLLoadingPlugin.Name("SushiMixinLoader")
+@IFMLLoadingPlugin.MCVersion("1.12.2")
 public class MixinLoaderForge implements IFMLLoadingPlugin {
+
+    private static boolean isObfuscatedEnvironment = false;
 
     public MixinLoaderForge() {
         MixinBootstrap.init();
-        Mixins.addConfigurations("mixins.sushi.json", "mixins.baritone.json");
+        Mixins.addConfigurations("mixins.sushi.json");
         MixinEnvironment.getDefaultEnvironment().setObfuscationContext("searge");
     }
 
@@ -32,6 +36,7 @@ public class MixinLoaderForge implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
+        isObfuscatedEnvironment = (boolean) data.get("runtimeDeobfuscationEnabled");
     }
 
     @Override

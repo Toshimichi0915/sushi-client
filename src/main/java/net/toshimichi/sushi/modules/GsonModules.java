@@ -8,9 +8,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
-import net.toshimichi.sushi.modules.player.NoRotateModule;
-import net.toshimichi.sushi.modules.player.SpinModule;
-import net.toshimichi.sushi.modules.player.TimerModule;
+import net.toshimichi.sushi.modules.player.*;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -39,16 +37,16 @@ public class GsonModules implements Modules {
         this.conf = conf;
         this.categories = categories;
         this.gson = gson;
-        addModuleFactory("no_rotate", NoRotateModule::new);
         addModuleFactory("clickgui", ClickGuiModule::new);
         addModuleFactory("spin", SpinModule::new);
-        addModuleFactory("timer", TimerModule::new);
+        addModuleFactory("anti_chunkban", AntiChunkBan::new);
+        addModuleFactory("velocity", Velocity::new);
         addModuleFactory("hud", HudModule::new);
 
-        addDefaultModule("no_rotate", "no_rotate");
         addDefaultModule("clickgui", "clickgui");
         addDefaultModule("spin", "spin");
-        addDefaultModule("timer", "timer");
+        addDefaultModule("anti_chunkban", "anti_chunkban");
+        addDefaultModule("velocity", "velocity");
         addDefaultModule("hud", "hud");
     }
 
@@ -158,7 +156,10 @@ public class GsonModules implements Modules {
     @Override
     public void enable() {
         if (enabled) return;
+        enabled = true;
         for (Module module : modules) {
+            if(module.getId().equals("anti_chunkban"))
+                module.setEnabled(true);
             if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
             JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
             if (object.getAsJsonPrimitive(ENABLED_TAG).getAsBoolean()) module.setEnabled(true);
@@ -168,6 +169,7 @@ public class GsonModules implements Modules {
     @Override
     public void disable() {
         if (!enabled) return;
+        enabled = false;
         for (Module module : modules) {
             if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
             JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
