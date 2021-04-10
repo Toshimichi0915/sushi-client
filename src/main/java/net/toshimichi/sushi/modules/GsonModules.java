@@ -145,7 +145,12 @@ public class GsonModules implements Modules {
             for (Map.Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
                 JsonObject moduleJson = entry.getValue().getAsJsonObject();
                 String factoryId = moduleJson.getAsJsonPrimitive(FACTORY_TAG).getAsString();
-                addModule(entry.getKey(), getModuleFactory(factoryId));
+                ModuleFactory factory = getModuleFactory(factoryId);
+                if (factory == null) {
+                    root.remove(entry.getKey());
+                } else {
+                    addModule(entry.getKey(), getModuleFactory(factoryId));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
