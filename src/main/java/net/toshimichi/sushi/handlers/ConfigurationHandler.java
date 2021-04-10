@@ -10,8 +10,8 @@ public class ConfigurationHandler {
     @EventHandler(timing = EventTiming.PRE)
     public void onLoadWorld(WorldLoadEvent e) {
         if (e.getClient() == null) {
-            Sushi.getProfile().save();
             Sushi.getProfile().getModules().disable();
+            Sushi.getProfile().save();
         } else {
             Sushi.getProfile().getModules().enable();
         }

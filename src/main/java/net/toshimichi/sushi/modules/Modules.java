@@ -33,4 +33,6 @@ public interface Modules {
     void enable();
 
     void disable();
+
+    void reload();
 }

@@ -120,7 +120,6 @@ public class GsonModules implements Modules {
                 if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
                 JsonObject obj = ((GsonConfigurations) conf).save();
                 obj.add(FACTORY_TAG, new JsonPrimitive(module.getModuleFactory().getId()));
-                obj.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
                 savedRoot.add(module.getId(), ((GsonConfigurations) conf).save());
             }
             FileUtils.writeStringToFile(conf, gson.toJson(savedRoot), StandardCharsets.UTF_8);
@@ -162,7 +161,9 @@ public class GsonModules implements Modules {
                 module.setEnabled(true);
             if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
             JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
-            if (object.getAsJsonPrimitive(ENABLED_TAG).getAsBoolean()) module.setEnabled(true);
+            JsonPrimitive enabledTag = object.getAsJsonPrimitive(ENABLED_TAG);
+            if (enabledTag != null && enabledTag.getAsBoolean())
+                module.setEnabled(true);
         }
     }
 
@@ -175,6 +176,15 @@ public class GsonModules implements Modules {
             JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
             object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
             module.setEnabled(false);
+        }
+    }
+
+    @Override
+    public void reload() {
+        for (Module module : modules) {
+            if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
+            JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
+            object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
         }
     }
 
