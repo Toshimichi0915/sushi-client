@@ -37,5 +37,15 @@ public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
         }));
         add(new SipmleClickComponent(constants, "Remove this module", () -> modules.removeModule(module.getId())));
         setHeight(16);
+
+        sort((a, b) -> {
+            int aPriority = 1000;
+            int bPriority = 1000;
+            if (a instanceof ConfigComponent)
+                aPriority = ((ConfigComponent<?>) a).getValue().getPriority();
+            if (b instanceof ConfigComponent)
+                bPriority = ((ConfigComponent<?>) b).getValue().getPriority();
+            return Integer.compare(aPriority, bPriority);
+        });
     }
 }

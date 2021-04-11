@@ -31,11 +31,11 @@ public class ConfigHandler implements ComponentHandler {
         String name = component.getName();
         this.component = component;
         this.hud = hud;
-        this.x = configurations.get("element." + id + ".x", name + " X", "X coordinate of " + name, Integer.class, component.getX());
-        this.y = configurations.get("element." + id + ".y", name + " Y", "Y coordinate of " + name, Integer.class, component.getY());
-        this.anchor = configurations.get("element." + id + ".anchor", name + " Anchor", "Anchor of " + name, Anchor.class, component.getAnchor());
-        this.origin = configurations.get("element." + id + ".origin", name + " Origin", "Origin of " + name, Origin.class, component.getOrigin());
-        this.parent = configurations.get("element." + id + ".parent", name + " Parent", "Parent of " + name, String.class, "");
+        this.x = configurations.temp("element." + id + ".x", name + " X", "X coordinate of " + name, Integer.class, component.getX());
+        this.y = configurations.temp("element." + id + ".y", name + " Y", "Y coordinate of " + name, Integer.class, component.getY());
+        this.anchor = configurations.temp("element." + id + ".anchor", name + " Anchor", "Anchor of " + name, Anchor.class, component.getAnchor());
+        this.origin = configurations.temp("element." + id + ".origin", name + " Origin", "Origin of " + name, Origin.class, component.getOrigin());
+        this.parent = configurations.temp("element." + id + ".parent", name + " Parent", "Parent of " + name, String.class, "");
         xHandler = component::setX;
         yHandler = component::setY;
         anchorHandler = component::setAnchor;

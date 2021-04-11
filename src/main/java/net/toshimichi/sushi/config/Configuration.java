@@ -21,6 +21,8 @@ public interface Configuration<T> {
 
     boolean isTemporary();
 
+    int getPriority();
+
     T getDefaultValue();
 
     void addHandler(Consumer<T> handler);

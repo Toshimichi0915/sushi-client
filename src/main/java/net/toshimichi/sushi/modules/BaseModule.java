@@ -23,10 +23,10 @@ abstract public class BaseModule implements Module {
         this.modules = modules;
         this.categories = categories;
         this.factory = factory;
-        this.name = provider.get("name", "Module Name", "Module name", String.class, getDefaultName());
-        this.category = provider.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName());
-        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind());
-        this.isTemporary = provider.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault());
+        this.name = provider.get("name", "Module Name", "Module name", String.class, getDefaultName(), () -> true, null, false, 800);
+        this.category = provider.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName(), () -> true, null, false, 810);
+        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, null, false, 820);
+        this.isTemporary = provider.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, null, false, 830);
     }
 
     @Override

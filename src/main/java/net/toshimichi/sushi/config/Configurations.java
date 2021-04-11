@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public interface Configurations {
-    <T> Configuration<T> get(String id, String name, String description, Class<T> t, T defaultValue, Supplier<Boolean> isValid, String category, boolean temporary);
+    <T> Configuration<T> get(String id, String name, String description, Class<T> t, T defaultValue, Supplier<Boolean> isValid, String category, boolean temporary, int priority);
 
     default <T> Configuration<T> get(String id, String name, String description, Class<T> t, T value) {
-        return get(id, name, description, t, value, () -> true, null, false);
+        return get(id, name, description, t, value, () -> true, null, false, 0);
     }
 
     default <T> Configuration<T> temp(String id, String name, String description, Class<T> t, T defaultValue) {
-        return get(id, name, description, t, defaultValue, () -> true, null, true);
+        return get(id, name, description, t, defaultValue, () -> true, null, true, 0);
     }
 
     List<Configuration<?>> getAll();
