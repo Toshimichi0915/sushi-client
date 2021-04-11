@@ -99,7 +99,10 @@ public class ComponentMouseHandler {
 
                 if (HOLD_DELAY >= status.lastTickMillis - status.clickMillis &&
                         CLICK_THRESHOLD >= MathHelper.sqrt(Math.pow(status.lastX - status.clickX, 2) + Math.pow(status.lastY - status.clickY, 2))) {
-                    component.onHold(status.lastX, status.lastY, status.x, status.y, type, MouseStatus.START);
+                    if (mouseStatus != MouseStatus.END)
+                        component.onHold(status.lastX, status.lastY, status.x, status.y, type, MouseStatus.START);
+                    else
+                        component.onClick(status.x, status.y, type);
                 } else {
                     component.onHold(status.lastX, status.lastY, status.x, status.y, type, mouseStatus);
                 }
