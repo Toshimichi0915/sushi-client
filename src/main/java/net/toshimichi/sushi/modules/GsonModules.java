@@ -164,8 +164,6 @@ public class GsonModules implements Modules {
         if (enabled) return;
         enabled = true;
         for (Module module : modules) {
-            if (module.getId().equals("anti_chunkban"))
-                module.setEnabled(true);
             if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
             JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
             JsonPrimitive enabledTag = object.getAsJsonPrimitive(ENABLED_TAG);
