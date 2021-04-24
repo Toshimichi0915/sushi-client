@@ -40,26 +40,6 @@ public class AntiChunkBan extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onPacketReceive(PacketReceiveEvent e) {
         Packet<?> p = e.getPacket();
-        BlockPos pos = Minecraft.getMinecraft().player.getPosition();
-        if (p instanceof SPacketBlockChange) {
-            SPacketBlockChange c = (SPacketBlockChange) p;
-//            if (c.getBlockPosition().distanceSq(pos) > 20) {
-            e.setCancelled(true);
-//            }
-        } else if (p instanceof SPacketUpdateTileEntity) {
-            SPacketUpdateTileEntity c = (SPacketUpdateTileEntity) p;
-//            if (c.getPos().distanceSq(pos)) {
-            e.setCancelled(true);
-//            }
-        } else if (p instanceof SPacketMultiBlockChange) {
-            e.setCancelled(true);
-        } else if (p instanceof SPacketChunkData) {
-            SPacketChunkData data = (SPacketChunkData) p;
-            Chunk chunk = Minecraft.getMinecraft().world.getChunk(data.getChunkX(), data.getChunkZ());
-            if (chunk.isLoaded())
-                e.setCancelled(true);
-        } else if(p instanceof SPacketBlockAction) {
-            e.setCancelled(true);
-        }
+
     }
 }

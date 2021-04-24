@@ -8,7 +8,9 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
-import net.toshimichi.sushi.modules.player.*;
+import net.toshimichi.sushi.modules.player.AntiChunkBan;
+import net.toshimichi.sushi.modules.player.SpinModule;
+import net.toshimichi.sushi.modules.player.Velocity;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -142,7 +144,7 @@ public class GsonModules implements Modules {
                 root = gson.fromJson(contents, JsonObject.class);
             }
             modules.clear();
-            for (Map.Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
+            for (Map.Entry<String, JsonElement> entry : new HashSet<>(root.getAsJsonObject().entrySet())) {
                 JsonObject moduleJson = entry.getValue().getAsJsonObject();
                 String factoryId = moduleJson.getAsJsonPrimitive(FACTORY_TAG).getAsString();
                 ModuleFactory factory = getModuleFactory(factoryId);
@@ -162,7 +164,7 @@ public class GsonModules implements Modules {
         if (enabled) return;
         enabled = true;
         for (Module module : modules) {
-            if(module.getId().equals("anti_chunkban"))
+            if (module.getId().equals("anti_chunkban"))
                 module.setEnabled(true);
             if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
             JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
