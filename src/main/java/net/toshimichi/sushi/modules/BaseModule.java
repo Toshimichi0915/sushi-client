@@ -114,7 +114,7 @@ abstract public class BaseModule implements Module {
     abstract public String getDefaultName();
 
     public Keybind getDefaultKeybind() {
-        return new Keybind(ActivationType.TOGGLE, 0);
+        return new Keybind(ActivationType.TOGGLE);
     }
 
     abstract public Category getDefaultCategory();
