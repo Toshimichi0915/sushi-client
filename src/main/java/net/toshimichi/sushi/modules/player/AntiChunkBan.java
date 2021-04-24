@@ -1,15 +1,10 @@
 package net.toshimichi.sushi.modules.player;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
+import net.toshimichi.sushi.events.client.UpdateLightEvent;
 import net.toshimichi.sushi.modules.*;
 
 public class AntiChunkBan extends BaseModule {
@@ -38,8 +33,7 @@ public class AntiChunkBan extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onPacketReceive(PacketReceiveEvent e) {
-        Packet<?> p = e.getPacket();
-
+    public void onCheckLight(UpdateLightEvent e) {
+        e.setCancelled(true);
     }
 }
