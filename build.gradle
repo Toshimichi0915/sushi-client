@@ -1,7 +1,5 @@
 buildscript {
     repositories {
-        jcenter()
-        mavenCentral()
         maven { url = 'https://plugins.gradle.org/m2/' }
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
@@ -9,13 +7,11 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'eclipse'
 
 archivesBaseName = 'sushi'
@@ -35,6 +31,10 @@ minecraft {
     }
 }
 
+configurations {
+    included
+}
+
 repositories {
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     maven { url = 'https://impactdevelopment.github.io/maven/' }
@@ -42,7 +42,7 @@ repositories {
 }
 
 dependencies {
-    implementation('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
+    included('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
         exclude module: 'gson'
         exclude module: 'guava'
         exclude module: 'commons-io'
@@ -50,7 +50,7 @@ dependencies {
         exclude module: 'log4j-core'
     }
 
-    implementation('org.reflections:reflections:0.9.12') {
+    included('org.reflections:reflections:0.9.12') {
         exclude module: 'gson'
         exclude module: 'guava'
     }
@@ -59,13 +59,14 @@ dependencies {
         exclude module: 'gson'
     }
 
-    implementation 'cabaletta:baritone-api:1.2'
+    included 'cabaletta:baritone-api:1.2'
     implementation 'com.github.cabaletta:baritone:1.2.14'
-    implementation('org.slick2d:slick2d-core:1.0.2') {
+    included('org.slick2d:slick2d-core:1.0.2') {
         exclude module: 'lwjgl'
     }
-    implementation 'slick-util:slick-util:1.0.0'
+    included 'slick-util:slick-util:1.0.0'
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
+    implementation configurations.included
 }
 
 mixin {
@@ -83,18 +84,11 @@ jar {
             'FMLCorePlugin': 'net.toshimichi.sushi.mixin.MixinLoaderForge',
             'ForceLoadAsMod': 'true'
     )
-}
-
-tasks.build.dependsOn tasks.shadowJar
-shadowJar {
-    dependencies {
-        include(dependency('org.spongepowered:mixin'))
-        include(dependency('org.reflections:reflections'))
-        include(dependency('cabaletta:baritone-api'))
-        include(dependency('org.slick2d:slick2d-core'))
-        include(dependency('slick-util:slick-util'))
+    from {
+        configurations.included.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
     }
-    exclude 'LICENSE.txt'
 }
 
 sourceSets {
