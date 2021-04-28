@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ComponentRenderHandler {
 
-    @EventHandler(timing = {EventTiming.PRE})
+    @EventHandler(timing = EventTiming.POST)
     public void onOverlayRender(OverlayRenderEvent e) {
         List<ComponentContext<?>> components = Components.getAll();
         Collections.reverse(components);
