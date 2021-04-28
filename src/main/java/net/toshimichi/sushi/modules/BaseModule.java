@@ -12,6 +12,7 @@ abstract public class BaseModule implements Module {
     private final Configuration<String> name;
     private final Configuration<String> category;
     private final Configuration<Keybind> keybind;
+    private final Configuration<Boolean> isTemporary;
     private final ModuleFactory factory;
     private boolean isEnabled;
     private boolean isPaused;
@@ -25,6 +26,7 @@ abstract public class BaseModule implements Module {
         this.name = provider.get("name", "Module Name", "Module name", String.class, getDefaultName());
         this.category = provider.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName());
         this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind());
+        this.isTemporary = provider.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault());
     }
 
     @Override
@@ -35,6 +37,11 @@ abstract public class BaseModule implements Module {
     @Override
     public String getName() {
         return name.getValue();
+    }
+
+    @Override
+    public boolean isTemporary() {
+        return isTemporary.getValue();
     }
 
     @Override
@@ -118,4 +125,8 @@ abstract public class BaseModule implements Module {
     }
 
     abstract public Category getDefaultCategory();
+
+    protected boolean isTemporaryByDefault() {
+        return false;
+    }
 }

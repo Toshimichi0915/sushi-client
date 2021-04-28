@@ -25,6 +25,11 @@ public class ClickGuiModule extends BaseModule {
     }
 
     @Override
+    protected boolean isTemporaryByDefault() {
+        return true;
+    }
+
+    @Override
     public void onEnable() {
         Theme theme = fallbackTheme;
         for (Theme t : Sushi.getThemes()) {

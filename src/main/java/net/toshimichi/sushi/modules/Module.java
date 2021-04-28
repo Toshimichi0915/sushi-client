@@ -8,6 +8,8 @@ public interface Module {
 
     String getName();
 
+    boolean isTemporary();
+
     boolean isEnabled();
 
     void setEnabled(boolean enabled);
