@@ -14,7 +14,7 @@ public class HotbarHudElementComponent extends VirtualHudElementComponent {
     }
 
     @Override
-    public void onRender() {
+    public void onRelocate() {
         setWindowX(GuiUtils.getWidth() / 2 - 91);
         setWindowY(GuiUtils.getHeight() - 22);
         setWidth(182);
