@@ -163,6 +163,11 @@ public class BaseComponent implements Component {
     }
 
     @Override
+    public void onRelocate() {
+        handlers.forEach(ComponentHandler::onRelocate);
+    }
+
+    @Override
     public void onRender() {
         handlers.forEach(ComponentHandler::onRender);
     }

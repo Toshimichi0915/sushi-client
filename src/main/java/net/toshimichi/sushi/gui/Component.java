@@ -82,6 +82,8 @@ public interface Component {
 
     void onRender();
 
+    void onRelocate();
+
     void onClick(int x, int y, ClickType type);
 
     void onHover(int x, int y);

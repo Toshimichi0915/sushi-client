@@ -13,9 +13,11 @@ public class EmptyLayout implements Layout {
 
     @Override
     public void relocate() {
-        for (Component component : target) {
-            if (target.isVisible())
-                component.setParent(target);
+        for (Component child : target) {
+            if (target.isVisible()) {
+                child.onRelocate();
+                child.setParent(target);
+            }
         }
     }
 }

@@ -22,10 +22,15 @@ public class SimpleStringComponent extends BasePanelComponent<Component> impleme
         add(new BaseComponent() {
             @Override
             public void onRender() {
-                setHeight(10);
                 GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
                 TextPreview preview = GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), 9, true);
                 preview.draw(getWindowX() + (getWidth() - preview.getWidth()) / 2 - 1, getWindowY() + (getHeight() - preview.getHeight()) / 2 - 1);
+            }
+
+            @Override
+            public void onRelocate() {
+                setHeight(10);
+                super.onRelocate();
             }
         });
         add(new SimpleTextComponent(constants, config.getValue()) {

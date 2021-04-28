@@ -26,6 +26,7 @@ class FlowDownLayout implements Layout {
             component.setX(margin.getLeft());
             component.setY(height + marginTop);
             component.setWidth(target.getWidth() - margin.getLeft() - margin.getRight());
+            component.onRelocate();
             height += component.getHeight() + marginTop;
             marginBottom = margin.getBottom();
         }

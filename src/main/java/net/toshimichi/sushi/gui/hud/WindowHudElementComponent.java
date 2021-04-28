@@ -14,7 +14,7 @@ public class WindowHudElementComponent extends VirtualHudElementComponent {
     }
 
     @Override
-    public void onRender() {
+    public void onRelocate() {
         setWidth(GuiUtils.getWidth());
         setHeight(GuiUtils.getHeight());
     }

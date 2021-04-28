@@ -1,7 +1,6 @@
 package net.toshimichi.sushi.gui.hud;
 
 import net.toshimichi.sushi.config.Configurations;
-import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
@@ -27,19 +26,18 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
     }
 
     public HudElementComponent getHudElementComponent(String id) {
-        for (Component component : this) {
-            if (!(component instanceof HudElementComponent)) continue;
-            if (((HudElementComponent) component).getId().equals(id))
-                return (HudElementComponent) component;
+        for (HudElementComponent component : this) {
+            if (component.getId().equals(id))
+                return component;
         }
         return null;
     }
 
     @Override
-    public void onRender() {
+    public void onRelocate() {
         setWidth(GuiUtils.getWidth());
         setHeight(GuiUtils.getHeight());
-        super.onRender();
+        super.onRelocate();
     }
 
     @Override

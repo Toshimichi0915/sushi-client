@@ -26,6 +26,7 @@ class FlowRightLayout implements Layout {
             component.setX(width + marginLeft);
             component.setY(margin.getTop());
             component.setHeight(target.getHeight() - margin.getTop() - margin.getBottom());
+            component.onRelocate();
             width += component.getHeight() + marginLeft;
             marginRight = margin.getRight();
         }

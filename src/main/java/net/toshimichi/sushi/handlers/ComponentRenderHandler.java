@@ -3,6 +3,7 @@ package net.toshimichi.sushi.handlers;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.OverlayRenderEvent;
+import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
 
@@ -16,8 +17,11 @@ public class ComponentRenderHandler {
         List<ComponentContext<?>> components = Components.getAll();
         Collections.reverse(components);
         for (ComponentContext<?> component : components) {
-            if (component.getOrigin() != null && component.getOrigin().isVisible())
-                component.getOrigin().onRender();
+            Component origin = component.getOrigin();
+            if (origin != null && component.getOrigin().isVisible()) {
+                origin.onRelocate();
+                origin.onRender();
+            }
         }
     }
 }

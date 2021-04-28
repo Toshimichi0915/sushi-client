@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public class BasePanelComponent<T extends Component> extends BaseListComponent<T> implements PanelComponent<T> {
 
-    private Layout layout = new NullLayout();
+    private Layout layout = new NullLayout(this);
 
     public BasePanelComponent() {
         super(new ArrayList<>());
@@ -56,8 +56,12 @@ public class BasePanelComponent<T extends Component> extends BaseListComponent<T
     }
 
     @Override
+    public void onRelocate() {
+        getLayout().relocate();
+    }
+
+    @Override
     public void onRender() {
-        layout.relocate();
         ArrayList<T> clone = new ArrayList<>(this);
         Collections.reverse(clone);
         for (T component : clone) {

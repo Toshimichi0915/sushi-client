@@ -20,7 +20,7 @@ public class KeybindHandler {
     private final ArrayList<Module> heldModules = new ArrayList<>();
 
     private boolean checkKeybind(Module module) {
-        if(module.getKeybind().getKeys().length == 0)
+        if (module.getKeybind().getKeys().length == 0)
             return false;
         int[] keys = heldKeys.toIntArray();
         for (int key : module.getKeybind().getKeys()) {

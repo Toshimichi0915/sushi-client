@@ -35,12 +35,12 @@ public class SimpleModuleComponent extends BasePanelComponent<Component> {
     }
 
     @Override
-    public void onRender() {
+    public void onRelocate() {
         double progress;
         if (collapsed) progress = configComponent.getProgress() + COLLAPSE_SPEED;
         else progress = configComponent.getProgress() - COLLAPSE_SPEED;
         configComponent.setProgress(progress);
-        super.onRender();
+        super.onRelocate();
     }
 
     public Module getModule() {

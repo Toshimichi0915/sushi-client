@@ -36,7 +36,7 @@ public class Velocity extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onPacketReceive(PacketReceiveEvent e) {
-        if(e.getPacket() instanceof SPacketEntityVelocity) {
+        if (e.getPacket() instanceof SPacketEntityVelocity) {
             e.setCancelled(true);
         }
     }

@@ -22,7 +22,6 @@ public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryCo
         this.theme = theme;
         this.configurations = configurations;
         this.module = module;
-        find();
     }
 
     @Override
@@ -33,15 +32,10 @@ public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryCo
     }
 
     @Override
-    public void onRender() {
+    public void onRelocate() {
         setWidth(GuiUtils.getWidth());
         setHeight(GuiUtils.getHeight());
-        find();
 
-        super.onRender();
-    }
-
-    private void find() {
         addCategory:
         for (Category category : Sushi.getProfile().getCategories().getAll()) {
             for (SimpleCategoryComponent component : this) {
@@ -51,6 +45,8 @@ public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryCo
             add(newComponent, true);
             newComponent.setWidth(100);
         }
+
+        super.onRelocate();
     }
 
     @Override

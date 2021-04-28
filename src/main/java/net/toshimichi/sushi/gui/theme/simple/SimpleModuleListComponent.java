@@ -23,18 +23,11 @@ public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleCo
         this.theme = theme;
         this.category = category;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
-        find();
+        onRelocate();
     }
 
     @Override
-    public void onRender() {
-        find();
-        if (isEmpty()) setMargin(new Insets(0, 0, 0, 0));
-        else setMargin(new Insets(0, 2, 2, 2));
-        super.onRender();
-    }
-
-    private void find() {
+    public void onRelocate() {
         addModule:
         for (Module module : Sushi.getProfile().getModules().getModules(category)) {
             for (SimpleModuleComponent component : this) {
@@ -51,6 +44,10 @@ public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleCo
             }
             remove(component);
         }
+        if (isEmpty()) setMargin(new Insets(0, 0, 0, 0));
+        else setMargin(new Insets(0, 2, 2, 2));
+
+        super.onRelocate();
     }
 
     public Category getCategory() {

@@ -37,6 +37,9 @@ public interface ComponentHandler {
     default void onRender() {
     }
 
+    default void onRelocate() {
+    }
+
     default void onClick(int x, int y, ClickType type) {
     }
 

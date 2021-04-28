@@ -4,10 +4,12 @@ import net.toshimichi.sushi.gui.PanelComponent;
 
 public class FlowLayout implements Layout {
 
+    private final PanelComponent<?> target;
     private final Layout layout;
 
-    public FlowLayout(PanelComponent<? extends net.toshimichi.sushi.gui.Component> target, FlowDirection direction) {
-        layout = direction.getFactory().apply(target);
+    public FlowLayout(PanelComponent<?> target, FlowDirection direction) {
+        this.target = target;
+        this.layout = direction.getFactory().apply(target);
     }
 
     @Override

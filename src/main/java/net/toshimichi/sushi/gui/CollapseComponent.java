@@ -37,7 +37,11 @@ public class CollapseComponent<T extends Component> extends BasePanelComponent<T
         GuiUtils.prepareArea(this);
         super.onRender();
         GuiUtils.releaseArea();
+    }
 
+    @Override
+    public void onRelocate() {
+        super.onRelocate();
         setHeight((int) (progress * component.getHeight()));
         if (mode == CollapseMode.UP)
             component.setY(0);
