@@ -1,4 +1,4 @@
-package net.toshimichi.sushi.modules.player;
+package net.toshimichi.sushi.modules.combat;
 
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.toshimichi.sushi.config.Configurations;
@@ -21,7 +21,7 @@ public class Velocity extends BaseModule {
 
     @Override
     public Category getDefaultCategory() {
-        return Category.PLAYER;
+        return Category.COMBAT;
     }
 
     @Override

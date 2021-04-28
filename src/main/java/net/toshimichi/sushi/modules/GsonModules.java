@@ -9,7 +9,7 @@ import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.player.AntiChunkBan;
-import net.toshimichi.sushi.modules.player.Velocity;
+import net.toshimichi.sushi.modules.combat.Velocity;
 import net.toshimichi.sushi.modules.render.FullBright;
 import org.apache.commons.io.FileUtils;
 
