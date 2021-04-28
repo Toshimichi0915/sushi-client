@@ -10,6 +10,7 @@ import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.player.AntiChunkBan;
 import net.toshimichi.sushi.modules.player.Velocity;
+import net.toshimichi.sushi.modules.render.FullBright;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -42,11 +43,13 @@ public class GsonModules implements Modules {
         addModuleFactory("anti_chunkban", AntiChunkBan::new);
         addModuleFactory("velocity", Velocity::new);
         addModuleFactory("hud", HudModule::new);
+        addModuleFactory("fullbright", FullBright::new);
 
         addDefaultModule("clickgui", "clickgui");
         addDefaultModule("anti_chunkban", "anti_chunkban");
         addDefaultModule("velocity", "velocity");
         addDefaultModule("hud", "hud");
+        addDefaultModule("fullbright", "fullbright");
     }
 
     private void addDefaultModule(String id, String factory) {
