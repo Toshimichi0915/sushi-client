@@ -20,7 +20,6 @@ public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
         for (Configuration<?> conf : module.getConfigurations().getAll()) {
             if (!conf.isValid()) continue;
-            if (conf.isTemporary()) continue;
             ConfigComponent<?> component = theme.newConfigComponent(conf);
             if (component == null) continue;
             add(component, true);
