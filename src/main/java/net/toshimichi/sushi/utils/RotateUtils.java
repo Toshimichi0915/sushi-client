@@ -28,9 +28,9 @@ public class RotateUtils {
     }
 
     public static void rotate(float yaw, float pitch) {
-        if(isSync()) {
+        if (isSync()) {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            if(player == null) return;
+            if (player == null) return;
             player.cameraYaw = yaw;
             player.cameraPitch = pitch;
         } else {

@@ -1,7 +1,9 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.Sushi;
+import net.toshimichi.sushi.gui.CollapseMode;
 import net.toshimichi.sushi.gui.Insets;
+import net.toshimichi.sushi.gui.SmoothCollapseComponent;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
@@ -33,8 +35,10 @@ public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleCo
             for (SimpleModuleComponent component : this) {
                 if (component.getModule().equals(module)) continue addModule;
             }
-            SimpleModuleComponent component = new SimpleModuleComponent(constants, theme, module);
-            add(component, true);
+            SmoothCollapseComponent<SimpleModuleConfigComponent> configComponent
+                    = new SmoothCollapseComponent<>(new SimpleModuleConfigComponent(constants, theme, module), CollapseMode.DOWN, 0.1);
+            SimpleModuleToggleComponent component = new SimpleModuleToggleComponent(constants, module, configComponent);
+            add(new SimpleModuleComponent(module, component, configComponent), true);
         }
 
         removeModule:

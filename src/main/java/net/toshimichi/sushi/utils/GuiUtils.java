@@ -6,12 +6,14 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.toshimichi.sushi.gui.Component;
 
 import java.awt.Color;
+import java.util.Stack;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class GuiUtils {
 
     private static boolean locked;
+    private static Stack<Scissor> scissorStack = new Stack<>();
 
     public static void lockGame() {
         if (isGameLocked()) return;
@@ -57,12 +59,16 @@ public class GuiUtils {
     public static void prepareArea(Component component) {
         glPushAttrib(GL_SCISSOR_BIT);
         glEnable(GL_SCISSOR_TEST);
-        glScissor(GuiUtils.toWindowX(component.getWindowX()) - 1, GuiUtils.getWindowHeight() - GuiUtils.toWindowY(component.getWindowY() + component.getHeight()) - 1,
-                GuiUtils.toWindowX(component.getWidth()) + 1, GuiUtils.toWindowY(component.getHeight()) + 1);
+        Scissor scissor = new Scissor(component);
+        if (!scissorStack.isEmpty())
+            scissor = scissor.clip(scissorStack.peek());
+        scissorStack.push(scissor);
+        scissor.scissor();
     }
 
     public static void releaseArea() {
         glPopAttrib();
+        scissorStack.pop();
     }
 
     public static int toWindowX(int x) {
@@ -146,4 +152,36 @@ public class GuiUtils {
         release2D();
     }
 
+    private static class Scissor {
+        final int x;
+        final int y;
+        final int width;
+        final int height;
+
+        Scissor(int x, int y, int width, int height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+
+        Scissor(Component component) {
+            x = GuiUtils.toWindowX(component.getWindowX());
+            y = GuiUtils.getWindowHeight() - GuiUtils.toWindowY(component.getWindowY() + component.getHeight());
+            width = GuiUtils.toWindowX(component.getWidth());
+            height = GuiUtils.toWindowY(component.getHeight());
+        }
+
+        Scissor clip(Scissor scissor) {
+            int newX = Math.max(x, scissor.x);
+            int newY = Math.max(y, scissor.y);
+            int newWidth = Math.max(Math.min(x + width, scissor.x + scissor.width) - newX, 0);
+            int newHeight = Math.max(Math.min(y + height, scissor.y + scissor.height) - newY, 0);
+            return new Scissor(newX, newY, newWidth, newHeight);
+        }
+
+        void scissor() {
+            glScissor(x, y, width, height);
+        }
+    }
 }

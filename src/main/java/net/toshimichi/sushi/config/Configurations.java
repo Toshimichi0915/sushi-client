@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -19,4 +20,14 @@ public interface Configurations {
     ConfigurationCategory getCategory(String id, String name, String description);
 
     List<ConfigurationCategory> getCategories();
+
+    default List<Configuration<?>> getByCategory(ConfigurationCategory category) {
+        ArrayList<Configuration<?>> result = new ArrayList<>();
+        for (Configuration<?> configuration : getAll()) {
+            if ((category == null && configuration.getCategory() == null) ||
+                    (category != null && category.equals(configuration.getCategory())))
+                result.add(configuration);
+        }
+        return result;
+    }
 }

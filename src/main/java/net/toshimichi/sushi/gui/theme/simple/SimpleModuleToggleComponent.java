@@ -1,8 +1,8 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.gui.CollapseComponent;
 import net.toshimichi.sushi.gui.MouseStatus;
+import net.toshimichi.sushi.gui.SmoothCollapseComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
@@ -13,14 +13,12 @@ public class SimpleModuleToggleComponent extends SimpleToggleComponent<Module> {
 
     private final ThemeConstants constants;
     private final Module module;
-    private final SimpleModuleComponent parent;
-    private final CollapseComponent<?> component;
+    private final SmoothCollapseComponent<?> component;
 
-    public SimpleModuleToggleComponent(ThemeConstants constants, Module module, SimpleModuleComponent parent, CollapseComponent<?> component) {
+    public SimpleModuleToggleComponent(ThemeConstants constants, Module module, SmoothCollapseComponent<?> component) {
         super(constants, module.isEnabled());
         this.constants = constants;
         this.module = module;
-        this.parent = parent;
         this.component = component;
         setHeight(16);
     }
@@ -50,14 +48,14 @@ public class SimpleModuleToggleComponent extends SimpleToggleComponent<Module> {
     public void onClick(int x, int y, ClickType type) {
         super.onClick(x, y, type);
         if (type != ClickType.RIGHT) return;
-        parent.setCollapsed(!parent.isCollapsed());
+        component.setCollapsed(!component.isCollapsed());
     }
 
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
         super.onHold(fromX, fromY, toX, toY, type, status);
         if (status != MouseStatus.END || type != ClickType.RIGHT) return;
-        parent.setCollapsed(!parent.isCollapsed());
+        component.setCollapsed(!component.isCollapsed());
     }
 
     @Override
