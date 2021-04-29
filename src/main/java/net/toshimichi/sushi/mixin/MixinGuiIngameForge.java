@@ -13,12 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinGuiIngameForge {
 
     @Inject(at = @At("HEAD"), method = "renderGameOverlay")
-    public void onRenderGameOverlayHead(float partialTicks, CallbackInfo info) {
+    public void onPreRenderGameOverlay(float partialTicks, CallbackInfo info) {
         EventHandlers.callEvent(new OverlayRenderEvent(EventTiming.PRE));
     }
 
     @Inject(at = @At("TAIL"), method = "renderGameOverlay")
-    public void onRenderGameOverlayTail(float partialTicks, CallbackInfo info) {
+    public void onPostRenderGameOverlay(float partialTicks, CallbackInfo info) {
         EventHandlers.callEvent(new OverlayRenderEvent(EventTiming.POST));
     }
 }

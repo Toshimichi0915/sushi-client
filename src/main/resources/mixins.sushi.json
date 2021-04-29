@@ -9,5 +9,8 @@
     "MixinMinecraft",
     "MixinNetworkManager",
     "MixinWorld"
+  ],
+  "mixins": [
+    "MixinEntityPlayerSP"
   ]
 }

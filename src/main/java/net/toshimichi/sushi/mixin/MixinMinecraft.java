@@ -21,32 +21,32 @@ public class MixinMinecraft {
     }
 
     @Inject(at = @At("HEAD"), method = "setIngameFocus", cancellable = true)
-    public void onFocusHead(CallbackInfo info) {
+    public void onPreFocus(CallbackInfo info) {
         if (callGameFocusEvent(EventTiming.PRE, true)) info.cancel();
     }
 
     @Inject(at = @At("HEAD"), method = "setIngameNotInFocus", cancellable = true)
-    public void onNotInFocusHead(CallbackInfo info) {
+    public void onPreNotInFocus(CallbackInfo info) {
         if (callGameFocusEvent(EventTiming.PRE, false)) info.cancel();
     }
 
-    @Inject(at = @At("TAIL"), method = "setIngameFocus", cancellable = true)
-    public void onFocusTail(CallbackInfo info) {
-        if (callGameFocusEvent(EventTiming.POST, true)) info.cancel();
+    @Inject(at = @At("TAIL"), method = "setIngameFocus")
+    public void onPostFocus(CallbackInfo info) {
+        callGameFocusEvent(EventTiming.POST, true);
     }
 
-    @Inject(at = @At("TAIL"), method = "setIngameNotInFocus", cancellable = true)
-    public void onNotInFocusTail(CallbackInfo info) {
-        if (callGameFocusEvent(EventTiming.POST, false)) info.cancel();
+    @Inject(at = @At("TAIL"), method = "setIngameNotInFocus")
+    public void onPostNotInFocus(CallbackInfo info) {
+        callGameFocusEvent(EventTiming.POST, false);
     }
 
     @Inject(at = @At("HEAD"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;)V")
-    public void onLoadWorldHead(WorldClient client, CallbackInfo info) {
+    public void onPreLoadWorld(WorldClient client, CallbackInfo info) {
         EventHandlers.callEvent(new WorldLoadEvent(EventTiming.PRE, client));
     }
 
     @Inject(at = @At("TAIL"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;)V")
-    public void onLoadWorldTail(WorldClient client, CallbackInfo info) {
+    public void onPostLoadWorld(WorldClient client, CallbackInfo info) {
         EventHandlers.callEvent(new WorldLoadEvent(EventTiming.POST, client));
     }
 }

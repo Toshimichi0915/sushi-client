@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(World.class)
 public class MixinWorld {
     @Inject(at = @At("HEAD"), method = "checkLightFor", cancellable = true)
-    public void onCheckLightForHead(EnumSkyBlock lightType, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    public void onPreCheckLightFor(EnumSkyBlock lightType, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         UpdateLightEvent event = new UpdateLightEvent(EventTiming.PRE, lightType, pos);
         EventHandlers.callEvent(event);
         if (event.isCancelled()) {
@@ -23,8 +23,8 @@ public class MixinWorld {
         }
     }
 
-    @Inject(at = @At("TAIL"), method = "checkLightFor", cancellable = true)
-    public void onCheckLightForTail(EnumSkyBlock lightType, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(at = @At("TAIL"), method = "checkLightFor")
+    public void onPostCheckLightFor(EnumSkyBlock lightType, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         UpdateLightEvent event = new UpdateLightEvent(EventTiming.POST, lightType, pos);
         EventHandlers.callEvent(event);
     }
