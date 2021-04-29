@@ -40,18 +40,18 @@ public class GsonModules implements Modules {
         this.conf = conf;
         this.categories = categories;
         this.gson = gson;
-        addModuleFactory("clickgui", ClickGuiModule::new);
+        addModuleFactory("click_gui", ClickGuiModule::new);
         addModuleFactory("no_render", NoRender::new);
         addModuleFactory("velocity", Velocity::new);
         addModuleFactory("hud", HudModule::new);
-        addModuleFactory("fullbright", FullBright::new);
+        addModuleFactory("full_bright", FullBright::new);
         addModuleFactory("sprint", Sprint::new);
 
-        addDefaultModule("clickgui", "clickgui");
+        addDefaultModule("click_gui", "click_gui");
         addDefaultModule("no_render", "no_render");
         addDefaultModule("velocity", "velocity");
         addDefaultModule("hud", "hud");
-        addDefaultModule("fullbright", "fullbright");
+        addDefaultModule("full_bright", "full_bright");
         addDefaultModule("sprint", "sprint");
     }
 
