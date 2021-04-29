@@ -28,8 +28,15 @@ public class RotateUtils {
     }
 
     public static void rotate(float yaw, float pitch) {
-        RotateUtils.yaw = MathHelper.wrapDegrees(yaw);
-        RotateUtils.pitch = MathHelper.wrapDegrees(pitch);
+        if(isSync()) {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            if(player == null) return;
+            player.cameraYaw = yaw;
+            player.cameraPitch = pitch;
+        } else {
+            RotateUtils.yaw = MathHelper.wrapDegrees(yaw);
+            RotateUtils.pitch = MathHelper.wrapDegrees(pitch);
+        }
     }
 
     public static void rotate(Vec3d loc) {
