@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.modules.combat;
 
 import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.network.play.server.SPacketExplosion;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -38,6 +39,9 @@ public class Velocity extends BaseModule {
     public void onPacketReceive(PacketReceiveEvent e) {
         if (e.getPacket() instanceof SPacketEntityVelocity) {
             e.setCancelled(true);
+        } else if (e.getPacket() instanceof SPacketExplosion) {
+            SPacketExplosion packet = (SPacketExplosion) e.getPacket();
+            e.setPacket(new SPacketExplosion(packet.getX(), packet.getY(), packet.getZ(), packet.getStrength(), packet.getAffectedBlockPositions(), null));
         }
     }
 }

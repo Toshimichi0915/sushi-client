@@ -32,11 +32,19 @@ public abstract class MixinNetworkManager {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "channelRead0", cancellable = true)
-    public void onReceivePacket(ChannelHandlerContext context, Packet<?> packet, CallbackInfo info) {
+    @ModifyVariable(at = @At(value = "HEAD", ordinal = 0), method = "channelRead0")
+    public Packet<?> onReceivePacketModify(Packet<?> packet) {
         PacketReceiveEvent event = new PacketReceiveEvent(packet);
         EventHandlers.callEvent(event);
-        if (event.isCancelled()) {
+        if (event.isCancelled())
+            return null;
+        else
+            return event.getPacket();
+    }
+
+    @Inject(at = @At("HEAD"), method = "channelRead0", cancellable = true)
+    public void onReceivePacket(ChannelHandlerContext context, Packet<?> packet, CallbackInfo info) {
+        if (packet == null) {
             info.cancel();
         }
     }
