@@ -25,7 +25,7 @@ public class GsonConfigurations implements Configurations {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Configuration<T> get(String id, String name, String description, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, String category, boolean temporary, int priority) {
+    public <T> Configuration<T> get(String id, String name, String description, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, ConfigurationCategory category, boolean temporary, int priority) {
         if (!temporary)
             defaults.put(id, defaultValue);
         for (GsonConfiguration<?> loaded : list) {
@@ -46,7 +46,7 @@ public class GsonConfigurations implements Configurations {
     }
 
     @Override
-    public ConfigurationCategory newCategory(String id, String name, String description) {
+    public ConfigurationCategory getCategory(String id, String name, String description) {
         GsonConfigurationCategory category = new GsonConfigurationCategory(id, name, description);
         categories.add(category);
         return category;

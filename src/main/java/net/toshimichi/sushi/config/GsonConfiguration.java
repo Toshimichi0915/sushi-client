@@ -14,11 +14,11 @@ public class GsonConfiguration<T> implements Configuration<T> {
     private final GsonConfigurations provider;
     private final Supplier<Boolean> isValid;
     private final int priority;
-    private final String parent;
+    private final ConfigurationCategory category;
     private final boolean temporary;
     private final ArrayList<Consumer<T>> handlers = new ArrayList<>();
 
-    public GsonConfiguration(String id, String name, String description, Class<T> tClass, T defaultValue, GsonConfigurations provider, Supplier<Boolean> isValid, String parent, boolean temporary, int priority) {
+    public GsonConfiguration(String id, String name, String description, Class<T> tClass, T defaultValue, GsonConfigurations provider, Supplier<Boolean> isValid, ConfigurationCategory category, boolean temporary, int priority) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -26,7 +26,7 @@ public class GsonConfiguration<T> implements Configuration<T> {
         this.defaultValue = defaultValue;
         this.provider = provider;
         this.isValid = isValid;
-        this.parent = parent;
+        this.category = category;
         this.temporary = temporary;
         this.priority = priority;
     }
@@ -73,8 +73,8 @@ public class GsonConfiguration<T> implements Configuration<T> {
     }
 
     @Override
-    public String getCategory() {
-        return parent;
+    public ConfigurationCategory getCategory() {
+        return category;
     }
 
     @Override

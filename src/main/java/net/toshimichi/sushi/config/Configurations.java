@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public interface Configurations {
-    <T> Configuration<T> get(String id, String name, String description, Class<T> t, T defaultValue, Supplier<Boolean> isValid, String category, boolean temporary, int priority);
+    <T> Configuration<T> get(String id, String name, String description, Class<T> t, T defaultValue, Supplier<Boolean> isValid, ConfigurationCategory category, boolean temporary, int priority);
 
     default <T> Configuration<T> get(String id, String name, String description, Class<T> t, T value) {
         return get(id, name, description, t, value, () -> true, null, false, 0);
@@ -16,7 +16,7 @@ public interface Configurations {
 
     List<Configuration<?>> getAll();
 
-    ConfigurationCategory newCategory(String id, String name, String description);
+    ConfigurationCategory getCategory(String id, String name, String description);
 
     List<ConfigurationCategory> getCategories();
 }

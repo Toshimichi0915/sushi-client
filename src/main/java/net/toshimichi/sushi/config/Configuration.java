@@ -17,7 +17,7 @@ public interface Configuration<T> {
 
     boolean isValid();
 
-    String getCategory();
+    ConfigurationCategory getCategory();
 
     boolean isTemporary();
 
