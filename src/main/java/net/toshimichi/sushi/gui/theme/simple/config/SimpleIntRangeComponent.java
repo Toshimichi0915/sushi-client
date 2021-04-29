@@ -18,6 +18,7 @@ public class SimpleIntRangeComponent extends SimpleBarComponent implements Confi
         super(constants, (double) (config.getValue().getCurrent() - config.getValue().getBottom()) / (config.getValue().getTop() - config.getValue().getBottom()));
         this.config = config;
         this.constants = constants;
+        setHeight(14);
     }
 
     @Override
