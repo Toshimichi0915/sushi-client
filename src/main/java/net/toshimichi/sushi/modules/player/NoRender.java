@@ -1,5 +1,7 @@
 package net.toshimichi.sushi.modules.player;
 
+import net.minecraft.world.EnumSkyBlock;
+import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -7,9 +9,15 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.UpdateLightEvent;
 import net.toshimichi.sushi.modules.*;
 
-public class AntiChunkBan extends BaseModule {
-    public AntiChunkBan(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+public class NoRender extends BaseModule {
+
+    private final Configuration<Boolean> skyLight;
+    private final Configuration<Boolean> blockLight;
+
+    public NoRender(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        skyLight = provider.get("sky_light", "Sky Light", null, Boolean.class, false);
+        blockLight = provider.get("block_light", "Block Light", null, Boolean.class, false);
     }
 
     @Override
@@ -24,7 +32,7 @@ public class AntiChunkBan extends BaseModule {
 
     @Override
     public String getDefaultName() {
-        return "AntiChunkBan";
+        return "NoRender";
     }
 
     @Override
@@ -34,6 +42,8 @@ public class AntiChunkBan extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onCheckLight(UpdateLightEvent e) {
-        e.setCancelled(true);
+        if ((skyLight.getValue() && e.getEnumSkyBlock() == EnumSkyBlock.SKY) ||
+                (blockLight.getValue() && e.getEnumSkyBlock() == EnumSkyBlock.BLOCK))
+            e.setCancelled(true);
     }
 }

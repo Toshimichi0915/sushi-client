@@ -10,7 +10,7 @@ import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.combat.Velocity;
 import net.toshimichi.sushi.modules.movement.Sprint;
-import net.toshimichi.sushi.modules.player.AntiChunkBan;
+import net.toshimichi.sushi.modules.player.NoRender;
 import net.toshimichi.sushi.modules.render.FullBright;
 import org.apache.commons.io.FileUtils;
 
@@ -41,14 +41,14 @@ public class GsonModules implements Modules {
         this.categories = categories;
         this.gson = gson;
         addModuleFactory("clickgui", ClickGuiModule::new);
-        addModuleFactory("anti_chunkban", AntiChunkBan::new);
+        addModuleFactory("no_render", NoRender::new);
         addModuleFactory("velocity", Velocity::new);
         addModuleFactory("hud", HudModule::new);
         addModuleFactory("fullbright", FullBright::new);
         addModuleFactory("sprint", Sprint::new);
 
         addDefaultModule("clickgui", "clickgui");
-        addDefaultModule("anti_chunkban", "anti_chunkban");
+        addDefaultModule("no_render", "no_render");
         addDefaultModule("velocity", "velocity");
         addDefaultModule("hud", "hud");
         addDefaultModule("fullbright", "fullbright");

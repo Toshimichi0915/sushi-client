@@ -3,7 +3,6 @@ package net.toshimichi.sushi.events.player;
 import net.minecraft.entity.MoverType;
 import net.toshimichi.sushi.events.CancellableEvent;
 import net.toshimichi.sushi.events.EventTiming;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public class PlayerMoveEvent extends CancellableEvent {
     private final MoverType type;

@@ -18,7 +18,7 @@ public class MixinEntityPlayerSP {
     public void onPreMove(MoverType type, double x, double y, double z, CallbackInfo ci) {
         PlayerMoveEvent event = new PlayerMoveEvent(type, x, y, z);
         EventHandlers.callEvent(event);
-        if(event.isCancelled())
+        if (event.isCancelled())
             ci.cancel();
     }
 
@@ -28,14 +28,15 @@ public class MixinEntityPlayerSP {
         EventHandlers.callEvent(event);
     }
 
-    @Inject(at = @At("HEAD"), method  = "onUpdateWalkingPlayer", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "onUpdateWalkingPlayer", cancellable = true)
     public void onPreUpdateWalkingPlayer(CallbackInfo ci) {
         PlayerMotionUpdateEvent event = new PlayerMotionUpdateEvent(EventTiming.PRE);
         EventHandlers.callEvent(event);
-        if(event.isCancelled())
+        if (event.isCancelled())
             ci.cancel();
     }
-    @Inject(at = @At("TAIL"), method  = "onUpdateWalkingPlayer")
+
+    @Inject(at = @At("TAIL"), method = "onUpdateWalkingPlayer")
     public void onPostUpdateWalkingPlayer(CallbackInfo ci) {
         PlayerMotionUpdateEvent event = new PlayerMotionUpdateEvent(EventTiming.POST);
         EventHandlers.callEvent(event);
