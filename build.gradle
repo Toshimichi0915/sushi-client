@@ -38,7 +38,7 @@ configurations {
 repositories {
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     maven { url = 'https://impactdevelopment.github.io/maven/' }
-    maven { url = "https://jitpack.io" }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
@@ -64,7 +64,6 @@ dependencies {
     included('org.slick2d:slick2d-core:1.0.2') {
         exclude module: 'lwjgl'
     }
-    included 'slick-util:slick-util:1.0.0'
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
     implementation configurations.included
 }
