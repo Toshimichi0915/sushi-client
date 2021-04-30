@@ -25,9 +25,9 @@ public class SimpleClickComponent extends BaseComponent {
     @Override
     public void onRender() {
         Color color;
-        if (hover) color = constants.selectedHoverColor.getValue();
+        if (hover) color = constants.unselectedHoverColor.getValue();
         else if (hold) color = constants.enabledColor.getValue();
-        else color = constants.backgroundColor.getValue();
+        else color = constants.disabledColor.getValue();
         hover = false;
         hold = false;
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
