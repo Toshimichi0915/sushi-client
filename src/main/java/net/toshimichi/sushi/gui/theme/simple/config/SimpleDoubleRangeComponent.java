@@ -23,8 +23,8 @@ public class SimpleDoubleRangeComponent extends SimpleBarComponent implements Co
     @Override
     public void onRender() {
         super.onRender();
-        GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), 9, true).draw(getWindowX() + 1, getWindowY() + 2);
-        TextPreview preview = GuiUtils.prepareText(String.format("%." + config.getValue().getDigits() + "f", config.getValue().getCurrent()), constants.font.getValue(), constants.textColor.getValue(), 9, true);
+        GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true).draw(getWindowX() + 1, getWindowY() + 2);
+        TextPreview preview = GuiUtils.prepareText(String.format("%." + config.getValue().getDigits() + "f", config.getValue().getCurrent()), constants.font.getValue(), constants.textColor.getValue(), 10, true);
         preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 2);
     }
 

@@ -24,7 +24,7 @@ public class SimpleConfigCategoryComponent extends BaseSettingComponent<Configur
         this.configCategory = configCategory;
         this.component = component;
         setHeight(16);
-        setMargin(new Insets(0, 2, 0, 2));
+        setMargin(new Insets(2, 2, 2, 2));
     }
 
     @Override

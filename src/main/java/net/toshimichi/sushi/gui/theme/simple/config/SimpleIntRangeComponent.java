@@ -24,8 +24,8 @@ public class SimpleIntRangeComponent extends SimpleBarComponent implements Confi
     @Override
     public void onRender() {
         super.onRender();
-        GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), 9, true).draw(getWindowX() + 1, getWindowY() + 2);
-        TextPreview preview = GuiUtils.prepareText(Integer.toString(config.getValue().getCurrent()), constants.font.getValue(), constants.textColor.getValue(), 9, true);
+        GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true).draw(getWindowX() + 1, getWindowY() + 2);
+        TextPreview preview = GuiUtils.prepareText(Integer.toString(config.getValue().getCurrent()), constants.font.getValue(), constants.textColor.getValue(), 10, true);
         preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 2);
     }
 

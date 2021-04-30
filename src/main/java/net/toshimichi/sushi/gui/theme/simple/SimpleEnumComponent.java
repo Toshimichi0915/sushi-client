@@ -8,6 +8,7 @@ import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.GuiUtils;
 import net.toshimichi.sushi.utils.TextPreview;
 
+import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
@@ -17,6 +18,7 @@ public class SimpleEnumComponent<T extends Named> extends BaseComponent {
     private final String text;
     private final T[] values;
     private int counter;
+    private boolean hover;
 
     public SimpleEnumComponent(ThemeConstants constants, String text, T init, Class<T> tClass) {
         this.constants = constants;
@@ -39,11 +41,15 @@ public class SimpleEnumComponent<T extends Named> extends BaseComponent {
 
     @Override
     public void onRender() {
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.backgroundColor.getValue());
-        GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 9, true)
+        Color color;
+        if (hover) color = constants.unselectedHoverColor.getValue();
+        else color = constants.disabledColor.getValue();
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
+        GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, false)
                 .draw(getWindowX() + 1, getWindowY() + 2);
-        TextPreview preview = GuiUtils.prepareText(getNamed(counter).getName(), constants.font.getValue(), constants.textColor.getValue(), 9, true);
+        TextPreview preview = GuiUtils.prepareText(getNamed(counter).getName(), constants.font.getValue(), constants.textColor.getValue(), 9, false);
         preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 2);
+        hover = false;
     }
 
     @Override
@@ -57,6 +63,11 @@ public class SimpleEnumComponent<T extends Named> extends BaseComponent {
         if (status != MouseStatus.END) return;
         onChange(getNamed(counter + 1));
         counter++;
+    }
+
+    @Override
+    public void onHover(int x, int y) {
+        hover = true;
     }
 
     private T getNamed(int counter) {

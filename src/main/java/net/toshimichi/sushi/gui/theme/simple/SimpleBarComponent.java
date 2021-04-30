@@ -7,10 +7,13 @@ import net.toshimichi.sushi.gui.base.BaseComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.GuiUtils;
 
+import java.awt.Color;
+
 abstract public class SimpleBarComponent extends BaseComponent {
 
     private final ThemeConstants constants;
     private double progress;
+    private boolean hover;
 
     public SimpleBarComponent(ThemeConstants constants, double progress) {
         this.constants = constants;
@@ -29,8 +32,12 @@ abstract public class SimpleBarComponent extends BaseComponent {
 
     @Override
     public void onRender() {
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.barBackgroundColor.getValue());
+        Color color;
+        if (hover) color = constants.unselectedHoverColor.getValue();
+        else color = constants.disabledColor.getValue();
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
         GuiUtils.drawRect(getWindowX(), getWindowY(), (int) (getWidth() * progress), getHeight(), constants.barColor.getValue());
+        hover = false;
     }
 
     @Override
@@ -43,6 +50,11 @@ abstract public class SimpleBarComponent extends BaseComponent {
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
         onClick(toX, toY, type);
+    }
+
+    @Override
+    public void onHover(int x, int y) {
+        hover = true;
     }
 
     protected void onChange(double newProgress) {

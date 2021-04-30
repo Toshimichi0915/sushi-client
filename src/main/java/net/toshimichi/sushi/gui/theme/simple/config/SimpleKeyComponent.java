@@ -8,12 +8,15 @@ import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.GuiUtils;
 import org.lwjgl.input.Keyboard;
 
+import java.awt.Color;
+
 public class SimpleKeyComponent extends BaseComponent {
 
     private final ThemeConstants constants;
     private final IntArrayList heldKeys = new IntArrayList();
     private int[] keyCodes;
     private boolean listening;
+    private boolean hover;
 
     public SimpleKeyComponent(ThemeConstants constants, int[] keyCodes) {
         this.constants = constants;
@@ -23,7 +26,10 @@ public class SimpleKeyComponent extends BaseComponent {
 
     @Override
     public void onRender() {
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.backgroundColor.getValue());
+        Color color;
+        if (hover) color = constants.unselectedHoverColor.getValue();
+        else color = constants.disabledColor.getValue();
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
         StringBuilder builder = new StringBuilder();
         if (listening) {
             builder.append("Input keys...");
@@ -39,6 +45,7 @@ public class SimpleKeyComponent extends BaseComponent {
         }
         GuiUtils.prepareText(builder.toString(), constants.font.getValue(), constants.textColor.getValue(), 10, false)
                 .draw(getWindowX() + 1, getWindowY() + 2);
+        hover = false;
     }
 
     @Override
@@ -52,6 +59,11 @@ public class SimpleKeyComponent extends BaseComponent {
         if (status != MouseStatus.END) return;
         listening = true;
         heldKeys.clear();
+    }
+
+    @Override
+    public void onHover(int x, int y) {
+        hover = true;
     }
 
     @Override
