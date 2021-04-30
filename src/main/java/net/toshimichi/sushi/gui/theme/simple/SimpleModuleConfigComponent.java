@@ -24,7 +24,7 @@ public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
             SimpleModuleCategoryComponent categoryComponent = new SimpleModuleCategoryComponent(theme, module, category);
             if (category.getId().equals("common")) {
                 Modules modules = Sushi.getProfile().getModules();
-                categoryComponent.add(new SipmleClickComponent(constants, "Clone this module", () -> {
+                categoryComponent.add(new SimpleClickComponent(constants, "Clone this module", () -> {
                     String[] split = module.getId().split("_");
                     String id = String.join("_", Arrays.copyOfRange(split, 0, split.length - 1));
                     int counter = 0;
@@ -34,7 +34,7 @@ public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
                     } while (modules.getModule(newId) != null);
                     modules.cloneModule(module.getId(), newId);
                 }));
-                categoryComponent.add(new SipmleClickComponent(constants, "Remove this module", () -> modules.removeModule(module.getId())));
+                categoryComponent.add(new SimpleClickComponent(constants, "Remove this module", () -> modules.removeModule(module.getId())));
             }
             SmoothCollapseComponent<?> component = new SmoothCollapseComponent<>(categoryComponent, CollapseMode.UP, 0.1);
             component.setMargin(new Insets(0, 2, 0, 2));

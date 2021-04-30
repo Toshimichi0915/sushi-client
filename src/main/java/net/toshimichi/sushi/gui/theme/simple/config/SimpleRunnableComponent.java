@@ -3,9 +3,9 @@ package net.toshimichi.sushi.gui.theme.simple.config;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.gui.ConfigComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
-import net.toshimichi.sushi.gui.theme.simple.SipmleClickComponent;
+import net.toshimichi.sushi.gui.theme.simple.SimpleClickComponent;
 
-public class SimpleRunnableComponent extends SipmleClickComponent implements ConfigComponent<Runnable> {
+public class SimpleRunnableComponent extends SimpleClickComponent implements ConfigComponent<Runnable> {
 
     private final Configuration<Runnable> configuration;
 
