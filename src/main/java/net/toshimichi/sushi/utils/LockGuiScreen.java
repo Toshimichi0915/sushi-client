@@ -6,9 +6,11 @@ import net.minecraft.client.gui.GuiScreen;
 class LockGuiScreen extends GuiScreen {
 
     private final GuiScreen parent;
+    private final Runnable onClose;
 
-    public LockGuiScreen(GuiScreen parent) {
+    public LockGuiScreen(GuiScreen parent, Runnable onClose) {
         this.parent = parent;
+        this.onClose = onClose;
     }
 
     @Override
@@ -32,5 +34,6 @@ class LockGuiScreen extends GuiScreen {
 
     public void close() {
         Minecraft.getMinecraft().displayGuiScreen(parent);
+        onClose.run();
     }
 }

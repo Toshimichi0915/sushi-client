@@ -5,6 +5,7 @@ import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.hud.HudComponent;
 import net.toshimichi.sushi.gui.hud.HudEditComponent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.GuiUtils;
 
 public class HudModule extends BaseModule {
 
@@ -16,7 +17,7 @@ public class HudModule extends BaseModule {
         provider.temp("editor", "Open Editor", null, Runnable.class, () -> {
             Components.closeAll();
             setEnabled(true);
-            Components.show(new HudEditComponent(hudComponent), false);
+            Components.show(new HudEditComponent(hudComponent, this), false);
         });
     }
 

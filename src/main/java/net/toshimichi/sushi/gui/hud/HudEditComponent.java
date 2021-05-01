@@ -5,6 +5,7 @@ import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.gui.Origin;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
+import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
 
 import java.awt.Color;
@@ -14,14 +15,16 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
 
     private static final Color LINE_COLOR = new Color(100, 160, 60);
     private final HudComponent hud;
+    private final Module caller;
     private int holdX;
     private int holdY;
     private int currentX;
     private int currentY;
     private CornerComponent corner;
 
-    public HudEditComponent(HudComponent hud) {
+    public HudEditComponent(HudComponent hud, Module caller) {
         this.hud = hud;
+        this.caller = caller;
     }
 
     private void addCornerComponents(Component parent) {
@@ -157,7 +160,7 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
 
     @Override
     public void onShow() {
-        GuiUtils.lockGame();
+        GuiUtils.lockGame(() -> caller.setEnabled(false));
         for (HudElementComponent element : hud)
             addCornerComponents(element);
     }
