@@ -77,7 +77,7 @@ public class SimpleKeyComponent extends BaseComponent {
         if (!listening) return false;
         int[] keyCodes;
         if (keyCode == Keyboard.KEY_ESCAPE)
-            keyCodes = new int[]{0};
+            keyCodes = new int[0];
         else
             keyCodes = heldKeys.toIntArray();
         onChange(keyCodes);
