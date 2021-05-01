@@ -8,10 +8,10 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
-import net.toshimichi.sushi.modules.combat.Velocity;
-import net.toshimichi.sushi.modules.movement.Sprint;
-import net.toshimichi.sushi.modules.player.NoRender;
-import net.toshimichi.sushi.modules.render.FullBright;
+import net.toshimichi.sushi.modules.combat.VelocityModule;
+import net.toshimichi.sushi.modules.movement.SprintModule;
+import net.toshimichi.sushi.modules.player.NoRenderModule;
+import net.toshimichi.sushi.modules.render.FullBrightModule;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -41,11 +41,11 @@ public class GsonModules implements Modules {
         this.categories = categories;
         this.gson = gson;
         addModuleFactory("click_gui", ClickGuiModule::new);
-        addModuleFactory("no_render", NoRender::new);
-        addModuleFactory("velocity", Velocity::new);
+        addModuleFactory("no_render", NoRenderModule::new);
+        addModuleFactory("velocity", VelocityModule::new);
         addModuleFactory("hud", HudModule::new);
-        addModuleFactory("full_bright", FullBright::new);
-        addModuleFactory("sprint", Sprint::new);
+        addModuleFactory("full_bright", FullBrightModule::new);
+        addModuleFactory("sprint", SprintModule::new);
 
         addDefaultModule("click_gui", "click_gui");
         addDefaultModule("no_render", "no_render");

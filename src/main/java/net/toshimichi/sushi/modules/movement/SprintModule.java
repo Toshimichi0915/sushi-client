@@ -11,11 +11,11 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 
-public class Sprint extends BaseModule {
+public class SprintModule extends BaseModule {
 
     private final Configuration<Boolean> multiDirection;
 
-    public Sprint(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public SprintModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         multiDirection = provider.get("multi", "Multi Direction", null, Boolean.class, false);
     }

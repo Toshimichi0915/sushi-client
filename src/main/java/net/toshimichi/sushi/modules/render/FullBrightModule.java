@@ -5,12 +5,12 @@ import net.minecraft.client.settings.GameSettings;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.modules.*;
 
-public class FullBright extends BaseModule {
+public class FullBrightModule extends BaseModule {
 
     private final GameSettings settings = Minecraft.getMinecraft().gameSettings;
     private float oldGamma;
 
-    public FullBright(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public FullBrightModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 

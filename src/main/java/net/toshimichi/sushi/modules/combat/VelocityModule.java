@@ -9,9 +9,9 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.modules.*;
 
-public class Velocity extends BaseModule {
+public class VelocityModule extends BaseModule {
 
-    public Velocity(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public VelocityModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 

@@ -9,12 +9,12 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.UpdateLightEvent;
 import net.toshimichi.sushi.modules.*;
 
-public class NoRender extends BaseModule {
+public class NoRenderModule extends BaseModule {
 
     private final Configuration<Boolean> skyLight;
     private final Configuration<Boolean> blockLight;
 
-    public NoRender(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public NoRenderModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         skyLight = provider.get("sky_light", "Sky Light", null, Boolean.class, false);
         blockLight = provider.get("block_light", "Block Light", null, Boolean.class, false);
