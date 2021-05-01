@@ -102,7 +102,7 @@ public class SushiMod {
         MinecraftForge.EVENT_BUS.register(new ClientTickHandler());
         MinecraftForge.EVENT_BUS.register(new RenderTickHandler());
         MinecraftForge.EVENT_BUS.register(new ClientChatHandler());
-        EventHandlers.register(new KeyFixHandler());
+        EventHandlers.register(new KeyReleaseHandler());
         EventHandlers.register(new KeybindHandler());
         EventHandlers.register(new ComponentMouseHandler());
         EventHandlers.register(new ComponentRenderHandler());

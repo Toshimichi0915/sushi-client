@@ -5,7 +5,6 @@ import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.hud.HudComponent;
 import net.toshimichi.sushi.gui.hud.HudEditComponent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.GuiUtils;
 
 public class HudModule extends BaseModule {
 

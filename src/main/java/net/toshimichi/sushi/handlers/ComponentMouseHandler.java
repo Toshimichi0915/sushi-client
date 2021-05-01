@@ -49,7 +49,7 @@ public class ComponentMouseHandler {
         status.isClicked = false;
     }
 
-    @EventHandler(timing = EventTiming.POST, priority = 500)
+    @EventHandler(timing = EventTiming.POST, priority = -100)
     public void onRenderTick(RenderTickEvent e) {
         if (!GuiUtils.isGameLocked()) return;
         for (ClickType type : ClickType.values()) {

@@ -6,19 +6,17 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 public class InputUtils {
-    public static KeyEvent callKeyEvent() {
-        if (Keyboard.isRepeatEvent()) return null;
+    public static void callKeyEvent() {
+        if (Keyboard.isRepeatEvent()) return;
         int eventKey = Keyboard.getEventKey();
-        if (eventKey == 0) return null;
-        KeyEvent event;
-        if (Keyboard.isKeyDown(eventKey)) event = new KeyPressEvent(eventKey, Keyboard.getEventCharacter());
-        else event = new KeyReleaseEvent(eventKey);
+        if (!Keyboard.isKeyDown(eventKey)) return;
+        if (eventKey == 0) return;
+        KeyPressEvent event = new KeyPressEvent(eventKey, Keyboard.getEventCharacter());
         EventHandlers.callEvent(event);
-        return event;
     }
 
-    public static MouseEvent callMouseEvent() {
-        if (Mouse.getEventButton() == -1) return null;
+    public static void callMouseEvent() {
+        if (Mouse.getEventButton() == -1) return;
         int mouse = Mouse.getEventButton();
         ClickType clickType;
         if (mouse == 0) clickType = ClickType.LEFT;
@@ -26,8 +24,6 @@ public class InputUtils {
         MouseEvent event;
         if (Mouse.isButtonDown(mouse)) event = new MousePressEvent(clickType);
         else event = new MouseReleaseEvent(clickType);
-
         EventHandlers.callEvent(event);
-        return event;
     }
 }

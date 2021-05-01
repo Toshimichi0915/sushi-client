@@ -118,7 +118,6 @@ public class BasePanelComponent<T extends Component> extends BaseListComponent<T
     public boolean onKeyReleased(int keyCode) {
         AtomicBoolean result = new AtomicBoolean();
         execFocus(c -> result.set(c.onKeyReleased(keyCode)));
-
         if (result.get()) return true;
         else return super.onKeyReleased(keyCode);
     }
