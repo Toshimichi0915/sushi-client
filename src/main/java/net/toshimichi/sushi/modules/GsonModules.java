@@ -9,6 +9,7 @@ import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.combat.VelocityModule;
+import net.toshimichi.sushi.modules.movement.PhaseModule;
 import net.toshimichi.sushi.modules.movement.SprintModule;
 import net.toshimichi.sushi.modules.player.NoRenderModule;
 import net.toshimichi.sushi.modules.player.PacketCancellerModule;
@@ -48,6 +49,7 @@ public class GsonModules implements Modules {
         addModuleFactory("full_bright", FullBrightModule::new);
         addModuleFactory("sprint", SprintModule::new);
         addModuleFactory("packet_canceller", PacketCancellerModule::new);
+        addModuleFactory("phase", PhaseModule::new);
 
         addDefaultModule("click_gui", "click_gui");
         addDefaultModule("no_render", "no_render");
@@ -56,6 +58,7 @@ public class GsonModules implements Modules {
         addDefaultModule("full_bright", "full_bright");
         addDefaultModule("sprint", "sprint");
         addDefaultModule("packet_canceller", "packet_canceller");
+        addDefaultModule("phase", "phase");
     }
 
     private void addDefaultModule(String id, String factory) {
