@@ -10,6 +10,7 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerMotionEvent;
+import net.toshimichi.sushi.events.player.PlayerPushEvent;
 import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.modules.*;
 
@@ -17,6 +18,7 @@ public class PhaseModule extends BaseModule {
 
     private final Configuration<DoubleRange> horizontal;
     private final Configuration<DoubleRange> vertical;
+    private boolean noGravity;
 
     public PhaseModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -41,6 +43,8 @@ public class PhaseModule extends BaseModule {
         if (e.getType() == MoverType.SELF) {
             e.setX(e.getX() * horizontal.getValue().getCurrent());
             e.setZ(e.getZ() * horizontal.getValue().getCurrent());
+        } else {
+            e.setCancelled(true);
         }
     }
 
@@ -56,6 +60,11 @@ public class PhaseModule extends BaseModule {
         if (player.movementInput.sneak) {
             player.move(MoverType.SELF, 0, -vertical.getValue().getCurrent() / 10, 0);
         }
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onPush(PlayerPushEvent e) {
+        e.setCancelled(true);
     }
 
     @Override
