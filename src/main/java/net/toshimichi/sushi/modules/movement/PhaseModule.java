@@ -3,6 +3,8 @@ package net.toshimichi.sushi.modules.movement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.MoverType;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
@@ -11,8 +13,8 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerMotionEvent;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;
-import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.MovementUtils;
 
 public class PhaseModule extends BaseModule {
 
@@ -38,29 +40,31 @@ public class PhaseModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onMotion(PlayerMotionEvent e) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        player.noClip = true;
         if (e.getType() == MoverType.SELF) {
-            e.setX(e.getX() * horizontal.getValue().getCurrent());
-            e.setZ(e.getZ() * horizontal.getValue().getCurrent());
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            player.noClip = true;
+            player.fallDistance = 0;
+            player.onGround = false;
+
+            double horizontalSpeed = horizontal.getValue().getCurrent() / 10;
+            double verticalSpeed = vertical.getValue().getCurrent() / 10;
+            Vec3d inputs = MovementUtils.getMoveInputs(player);
+            float moveForward = (float) (inputs.x * horizontalSpeed);
+            float moveUpward = (float) (inputs.y * verticalSpeed);
+            float moveStrafe = (float) (inputs.z * horizontalSpeed);
+
+            Vec2f vec = MovementUtils.toWorld(new Vec2f(moveForward, moveStrafe), player.rotationYaw);
+            player.motionX = vec.x;
+            player.motionY = moveUpward;
+            player.motionZ = vec.y;
+            e.setX(vec.x);
+            e.setY(moveUpward);
+            e.setZ(vec.y);
         } else {
             e.setCancelled(true);
         }
     }
 
-    @EventHandler(timing = EventTiming.PRE)
-    public void onUpdate(PlayerUpdateEvent e) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        player.fallDistance = 0;
-        player.onGround = false;
-        player.motionY = 0;
-        if (player.movementInput.jump) {
-            player.move(MoverType.SELF, 0, vertical.getValue().getCurrent() / 10, 0);
-        }
-        if (player.movementInput.sneak) {
-            player.move(MoverType.SELF, 0, -vertical.getValue().getCurrent() / 10, 0);
-        }
-    }
 
     @EventHandler(timing = EventTiming.PRE)
     public void onPush(PlayerPushEvent e) {
