@@ -36,7 +36,7 @@ public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleCo
                 if (component.getModule().equals(module)) continue addModule;
             }
             SmoothCollapseComponent<SimpleModuleConfigComponent> configComponent
-                    = new SmoothCollapseComponent<>(new SimpleModuleConfigComponent(constants, theme, module), CollapseMode.DOWN, 0.1);
+                    = new SmoothCollapseComponent<>(new SimpleModuleConfigComponent(constants, theme, module), CollapseMode.DOWN, 100);
             SimpleModuleToggleComponent component = new SimpleModuleToggleComponent(constants, module, configComponent);
             add(new SimpleModuleComponent(module, component, configComponent), true);
         }

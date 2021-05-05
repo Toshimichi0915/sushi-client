@@ -1,13 +1,16 @@
 package net.toshimichi.sushi.gui;
 
+import net.minecraft.util.math.MathHelper;
+
 public class SmoothCollapseComponent<T extends Component> extends CollapseComponent<T> {
 
-    private final double collapseSpeed;
+    private final double totalMillis;
+    private long millis;
     private boolean collapsed;
 
-    public SmoothCollapseComponent(T component, CollapseMode mode, double collapseSpeed) {
+    public SmoothCollapseComponent(T component, CollapseMode mode, double totalMillis) {
         super(component, mode);
-        this.collapseSpeed = collapseSpeed;
+        this.totalMillis = totalMillis;
     }
 
     public boolean isCollapsed() {
@@ -15,15 +18,15 @@ public class SmoothCollapseComponent<T extends Component> extends CollapseCompon
     }
 
     public void setCollapsed(boolean collapsed) {
+        this.millis = System.currentTimeMillis();
         this.collapsed = collapsed;
     }
 
     @Override
     public void onRelocate() {
-        double progress;
-        if (collapsed) progress = getProgress() + collapseSpeed;
-        else progress = getProgress() - collapseSpeed;
-        setProgress(progress);
+        double progress = MathHelper.clamp((System.currentTimeMillis() - millis) / totalMillis, 0, 1);
+        if (collapsed) setProgress(progress);
+        else setProgress(1 - progress);
         super.onRelocate();
     }
 }

@@ -36,7 +36,7 @@ public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
                 }));
                 categoryComponent.add(new SimpleClickComponent(constants, "Remove this module", () -> modules.removeModule(module.getId())));
             }
-            SmoothCollapseComponent<?> component = new SmoothCollapseComponent<>(categoryComponent, CollapseMode.UP, 0.1);
+            SmoothCollapseComponent<?> component = new SmoothCollapseComponent<>(categoryComponent, CollapseMode.UP, 100);
             component.setMargin(new Insets(0, 2, 0, 2));
             add(new SimpleConfigCategoryComponent(constants, category, component));
             add(component);
