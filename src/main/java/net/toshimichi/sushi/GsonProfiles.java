@@ -42,13 +42,17 @@ public class GsonProfiles implements Profiles {
     @Override
     public Profile load(String name) {
         File dir = getFile(name);
+        File configFile = new File(getFile(name), "profile.json");
+        ProfileConfig profileConfig = new ProfileConfig();
+        profileConfig.load(configFile);
         GsonCategories categories = new GsonCategories(new File(dir, "categories.json"), gson);
-        GsonModules modules = new GsonModules(new File(dir, "modules.json"), categories, gson);
-        return new GsonProfile(new File(dir, "profile.json"), new ProfileConfig(), modules, categories);
+        GsonModules modules = new GsonModules(profileConfig.version, new File(dir, "modules.json"), categories, gson);
+        return new GsonProfile(configFile, profileConfig, modules, categories);
     }
 
     private class ProfileConfig {
         char prefix = '.';
+        int version = Sushi.getVersion();
 
         void load(File file) {
             try {
@@ -56,6 +60,7 @@ public class GsonProfiles implements Profiles {
                 String contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 ProfileConfig config = gson.fromJson(contents, ProfileConfig.class);
                 this.prefix = config.prefix;
+                this.version = config.version;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -74,7 +79,7 @@ public class GsonProfiles implements Profiles {
 
         private final File configFile;
         private final ProfileConfig config;
-        private final GsonModules modules;
+        private final Modules modules;
         private final GsonCategories categories;
 
         GsonProfile(File configFile, ProfileConfig config, GsonModules modules, GsonCategories categories) {
@@ -82,6 +87,11 @@ public class GsonProfiles implements Profiles {
             this.config = config;
             this.modules = modules;
             this.categories = categories;
+        }
+
+        @Override
+        public int getVersion() {
+            return config.version;
         }
 
         @Override

@@ -6,6 +6,8 @@ import net.toshimichi.sushi.modules.Modules;
 
 public interface Profile {
 
+    int getVersion();
+
     Modules getModules();
 
     Categories getCategories();

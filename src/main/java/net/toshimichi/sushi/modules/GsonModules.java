@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
@@ -31,6 +32,7 @@ public class GsonModules implements Modules {
     private static final String FACTORY_TAG = "base";
 
     private final Gson gson;
+    private final int version;
     private final File conf;
     private final Categories categories;
     private final HashSet<GsonModuleFactory> factories = new HashSet<>();
@@ -39,7 +41,8 @@ public class GsonModules implements Modules {
     private JsonObject root = new JsonObject();
     private boolean enabled;
 
-    public GsonModules(File conf, Categories categories, Gson gson) {
+    public GsonModules(int version, File conf, Categories categories, Gson gson) {
+        this.version = version;
         this.conf = conf;
         this.categories = categories;
         this.gson = gson;
@@ -142,27 +145,32 @@ public class GsonModules implements Modules {
         }
     }
 
+    private void renewConfig() {
+        root = new JsonObject();
+        for (DefaultModule module : defaults) {
+            root.add(module.id, new JsonObject());
+            addModule(module.id, getModuleFactory(module.factory));
+        }
+    }
+
     @Override
     public void load() {
         try {
+            modules.clear();
             if (!conf.exists()) {
-                root = new JsonObject();
-                for (DefaultModule module : defaults) {
-                    root.add(module.id, new JsonObject());
-                    addModule(module.id, getModuleFactory(module.factory));
-                }
+                renewConfig();
             } else {
                 String contents = FileUtils.readFileToString(conf, StandardCharsets.UTF_8);
                 root = gson.fromJson(contents, JsonObject.class);
+                if (version < Sushi.getVersion()) renewConfig();
             }
-            modules.clear();
             for (Map.Entry<String, JsonElement> entry : new HashSet<>(root.getAsJsonObject().entrySet())) {
                 JsonObject moduleJson = entry.getValue().getAsJsonObject();
                 String factoryId = moduleJson.getAsJsonPrimitive(FACTORY_TAG).getAsString();
                 ModuleFactory factory = getModuleFactory(factoryId);
                 if (factory == null) {
                     root.remove(entry.getKey());
-                } else {
+                } else if (getModule(entry.getKey()) == null) {
                     addModule(entry.getKey(), getModuleFactory(factoryId));
                 }
             }

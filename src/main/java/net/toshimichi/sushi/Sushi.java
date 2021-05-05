@@ -11,6 +11,10 @@ public class Sushi {
     private static Profile profile;
     private static Profiles profiles;
 
+    public static int getVersion() {
+        return 0;
+    }
+
     public static Profile getProfile() {
         return profile;
     }
