@@ -164,7 +164,7 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
             Component target = this.corner.getParent();
             if (connected == null) {
                 calculateWindowComponent(target);
-            } else if (!connected.equals(this.corner)) {
+            } else if (!connected.equals(this.corner) && !connected.getParent().equals(this.corner.getParent())) {
                 int oldWindowX = target.getWindowX();
                 int oldWindowY = target.getWindowY();
                 target.setOrigin(this.corner.getOrigin().getOpposite());
