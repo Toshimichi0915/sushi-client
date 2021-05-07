@@ -34,7 +34,6 @@ public class HudModule extends BaseModule {
         hudComponent.getContext().close();
     }
 
-
     @Override
     public String getDefaultName() {
         return "HUD";
