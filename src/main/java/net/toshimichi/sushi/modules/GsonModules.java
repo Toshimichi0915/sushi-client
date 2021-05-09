@@ -46,33 +46,20 @@ public class GsonModules implements Modules {
         this.conf = conf;
         this.categories = categories;
         this.gson = gson;
-        addModuleFactory("click_gui", ClickGuiModule::new);
-        addModuleFactory("no_render", NoRenderModule::new);
-        addModuleFactory("velocity", VelocityModule::new);
-        addModuleFactory("hud", HudModule::new);
-        addModuleFactory("full_bright", FullBrightModule::new);
-        addModuleFactory("sprint", SprintModule::new);
-        addModuleFactory("packet_canceller", PacketCancellerModule::new);
-        addModuleFactory("phase", PhaseModule::new);
-        addModuleFactory("timer", TimerModule::new);
-
-        addDefaultModule("click_gui", "click_gui");
-        addDefaultModule("no_render", "no_render");
-        addDefaultModule("velocity", "velocity");
-        addDefaultModule("hud", "hud");
-        addDefaultModule("full_bright", "full_bright");
-        addDefaultModule("sprint", "sprint");
-        addDefaultModule("packet_canceller", "packet_canceller");
-        addDefaultModule("phase", "phase");
-        addDefaultModule("timer", "timer");
+        addModuleFactory("click_gui", ClickGuiModule::new, true);
+        addModuleFactory("no_render", NoRenderModule::new, true);
+        addModuleFactory("velocity", VelocityModule::new, true);
+        addModuleFactory("hud", HudModule::new, true);
+        addModuleFactory("full_bright", FullBrightModule::new, true);
+        addModuleFactory("sprint", SprintModule::new, true);
+        addModuleFactory("packet_canceller", PacketCancellerModule::new, true);
+        addModuleFactory("phase", PhaseModule::new, true);
+        addModuleFactory("timer", TimerModule::new, true);
     }
 
-    private void addDefaultModule(String id, String factory) {
-        defaults.add(new DefaultModule(id, factory));
-    }
-
-    private void addModuleFactory(String id, ModuleConstructor constructor) {
+    private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
         factories.add(new GsonModuleFactory(id, constructor));
+        if (isDefault) defaults.add(new DefaultModule(id, id));
     }
 
     @Override
