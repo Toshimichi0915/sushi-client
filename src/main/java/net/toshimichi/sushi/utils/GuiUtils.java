@@ -13,13 +13,18 @@ import static org.lwjgl.opengl.GL11.*;
 public class GuiUtils {
 
     private static boolean locked;
-    private static Stack<Scissor> scissorStack = new Stack<>();
+    private static final Stack<Scissor> scissorStack = new Stack<>();
 
     public static void lockGame(Runnable onClose) {
         if (isGameLocked()) return;
         Minecraft.getMinecraft().displayGuiScreen(new LockGuiScreen(Minecraft.getMinecraft().currentScreen, onClose));
         locked = true;
         Minecraft.getMinecraft().setIngameNotInFocus();
+    }
+
+    public static void lockGame() {
+        lockGame(() -> {
+        });
     }
 
     public static void unlockGame() {

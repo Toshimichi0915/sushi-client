@@ -20,16 +20,14 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
 
     private final ArrayList<HudElementComponent> inactive = new ArrayList<>();
     private final HudComponent hud;
-    private final Module caller;
     private int holdX;
     private int holdY;
     private int currentX;
     private int currentY;
     private CornerComponent corner;
 
-    public HudEditComponent(HudComponent hud, Module caller) {
+    public HudEditComponent(HudComponent hud) {
         this.hud = hud;
-        this.caller = caller;
     }
 
     private void addCornerComponents(Component parent) {
@@ -193,7 +191,7 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
 
     @Override
     public void onShow() {
-        GuiUtils.lockGame(() -> caller.setEnabled(false));
+        GuiUtils.lockGame();
         for (HudElementComponent element : hud) {
             addCornerComponents(element);
             if (!element.isActive()) inactive.add(element);
