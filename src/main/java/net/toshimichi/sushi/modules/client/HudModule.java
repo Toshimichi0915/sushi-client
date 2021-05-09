@@ -16,7 +16,7 @@ public class HudModule extends BaseModule {
         provider.temp("editor", "Open Editor", null, Runnable.class, () -> {
             Components.closeAll();
             setEnabled(true);
-            Components.show(new HudEditComponent(hudComponent, this), false);
+            Components.show(new HudEditComponent(hudComponent), false);
         });
     }
 
