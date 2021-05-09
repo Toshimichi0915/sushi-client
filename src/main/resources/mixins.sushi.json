@@ -11,6 +11,8 @@
     "MixinWorld"
   ],
   "mixins": [
+    "AccessorMinecraft",
+    "AccessorTimer",
     "MixinEntity",
     "MixinEntityPlayerSP"
   ]
