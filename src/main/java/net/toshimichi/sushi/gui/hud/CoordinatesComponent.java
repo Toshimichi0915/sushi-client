@@ -4,14 +4,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
-import net.toshimichi.sushi.gui.base.BaseComponent;
 import net.toshimichi.sushi.utils.GuiUtils;
 import net.toshimichi.sushi.utils.TextPreview;
 
 import java.text.DecimalFormat;
 
-public class CoordinatesComponent extends BaseComponent implements HudElementComponent {
-    private static final DecimalFormat FORMATTER = new DecimalFormat(".#");
+public class CoordinatesComponent extends BaseHudElementComponent implements HudElementComponent {
+    private static final DecimalFormat FORMATTER = new DecimalFormat("0.0");
     private final HudConstants constants;
     private final Configuration<String> format;
 

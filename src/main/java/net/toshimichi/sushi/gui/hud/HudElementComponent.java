@@ -8,4 +8,8 @@ public interface HudElementComponent extends Component {
 
     String getName();
 
+    boolean isActive();
+
+    void setActive(boolean active);
+
 }

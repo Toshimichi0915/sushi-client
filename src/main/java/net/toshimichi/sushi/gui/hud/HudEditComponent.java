@@ -13,7 +13,12 @@ import java.util.ArrayList;
 
 public class HudEditComponent extends BasePanelComponent<CornerComponent> {
 
+    private static final Color ACTIVE_COLOR = new Color(60, 60, 60, 100);
+    private static final Color INACTIVE_COLOR = new Color(250, 30, 30, 100);
+
     private static final Color LINE_COLOR = new Color(100, 160, 60);
+
+    private final ArrayList<HudElementComponent> inactive = new ArrayList<>();
     private final HudComponent hud;
     private final Module caller;
     private int holdX;
@@ -44,7 +49,7 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
         super.onRender();
         setWidth(GuiUtils.getWidth());
         setHeight(GuiUtils.getHeight());
-        for (Component component : hud) {
+        for (HudElementComponent component : hud) {
             if (component instanceof VirtualHudElementComponent) continue;
             drawBox(component);
             CornerComponent connecting = getConnectingCorner(component);
@@ -64,7 +69,9 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
     }
 
     private void drawBox(Component component) {
-        GuiUtils.drawRect(component.getWindowX(), component.getWindowY(), component.getWidth(), component.getHeight(), new Color(60, 60, 60, 100));
+        Color rectColor = ACTIVE_COLOR;
+        if (inactive.contains(component)) rectColor = INACTIVE_COLOR;
+        GuiUtils.drawRect(component.getWindowX(), component.getWindowY(), component.getWidth(), component.getHeight(), rectColor);
         GuiUtils.drawOutline(component.getWindowX(), component.getWindowY(), component.getWidth(), component.getHeight(), Color.WHITE, 1);
     }
 
@@ -113,8 +120,24 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
     }
 
     @Override
-    public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
+    public void setFocusedComponent(CornerComponent component) {
+        super.setFocusedComponent(component);
+        remove(component);
+        add(0, component);
+    }
 
+    @Override
+    public void onClick(int x, int y, ClickType type) {
+        HudElementComponent component = hud.getTopComponent(x, y);
+        System.out.println(component);
+        if (component == null) return;
+        System.out.println(component);
+        if (inactive.contains(component)) inactive.remove(component);
+        else inactive.add(component);
+        System.out.println(inactive);
+    }
+
+    private void onHoldLeft(int fromX, int fromY, int toX, int toY, MouseStatus status) {
         // component
         Component component = hud.getTopComponent(fromX, fromY);
         if (component != null) {
@@ -158,16 +181,32 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
         }
     }
 
+    private void onHoldRight(int fromX, int fromY, int toX, int toY, MouseStatus status) {
+        if (status == MouseStatus.END) onClick(toX, toY, ClickType.RIGHT);
+    }
+
+    @Override
+    public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
+        if (type == ClickType.LEFT) onHoldLeft(fromX, fromY, toX, toY, status);
+        if (type == ClickType.RIGHT) onHoldRight(fromX, fromY, toX, toY, status);
+    }
+
     @Override
     public void onShow() {
         GuiUtils.lockGame(() -> caller.setEnabled(false));
-        for (HudElementComponent element : hud)
+        for (HudElementComponent element : hud) {
             addCornerComponents(element);
+            if (!element.isActive()) inactive.add(element);
+            element.setActive(true);
+        }
     }
 
     @Override
     public void onClose() {
         GuiUtils.unlockGame();
         clear();
+        for (HudElementComponent element : hud) {
+            element.setActive(!inactive.contains(element));
+        }
     }
 }

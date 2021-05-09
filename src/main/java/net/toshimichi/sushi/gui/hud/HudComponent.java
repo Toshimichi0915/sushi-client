@@ -34,6 +34,21 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
     }
 
     @Override
+    public void setFocusedComponent(HudElementComponent component) {
+        super.setFocusedComponent(component);
+        remove(component);
+        add(0, component);
+    }
+
+    @Override
+    public void onRender() {
+        for (HudElementComponent component : this) {
+            component.setVisible(component.isActive());
+        }
+        super.onRender();
+    }
+
+    @Override
     public void onRelocate() {
         setWidth(GuiUtils.getWidth());
         setHeight(GuiUtils.getHeight());

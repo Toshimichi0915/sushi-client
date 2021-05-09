@@ -4,27 +4,28 @@ import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.gui.Anchor;
 import net.toshimichi.sushi.gui.Component;
-import net.toshimichi.sushi.gui.ComponentHandler;
 import net.toshimichi.sushi.gui.Origin;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class ConfigHandler implements ComponentHandler {
+public class ConfigHandler implements HudElementComponentHandler {
 
-    private final Component component;
+    private final HudElementComponent component;
     private final HudComponent hud;
     private final Configuration<Integer> x;
     private final Configuration<Integer> y;
     private final Configuration<Anchor> anchor;
     private final Configuration<Origin> origin;
     private final Configuration<String> parent;
+    private final Configuration<Boolean> active;
 
     private final Consumer<Integer> xHandler;
     private final Consumer<Integer> yHandler;
     private final Consumer<Anchor> anchorHandler;
     private final Consumer<Origin> originHandler;
     private final Consumer<String> parentHandler;
+    private final Consumer<Boolean> activeHandler;
 
     public ConfigHandler(HudElementComponent component, HudComponent hud, Configurations configurations) {
         String id = component.getId();
@@ -36,11 +37,13 @@ public class ConfigHandler implements ComponentHandler {
         this.anchor = configurations.get("element." + id + ".anchor", name + " Anchor", "Anchor of " + name, Anchor.class, component.getAnchor(), () -> false, null, false, 0);
         this.origin = configurations.get("element." + id + ".origin", name + " Origin", "Origin of " + name, Origin.class, component.getOrigin(), () -> false, null, false, 0);
         this.parent = configurations.get("element." + id + ".parent", name + " Parent", "Parent of " + name, String.class, "", () -> false, null, false, 0);
+        this.active = configurations.get("element." + id + ".activity", name + " Activity", "Activity of " + name, Boolean.class, component.isActive(), () -> false, null, false, 0);
         xHandler = component::setX;
         yHandler = component::setY;
         anchorHandler = component::setAnchor;
         originHandler = component::setOrigin;
         parentHandler = this::setParent;
+        activeHandler = this::setActive;
     }
 
     private void setParent(String parentId) {
@@ -89,11 +92,18 @@ public class ConfigHandler implements ComponentHandler {
     }
 
     @Override
+    public void setActive(boolean active) {
+        if (this.active.getValue().equals(active)) return;
+        this.active.setValue(active);
+    }
+
+    @Override
     public void onShow() {
         component.setX(x.getValue());
         component.setY(y.getValue());
         component.setAnchor(anchor.getValue());
         component.setOrigin(origin.getValue());
+        component.setActive(active.getValue());
         setParent(parent.getValue());
 
         x.addHandler(xHandler);
@@ -101,6 +111,7 @@ public class ConfigHandler implements ComponentHandler {
         anchor.addHandler(anchorHandler);
         origin.addHandler(originHandler);
         parent.addHandler(parentHandler);
+        active.addHandler(activeHandler);
     }
 
     @Override
@@ -110,5 +121,6 @@ public class ConfigHandler implements ComponentHandler {
         anchor.removeHandler(anchorHandler);
         origin.removeHandler(originHandler);
         parent.removeHandler(parentHandler);
+        active.removeHandler(activeHandler);
     }
 }
