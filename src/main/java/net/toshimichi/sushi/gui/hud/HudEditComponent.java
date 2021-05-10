@@ -5,7 +5,6 @@ import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.gui.Origin;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
-import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
 
 import java.awt.Color;
