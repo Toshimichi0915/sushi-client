@@ -4,9 +4,9 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
-import net.toshimichi.sushi.task.tasks.NullTask;
 import net.toshimichi.sushi.task.TaskAdapter;
 import net.toshimichi.sushi.task.TaskChain;
+import net.toshimichi.sushi.task.tasks.NullTask;
 
 import java.util.ArrayList;
 

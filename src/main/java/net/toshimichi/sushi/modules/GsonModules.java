@@ -10,7 +10,7 @@ import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.combat.VelocityModule;
-import net.toshimichi.sushi.modules.movement.PhaseModule;
+import net.toshimichi.sushi.modules.movement.PhaseFlyModule;
 import net.toshimichi.sushi.modules.movement.SprintModule;
 import net.toshimichi.sushi.modules.player.NoRenderModule;
 import net.toshimichi.sushi.modules.player.PacketCancellerModule;
@@ -53,7 +53,7 @@ public class GsonModules implements Modules {
         addModuleFactory("full_bright", FullBrightModule::new, true);
         addModuleFactory("sprint", SprintModule::new, true);
         addModuleFactory("packet_canceller", PacketCancellerModule::new, true);
-        addModuleFactory("phase", PhaseModule::new, true);
+        addModuleFactory("phase_fly", PhaseFlyModule::new, true);
         addModuleFactory("timer", TimerModule::new, true);
     }
 
