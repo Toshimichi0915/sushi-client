@@ -1,6 +1,8 @@
-package net.toshimichi.sushi.task;
+package net.toshimichi.sushi.task.tasks;
 
-public class NullTaskAdapter extends TaskAdapter<Void, Void> {
+import net.toshimichi.sushi.task.TaskAdapter;
+
+public class NullTask extends TaskAdapter<Void, Void> {
 
     @Override
     public void start(Void input) {

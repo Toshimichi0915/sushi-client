@@ -4,7 +4,7 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
-import net.toshimichi.sushi.task.NullTaskAdapter;
+import net.toshimichi.sushi.task.tasks.NullTask;
 import net.toshimichi.sushi.task.TaskAdapter;
 import net.toshimichi.sushi.task.TaskChain;
 
@@ -79,7 +79,7 @@ public class TaskExecutor {
     }
 
     public static TaskChain newTaskChain() {
-        NullTaskAdapter firstTask = new NullTaskAdapter();
+        NullTask firstTask = new NullTask();
         ArrayList<TaskAdapter<?, ?>> adapters = new ArrayList<>();
         adapters.add(firstTask);
         return new ForgeTaskChain(new TaskExecutor(adapters), firstTask);
