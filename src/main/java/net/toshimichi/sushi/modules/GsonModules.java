@@ -132,9 +132,9 @@ public class GsonModules implements Modules {
         }
     }
 
-    private void renewConfig() {
-        root = new JsonObject();
+    private void updateConfig(JsonObject root) {
         for (DefaultModule module : defaults) {
+            root.remove(module.id);
             root.add(module.id, new JsonObject());
             addModule(module.id, getModuleFactory(module.factory));
         }
@@ -145,11 +145,11 @@ public class GsonModules implements Modules {
         try {
             modules.clear();
             if (!conf.exists()) {
-                renewConfig();
+                updateConfig(new JsonObject());
             } else {
                 String contents = FileUtils.readFileToString(conf, StandardCharsets.UTF_8);
                 root = gson.fromJson(contents, JsonObject.class);
-                if (version < Sushi.getVersion()) renewConfig();
+                if (version < Sushi.getVersion()) updateConfig(root);
             }
             for (Map.Entry<String, JsonElement> entry : new HashSet<>(root.getAsJsonObject().entrySet())) {
                 JsonObject moduleJson = entry.getValue().getAsJsonObject();
