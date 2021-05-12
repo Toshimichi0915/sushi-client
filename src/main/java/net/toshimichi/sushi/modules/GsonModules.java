@@ -11,7 +11,7 @@ import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.combat.VelocityModule;
 import net.toshimichi.sushi.modules.movement.PhaseFlyModule;
-import net.toshimichi.sushi.modules.movement.PhaseWalk;
+import net.toshimichi.sushi.modules.movement.PhaseWalkModule;
 import net.toshimichi.sushi.modules.movement.SprintModule;
 import net.toshimichi.sushi.modules.player.NoRenderModule;
 import net.toshimichi.sushi.modules.player.PacketCancellerModule;
@@ -55,7 +55,7 @@ public class GsonModules implements Modules {
         addModuleFactory("sprint", SprintModule::new, true);
         addModuleFactory("packet_canceller", PacketCancellerModule::new, true);
         addModuleFactory("phase_fly", PhaseFlyModule::new, true);
-        addModuleFactory("phase_walk", PhaseWalk::new, true);
+        addModuleFactory("phase_walk", PhaseWalkModule::new, true);
         addModuleFactory("timer", TimerModule::new, true);
     }
 

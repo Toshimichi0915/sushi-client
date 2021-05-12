@@ -22,13 +22,13 @@ import net.toshimichi.sushi.utils.SyncMode;
 
 import java.util.List;
 
-public class PhaseWalk extends BaseModule {
+public class PhaseWalkModule extends BaseModule {
 
     private final Configuration<DoubleRange> horizontal;
     private final Configuration<DoubleRange> delta;
     private final Configuration<IntRange> range;
 
-    public PhaseWalk(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public PhaseWalkModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         horizontal = provider.get("horizontal_speed", "Horizontal Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
         delta = provider.get("delta", "Delta", null, DoubleRange.class, new DoubleRange(0.5, 1, 0.1, 0.1, 1));
@@ -79,7 +79,7 @@ public class PhaseWalk extends BaseModule {
         int step = range.getValue().getCurrent();
         boolean isAboveAir = false;
         for (int y = step; y >= -step; y--) {
-            AxisAlignedBB boundingBox = player.getEntityBoundingBox().offset(0, y, 0).shrink(0.1);
+            AxisAlignedBB boundingBox = player.getEntityBoundingBox().offset(0, y, 0).shrink(0.4);
             List<AxisAlignedBB> collisions = player.world.getCollisionBoxes(null, boundingBox);
             if (collisions.isEmpty()) {
                 isAboveAir = true;
