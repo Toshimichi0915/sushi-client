@@ -27,6 +27,7 @@ public class PhaseWalkModule extends BaseModule {
     private final Configuration<DoubleRange> horizontal;
     private final Configuration<DoubleRange> delta;
     private final Configuration<IntRange> range;
+    private boolean clipping;
 
     public PhaseWalkModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -43,6 +44,10 @@ public class PhaseWalkModule extends BaseModule {
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
+        if (clipping) {
+            PositionUtils.setSyncMode(SyncMode.BOTH);
+            PositionUtils.move(PositionUtils.getX(), PositionUtils.getY(), PositionUtils.getZ(), 0, 0, true, false);
+        }
     }
 
     @EventHandler(timing = EventTiming.PRE)
@@ -71,6 +76,7 @@ public class PhaseWalkModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onPostPlayerMotion(PlayerMotionEvent e) {
+        clipping = false;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (e.getType() != MoverType.SELF) {
             e.setCancelled(true);
@@ -79,11 +85,12 @@ public class PhaseWalkModule extends BaseModule {
         int step = range.getValue().getCurrent();
         boolean isAboveAir = false;
         for (int y = step; y >= -step; y--) {
-            AxisAlignedBB boundingBox = player.getEntityBoundingBox().offset(0, y, 0).shrink(0.4);
+            AxisAlignedBB boundingBox = player.getEntityBoundingBox().offset(0, y, 0).shrink(0.5);
             List<AxisAlignedBB> collisions = player.world.getCollisionBoxes(null, boundingBox);
             if (collisions.isEmpty()) {
                 isAboveAir = true;
             } else if (isAboveAir) {
+                clipping = true;
                 double maxY = 0;
                 for (AxisAlignedBB collision : collisions) {
                     if (collision.maxY > maxY) {
@@ -91,6 +98,8 @@ public class PhaseWalkModule extends BaseModule {
                     }
                 }
                 PositionUtils.setSyncMode(SyncMode.BOTH);
+                PositionUtils.move(player.posX, maxY, player.posZ, 0, 0, true, false);
+                PositionUtils.setSyncMode(SyncMode.LOOK);
                 PositionUtils.move(player.posX, maxY - delta.getValue().getCurrent(), player.posZ, 0, 0, true, false);
                 return;
             }
@@ -99,6 +108,8 @@ public class PhaseWalkModule extends BaseModule {
         // safe walk
         PositionUtils.setSyncMode(SyncMode.BOTH);
         PositionUtils.move(player.prevPosX, player.prevPosY, player.prevPosZ, 0, 0, true, false);
+        PositionUtils.setSyncMode(SyncMode.LOOK);
+        PositionUtils.move(player.prevPosX, PositionUtils.getY(), player.prevPosZ, 0, 0, true, false);
     }
 
     @EventHandler(timing = EventTiming.PRE)

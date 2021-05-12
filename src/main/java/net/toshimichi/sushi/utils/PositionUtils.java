@@ -52,10 +52,10 @@ public class PositionUtils {
             if (mode.isSyncPosition()) {
                 player.setPosition(x, y, z);
             } else {
+                positionPacket = PositionUtils.x != x || PositionUtils.y != y || PositionUtils.z != z;
                 PositionUtils.x = x;
                 PositionUtils.y = y;
                 PositionUtils.z = z;
-                positionPacket = true;
             }
         }
         if (rotation) {
@@ -63,9 +63,9 @@ public class PositionUtils {
                 player.rotationYaw = yaw;
                 player.rotationPitch = pitch;
             } else {
+                rotationPacket = PositionUtils.yaw != yaw || PositionUtils.pitch != pitch;
                 PositionUtils.yaw = yaw;
                 PositionUtils.pitch = pitch;
-                rotationPacket = true;
             }
         }
         CPacketPlayer packet;
