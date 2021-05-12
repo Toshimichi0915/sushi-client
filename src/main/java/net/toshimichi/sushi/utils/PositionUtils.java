@@ -50,7 +50,7 @@ public class PositionUtils {
         boolean rotationPacket = false;
         if (position) {
             if (mode.isSyncPosition()) {
-                player.setLocationAndAngles(x, y, z, player.rotationYaw, player.rotationPitch);
+                player.setPosition(x, y, z);
             } else {
                 PositionUtils.x = x;
                 PositionUtils.y = y;
