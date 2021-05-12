@@ -76,15 +76,15 @@ public class PhaseFlyModule extends BaseModule {
         if (!auto.getValue()) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (stage == 0 && (player.movementInput.sneak || player.noClip || !player.collidedVertically)) return;
-        if (stage == 0) {
+        if (stage == 0 || stage == 1) {
             player.movementInput.sneak = true;
             stage++;
-        } else if (stage == 1) {
+        } else if (stage == 2) {
             player.movementInput.sneak = true;
             PositionUtils.setSyncMode(SyncMode.BOTH);
             PositionUtils.move(player.posX, player.posY + 0.1, player.posZ, 0, 0, true, false);
             stage++;
-        } else if (stage == 2) {
+        } else if (stage == 3) {
             stage = 0;
         }
     }
