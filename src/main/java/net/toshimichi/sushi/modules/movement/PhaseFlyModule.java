@@ -45,13 +45,15 @@ public class PhaseFlyModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onMotion(PlayerMotionEvent e) {
-        if (e.getType() != MoverType.SELF || stage != 0) {
-            e.setCancelled(true);
-        }
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         player.noClip = !player.world.getCollisionBoxes(null, player.getEntityBoundingBox()).isEmpty();
         player.fallDistance = 0;
         player.onGround = false;
+
+        if (e.getType() != MoverType.SELF || stage != 0) {
+            e.setCancelled(true);
+            return;
+        }
 
         double horizontalSpeed = horizontal.getValue().getCurrent() / 10;
         double verticalSpeed = vertical.getValue().getCurrent() / 10;
@@ -94,7 +96,7 @@ public class PhaseFlyModule extends BaseModule {
 
     @Override
     public String getDefaultName() {
-        return "Phase";
+        return "PhaseFly";
     }
 
     @Override
