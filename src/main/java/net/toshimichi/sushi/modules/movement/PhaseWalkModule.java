@@ -44,6 +44,7 @@ public class PhaseWalkModule extends BaseModule {
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
+        PositionUtils.setSyncMode(SyncMode.BOTH);
         if (clipping) {
             PositionUtils.setSyncMode(SyncMode.BOTH);
             PositionUtils.move(PositionUtils.getX(), PositionUtils.getY(), PositionUtils.getZ(), 0, 0, true, false);
