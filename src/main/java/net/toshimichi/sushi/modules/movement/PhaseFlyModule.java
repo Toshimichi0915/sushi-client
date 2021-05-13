@@ -18,12 +18,14 @@ import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.MovementUtils;
 import net.toshimichi.sushi.utils.PositionUtils;
 import net.toshimichi.sushi.utils.SyncMode;
+import net.toshimichi.sushi.utils.TpsUtils;
 
 public class PhaseFlyModule extends BaseModule {
 
     private final Configuration<DoubleRange> horizontal;
     private final Configuration<DoubleRange> vertical;
     private final Configuration<Boolean> auto;
+    private final Configuration<Boolean> tpsSync;
     private int stage;
 
     public PhaseFlyModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
@@ -31,6 +33,7 @@ public class PhaseFlyModule extends BaseModule {
         horizontal = provider.get("horizontal_speed", "Horizontal Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
         vertical = provider.get("vertical_speed", "Vertical Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
         auto = provider.get("auto", "Auto", null, Boolean.class, false);
+        tpsSync = provider.get("tps_sync", "TPS Sync", null, Boolean.class, false);
     }
 
     @Override
@@ -61,6 +64,12 @@ public class PhaseFlyModule extends BaseModule {
         float moveForward = (float) (inputs.x * horizontalSpeed);
         float moveUpward = (float) (inputs.y * verticalSpeed);
         float moveStrafe = (float) (inputs.z * horizontalSpeed);
+
+        if (tpsSync.getValue()) {
+            moveForward *= TpsUtils.getTps() / 20;
+            moveStrafe *= TpsUtils.getTps() / 20;
+            moveUpward *= TpsUtils.getTps() / 20;
+        }
 
         Vec2f vec = MovementUtils.toWorld(new Vec2f(moveForward, moveStrafe), player.rotationYaw);
         player.motionX = vec.x;
