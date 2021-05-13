@@ -14,10 +14,7 @@ import net.toshimichi.sushi.modules.combat.VelocityModule;
 import net.toshimichi.sushi.modules.movement.PhaseFlyModule;
 import net.toshimichi.sushi.modules.movement.PhaseWalkModule;
 import net.toshimichi.sushi.modules.movement.SprintModule;
-import net.toshimichi.sushi.modules.player.AntiStuckModule;
-import net.toshimichi.sushi.modules.player.NoRenderModule;
-import net.toshimichi.sushi.modules.player.PacketCancellerModule;
-import net.toshimichi.sushi.modules.player.TimerModule;
+import net.toshimichi.sushi.modules.player.*;
 import net.toshimichi.sushi.modules.render.FullBrightModule;
 import org.apache.commons.io.FileUtils;
 
@@ -61,6 +58,7 @@ public class GsonModules implements Modules {
         addModuleFactory("anti_stuck", AntiStuckModule::new, true);
         addModuleFactory("timer", TimerModule::new, true);
         addModuleFactory("anti_cev_break", AntiCevBreak::new, true);
+        addModuleFactory("no_swing", NoSwing::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
