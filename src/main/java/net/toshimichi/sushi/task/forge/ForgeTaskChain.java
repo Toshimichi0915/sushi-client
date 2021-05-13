@@ -37,6 +37,12 @@ class ForgeTaskChain implements TaskChain {
     }
 
     @Override
+    public TaskChain abort(TaskAdapter<Void, Boolean> task) {
+        getTaskExecutor().addAbortHandler(getParent(), task);
+        return new ForgeTaskChain(getTaskExecutor(), task);
+    }
+
+    @Override
     public void execute() {
         getTaskExecutor().execute();
     }

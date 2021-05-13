@@ -1,7 +1,8 @@
 package net.toshimichi.sushi.task;
 
 public interface Tickable {
-    void tick() throws Exception;
+    default void tick() throws Exception {
+    }
 
     boolean isRunning();
 }

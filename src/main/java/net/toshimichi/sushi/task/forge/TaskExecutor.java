@@ -14,9 +14,11 @@ public class TaskExecutor {
 
     private final ArrayList<TaskContext> contexts = new ArrayList<>();
     private final ArrayList<TaskAdapter<?, ?>> running;
+    private final ArrayList<TaskAdapter<?, Boolean>> abort;
 
     private TaskExecutor(ArrayList<TaskAdapter<?, ?>> running) {
         this.running = running;
+        this.abort = new ArrayList<>();
     }
 
     private TaskContext getTaskContext(TaskAdapter<?, ?> origin, boolean create) {
@@ -35,6 +37,11 @@ public class TaskExecutor {
         getTaskContext(origin, true).addTaskAdapter(adapter);
     }
 
+    protected void addAbortHandler(TaskAdapter<?, ?> origin, TaskAdapter<?, Boolean> adapter) {
+        addTaskAdapter(origin, adapter);
+        abort.add(adapter);
+    }
+
     protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<Exception, ?> handler) {
         getTaskContext(origin, true).addExceptionHandler(handler);
     }
@@ -45,16 +52,18 @@ public class TaskExecutor {
 
     /**
      * Refreshes the task.
-     * If task is still running, nothing will happen and return {@code false}.
-     * Otherwise, start child tasks and return {@code true}.
      *
      * @param task Task to be refreshed.
-     * @return {@code true} if task finished, otherwise {@code false}.
+     * @return {@code true} if {@link TaskAdapter#tick()} should be called, otherwise {@code false}
      */
     @SuppressWarnings("unchecked")
     private boolean refresh(TaskAdapter<?, ?> task) {
         TaskContext context = getTaskContext(task, false);
         if (!task.isRunning()) {
+            if (abort.contains(task) && ((TaskAdapter<?, Boolean>) task).getResult()) {
+                running.clear();
+                return false;
+            }
             if (context != null) {
                 for (TaskAdapter<?, ?> child : context.getTaskAdapters()) {
                     ((TaskAdapter<Object, ?>) child).start(task.getResult());

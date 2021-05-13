@@ -9,8 +9,4 @@ public class NullTask extends TaskAdapter<Void, Void> {
         super.start(input);
         stop(null);
     }
-
-    @Override
-    public void tick() {
-    }
 }

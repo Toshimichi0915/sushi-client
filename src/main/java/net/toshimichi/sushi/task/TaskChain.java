@@ -12,6 +12,8 @@ public interface TaskChain {
 
     <I> ConsumerTaskChain<I> fail(TaskAdapter<Exception, I> task);
 
+    TaskChain abort(TaskAdapter<Void, Boolean> task);
+
     void execute();
 
     default TaskChain then(Task task) {
@@ -32,6 +34,10 @@ public interface TaskChain {
 
     default <I> ConsumerTaskChain<I> fail(PipeTask<Exception, I> task) {
         return fail(new FunctionalPipeTask<>(task));
+    }
+
+    default TaskChain abort(SupplierTask<Boolean> task) {
+        return abort(new FunctionalSupplierTask<>(task));
     }
 
     default TaskChain delay(int delay) {

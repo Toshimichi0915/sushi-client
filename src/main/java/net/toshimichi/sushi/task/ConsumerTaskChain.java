@@ -7,6 +7,8 @@ public interface ConsumerTaskChain<I> extends TaskChain {
 
     <R> ConsumerTaskChain<R> supply(TaskAdapter<I, R> task);
 
+    ConsumerTaskChain<I> abortIf(TaskAdapter<I, Boolean> task);
+
     default TaskChain use(ConsumerTask<I> task) {
         return use(new FunctionalConsumerTask<>(task));
     }
@@ -17,6 +19,10 @@ public interface ConsumerTaskChain<I> extends TaskChain {
 
     default <R> ConsumerTaskChain<R> supply(PipeTask<I, R> task) {
         return supply(new FunctionalPipeTask<>(task));
+    }
+
+    default ConsumerTaskChain<I> abortIf(PipeTask<I, Boolean> task) {
+        return abortIf(new FunctionalPipeTask<>(task));
     }
 
     default ConsumerTaskChain<I> delay(int ticks) {
