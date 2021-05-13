@@ -43,7 +43,51 @@ public class TaskExecutor {
         EventHandlers.register(this);
     }
 
+    /**
+     * Refreshes the task.
+     * If task is still running, nothing will happen and return {@code false}.
+     * Otherwise, start child tasks and return {@code true}.
+     *
+     * @param task Task to be refreshed.
+     * @return {@code true} if task finished, otherwise {@code false}.
+     */
     @SuppressWarnings("unchecked")
+    private boolean refresh(TaskAdapter<?, ?> task) {
+        TaskContext context = getTaskContext(task, false);
+        if (!task.isRunning()) {
+            if (context != null) {
+                for (TaskAdapter<?, ?> child : context.getTaskAdapters()) {
+                    ((TaskAdapter<Object, ?>) child).start(task.getResult());
+                    running.add(child);
+                    updateTask(child, false);
+                }
+            }
+            running.remove(task);
+            return true;
+        }
+        return false;
+    }
+
+    private void updateTask(TaskAdapter<?, ?> task, boolean tick) {
+        TaskContext context = getTaskContext(task, false);
+        try {
+            if (!refresh(task) && tick) {
+                task.tick();
+                refresh(task);
+            }
+        } catch (Exception ex) {
+            if (context == null || context.getExceptionHandlers().isEmpty()) {
+                ex.printStackTrace();
+                return;
+            }
+            for (TaskAdapter<Exception, ?> handler : context.getExceptionHandlers()) {
+                handler.start(ex);
+                running.add(handler);
+                updateTask(handler, false);
+            }
+        }
+    }
+
     @EventHandler(timing = EventTiming.PRE, priority = 1000)
     public void onClientTick(ClientTickEvent e) {
         if (running.isEmpty()) {
@@ -52,29 +96,7 @@ public class TaskExecutor {
         }
 
         for (TaskAdapter<?, ?> task : new ArrayList<>(running)) {
-            TaskContext context = getTaskContext(task, false);
-            try {
-                if (!task.isRunning()) {
-                    if (context != null) {
-                        for (TaskAdapter<?, ?> child : context.getTaskAdapters()) {
-                            ((TaskAdapter<Object, ?>) child).start(task.getResult());
-                            running.add(child);
-                        }
-                    }
-                    running.remove(task);
-                    continue;
-                }
-                task.tick();
-            } catch (Exception ex) {
-                if (context == null || context.getExceptionHandlers().isEmpty()) {
-                    ex.printStackTrace();
-                    return;
-                }
-                for (TaskAdapter<Exception, ?> handler : context.getExceptionHandlers()) {
-                    handler.start(ex);
-                    running.add(handler);
-                }
-            }
+            updateTask(task, true);
         }
     }
 
