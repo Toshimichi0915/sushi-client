@@ -1,5 +1,10 @@
 package net.toshimichi.sushi.modules;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.Configurations;
@@ -130,5 +135,25 @@ abstract public class BaseModule implements Module {
 
     protected boolean isTemporaryByDefault() {
         return false;
+    }
+
+    protected Minecraft getClient() {
+        return Minecraft.getMinecraft();
+    }
+
+    protected EntityPlayerSP getPlayer() {
+        return getClient().player;
+    }
+
+    protected PlayerControllerMP getController() {
+        return getClient().playerController;
+    }
+
+    protected WorldClient getWorld() {
+        return getClient().world;
+    }
+
+    protected NetHandlerPlayClient getConnection() {
+        return getPlayer().connection;
     }
 }
