@@ -8,7 +8,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
-import net.toshimichi.sushi.modules.combat.AntiCevBreak;
+import net.toshimichi.sushi.modules.combat.AntiCevBreakModule;
 import net.toshimichi.sushi.modules.combat.VelocityModule;
 import net.toshimichi.sushi.modules.movement.PhaseFlyModule;
 import net.toshimichi.sushi.modules.movement.PhaseWalkModule;
@@ -56,7 +56,7 @@ public class GsonModules implements Modules {
         addModuleFactory("phase_walk", PhaseWalkModule::new, true);
         addModuleFactory("anti_stuck", AntiStuckModule::new, true);
         addModuleFactory("timer", TimerModule::new, true);
-        addModuleFactory("anti_cev_break", AntiCevBreak::new, true);
+        addModuleFactory("anti_cev_break", AntiCevBreakModule::new, true);
         addModuleFactory("no_swing", NoSwingModule::new, true);
         addModuleFactory("lock_yaw", LockYawModule::new, true);
         addModuleFactory("no_fall", NoFallModule::new, true);

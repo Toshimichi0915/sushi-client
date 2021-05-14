@@ -16,9 +16,9 @@ import net.toshimichi.sushi.utils.*;
 
 import java.util.List;
 
-public class AntiCevBreak extends BaseModule {
+public class AntiCevBreakModule extends BaseModule {
 
-    public AntiCevBreak(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public AntiCevBreakModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 
