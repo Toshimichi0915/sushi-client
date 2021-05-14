@@ -10,6 +10,6 @@ public class FunctionalConsumerRepeatTask<I> extends ConsumerTaskAdapter<I> {
 
     @Override
     public void tick() throws Exception {
-        if (delegate.tick(getItem())) stop(null);
+        if (delegate.tick(getInput())) stop(null);
     }
 }

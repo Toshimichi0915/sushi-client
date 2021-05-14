@@ -3,13 +3,13 @@ package net.toshimichi.sushi.task;
 abstract public class ConsumerTaskAdapter<I> extends TaskAdapter<I, Void> {
 
     private boolean running;
-    private I item;
+    private I input;
 
     @Override
     public void start(I item) {
         if (running) throw new IllegalStateException("This task has already started");
         this.running = true;
-        this.item = item;
+        this.input = item;
     }
 
     @Override
@@ -23,7 +23,8 @@ abstract public class ConsumerTaskAdapter<I> extends TaskAdapter<I, Void> {
         return running;
     }
 
-    public I getItem() {
-        return item;
+    @Override
+    public I getInput() {
+        return input;
     }
 }

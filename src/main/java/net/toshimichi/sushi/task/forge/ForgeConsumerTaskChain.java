@@ -13,21 +13,21 @@ class ForgeConsumerTaskChain<I> extends ForgeTaskChain implements ConsumerTaskCh
     }
 
     @Override
-    public TaskChain use(ConsumerTaskAdapter<I> task) {
+    public TaskChain use(ConsumerTaskAdapter<? super I> task) {
         getTaskExecutor().addTaskAdapter(getParent(), task);
         return new ForgeTaskChain(getTaskExecutor(), task);
     }
 
     @Override
-    public <R> ConsumerTaskChain<R> supply(TaskAdapter<I, R> task) {
+    public <R> ConsumerTaskChain<R> supply(TaskAdapter<? super I, R> task) {
         getTaskExecutor().addTaskAdapter(getParent(), task);
         return new ForgeConsumerTaskChain<>(getTaskExecutor(), task);
     }
 
     @Override
-    public ConsumerTaskChain<I> abortIf(TaskAdapter<I, Boolean> task) {
+    public ConsumerTaskChain<I> abortIf(TaskAdapter<? super I, Boolean> task) {
         getTaskExecutor().addAbortHandler(getParent(), task);
-        RelayTask<I> relayTask = new RelayTask<>(task);
+        RelayTask<? super I> relayTask = new RelayTask<>(task);
         getTaskExecutor().addTaskAdapter(task, relayTask);
         return new ForgeConsumerTaskChain<>(getTaskExecutor(), relayTask);
     }

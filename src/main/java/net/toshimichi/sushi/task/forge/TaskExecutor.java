@@ -85,6 +85,7 @@ public class TaskExecutor {
                 refresh(task);
             }
         } catch (Exception ex) {
+            running.remove(task);
             if (context == null || context.getExceptionHandlers().isEmpty()) {
                 ex.printStackTrace();
                 return;

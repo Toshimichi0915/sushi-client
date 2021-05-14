@@ -10,7 +10,7 @@ public class FunctionalConsumerTask<I> extends ConsumerTaskAdapter<I> {
 
     @Override
     public void tick() throws Exception {
-        delegate.tick(getItem());
+        delegate.tick(getInput());
         stop(null);
     }
 }
