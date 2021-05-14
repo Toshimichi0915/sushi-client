@@ -8,7 +8,7 @@ public class CharParser implements TypeParser<Character> {
     @Override
     public Character parse(int index, Stack<String> args) throws ParseException {
         if (args.isEmpty())
-            throw new ParseException("Missing char at index " + index);
+            throw new ParseException("Missing character at index " + index);
         String prefix = args.pop();
         if (prefix.length() > 1)
             throw new ParseException("Invalid character at index " + index);

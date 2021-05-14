@@ -29,7 +29,7 @@ public class SetCommand extends BaseCommand {
         return (TypeParser<T>) Commands.getTypeParsers().stream()
                 .filter(p -> c.isAssignableFrom(p.getType()))
                 .min(Comparator.comparingInt(TypeParser::getPriority))
-                .orElseThrow(() -> new ParseException("This setting cannot be changed"));
+                .orElseThrow(() -> new ParseException(TypeParser.UNMODIFIABLE_ERROR));
     }
 
     @SuppressWarnings("unchecked")
@@ -44,12 +44,11 @@ public class SetCommand extends BaseCommand {
             if (stack.isEmpty())
                 throw new ParseException("A configuration name/id was missing at index " + original.size());
             String key = stack.pop();
-            ArrayList<String> values = new ArrayList<>(stack);
             for (Configuration<?> conf : module.getConfigurations().getAll()) {
                 if (!conf.getId().equalsIgnoreCase(key) && !conf.getName().equalsIgnoreCase(key)) continue;
-                Object value = findParser(conf.getValueClass()).parse(original.size(), stack);
+                Object value = ((TypeParser<Object>) findParser(conf.getValueClass())).parse(original.size(), stack, conf.getValue());
                 ((Configuration<Object>) conf).setValue(value);
-                out.send("Set " + conf.getName() + " to " + String.join(" ", values), LogLevel.INFO);
+                out.send("Changed configuration " + conf.getName(), LogLevel.INFO);
                 return;
             }
             throw new ParseException("A configuration named " + key + " was not found");

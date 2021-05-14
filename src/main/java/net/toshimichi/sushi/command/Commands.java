@@ -14,8 +14,12 @@ public class Commands {
 
     static {
         addTypeParser(new IntParser());
+        addTypeParser(new DoubleParser());
+        addTypeParser(new IntRangeParser());
+        addTypeParser(new DoubleRangeParser());
         addTypeParser(new CharParser());
         addTypeParser(new StringParser());
+        addTypeParser(new BooleanParser());
         addTypeParser(new MessageHandlerParser());
         addTypeParser(new ModuleParser());
     }
