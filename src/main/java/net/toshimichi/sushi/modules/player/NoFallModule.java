@@ -14,6 +14,7 @@ public class NoFallModule extends BaseModule {
     private final Configuration<NoFallMode> noFallMode;
     private final Configuration<DoubleRange> distance;
     private final Configuration<Boolean> pauseOnElytra;
+    private boolean onGround;
 
     public NoFallModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -29,7 +30,8 @@ public class NoFallModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onPlayerUpdate(PlayerUpdateEvent e) {
+    public void onPrePlayerUpdate(PlayerUpdateEvent e) {
+        onGround = getPlayer().onGround;
         NoFallMode mode = noFallMode.getValue();
         if (mode == NoFallMode.PACKET) {
             if (getPlayer().fallDistance > distance.getValue().getCurrent() &&
@@ -41,6 +43,11 @@ public class NoFallModule extends BaseModule {
         } else if (mode == NoFallMode.FLY) {
             getPlayer().onGround = false;
         }
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void onPostPlayerUpdate(PlayerUpdateEvent e) {
+        getPlayer().onGround = onGround;
     }
 
     @Override
