@@ -10,24 +10,32 @@ import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTextComponent;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTextHeaderComponent;
 
-public class SimpleStringComponent extends BasePanelComponent<Component> implements ConfigComponent<String> {
+public class SimpleIntComponent extends BasePanelComponent<Component> implements ConfigComponent<Integer> {
 
-    private final Configuration<String> config;
+    private final Configuration<Integer> config;
 
-    public SimpleStringComponent(ThemeConstants constants, Configuration<String> config) {
+    public SimpleIntComponent(ThemeConstants constants, Configuration<Integer> config) {
         this.config = config;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
         add(new SimpleTextHeaderComponent(constants, config.getName()));
-        add(new SimpleTextComponent(constants, config.getValue()) {
+        add(new SimpleTextComponent(constants, Integer.toString(config.getValue())) {
+
+            private String oldValue;
+
             @Override
             protected void onChange(String text) {
-                config.setValue(text);
+                try {
+                    config.setValue(Integer.parseInt(text));
+                    oldValue = text;
+                } catch (NumberFormatException e) {
+                    setText(oldValue);
+                }
             }
         });
     }
 
     @Override
-    public Configuration<String> getValue() {
+    public Configuration<Integer> getValue() {
         return config;
     }
 }

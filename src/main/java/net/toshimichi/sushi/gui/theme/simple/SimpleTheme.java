@@ -31,6 +31,7 @@ public class SimpleTheme implements Theme {
         newFactory(Keybind.class, c -> new SimpleKeybindComponent(constants, c));
         newFactory(Runnable.class, c -> new SimpleRunnableComponent(constants, c));
         newFactory(Boolean.class, c -> new SimpleBooleanComponent(constants, c));
+        newFactory(Integer.class, c -> new SimpleIntComponent(constants, c));
     }
 
     public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {

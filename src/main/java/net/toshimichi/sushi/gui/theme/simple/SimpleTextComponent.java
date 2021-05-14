@@ -13,7 +13,7 @@ abstract public class SimpleTextComponent extends BaseComponent {
     private static final int HOLD_DELAY = 50;
     private final ThemeConstants constants;
 
-    private final StringBuilder text;
+    private StringBuilder text;
     private long pressMillis;
     private long holdMillis;
     private int holdKeyCode;
@@ -73,6 +73,10 @@ abstract public class SimpleTextComponent extends BaseComponent {
             getContext().close();
         }
         return true;
+    }
+
+    public void setText(String newValue) {
+        text = new StringBuilder(newValue);
     }
 
     protected void onChange(String text) {

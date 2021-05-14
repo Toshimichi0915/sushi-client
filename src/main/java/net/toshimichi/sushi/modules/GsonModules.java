@@ -59,6 +59,7 @@ public class GsonModules implements Modules {
         addModuleFactory("timer", TimerModule::new, true);
         addModuleFactory("anti_cev_break", AntiCevBreak::new, true);
         addModuleFactory("no_swing", NoSwing::new, true);
+        addModuleFactory("lock_yaw", LockYawModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
