@@ -25,6 +25,7 @@ public class SimpleIntComponent extends BasePanelComponent<Component> implements
             @Override
             protected void onChange(String text) {
                 try {
+                    if (text.isEmpty() || text.equals("-")) return;
                     config.setValue(Integer.parseInt(text));
                     oldValue = text;
                 } catch (NumberFormatException e) {
