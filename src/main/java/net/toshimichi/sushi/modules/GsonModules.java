@@ -58,7 +58,7 @@ public class GsonModules implements Modules {
         addModuleFactory("anti_stuck", AntiStuckModule::new, true);
         addModuleFactory("timer", TimerModule::new, true);
         addModuleFactory("anti_cev_break", AntiCevBreak::new, true);
-        addModuleFactory("no_swing", NoSwing::new, true);
+        addModuleFactory("no_swing", NoSwingModule::new, true);
         addModuleFactory("lock_yaw", LockYawModule::new, true);
     }
 

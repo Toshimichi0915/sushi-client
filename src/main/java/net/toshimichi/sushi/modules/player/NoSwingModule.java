@@ -8,8 +8,8 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import net.toshimichi.sushi.modules.*;
 
-public class NoSwing extends BaseModule {
-    public NoSwing(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+public class NoSwingModule extends BaseModule {
+    public NoSwingModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 
