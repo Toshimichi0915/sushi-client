@@ -59,6 +59,7 @@ public class GsonModules implements Modules {
         addModuleFactory("anti_cev_break", AntiCevBreak::new, true);
         addModuleFactory("no_swing", NoSwingModule::new, true);
         addModuleFactory("lock_yaw", LockYawModule::new, true);
+        addModuleFactory("no_fall", NoFallModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
