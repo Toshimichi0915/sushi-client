@@ -4,6 +4,7 @@ import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.config.data.IntRange;
+import net.toshimichi.sushi.config.data.Named;
 import net.toshimichi.sushi.gui.ConfigComponent;
 import net.toshimichi.sushi.gui.ConfigComponentFactory;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
@@ -32,6 +33,7 @@ public class SimpleTheme implements Theme {
         newFactory(Runnable.class, c -> new SimpleRunnableComponent(constants, c));
         newFactory(Boolean.class, c -> new SimpleBooleanComponent(constants, c));
         newFactory(Integer.class, c -> new SimpleIntComponent(constants, c));
+        newFactory(Named.class, c -> new SimpleNamedComponent<>(constants, c));
     }
 
     public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {
@@ -52,7 +54,7 @@ public class SimpleTheme implements Theme {
     @Override
     public <T> ConfigComponent<T> newConfigComponent(Configuration<T> conf) {
         for (Map.Entry<Class<?>, ConfigComponentFactory<?>> entry : factories.entrySet()) {
-            if (entry.getKey().equals(conf.getValueClass()))
+            if (entry.getKey().isAssignableFrom(conf.getValueClass()))
                 return ((ConfigComponentFactory<T>) entry.getValue()).newConfigComponent(conf);
         }
         return null;

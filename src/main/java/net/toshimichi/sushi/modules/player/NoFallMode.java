@@ -2,7 +2,7 @@ package net.toshimichi.sushi.modules.player;
 
 import net.toshimichi.sushi.config.data.Named;
 
-enum NoFallMode implements Named {
+public enum NoFallMode implements Named {
     PACKET("Packet"), ON_GROUND("On Ground"), FLY("Fly");
 
     private final String name;

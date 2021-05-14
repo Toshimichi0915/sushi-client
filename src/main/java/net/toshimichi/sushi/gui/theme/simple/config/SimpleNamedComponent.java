@@ -15,7 +15,6 @@ public class SimpleNamedComponent<T extends Named> extends SimpleEnumComponent<T
         this.conf = conf;
     }
 
-
     @Override
     public Configuration<T> getValue() {
         return conf;
