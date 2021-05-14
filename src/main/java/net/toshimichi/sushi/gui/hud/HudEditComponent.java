@@ -126,12 +126,9 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
     @Override
     public void onClick(int x, int y, ClickType type) {
         HudElementComponent component = hud.getTopComponent(x, y);
-        System.out.println(component);
         if (component == null) return;
-        System.out.println(component);
         if (inactive.contains(component)) inactive.remove(component);
         else inactive.add(component);
-        System.out.println(inactive);
     }
 
     private void onHoldLeft(int fromX, int fromY, int toX, int toY, MouseStatus status) {

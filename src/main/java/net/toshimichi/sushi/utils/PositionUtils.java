@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class PositionUtils {
@@ -64,8 +65,8 @@ public class PositionUtils {
                 player.rotationPitch = pitch;
             } else {
                 rotationPacket = PositionUtils.yaw != yaw || PositionUtils.pitch != pitch;
-                PositionUtils.yaw = yaw;
-                PositionUtils.pitch = pitch;
+                PositionUtils.yaw = MathHelper.wrapDegrees(yaw);
+                PositionUtils.pitch = MathHelper.wrapDegrees(pitch);
             }
         }
         CPacketPlayer packet;
@@ -86,10 +87,9 @@ public class PositionUtils {
     public static void lookAt(Vec3d loc) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) return;
-        Vec3d origin = new Vec3d(1, 0, 0);
-        Vec3d direction = new Vec3d(player.posX, player.posY, player.posZ).subtract(loc).normalize();
-        float pitch = (float) (Math.atan2(direction.z, direction.x - 1) * 180 / Math.PI);
-        float yaw = (float) (Math.asin(direction.y - origin.y) * 180 / Math.PI);
+        Vec3d direction = loc.subtract(new Vec3d(player.posX, player.posY + player.eyeHeight, player.posZ)).normalize();
+        float yaw = (float) (Math.atan2(direction.z, direction.x) * 180 / Math.PI) - 90;
+        float pitch = (float) -(Math.asin(direction.y) * 180 / Math.PI);
         move(0, 0, 0, yaw, pitch, false, true);
     }
 }
