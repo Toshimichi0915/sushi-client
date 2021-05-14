@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
@@ -139,7 +138,7 @@ public class GsonModules implements Modules {
 
     private void updateConfig(JsonObject root) {
         for (DefaultModule module : defaults) {
-            root.remove(module.id);
+            if (root.has(module.id)) continue;
             root.add(module.id, new JsonObject());
             addModule(module.id, getModuleFactory(module.factory));
         }
@@ -154,7 +153,7 @@ public class GsonModules implements Modules {
             } else {
                 String contents = FileUtils.readFileToString(conf, StandardCharsets.UTF_8);
                 root = gson.fromJson(contents, JsonObject.class);
-                if (version < Sushi.getVersion()) updateConfig(root);
+                updateConfig(root);
             }
             for (Map.Entry<String, JsonElement> entry : new HashSet<>(root.getAsJsonObject().entrySet())) {
                 JsonObject moduleJson = entry.getValue().getAsJsonObject();
