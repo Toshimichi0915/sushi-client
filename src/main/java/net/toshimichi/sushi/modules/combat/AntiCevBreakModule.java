@@ -13,10 +13,13 @@ import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
-import net.toshimichi.sushi.utils.*;
+import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
+import net.toshimichi.sushi.utils.BlockPlaceInfo;
+import net.toshimichi.sushi.utils.BlockUtils;
+import net.toshimichi.sushi.utils.DesyncMode;
+import net.toshimichi.sushi.utils.PositionUtils;
 
 import java.util.Collections;
-import java.util.List;
 
 public class AntiCevBreakModule extends BaseModule {
 
@@ -37,8 +40,6 @@ public class AntiCevBreakModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
         Item obsidian = Item.getItemById(49);
-        List<Integer> hotbar = InventoryUtils.findItemFromHotbar(obsidian);
-        if (hotbar.isEmpty()) return;
         for (Entity entity : getWorld().loadedEntityList) {
             if (!(entity instanceof EntityEnderCrystal)) continue;
             if (entity.posY < getPlayer().posY + 2) continue;
@@ -52,10 +53,11 @@ public class AntiCevBreakModule extends BaseModule {
             getConnection().sendPacket(new CPacketUseEntity(entity));
             BlockPlaceInfo face = BlockUtils.findFace(getWorld(), entity.getPosition());
             if (face == null) continue;
-            getPlayer().inventory.currentItem = hotbar.get(0);
-            getController().updateController();
             TaskExecutor.newTaskChain()
-                    .supply(true, () -> Collections.singletonList(face))
+                    .supply(() -> obsidian)
+                    .then(new ItemSwitchTask(null, false))
+                    .abortIf(found -> !found)
+                    .supply(() -> Collections.singletonList(face))
                     .then(new BlockPlaceTask(DesyncMode.LOOK))
                     .execute();
         }

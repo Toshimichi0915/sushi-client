@@ -1,19 +1,31 @@
 package net.toshimichi.sushi.utils;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Container;
+import net.minecraft.network.play.client.CPacketClickWindow;
 
 public class InventoryUtils {
-    public static List<Integer> findItemFromHotbar(Item item) {
-        ArrayList<Integer> result = new ArrayList<>();
-        List<ItemStack> items = Minecraft.getMinecraft().player.inventory.mainInventory;
-        for (int i = 0; i < 9; i++) {
-            if (items.get(i).getItem().equals(item)) result.add(i);
-        }
-        return result;
+
+    public static void moveHotbar(int slot) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        PlayerControllerMP controller = Minecraft.getMinecraft().playerController;
+        player.inventory.currentItem = slot;
+        controller.updateController();
+    }
+
+    public static short clickItemSlot(ItemSlot slot, ClickType type, int button) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        NetHandlerPlayClient connection = player.connection;
+        Container container = player.inventoryContainer;
+        short transactionId = container.getNextTransactionID(player.inventory);
+        int index = slot.getInventoryType().toProtocol(slot.getIndex());
+        container.slotClick(index, button, type, player);
+        connection.sendPacket(new CPacketClickWindow(0, index, button, type, slot.getItemStack(), transactionId));
+        Minecraft.getMinecraft().playerController.updateController();
+        return transactionId;
     }
 }

@@ -13,10 +13,10 @@ import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
+import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SurroundModule extends BaseModule {
 
@@ -45,9 +45,6 @@ public class SurroundModule extends BaseModule {
 
     private void surround() {
         if (running) return;
-        Item obsidian = Item.getItemById(49);
-        List<Integer> hotbar = InventoryUtils.findItemFromHotbar(obsidian);
-        if (hotbar.isEmpty()) return;
         BlockPos pos = new BlockPos(getPlayer().posX, getPlayer().posY, getPlayer().posZ);
         if (pull.getValue()) {
             PositionUtils.move(pos.getX() + 0.5, getPlayer().posY, pos.getZ() + 0.5,
@@ -70,14 +67,15 @@ public class SurroundModule extends BaseModule {
                 toBePlaced.add(neighborFace);
             }
         }
-        getPlayer().inventory.currentItem = hotbar.get(0);
-        getController().updateController();
 
         running = true;
         TaskExecutor.newTaskChain()
-                .supply(true, () -> toBePlaced)
-                .then(true, new BlockPlaceTask(DesyncMode.LOOK))
-                .then(true, () -> running = false)
+                .supply(() -> Item.getItemById(49))
+                .then(new ItemSwitchTask(null, true))
+                .abortIf(found -> !found)
+                .supply(() -> toBePlaced)
+                .then(new BlockPlaceTask(DesyncMode.LOOK))
+                .then(() -> running = false)
                 .execute();
     }
 
