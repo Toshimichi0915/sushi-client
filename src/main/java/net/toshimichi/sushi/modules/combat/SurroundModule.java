@@ -76,7 +76,7 @@ public class SurroundModule extends BaseModule {
         running = true;
         TaskExecutor.newTaskChain()
                 .supply(true, () -> toBePlaced)
-                .then(new BlockPlaceTask(DesyncMode.LOOK))
+                .then(true, new BlockPlaceTask(DesyncMode.LOOK))
                 .then(true, () -> running = false)
                 .execute();
     }
