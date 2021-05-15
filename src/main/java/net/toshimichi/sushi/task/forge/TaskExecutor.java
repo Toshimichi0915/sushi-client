@@ -18,12 +18,12 @@ public class TaskExecutor {
     private final ArrayList<TaskContext> contexts = new ArrayList<>();
     private final ArrayList<TaskAdapter<?, ?>> running;
     private final ArrayList<TaskAdapter<?, Boolean>> abort;
-    private final ArrayList<TaskAdapter<?, ?>> instant;
+    private final ArrayList<TaskAdapter<?, ?>> delay;
 
     private TaskExecutor(ArrayList<TaskAdapter<?, ?>> running) {
         this.running = running;
         this.abort = new ArrayList<>();
-        this.instant = new ArrayList<>();
+        this.delay = new ArrayList<>();
     }
 
     private TaskContext getTaskContext(TaskAdapter<?, ?> origin, boolean create) {
@@ -38,18 +38,18 @@ public class TaskExecutor {
         return context;
     }
 
-    protected void addTaskAdapter(TaskAdapter<?, ?> origin, TaskAdapter<?, ?> adapter, boolean instant) {
+    protected void addTaskAdapter(TaskAdapter<?, ?> origin, TaskAdapter<?, ?> adapter, boolean delay) {
         getTaskContext(origin, true).addTaskAdapter(adapter);
-        if (instant) this.instant.add(adapter);
+        if (delay) this.delay.add(adapter);
     }
 
-    protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<? super Exception, ?> handler, boolean instant) {
+    protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<? super Exception, ?> handler, boolean delay) {
         getTaskContext(origin, true).addExceptionHandler(handler);
-        if (instant) this.instant.add(handler);
+        if (delay) this.delay.add(handler);
     }
 
-    protected void addAbortHandler(TaskAdapter<?, ?> origin, TaskAdapter<?, Boolean> adapter, boolean instant) {
-        addTaskAdapter(origin, adapter, instant);
+    protected void addAbortHandler(TaskAdapter<?, ?> origin, TaskAdapter<?, Boolean> adapter, boolean delay) {
+        addTaskAdapter(origin, adapter, delay);
         abort.add(adapter);
     }
 
@@ -95,7 +95,7 @@ public class TaskExecutor {
                     TaskAdapter<Object, ?> consumer = (TaskAdapter<Object, ?>) child;
                     executeTask(consumer, () -> consumer.start(task.getResult()));
                     running.add(child);
-                    updateTask(child, instant.contains(child));
+                    updateTask(child, !delay.contains(child));
                 }
             }
             running.remove(task);
