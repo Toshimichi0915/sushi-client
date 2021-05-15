@@ -18,10 +18,12 @@ public class TaskExecutor {
     private final ArrayList<TaskContext> contexts = new ArrayList<>();
     private final ArrayList<TaskAdapter<?, ?>> running;
     private final ArrayList<TaskAdapter<?, Boolean>> abort;
+    private final ArrayList<TaskAdapter<?, ?>> instant;
 
     private TaskExecutor(ArrayList<TaskAdapter<?, ?>> running) {
         this.running = running;
         this.abort = new ArrayList<>();
+        this.instant = new ArrayList<>();
     }
 
     private TaskContext getTaskContext(TaskAdapter<?, ?> origin, boolean create) {
@@ -36,17 +38,19 @@ public class TaskExecutor {
         return context;
     }
 
-    protected void addTaskAdapter(TaskAdapter<?, ?> origin, TaskAdapter<?, ?> adapter) {
+    protected void addTaskAdapter(TaskAdapter<?, ?> origin, TaskAdapter<?, ?> adapter, boolean instant) {
         getTaskContext(origin, true).addTaskAdapter(adapter);
+        if (instant) this.instant.add(adapter);
     }
 
-    protected void addAbortHandler(TaskAdapter<?, ?> origin, TaskAdapter<?, Boolean> adapter) {
-        addTaskAdapter(origin, adapter);
-        abort.add(adapter);
-    }
-
-    protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<? super Exception, ?> handler) {
+    protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<? super Exception, ?> handler, boolean instant) {
         getTaskContext(origin, true).addExceptionHandler(handler);
+        if (instant) this.instant.add(handler);
+    }
+
+    protected void addAbortHandler(TaskAdapter<?, ?> origin, TaskAdapter<?, Boolean> adapter, boolean instant) {
+        addTaskAdapter(origin, adapter, instant);
+        abort.add(adapter);
     }
 
     protected void execute() {
@@ -91,7 +95,7 @@ public class TaskExecutor {
                     TaskAdapter<Object, ?> consumer = (TaskAdapter<Object, ?>) child;
                     executeTask(consumer, () -> consumer.start(task.getResult()));
                     running.add(child);
-                    updateTask(child, false);
+                    updateTask(child, instant.contains(child));
                 }
             }
             running.remove(task);
