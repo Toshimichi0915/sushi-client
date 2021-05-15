@@ -8,8 +8,8 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.DesyncMode;
 import net.toshimichi.sushi.utils.PositionUtils;
-import net.toshimichi.sushi.utils.SyncMode;
 
 public class LockYawModule extends BaseModule {
 
@@ -34,9 +34,8 @@ public class LockYawModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
-        PositionUtils.setSyncMode(SyncMode.BOTH);
         float pitch = PositionUtils.getPitch();
-        PositionUtils.lookAt(new Vec3d(x.getValue(), 0, z.getValue()));
+        PositionUtils.lookAt(new Vec3d(x.getValue(), 0, z.getValue()), DesyncMode.NONE);
         getPlayer().rotationPitch = pitch;
     }
 

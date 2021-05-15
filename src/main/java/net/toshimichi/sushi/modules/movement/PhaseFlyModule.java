@@ -15,9 +15,9 @@ import net.toshimichi.sushi.events.player.PlayerMotionEvent;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;
 import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.DesyncMode;
 import net.toshimichi.sushi.utils.MovementUtils;
 import net.toshimichi.sushi.utils.PositionUtils;
-import net.toshimichi.sushi.utils.SyncMode;
 import net.toshimichi.sushi.utils.TpsUtils;
 
 public class PhaseFlyModule extends BaseModule {
@@ -90,8 +90,7 @@ public class PhaseFlyModule extends BaseModule {
             stage++;
         } else if (stage == 2) {
             player.movementInput.sneak = true;
-            PositionUtils.setSyncMode(SyncMode.BOTH);
-            PositionUtils.move(player.posX, player.posY + 0.1, player.posZ, 0, 0, true, false);
+            PositionUtils.move(player.posX, player.posY + 0.1, player.posZ, 0, 0, true, false, DesyncMode.NONE);
             stage++;
         } else if (stage == 3) {
             stage = 0;

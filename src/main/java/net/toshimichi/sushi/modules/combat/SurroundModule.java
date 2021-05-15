@@ -40,6 +40,7 @@ public class SurroundModule extends BaseModule {
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
+        running = false;
     }
 
     private void surround() {
@@ -49,9 +50,8 @@ public class SurroundModule extends BaseModule {
         if (hotbar.isEmpty()) return;
         BlockPos pos = new BlockPos(getPlayer().posX, getPlayer().posY, getPlayer().posZ);
         if (pull.getValue()) {
-            PositionUtils.setSyncMode(SyncMode.BOTH);
             PositionUtils.move(pos.getX() + 0.5, getPlayer().posY, pos.getZ() + 0.5,
-                    0, 0, true, false);
+                    0, 0, true, false, DesyncMode.NONE);
         }
         if (disableOnJump.getValue() && getPlayer().movementInput.jump || disableAfter.getValue()) {
             setEnabled(false);
@@ -76,7 +76,7 @@ public class SurroundModule extends BaseModule {
         running = true;
         TaskExecutor.newTaskChain()
                 .supply(true, () -> toBePlaced)
-                .then(new BlockPlaceTask(SyncMode.NONE))
+                .then(new BlockPlaceTask(DesyncMode.LOOK))
                 .then(true, () -> running = false)
                 .execute();
     }

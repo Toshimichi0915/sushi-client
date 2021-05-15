@@ -1,8 +1,6 @@
 package net.toshimichi.sushi.task.tasks;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.math.BlockPos;
 import net.toshimichi.sushi.task.TaskAdapter;
@@ -14,17 +12,12 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
 
     private int index = -1;
 
-    private final SyncMode mode;
-
-    private final PlayerControllerMP controller;
-    private final EntityPlayerSP player;
+    private final DesyncMode mode;
     private final WorldClient world;
 
-    public BlockPlaceTask(SyncMode mode) {
+    public BlockPlaceTask(DesyncMode mode) {
         this.mode = mode;
         Minecraft minecraft = Minecraft.getMinecraft();
-        controller = minecraft.playerController;
-        player = minecraft.player;
         world = minecraft.world;
     }
 
@@ -41,9 +34,9 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
             tick();
             return;
         }
-        PositionUtils.setSyncMode(mode);
-        PositionUtils.lookAt(face.getPos().add(pos.getX(), pos.getY(), pos.getZ()));
-        PositionUtils.setSyncMode(SyncMode.BOTH);
+        PositionUtils.desync(mode);
+        PositionUtils.lookAt(face.getPos().add(pos.getX(), pos.getY(), pos.getZ()), mode);
+        PositionUtils.pop();
         BlockUtils.place(info);
     }
 }

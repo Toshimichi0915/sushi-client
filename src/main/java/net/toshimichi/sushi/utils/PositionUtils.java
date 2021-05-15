@@ -4,19 +4,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.CPacketPlayer;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.Stack;
 
 public class PositionUtils {
 
-    private static SyncMode mode = SyncMode.BOTH;
+    private static final float EPSILON = 0.00001F;
+    private static final Stack<DesyncMode> stack = new Stack<>();
+    private static DesyncMode mode = DesyncMode.NONE;
     private static double x;
     private static double y;
     private static double z;
     private static float yaw;
     private static float pitch;
 
-    public static SyncMode getSyncMode() {
+    public static DesyncMode getDesyncMode() {
         return mode;
     }
 
@@ -40,34 +43,70 @@ public class PositionUtils {
         return pitch;
     }
 
-    public static void setSyncMode(SyncMode mode) {
-        PositionUtils.mode = mode;
+    public static double getX(EntityPlayerSP player, DesyncMode mode) {
+        return mode.isPositionDesync() ? getX() : player.posX;
     }
 
-    public static void move(double x, double y, double z, float yaw, float pitch, boolean position, boolean rotation) {
+    public static double getY(EntityPlayerSP player, DesyncMode mode) {
+        return mode.isPositionDesync() ? getY() : player.posY;
+    }
+
+    public static double getZ(EntityPlayerSP player, DesyncMode mode) {
+        return mode.isPositionDesync() ? getZ() : player.posZ;
+    }
+
+    public static float getYaw(EntityPlayerSP player, DesyncMode mode) {
+        return mode.isRotationDesync() ? getYaw() : player.rotationYaw;
+    }
+
+    public static float getPitch(EntityPlayerSP player, DesyncMode mode) {
+        return mode.isRotationDesync() ? getPitch() : player.rotationPitch;
+    }
+
+    public static void desync(DesyncMode newMode) {
+        boolean position = mode.isPositionDesync() || newMode.isPositionDesync();
+        boolean rotation = mode.isRotationDesync() || newMode.isRotationDesync();
+        stack.push(mode);
+        mode = DesyncMode.valueOf(position, rotation);
+    }
+
+    public static void pop() {
+        mode = stack.pop();
+    }
+
+    public static void move(double x, double y, double z, float yaw, float pitch, boolean position, boolean rotation, DesyncMode mode) {
+        if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z) ||
+                !Float.isFinite(yaw) || !Float.isFinite(pitch)) {
+            throw new IllegalArgumentException("Invalid movement x: " + x + " y: " + y + " z: " + z +
+                    " yaw: " + yaw + " pitch: " + pitch);
+        }
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) return;
         boolean positionPacket = false;
         boolean rotationPacket = false;
         if (position) {
-            if (mode.isSyncPosition()) {
-                player.setPosition(x, y, z);
+            if (mode.isPositionDesync()) {
+                positionPacket = true;
+                PositionUtils.x = x;
+                PositionUtils.y = y;
+                PositionUtils.z = z;
             } else {
-                positionPacket = PositionUtils.x != x || PositionUtils.y != y || PositionUtils.z != z;
+                player.setPosition(x, y, z);
             }
-            PositionUtils.x = x;
-            PositionUtils.y = y;
-            PositionUtils.z = z;
         }
         if (rotation) {
-            if (mode.isSyncLook()) {
+            while (yaw > 180) yaw -= 180;
+            while (yaw < -180) yaw += 180;
+            while (pitch > 90) pitch -= 90;
+            while (pitch < -90) pitch += 90;
+            if (mode.isRotationDesync()) {
+                rotationPacket = true;
+                PositionUtils.yaw = yaw;
+                PositionUtils.pitch = pitch;
+            } else {
                 player.rotationYaw = yaw;
                 player.rotationPitch = pitch;
-            } else {
-                rotationPacket = PositionUtils.yaw != yaw || PositionUtils.pitch != pitch;
             }
-            PositionUtils.yaw = MathHelper.wrapDegrees(yaw);
-            PositionUtils.pitch = MathHelper.wrapDegrees(pitch);
         }
         CPacketPlayer packet;
         if (positionPacket && rotationPacket) {
@@ -84,12 +123,16 @@ public class PositionUtils {
         connection.sendPacket(packet);
     }
 
-    public static void lookAt(Vec3d loc) {
+    public static void lookAt(Vec3d loc, DesyncMode mode) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) return;
         Vec3d direction = loc.subtract(new Vec3d(player.posX, player.posY + player.eyeHeight, player.posZ)).normalize();
+        if (Math.abs(Math.abs(direction.y) - 1) < EPSILON) {
+            // workaround for Math#asin returning Double.NaN
+            direction = new Vec3d(direction.x, Math.signum(direction.y) * (1 - EPSILON), direction.z);
+        }
         float yaw = (float) (Math.atan2(direction.z, direction.x) * 180 / Math.PI) - 90;
         float pitch = (float) -(Math.asin(direction.y) * 180 / Math.PI);
-        move(0, 0, 0, yaw, pitch, false, true);
+        move(0, 0, 0, yaw, pitch, false, true, mode);
     }
 }

@@ -110,7 +110,7 @@ public class SushiMod {
         EventHandlers.register(new GameFocusHandler());
         EventHandlers.register(new ConfigurationHandler());
         EventHandlers.register(new CommandHandler());
-        EventHandlers.register(new RotateHandler());
+        EventHandlers.register(new DesyncHandler());
         EventHandlers.register(new TpsHandler());
         EventHandlers.register(this);
 

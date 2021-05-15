@@ -16,9 +16,9 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerMotionEvent;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.DesyncMode;
 import net.toshimichi.sushi.utils.MovementUtils;
 import net.toshimichi.sushi.utils.PositionUtils;
-import net.toshimichi.sushi.utils.SyncMode;
 
 import java.util.List;
 
@@ -39,15 +39,15 @@ public class PhaseWalkModule extends BaseModule {
     @Override
     public void onEnable() {
         EventHandlers.register(this);
+        PositionUtils.desync(DesyncMode.POSITION);
     }
 
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
-        PositionUtils.setSyncMode(SyncMode.BOTH);
+        PositionUtils.pop();
         if (clipping) {
-            PositionUtils.setSyncMode(SyncMode.BOTH);
-            PositionUtils.move(PositionUtils.getX(), PositionUtils.getY(), PositionUtils.getZ(), 0, 0, true, false);
+            PositionUtils.move(PositionUtils.getX(), PositionUtils.getY(), PositionUtils.getZ(), 0, 0, true, false, DesyncMode.NONE);
         }
     }
 
@@ -98,19 +98,15 @@ public class PhaseWalkModule extends BaseModule {
                         maxY = collision.maxY;
                     }
                 }
-                PositionUtils.setSyncMode(SyncMode.BOTH);
-                PositionUtils.move(player.posX, maxY, player.posZ, 0, 0, true, false);
-                PositionUtils.setSyncMode(SyncMode.LOOK);
-                PositionUtils.move(player.posX, maxY - delta.getValue().getCurrent(), player.posZ, 0, 0, true, false);
+                PositionUtils.move(player.posX, maxY, player.posZ, 0, 0, true, false, DesyncMode.NONE);
+                PositionUtils.move(player.posX, maxY - delta.getValue().getCurrent(), player.posZ, 0, 0, true, false, DesyncMode.POSITION);
                 return;
             }
         }
 
         // safe walk
-        PositionUtils.setSyncMode(SyncMode.BOTH);
-        PositionUtils.move(player.prevPosX, player.prevPosY, player.prevPosZ, 0, 0, true, false);
-        PositionUtils.setSyncMode(SyncMode.LOOK);
-        PositionUtils.move(player.prevPosX, PositionUtils.getY(), player.prevPosZ, 0, 0, true, false);
+        PositionUtils.move(player.prevPosX, player.prevPosY, player.prevPosZ, 0, 0, true, false, DesyncMode.NONE);
+        PositionUtils.move(player.prevPosX, PositionUtils.getY(), player.prevPosZ, 0, 0, true, false, DesyncMode.POSITION);
     }
 
     @EventHandler(timing = EventTiming.PRE)
