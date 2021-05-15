@@ -46,7 +46,7 @@ public class AntiCevBreakModule extends BaseModule {
             if (entity.getDistanceSq(posX, posY, posZ) > 4) continue;
             Block floor = getWorld().getBlockState(entity.getPosition().add(0, -1, 0)).getBlock();
             if (floor != Block.getBlockFromItem(obsidian)) return;
-            PositionUtils.desync(DesyncMode.LOOK);
+            PositionUtils.desync(DesyncMode.POSITION);
             PositionUtils.move(posX, getPlayer().posY + 0.2, posZ, 0, 0, true, false, DesyncMode.POSITION);
             PositionUtils.pop();
             getConnection().sendPacket(new CPacketUseEntity(entity));
