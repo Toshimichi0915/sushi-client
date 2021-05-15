@@ -28,7 +28,7 @@ public class SurroundModule extends BaseModule {
         super(id, modules, categories, provider, factory);
         pull = provider.get("pull", "Pull", null, Boolean.class, true);
         disableAfter = provider.get("disable_after", "Disable After", null, Boolean.class, false);
-        disableOnJump = provider.get("disable_after", "Disable After", null, Boolean.class, false);
+        disableOnJump = provider.get("disable_on_jump", "Disable On Jump", null, Boolean.class, false);
     }
 
     @Override
