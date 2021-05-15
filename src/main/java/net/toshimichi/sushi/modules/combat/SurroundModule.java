@@ -3,6 +3,7 @@ package net.toshimichi.sushi.modules.combat;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
@@ -58,15 +59,15 @@ public class SurroundModule extends BaseModule {
         ArrayList<BlockPlaceInfo> toBePlaced = new ArrayList<>();
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPos neighbor = pos.offset(facing);
-            BlockFace neighborFace = BlockUtils.findFace(getWorld(), neighbor);
+            BlockPlaceInfo neighborFace = BlockUtils.findFace(getWorld(), neighbor);
             if (neighborFace == null) {
                 BlockPos under = neighbor.offset(EnumFacing.DOWN);
-                BlockFace underFace = BlockUtils.findFace(getWorld(), under);
+                BlockPlaceInfo underFace = BlockUtils.findFace(getWorld(), under);
                 if (underFace == null) continue;
-                toBePlaced.add(new BlockPlaceInfo(under, underFace));
-                toBePlaced.add(new BlockPlaceInfo(neighbor, new BlockFace(under, EnumFacing.UP)));
+                toBePlaced.add(underFace);
+                toBePlaced.add(new BlockPlaceInfo(neighbor, new BlockFace(new Vec3d(0.5, 1, 0.5), EnumFacing.UP)));
             } else {
-                toBePlaced.add(new BlockPlaceInfo(neighbor, neighborFace));
+                toBePlaced.add(neighborFace);
             }
         }
         getPlayer().inventory.currentItem = hotbar.get(0);

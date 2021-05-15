@@ -5,15 +5,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.client.CPacketUseEntity;
-import net.minecraft.util.EnumHand;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.task.forge.TaskExecutor;
+import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
 import net.toshimichi.sushi.utils.*;
 
+import java.util.Collections;
 import java.util.List;
 
 public class AntiCevBreakModule extends BaseModule {
@@ -44,17 +46,18 @@ public class AntiCevBreakModule extends BaseModule {
             if (entity.getDistanceSq(posX, posY, posZ) > 4) continue;
             Block floor = getWorld().getBlockState(entity.getPosition().add(0, -1, 0)).getBlock();
             if (floor != Block.getBlockFromItem(obsidian)) return;
-            getConnection().sendPacket(new CPacketUseEntity(entity));
-            BlockFace face = BlockUtils.findFace(getWorld(), entity.getPosition());
-            if (face == null) continue;
-            getPlayer().inventory.currentItem = hotbar.get(0);
             PositionUtils.setSyncMode(SyncMode.NONE);
             PositionUtils.move(posX, getPlayer().posY + 0.2, posZ, 0, 0, true, false);
-            PositionUtils.lookAt(face.getPos());
             PositionUtils.setSyncMode(SyncMode.BOTH);
+            getConnection().sendPacket(new CPacketUseEntity(entity));
+            BlockPlaceInfo face = BlockUtils.findFace(getWorld(), entity.getPosition());
+            if (face == null) continue;
+            getPlayer().inventory.currentItem = hotbar.get(0);
             getController().updateController();
-            getController().processRightClickBlock(getPlayer(), getWorld(), entity.getPosition(), face.getFacing(),
-                    face.getPos().subtract(entity.posX, entity.posY, entity.posZ), EnumHand.MAIN_HAND);
+            TaskExecutor.newTaskChain()
+                    .supply(true, () -> Collections.singletonList(face))
+                    .then(new BlockPlaceTask(SyncMode.NONE))
+                    .execute();
         }
     }
 

@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.toshimichi.sushi.task.TaskAdapter;
 import net.toshimichi.sushi.utils.*;
@@ -43,8 +42,8 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
             return;
         }
         PositionUtils.setSyncMode(mode);
-        PositionUtils.lookAt(face.getPos());
+        PositionUtils.lookAt(face.getPos().add(pos.getX(), pos.getY(), pos.getZ()));
         PositionUtils.setSyncMode(SyncMode.BOTH);
-        controller.processRightClickBlock(player, world, pos, face.getFacing(), face.getPos(), EnumHand.MAIN_HAND);
+        BlockUtils.place(info);
     }
 }
