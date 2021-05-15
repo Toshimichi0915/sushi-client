@@ -64,6 +64,7 @@ public class GsonModules implements Modules {
         addModuleFactory("no_fall", NoFallModule::new, true);
         addModuleFactory("surround", SurroundModule::new, true);
         addModuleFactory("auto_totem", AutoTotemModule::new, true);
+        addModuleFactory("anti_hunger", AntiHungerModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
