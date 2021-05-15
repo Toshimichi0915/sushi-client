@@ -4,12 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.toshimichi.sushi.task.TaskAdapter;
+import net.toshimichi.sushi.utils.InventoryType;
 import net.toshimichi.sushi.utils.InventoryUtils;
 import net.toshimichi.sushi.utils.ItemSlot;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ItemSwitchTask extends TaskAdapter<Item, Boolean> {
@@ -18,28 +17,8 @@ public class ItemSwitchTask extends TaskAdapter<Item, Boolean> {
     private final boolean fromInventory;
 
     public ItemSwitchTask(Comparator<ItemSlot> comparator, boolean fromInventory) {
-        this.comparator = comparator == null ? Comparator.comparingInt(ItemSlot::getIndex) : comparator;
+        this.comparator = comparator;
         this.fromInventory = fromInventory;
-    }
-
-    private ItemSlot findItemSlot(EntityPlayerSP player) {
-        ArrayList<ItemSlot> list = new ArrayList<>();
-        for (int i = 0; i < 36; i++) {
-            ItemStack itemStack = player.inventory.getStackInSlot(i);
-            if (!itemStack.getItem().equals(getInput())) continue;
-            list.add(new ItemSlot(i, player));
-        }
-        list.sort(comparator);
-        if (list.isEmpty()) return null;
-        else return list.get(0);
-    }
-
-    private int getEmptyHotbar(EntityPlayerSP playerSP) {
-        for (int i = 0; i < 9; i++) {
-            ItemStack itemStack = playerSP.inventory.getStackInSlot(i);
-            if (itemStack.isEmpty()) return i;
-        }
-        return -1;
     }
 
     @Override
@@ -50,7 +29,7 @@ public class ItemSwitchTask extends TaskAdapter<Item, Boolean> {
             return;
         }
 
-        ItemSlot itemSlot = findItemSlot(player);
+        ItemSlot itemSlot = InventoryUtils.findItemSlot(getInput(), player, comparator, InventoryType.values());
         if (itemSlot == null) {
             stop(false);
             return;
@@ -64,12 +43,12 @@ public class ItemSwitchTask extends TaskAdapter<Item, Boolean> {
         }
 
         if (fromInventory) {
-            int empty = getEmptyHotbar(player);
-            if (empty == -1) {
+            ItemSlot emptyHotbar = InventoryUtils.findItemSlot(null, player, InventoryType.HOTBAR);
+            if (emptyHotbar == null) {
                 InventoryUtils.clickItemSlot(itemSlot, ClickType.SWAP, player.inventory.currentItem);
             } else {
                 InventoryUtils.clickItemSlot(itemSlot, ClickType.QUICK_MOVE, 0);
-                InventoryUtils.moveHotbar(empty);
+                InventoryUtils.moveHotbar(emptyHotbar.getIndex());
             }
             stop(true);
             return;

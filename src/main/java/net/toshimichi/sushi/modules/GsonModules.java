@@ -9,6 +9,7 @@ import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.combat.AntiCevBreakModule;
+import net.toshimichi.sushi.modules.combat.AutoTotemModule;
 import net.toshimichi.sushi.modules.combat.SurroundModule;
 import net.toshimichi.sushi.modules.combat.VelocityModule;
 import net.toshimichi.sushi.modules.movement.PhaseFlyModule;
@@ -62,6 +63,7 @@ public class GsonModules implements Modules {
         addModuleFactory("lock_yaw", LockYawModule::new, true);
         addModuleFactory("no_fall", NoFallModule::new, true);
         addModuleFactory("surround", SurroundModule::new, true);
+        addModuleFactory("auto_totem", AutoTotemModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

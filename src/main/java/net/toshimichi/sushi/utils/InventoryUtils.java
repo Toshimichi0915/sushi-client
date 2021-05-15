@@ -6,7 +6,12 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketClickWindow;
+
+import java.util.ArrayList;
+import java.util.Comparator;
 
 public class InventoryUtils {
 
@@ -15,6 +20,26 @@ public class InventoryUtils {
         PlayerControllerMP controller = Minecraft.getMinecraft().playerController;
         player.inventory.currentItem = slot;
         controller.updateController();
+    }
+
+    public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
+        ArrayList<ItemSlot> list = new ArrayList<>();
+        for (InventoryType type : allowed) {
+            for (int i = 0; i < type.getSize(); i++) {
+                int index = i + type.getIndex();
+                ItemStack itemStack = player.inventory.getStackInSlot(index);
+                System.out.println(searching);
+                if (searching == null && itemStack.isEmpty() || itemStack.getItem().equals(searching))
+                    list.add(new ItemSlot(index, player));
+            }
+        }
+        list.sort(comparator);
+        if (list.isEmpty()) return null;
+        else return list.get(0);
+    }
+
+    public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, InventoryType... allowed) {
+        return findItemSlot(searching, player, Comparator.comparingInt(ItemSlot::getIndex), allowed);
     }
 
     public static short clickItemSlot(ItemSlot slot, ClickType type, int button) {
