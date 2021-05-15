@@ -5,7 +5,7 @@ abstract public class TaskAdapter<I, R> implements Tickable {
     private I input;
     private R result;
 
-    public void start(I input) {
+    public void start(I input) throws Exception {
         if (running) throw new IllegalStateException("This task has already started");
         this.running = true;
         this.input = input;

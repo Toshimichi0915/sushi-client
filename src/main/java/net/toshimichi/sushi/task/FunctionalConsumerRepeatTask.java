@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.task;
 
-public class FunctionalConsumerRepeatTask<I> extends ConsumerTaskAdapter<I> {
+public class FunctionalConsumerRepeatTask<I> extends TaskAdapter<I, Object> {
 
     private final ConsumerRepeatTask<I> delegate;
 

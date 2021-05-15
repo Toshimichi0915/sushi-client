@@ -1,13 +1,13 @@
 package net.toshimichi.sushi.task.tasks;
 
-import net.toshimichi.sushi.task.Task;
+import net.toshimichi.sushi.task.ConsumerTask;
 import net.toshimichi.sushi.task.TaskAdapter;
 
-public class InstantTask<I, Object> extends TaskAdapter<I, Object> {
+public class InstantConsumerTask<I, Object> extends TaskAdapter<I, Object> {
 
-    private final Task task;
+    private final ConsumerTask<I> task;
 
-    public InstantTask(Task task) {
+    public InstantConsumerTask(ConsumerTask<I> task) {
         this.task = task;
     }
 
@@ -15,7 +15,7 @@ public class InstantTask<I, Object> extends TaskAdapter<I, Object> {
     public void start(I input) throws Exception {
         super.start(input);
         try {
-            task.tick();
+            task.tick(input);
             stop(null);
         } catch (Exception e) {
             e.printStackTrace();

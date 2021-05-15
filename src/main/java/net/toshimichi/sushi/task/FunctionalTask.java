@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.task;
 
-public class FunctionalTask extends TaskAdapter<Void, Void> {
+public class FunctionalTask extends TaskAdapter<Object, Object> {
 
     private final Task delegate;
 

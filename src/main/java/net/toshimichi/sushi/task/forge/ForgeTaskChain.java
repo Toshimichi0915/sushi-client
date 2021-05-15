@@ -1,8 +1,9 @@
 package net.toshimichi.sushi.task.forge;
 
-import net.toshimichi.sushi.task.*;
+import net.toshimichi.sushi.task.TaskAdapter;
+import net.toshimichi.sushi.task.TaskChain;
 
-class ForgeTaskChain implements TaskChain {
+class ForgeTaskChain<I> implements TaskChain<I> {
 
     private final TaskExecutor taskExecutor;
     private final TaskAdapter<?, ?> parent;
@@ -13,33 +14,21 @@ class ForgeTaskChain implements TaskChain {
     }
 
     @Override
-    public TaskChain then(TaskAdapter<Void, Void> task) {
+    public <R> TaskChain<R> then(TaskAdapter<? super I, R> task) {
         getTaskExecutor().addTaskAdapter(getParent(), task);
-        return new ForgeTaskChain(getTaskExecutor(), task);
+        return new ForgeTaskChain<>(getTaskExecutor(), task);
     }
 
     @Override
-    public <I> ConsumerTaskChain<I> supply(SupplierTaskAdapter<I> task) {
-        getTaskExecutor().addTaskAdapter(getParent(), task);
-        return new ForgeConsumerTaskChain<>(getTaskExecutor(), task);
-    }
-
-    @Override
-    public TaskChain fail(ConsumerTaskAdapter<Exception> task) {
+    public <R> TaskChain<R> fail(TaskAdapter<? super Exception, R> task) {
         getTaskExecutor().addExceptionHandler(getParent(), task);
-        return new ForgeTaskChain(getTaskExecutor(), task);
+        return new ForgeTaskChain<>(getTaskExecutor(), task);
     }
 
     @Override
-    public <I> ConsumerTaskChain<I> fail(TaskAdapter<Exception, I> task) {
-        getTaskExecutor().addTaskAdapter(getParent(), task);
-        return new ForgeConsumerTaskChain<>(getTaskExecutor(), task);
-    }
-
-    @Override
-    public TaskChain abort(TaskAdapter<Void, Boolean> task) {
+    public TaskChain<I> abortIf(TaskAdapter<? super I, Boolean> task) {
         getTaskExecutor().addAbortHandler(getParent(), task);
-        return new ForgeTaskChain(getTaskExecutor(), task);
+        return new ForgeTaskChain<>(getTaskExecutor(), task);
     }
 
     @Override

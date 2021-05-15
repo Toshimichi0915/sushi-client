@@ -6,12 +6,12 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.toshimichi.sushi.task.ConsumerTaskAdapter;
+import net.toshimichi.sushi.task.TaskAdapter;
 import net.toshimichi.sushi.utils.*;
 
 import java.util.List;
 
-public class BlockPlaceTask extends ConsumerTaskAdapter<List<BlockPlaceInfo>> {
+public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
 
     private int index = -1;
 

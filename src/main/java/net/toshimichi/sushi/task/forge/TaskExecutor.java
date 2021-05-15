@@ -6,6 +6,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.WorldLoadEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.task.Task;
 import net.toshimichi.sushi.task.TaskAdapter;
 import net.toshimichi.sushi.task.TaskChain;
 import net.toshimichi.sushi.task.tasks.NullTask;
@@ -44,13 +45,31 @@ public class TaskExecutor {
         abort.add(adapter);
     }
 
-    protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<Exception, ?> handler) {
+    protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<? super Exception, ?> handler) {
         getTaskContext(origin, true).addExceptionHandler(handler);
     }
 
     protected void execute() {
         if (Minecraft.getMinecraft().world == null) return;
         EventHandlers.register(this);
+    }
+
+    private <I, R> void executeTask(TaskAdapter<I, R> task, Task exec) {
+        TaskContext context = getTaskContext(task, false);
+        try {
+            exec.tick();
+        } catch (Exception e) {
+            running.remove(task);
+            if (context == null || context.getExceptionHandlers().isEmpty()) {
+                e.printStackTrace();
+                return;
+            }
+            for (TaskAdapter<? super Exception, ?> handler : context.getExceptionHandlers()) {
+                executeTask(handler, () -> handler.start(e));
+                running.add(handler);
+                updateTask(handler, false);
+            }
+        }
     }
 
     /**
@@ -69,7 +88,8 @@ public class TaskExecutor {
             }
             if (context != null) {
                 for (TaskAdapter<?, ?> child : context.getTaskAdapters()) {
-                    ((TaskAdapter<Object, ?>) child).start(task.getResult());
+                    TaskAdapter<Object, ?> consumer = (TaskAdapter<Object, ?>) child;
+                    executeTask(consumer, () -> consumer.start(task.getResult()));
                     running.add(child);
                     updateTask(child, false);
                 }
@@ -81,24 +101,12 @@ public class TaskExecutor {
     }
 
     private void updateTask(TaskAdapter<?, ?> task, boolean tick) {
-        TaskContext context = getTaskContext(task, false);
-        try {
+        executeTask(task, () -> {
             if (!refresh(task) && tick) {
                 task.tick();
                 refresh(task);
             }
-        } catch (Exception ex) {
-            running.remove(task);
-            if (context == null || context.getExceptionHandlers().isEmpty()) {
-                ex.printStackTrace();
-                return;
-            }
-            for (TaskAdapter<Exception, ?> handler : context.getExceptionHandlers()) {
-                handler.start(ex);
-                running.add(handler);
-                updateTask(handler, false);
-            }
-        }
+        });
     }
 
     @EventHandler(timing = EventTiming.PRE, priority = 1000)
@@ -120,10 +128,10 @@ public class TaskExecutor {
         EventHandlers.unregister(this);
     }
 
-    public static TaskChain newTaskChain() {
+    public static TaskChain<Object> newTaskChain() {
         NullTask firstTask = new NullTask();
         ArrayList<TaskAdapter<?, ?>> adapters = new ArrayList<>();
         adapters.add(firstTask);
-        return new ForgeTaskChain(new TaskExecutor(adapters), firstTask);
+        return new ForgeTaskChain<>(new TaskExecutor(adapters), firstTask);
     }
 }

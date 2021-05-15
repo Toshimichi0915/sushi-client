@@ -12,7 +12,6 @@ import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
-import net.toshimichi.sushi.task.tasks.InstantTask;
 import net.toshimichi.sushi.utils.*;
 
 import java.util.ArrayList;
@@ -75,9 +74,9 @@ public class SurroundModule extends BaseModule {
 
         running = true;
         TaskExecutor.newTaskChain()
-                .supply(() -> toBePlaced)
-                .use(new BlockPlaceTask(SyncMode.NONE))
-                .then(new InstantTask(() -> running = false))
+                .supply(true, () -> toBePlaced)
+                .then(new BlockPlaceTask(SyncMode.NONE))
+                .then(true, () -> running = false)
                 .execute();
     }
 

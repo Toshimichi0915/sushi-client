@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.task;
 
-public class FunctionalSupplierTask<R> extends SupplierTaskAdapter<R> {
+public class FunctionalSupplierTask<R> extends TaskAdapter<Object, R> {
 
     private final SupplierTask<R> delegate;
 
