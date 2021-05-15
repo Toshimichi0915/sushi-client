@@ -53,7 +53,8 @@ public class AntiCevBreakModule extends BaseModule {
             PositionUtils.lookAt(face.getPos());
             PositionUtils.setSyncMode(SyncMode.BOTH);
             getController().updateController();
-            getController().processRightClickBlock(getPlayer(), getWorld(), entity.getPosition(), face.getFacing(), face.getPos(), EnumHand.MAIN_HAND);
+            getController().processRightClickBlock(getPlayer(), getWorld(), entity.getPosition(), face.getFacing(),
+                    face.getPos().subtract(entity.posX, entity.posY, entity.posZ), EnumHand.MAIN_HAND);
         }
     }
 

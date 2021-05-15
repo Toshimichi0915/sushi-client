@@ -1,8 +1,10 @@
 package net.toshimichi.sushi.task.forge;
 
+import net.minecraft.client.Minecraft;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
+import net.toshimichi.sushi.events.client.WorldLoadEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.task.TaskAdapter;
 import net.toshimichi.sushi.task.TaskChain;
@@ -47,6 +49,7 @@ public class TaskExecutor {
     }
 
     protected void execute() {
+        if (Minecraft.getMinecraft().world == null) return;
         EventHandlers.register(this);
     }
 
@@ -108,6 +111,13 @@ public class TaskExecutor {
         for (TaskAdapter<?, ?> task : new ArrayList<>(running)) {
             updateTask(task, true);
         }
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onWorldLoad(WorldLoadEvent e) {
+        if (e.getClient() != null) return;
+        // abort all
+        EventHandlers.unregister(this);
     }
 
     public static TaskChain newTaskChain() {
