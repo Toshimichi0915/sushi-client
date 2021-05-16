@@ -28,14 +28,12 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
             return;
         }
         BlockPlaceInfo info = getInput().get(index);
-        BlockPos pos = info.getBlockPos();
-        BlockFace face = info.getBlockFace();
         if (!BlockUtils.canPlace(world, info)) {
             tick();
             return;
         }
         PositionUtils.desync(mode);
-        PositionUtils.lookAt(face.getPos().add(pos.getX(), pos.getY(), pos.getZ()), mode);
+        PositionUtils.lookAt(info, mode);
         PositionUtils.pop();
         BlockUtils.place(info);
     }

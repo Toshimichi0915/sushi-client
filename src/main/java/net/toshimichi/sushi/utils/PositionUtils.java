@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Stack;
@@ -134,5 +135,10 @@ public class PositionUtils {
         float yaw = (float) (Math.atan2(direction.z, direction.x) * 180 / Math.PI) - 90;
         float pitch = (float) -(Math.asin(direction.y) * 180 / Math.PI);
         move(0, 0, 0, yaw, pitch, false, true, mode);
+    }
+
+    public static void lookAt(BlockPlaceInfo info, DesyncMode mode) {
+        BlockPos pos = info.getBlockPos();
+        lookAt(info.getBlockFace().getPos().add(pos.getX(), pos.getY(), pos.getZ()), mode);
     }
 }
