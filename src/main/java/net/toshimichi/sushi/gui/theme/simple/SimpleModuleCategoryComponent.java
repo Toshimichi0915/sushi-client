@@ -24,15 +24,6 @@ public class SimpleModuleCategoryComponent extends BasePanelComponent<Component>
         this.category = category;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
 
-        sort((a, b) -> {
-            int aPriority = 1000;
-            int bPriority = 1000;
-            if (a instanceof ConfigComponent)
-                aPriority = ((ConfigComponent<?>) a).getValue().getPriority();
-            if (b instanceof ConfigComponent)
-                bPriority = ((ConfigComponent<?>) b).getValue().getPriority();
-            return Integer.compare(aPriority, bPriority);
-        });
     }
 
     private boolean contains(Configuration<?> conf) {
@@ -57,6 +48,16 @@ public class SimpleModuleCategoryComponent extends BasePanelComponent<Component>
             if (((ConfigComponent<?>) component).getValue().isValid()) continue;
             remove(component);
         }
+
+        sort((a, b) -> {
+            int aPriority = 1000;
+            int bPriority = 1000;
+            if (a instanceof ConfigComponent)
+                aPriority = ((ConfigComponent<?>) a).getValue().getPriority();
+            if (b instanceof ConfigComponent)
+                bPriority = ((ConfigComponent<?>) b).getValue().getPriority();
+            return Integer.compare(aPriority, bPriority);
+        });
 
         super.onRelocate();
     }
