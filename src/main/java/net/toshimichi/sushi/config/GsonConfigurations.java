@@ -13,11 +13,14 @@ import java.util.function.Supplier;
 
 public class GsonConfigurations implements Configurations {
 
+    private static final int PRIORITY_DELTA = 100;
+
     private final Gson gson;
-    private JsonObject root;
     private final ArrayList<GsonConfiguration<?>> list = new ArrayList<>();
     private final ArrayList<ConfigurationCategory> categories = new ArrayList<>();
     private final HashMap<String, Object> defaults = new HashMap<>();
+    private JsonObject root;
+    private int counter;
 
     public GsonConfigurations(Gson gson) {
         this.gson = gson;
@@ -38,6 +41,16 @@ public class GsonConfigurations implements Configurations {
         GsonConfiguration<T> conf = new GsonConfiguration<>(id, name, description, tClass, defaultValue, this, isValid, category, temporary, priority);
         list.add(conf);
         return conf;
+    }
+
+    @Override
+    public <T> Configuration<T> get(String id, String name, String description, Class<T> t, T value) {
+        return get(id, name, description, t, value, () -> true, null, false, counter++ * PRIORITY_DELTA);
+    }
+
+    @Override
+    public <T> Configuration<T> temp(String id, String name, String description, Class<T> t, T defaultValue) {
+        return get(id, name, description, t, defaultValue, () -> true, null, true, counter++ * PRIORITY_DELTA);
     }
 
     @Override
