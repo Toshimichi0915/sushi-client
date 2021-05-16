@@ -95,10 +95,10 @@ public class PositionUtils {
             }
         }
         if (rotation) {
-            while (yaw > 180) yaw -= 180;
-            while (yaw < -180) yaw += 180;
-            while (pitch > 90) pitch -= 90;
-            while (pitch < -90) pitch += 90;
+            while (yaw > 180) yaw -= 360;
+            while (yaw < -180) yaw += 360;
+            while (pitch > 90) pitch -= 180;
+            while (pitch < -90) pitch += 180;
             if (mode.isRotationDesync()) {
                 rotationPacket = true;
                 PositionUtils.yaw = yaw;
