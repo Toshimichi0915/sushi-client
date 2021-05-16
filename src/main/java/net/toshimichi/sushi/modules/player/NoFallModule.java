@@ -29,7 +29,7 @@ public class NoFallModule extends BaseModule {
         EventHandlers.register(this);
     }
 
-    @EventHandler(timing = EventTiming.PRE)
+    @EventHandler(timing = EventTiming.PRE, priority = 10000)
     public void onPrePlayerUpdate(PlayerUpdateEvent e) {
         onGround = getPlayer().onGround;
         NoFallMode mode = noFallMode.getValue();
@@ -45,7 +45,7 @@ public class NoFallModule extends BaseModule {
         }
     }
 
-    @EventHandler(timing = EventTiming.POST)
+    @EventHandler(timing = EventTiming.POST, priority = -10000)
     public void onPostPlayerUpdate(PlayerUpdateEvent e) {
         getPlayer().onGround = onGround;
     }
