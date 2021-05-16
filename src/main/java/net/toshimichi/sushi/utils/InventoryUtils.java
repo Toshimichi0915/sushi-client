@@ -28,7 +28,6 @@ public class InventoryUtils {
             for (int i = 0; i < type.getSize(); i++) {
                 int index = i + type.getIndex();
                 ItemStack itemStack = player.inventory.getStackInSlot(index);
-                System.out.println(searching);
                 if (searching == null && itemStack.isEmpty() || itemStack.getItem().equals(searching))
                     list.add(new ItemSlot(index, player));
             }

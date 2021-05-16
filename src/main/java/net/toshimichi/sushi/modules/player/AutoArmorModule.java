@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.modules.player;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -17,6 +18,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
+import net.toshimichi.sushi.task.tasks.TransactionWaitTask;
 import net.toshimichi.sushi.utils.InventoryType;
 import net.toshimichi.sushi.utils.InventoryUtils;
 import net.toshimichi.sushi.utils.ItemSlot;
@@ -35,11 +37,13 @@ public class AutoArmorModule extends BaseModule {
     };
 
     private final Configuration<Boolean> preferThorns;
+    private final Configuration<Boolean> preferElytra;
     private boolean running;
 
     public AutoArmorModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         preferThorns = provider.get("prefer_thorns", "Prefer Thorns", null, Boolean.class, true);
+        preferElytra = provider.get("prefer_elytra", "Prefer Elytra", null, Boolean.class, false);
     }
 
     @Override
@@ -55,14 +59,18 @@ public class AutoArmorModule extends BaseModule {
     private int getScore(ItemSlot slot) {
         int score = 0;
         ItemStack itemStack = slot.getItemStack();
-        ItemArmor itemArmor = (ItemArmor) slot.getItemStack().getItem();
+        Item item = slot.getItemStack().getItem();
 
         // material
-        ItemArmor.ArmorMaterial material = itemArmor.getArmorMaterial();
-        if (material == ItemArmor.ArmorMaterial.DIAMOND) score += 4;
-        else if (material == ItemArmor.ArmorMaterial.IRON) score += 3;
-        else if (material == ItemArmor.ArmorMaterial.CHAIN) score += 2;
-        else if (material == ItemArmor.ArmorMaterial.GOLD) score += 1;
+        if (item.equals(Item.getItemById(443)) && preferElytra.getValue()) score += 5;
+        if (item instanceof ItemArmor) {
+            ItemArmor itemArmor = (ItemArmor) slot.getItemStack().getItem();
+            ItemArmor.ArmorMaterial material = itemArmor.getArmorMaterial();
+            if (material == ItemArmor.ArmorMaterial.DIAMOND) score += 4;
+            else if (material == ItemArmor.ArmorMaterial.IRON) score += 3;
+            else if (material == ItemArmor.ArmorMaterial.CHAIN) score += 2;
+            else if (material == ItemArmor.ArmorMaterial.GOLD) score += 1;
+        }
 
         // enchants
         NBTTagList enchants = itemStack.getEnchantmentTagList();
@@ -105,23 +113,35 @@ public class AutoArmorModule extends BaseModule {
         for (int i = 0; i < 4; i++) {
             EntityEquipmentSlot equipmentSlot = SLOTS[i];
             int armorSlot = i + InventoryType.ARMOR.getIndex();
-            if (!getPlayer().inventory.getStackInSlot(armorSlot).isEmpty()) continue;
             ArrayList<ItemSlot> items = new ArrayList<>();
-            for (int j = 0; j < 36; j++) {
+            for (int j = 0; j < 40; j++) {
                 ItemStack itemStack = getPlayer().inventory.getStackInSlot(j);
-                Item item = itemStack.getItem();
-                if (!(item instanceof ItemArmor)) continue;
-                if (!((ItemArmor) item).getEquipmentSlot().equals(equipmentSlot)) continue;
+                if (!EntityLiving.getSlotForItemStack(itemStack).equals(equipmentSlot)) continue;
                 items.add(new ItemSlot(j, getPlayer()));
             }
             if (items.isEmpty()) continue;
             items.sort(Comparator.comparingInt(this::getScore));
             Collections.reverse(items);
+            int index = items.get(0).getIndex();
+            if (InventoryType.ARMOR.getIndex() <= index &&
+                    index < InventoryType.ARMOR.getIndex() + InventoryType.ARMOR.getSize()) continue;
             running = true;
-            TaskExecutor.newTaskChain()
-                    .then(() -> InventoryUtils.clickItemSlot(items.get(0), ClickType.QUICK_MOVE, 0))
-                    .then(() -> running = false)
-                    .execute();
+            if (getPlayer().inventory.getStackInSlot(armorSlot).isEmpty()) {
+                TaskExecutor.newTaskChain()
+                        .then(() -> InventoryUtils.clickItemSlot(items.get(0), ClickType.QUICK_MOVE, 0))
+                        .then(() -> running = false)
+                        .execute();
+            } else {
+                TaskExecutor.newTaskChain()
+                        .supply(() -> InventoryUtils.clickItemSlot(items.get(0), ClickType.PICKUP, 0))
+                        .then(new TransactionWaitTask())
+                        .supply(() -> InventoryUtils.clickItemSlot(new ItemSlot(armorSlot, getPlayer()), ClickType.PICKUP, 0))
+                        .then(new TransactionWaitTask())
+                        .then(() -> InventoryUtils.clickItemSlot(items.get(0), ClickType.PICKUP, 0))
+                        .then(() -> running = false)
+                        .execute();
+            }
+            return;
         }
     }
 
