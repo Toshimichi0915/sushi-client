@@ -86,7 +86,8 @@ public class PhaseWalkModule extends BaseModule {
         int step = range.getValue().getCurrent();
         boolean isAboveAir = false;
         for (int y = step; y >= -step; y--) {
-            AxisAlignedBB boundingBox = player.getEntityBoundingBox().offset(0, y, 0).shrink(0.5);
+            AxisAlignedBB boundingBox = player.getEntityBoundingBox().offset(0, y, 0);
+            boundingBox = boundingBox.grow(-(boundingBox.maxX - boundingBox.minX) / 2, 0, -(boundingBox.maxZ - boundingBox.minZ) / 2);
             List<AxisAlignedBB> collisions = player.world.getCollisionBoxes(null, boundingBox);
             if (collisions.isEmpty()) {
                 isAboveAir = true;
