@@ -24,6 +24,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
+import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.DamageUtils;
 import net.toshimichi.sushi.utils.DesyncMode;
@@ -34,6 +35,7 @@ import java.util.*;
 public class CrystalAuraModule extends BaseModule {
 
     private final Configuration<DoubleRange> range;
+    private final Configuration<ItemSwitchMode> switchMode;
     private final Configuration<IntRange> placeCoolTime;
     private final Configuration<IntRange> breakCoolTime;
     private final Configuration<DoubleRange> minDamage;
@@ -50,6 +52,7 @@ public class CrystalAuraModule extends BaseModule {
     public CrystalAuraModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         range = provider.get("range", "Range", null, DoubleRange.class, new DoubleRange(4.5, 10, 1, 0.1, 1));
+        switchMode = provider.get("switch", "Switch Mode", null, ItemSwitchMode.class, ItemSwitchMode.INVENTORY);
         placeCoolTime = provider.get("place_cool_time", "Place Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
         breakCoolTime = provider.get("break_cool_time", "Break Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
         minDamage = provider.get("min_damage", "Min Damage", null, DoubleRange.class, new DoubleRange(6, 20, 0, 0.2, 1));
@@ -212,8 +215,12 @@ public class CrystalAuraModule extends BaseModule {
         lastPlaceTick = counter;
         TaskExecutor.newTaskChain()
                 .supply(() -> Item.getItemById(426))
-                .then(new ItemSwitchTask(null, false))
-                .abortIf(found -> !found)
+                .then(new ItemSwitchTask(null, switchMode.getValue()))
+                .abortIf(found -> {
+                    if (found) return false;
+                    PositionUtils.pop();
+                    return true;
+                })
                 .then(() -> {
                     PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
                     PositionUtils.pop();
