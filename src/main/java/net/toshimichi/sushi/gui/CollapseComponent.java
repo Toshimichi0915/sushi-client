@@ -9,7 +9,7 @@ public class CollapseComponent<T extends Component> extends BasePanelComponent<T
 
     private final T component;
     private final CollapseMode mode;
-    private int height;
+    private double height;
     private double progress;
 
     public CollapseComponent(T component, CollapseMode mode) {
@@ -44,7 +44,7 @@ public class CollapseComponent<T extends Component> extends BasePanelComponent<T
         Insets margin = component.getMargin();
         component.setWidth(getWidth() - margin.getLeft() - margin.getRight());
         component.setX(component.getMargin().getLeft());
-        setHeight((int) (progress * (component.getHeight() + margin.getTop() + margin.getBottom())));
+        setHeight(progress * (component.getHeight() + margin.getTop() + margin.getBottom()));
         if (mode == CollapseMode.UP)
             component.setY(margin.getTop());
         else
@@ -52,12 +52,12 @@ public class CollapseComponent<T extends Component> extends BasePanelComponent<T
     }
 
     @Override
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 

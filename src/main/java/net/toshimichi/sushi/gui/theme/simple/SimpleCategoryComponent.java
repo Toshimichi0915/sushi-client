@@ -16,38 +16,38 @@ public class SimpleCategoryComponent extends BasePanelComponent<Component> {
     private final ThemeConstants constants;
     private final Category category;
 
-    private final Configuration<Integer> x;
-    private final Configuration<Integer> y;
+    private final Configuration<Double> x;
+    private final Configuration<Double> y;
 
-    public SimpleCategoryComponent(ThemeConstants constants, Theme theme, Configurations configurations, Category category, int defaultX, int defaultY) {
+    public SimpleCategoryComponent(ThemeConstants constants, Theme theme, Configurations configurations, Category category, double defaultX, double defaultY) {
         this.constants = constants;
         this.category = category;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
         add(new SimpleCategoryHeaderComponent(constants, category, this));
         add(new SimpleModuleListComponent(constants, theme, category));
         x = configurations.get("gui.category." + category.getName().toLowerCase() + ".x",
-                category.getName() + " X", "X coordinate of " + category.getName(), Integer.class, defaultX);
+                category.getName() + " X", "X coordinate of " + category.getName(), Double.class, defaultX);
         y = configurations.get("gui.category." + category.getName().toLowerCase() + ".y",
-                category.getName() + " Y", "Y coordinate of " + category.getName(), Integer.class, defaultY);
+                category.getName() + " Y", "Y coordinate of " + category.getName(), Double.class, defaultY);
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return x.getValue();
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return y.getValue();
     }
 
     @Override
-    public void setX(int x) {
+    public void setX(double x) {
         this.x.setValue(x);
     }
 
     @Override
-    public void setY(int y) {
+    public void setY(double y) {
         this.y.setValue(y);
     }
 

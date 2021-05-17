@@ -13,15 +13,15 @@ public class ConfigHandler implements HudElementComponentHandler {
 
     private final HudElementComponent component;
     private final HudComponent hud;
-    private final Configuration<Integer> x;
-    private final Configuration<Integer> y;
+    private final Configuration<Double> x;
+    private final Configuration<Double> y;
     private final Configuration<Anchor> anchor;
     private final Configuration<Origin> origin;
     private final Configuration<String> parent;
     private final Configuration<Boolean> active;
 
-    private final Consumer<Integer> xHandler;
-    private final Consumer<Integer> yHandler;
+    private final Consumer<Double> xHandler;
+    private final Consumer<Double> yHandler;
     private final Consumer<Anchor> anchorHandler;
     private final Consumer<Origin> originHandler;
     private final Consumer<String> parentHandler;
@@ -32,8 +32,8 @@ public class ConfigHandler implements HudElementComponentHandler {
         String name = component.getName();
         this.component = component;
         this.hud = hud;
-        this.x = configurations.get("element." + id + ".x", name + " X", "X coordinate of " + name, Integer.class, component.getX(), () -> false, null, false, 0);
-        this.y = configurations.get("element." + id + ".y", name + " Y", "Y coordinate of " + name, Integer.class, component.getY(), () -> false, null, false, 0);
+        this.x = configurations.get("element." + id + ".x", name + " X", "X coordinate of " + name, Double.class, component.getX(), () -> false, null, false, 0);
+        this.y = configurations.get("element." + id + ".y", name + " Y", "Y coordinate of " + name, Double.class, component.getY(), () -> false, null, false, 0);
         this.anchor = configurations.get("element." + id + ".anchor", name + " Anchor", "Anchor of " + name, Anchor.class, component.getAnchor(), () -> false, null, false, 0);
         this.origin = configurations.get("element." + id + ".origin", name + " Origin", "Origin of " + name, Origin.class, component.getOrigin(), () -> false, null, false, 0);
         this.parent = configurations.get("element." + id + ".parent", name + " Parent", "Parent of " + name, String.class, "", () -> false, null, false, 0);
@@ -58,13 +58,13 @@ public class ConfigHandler implements HudElementComponentHandler {
 
 
     @Override
-    public void setX(int x) {
+    public void setX(double x) {
         if (this.x.getValue() == x) return;
         this.x.setValue(x);
     }
 
     @Override
-    public void setY(int y) {
+    public void setY(double y) {
         if (this.y.getValue() == y) return;
         this.y.setValue(y);
     }

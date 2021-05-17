@@ -18,8 +18,8 @@ public class ModuleListComponent extends BaseHudElementComponent {
     @Override
     public void onRender() {
         ArrayList<Map.Entry<Module, TextPreview>> list = new ArrayList<>();
-        int totalWidth = 0;
-        int totalHeight = 0;
+        double totalWidth = 0;
+        double totalHeight = 0;
         for (Module module : Sushi.getProfile().getModules().getAll()) {
             if (!module.isEnabled()) continue;
             TextPreview preview = GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true);
@@ -30,13 +30,13 @@ public class ModuleListComponent extends BaseHudElementComponent {
         setWidth(totalWidth);
         setHeight(totalHeight);
 
-        list.sort(Comparator.comparingInt(i -> i.getValue().getWidth()));
+        list.sort(Comparator.comparingDouble(i -> i.getValue().getWidth()));
         if (!getOrigin().isFromBottom()) Collections.reverse(list);
 
-        int height = 0;
+        double height = 0;
         for (Map.Entry<Module, TextPreview> entry : list) {
             TextPreview preview = entry.getValue();
-            int width = getOrigin().isFromRight() ? getWidth() - preview.getWidth() : 0;
+            double width = getOrigin().isFromRight() ? getWidth() - preview.getWidth() : 0;
             preview.draw(getWindowX() + width, getWindowY() + height);
             height += preview.getHeight() + 1;
         }

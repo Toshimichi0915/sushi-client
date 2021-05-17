@@ -76,20 +76,20 @@ public class GuiUtils {
         scissorStack.pop();
     }
 
-    public static int toWindowX(int x) {
-        return (int) ((double) Minecraft.getMinecraft().displayWidth / getWidth() * x);
+    public static double toWindowX(double x) {
+        return (double) Minecraft.getMinecraft().displayWidth / getWidth() * x;
     }
 
-    public static int toWindowY(int y) {
-        return (int) ((double) Minecraft.getMinecraft().displayHeight / getHeight() * y);
+    public static double toWindowY(double y) {
+        return (double) Minecraft.getMinecraft().displayHeight / getHeight() * y;
     }
 
-    public static int toScaledX(int x) {
-        return (int) ((double) getWidth() / Minecraft.getMinecraft().displayWidth * x);
+    public static double toScaledX(double x) {
+        return (double) getWidth() / Minecraft.getMinecraft().displayWidth * x;
     }
 
-    public static int toScaledY(int y) {
-        return (int) (getHeight() - (double) getHeight() / Minecraft.getMinecraft().displayHeight * y);
+    public static double toScaledY(double y) {
+        return getHeight() - (double) getHeight() / Minecraft.getMinecraft().displayHeight * y;
     }
 
     public static void prepare2D() {
@@ -119,20 +119,20 @@ public class GuiUtils {
         return new VanillaTextPreview(text, color, pts, shadow);
     }
 
-    public static void drawLine(int x1, int y1, int x2, int y2, Color color, double width) {
+    public static void drawLine(double x1, double y1, double x2, double y2, Color color, double width) {
         prepare2D();
 
         glLineWidth((float) width);
         setColor(color);
         glBegin(GL_LINES);
-        glVertex2i(x1, y1);
-        glVertex2i(x2, y2);
+        glVertex2d(x1, y1);
+        glVertex2d(x2, y2);
         glEnd();
 
         release2D();
     }
 
-    public static void drawRect(int x, int y, int width, int height, Color color) {
+    public static void drawRect(double x, double y, double width, double height, Color color) {
         prepare2D();
 
         setColor(color);
@@ -141,14 +141,14 @@ public class GuiUtils {
         release2D();
     }
 
-    public static void drawOutline(int x, int y, int width, int height, Color color, double pts) {
+    public static void drawOutline(double x, double y, double width, double height, Color color, double pts) {
         prepare2D();
 
         glDisable(GL_LINE_SMOOTH);
         glLineWidth((float) pts);
         setColor(color);
         glBegin(GL_LINE_LOOP);
-        glVertex2i(x, y);
+        glVertex2d(x, y);
         glVertex2d(x + width, y);
         glVertex2d(x + width, y + height);
         glVertex2d(x, y + height);
@@ -158,12 +158,12 @@ public class GuiUtils {
     }
 
     private static class Scissor {
-        final int x;
-        final int y;
-        final int width;
-        final int height;
+        final double x;
+        final double y;
+        final double width;
+        final double height;
 
-        Scissor(int x, int y, int width, int height) {
+        Scissor(double x, double y, double width, double height) {
             this.x = x;
             this.y = y;
             this.width = width;
@@ -178,15 +178,15 @@ public class GuiUtils {
         }
 
         Scissor clip(Scissor scissor) {
-            int newX = Math.max(x, scissor.x);
-            int newY = Math.max(y, scissor.y);
-            int newWidth = Math.max(Math.min(x + width, scissor.x + scissor.width) - newX, 0);
-            int newHeight = Math.max(Math.min(y + height, scissor.y + scissor.height) - newY, 0);
+            double newX = Math.max(x, scissor.x);
+            double newY = Math.max(y, scissor.y);
+            double newWidth = Math.max(Math.min(x + width, scissor.x + scissor.width) - newX, 0);
+            double newHeight = Math.max(Math.min(y + height, scissor.y + scissor.height) - newY, 0);
             return new Scissor(newX, newY, newWidth, newHeight);
         }
 
         void scissor() {
-            glScissor(x, y, width, height);
+            glScissor((int) x, (int) y, (int) width, (int) height);
         }
     }
 }

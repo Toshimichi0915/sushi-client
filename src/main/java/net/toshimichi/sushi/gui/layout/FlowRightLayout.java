@@ -16,12 +16,12 @@ class FlowRightLayout implements Layout {
 
     @Override
     public void relocate() {
-        int width = 0;
-        int marginRight = 0;
+        double width = 0;
+        double marginRight = 0;
         for (Component component : getComponents()) {
             if (!component.isVisible()) continue;
             Insets margin = component.getMargin();
-            int marginLeft = Math.max(marginRight, margin.getLeft());
+            double marginLeft = Math.max(marginRight, margin.getLeft());
             component.setParent(target);
             component.setX(width + marginLeft);
             component.setY(margin.getTop());

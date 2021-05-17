@@ -6,54 +6,54 @@ import net.toshimichi.sushi.utils.GuiUtils;
 import java.util.List;
 
 public interface Component {
-    int getX();
+    double getX();
 
-    int getY();
+    double getY();
 
-    void setX(int x);
+    void setX(double x);
 
-    void setY(int y);
+    void setY(double y);
 
-    int getWidth();
+    double getWidth();
 
-    int getHeight();
+    double getHeight();
 
-    void setWidth(int width);
+    void setWidth(double width);
 
-    void setHeight(int height);
+    void setHeight(double height);
 
     Insets getMargin();
 
     void setMargin(Insets margin);
 
-    default int getWindowX() {
-        int deltaX = getOrigin().isFromRight() ? getWidth() : 0;
+    default double getWindowX() {
+        double deltaX = getOrigin().isFromRight() ? getWidth() : 0;
         if (getParent() == null)
-            return (int) (getX() - deltaX + GuiUtils.getWidth() * getAnchor().getX());
-        return (int) (getX() - deltaX + getParent().getWindowX() + getParent().getWidth() * getAnchor().getX());
+            return getX() - deltaX + GuiUtils.getWidth() * getAnchor().getX();
+        return getX() - deltaX + getParent().getWindowX() + getParent().getWidth() * getAnchor().getX();
     }
 
-    default int getWindowY() {
-        int deltaY = getOrigin().isFromBottom() ? getHeight() : 0;
+    default double getWindowY() {
+        double deltaY = getOrigin().isFromBottom() ? getHeight() : 0;
         if (getParent() == null)
-            return (int) (getY() - deltaY + GuiUtils.getHeight() * getAnchor().getY());
-        return (int) (getY() - deltaY + getParent().getWindowY() + getParent().getHeight() * getAnchor().getY());
+            return getY() - deltaY + GuiUtils.getHeight() * getAnchor().getY();
+        return getY() - deltaY + getParent().getWindowY() + getParent().getHeight() * getAnchor().getY();
     }
 
-    default void setWindowX(int x) {
-        int deltaX = getOrigin().isFromRight() ? getWidth() : 0;
+    default void setWindowX(double x) {
+        double deltaX = getOrigin().isFromRight() ? getWidth() : 0;
         if (getParent() == null)
-            setX((int) (x + deltaX - GuiUtils.getWidth() * getAnchor().getX()));
+            setX(x + deltaX - GuiUtils.getWidth() * getAnchor().getX());
         else
-            setX((int) (x + deltaX - getParent().getWindowX() - getParent().getWidth() * getAnchor().getX()));
+            setX(x + deltaX - getParent().getWindowX() - getParent().getWidth() * getAnchor().getX());
     }
 
-    default void setWindowY(int y) {
-        int deltaY = getOrigin().isFromBottom() ? getHeight() : 0;
+    default void setWindowY(double y) {
+        double deltaY = getOrigin().isFromBottom() ? getHeight() : 0;
         if (getParent() == null)
-            setY((int) (y + deltaY - GuiUtils.getHeight() * getAnchor().getY()));
+            setY(y + deltaY - GuiUtils.getHeight() * getAnchor().getY());
         else
-            setY((int) (y + deltaY - getParent().getWindowY() - getParent().getHeight() * getAnchor().getY()));
+            setY(y + deltaY - getParent().getWindowY() - getParent().getHeight() * getAnchor().getY());
     }
 
     Anchor getAnchor();

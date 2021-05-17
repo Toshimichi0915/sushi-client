@@ -37,8 +37,8 @@ public class ComponentMouseHandler {
         if (status == null) return;
         status.isClicked = true;
         status.clickMillis = System.currentTimeMillis();
-        status.clickX = GuiUtils.toScaledX(Mouse.getEventX());
-        status.clickY = GuiUtils.toScaledY(Mouse.getEventY());
+        status.clickX = (int) GuiUtils.toScaledX(Mouse.getEventX());
+        status.clickY = (int) GuiUtils.toScaledY(Mouse.getEventY());
     }
 
     @EventHandler(timing = EventTiming.PRE)
@@ -59,8 +59,8 @@ public class ComponentMouseHandler {
             if (status == null) continue;
             status.lastX = status.x;
             status.lastY = status.y;
-            status.x = GuiUtils.toScaledX(Mouse.getX());
-            status.y = GuiUtils.toScaledY(Mouse.getY());
+            status.x = (int) GuiUtils.toScaledX(Mouse.getX());
+            status.y = (int) GuiUtils.toScaledY(Mouse.getY());
 
             ComponentContext<?> lastContext = Components.getTopContext(status.lastX, status.lastY);
             ComponentContext<?> context = Components.getTopContext(status.x, status.y);

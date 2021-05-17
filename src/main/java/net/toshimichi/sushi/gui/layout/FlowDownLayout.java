@@ -16,12 +16,12 @@ class FlowDownLayout implements Layout {
 
     @Override
     public void relocate() {
-        int height = 0;
-        int marginBottom = 0;
+        double height = 0;
+        double marginBottom = 0;
         for (Component component : getComponents()) {
             if (!component.isVisible()) continue;
             Insets margin = component.getMargin();
-            int marginTop = Math.max(marginBottom, margin.getTop());
+            double marginTop = Math.max(marginBottom, margin.getTop());
             component.setParent(target);
             component.setX(margin.getLeft());
             component.setY(height + marginTop);

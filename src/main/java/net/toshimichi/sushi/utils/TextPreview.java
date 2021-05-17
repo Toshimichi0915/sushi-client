@@ -1,9 +1,9 @@
 package net.toshimichi.sushi.utils;
 
 public interface TextPreview {
-    int getWidth();
+    double getWidth();
 
-    int getHeight();
+    double getHeight();
 
-    void draw(int x, int y);
+    void draw(double x, double y);
 }

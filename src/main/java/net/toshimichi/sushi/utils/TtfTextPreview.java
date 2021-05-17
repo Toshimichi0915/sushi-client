@@ -32,17 +32,17 @@ public class TtfTextPreview implements TextPreview {
     }
 
     @Override
-    public int getWidth() {
-        return (int) (1D / GuiUtils.getScaleFactor() * font.getWidth(text));
+    public double getWidth() {
+        return 1D / GuiUtils.getScaleFactor() * font.getWidth(text);
     }
 
     @Override
-    public int getHeight() {
-        return (int) (1D / GuiUtils.getScaleFactor() * font.getHeight(text));
+    public double getHeight() {
+        return 1D / GuiUtils.getScaleFactor() * font.getHeight(text);
     }
 
     @Override
-    public void draw(int x, int y) {
+    public void draw(double x, double y) {
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT);
 
         glMatrixMode(GL_MODELVIEW);

@@ -14,10 +14,10 @@ public class BaseComponent implements Component {
     private Origin origin;
     private Component parent;
     private ComponentContext<?> context;
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    private double x;
+    private double y;
+    private double width;
+    private double height;
     private boolean visible;
     private Insets margin = new Insets(0, 0, 0, 0);
     private final ArrayList<ComponentHandler> handlers = new ArrayList<>();
@@ -38,45 +38,45 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return x;
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return y;
     }
 
     @Override
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
         handlers.forEach(c -> c.setX(x));
     }
 
     @Override
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
         handlers.forEach(c -> c.setY(y));
     }
 
     @Override
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
     @Override
-    public void setWidth(int width) {
+    public void setWidth(double width) {
         this.width = width;
         handlers.forEach(c -> c.setWidth(width));
     }
 
     @Override
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
         handlers.forEach(c -> c.setHeight(height));
     }

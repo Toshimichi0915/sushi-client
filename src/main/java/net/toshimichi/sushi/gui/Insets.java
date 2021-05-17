@@ -1,31 +1,31 @@
 package net.toshimichi.sushi.gui;
 
 public class Insets {
-    private final int top;
-    private final int right;
-    private final int bottom;
-    private final int left;
+    private final double top;
+    private final double right;
+    private final double bottom;
+    private final double left;
 
-    public Insets(int top, int right, int bottom, int left) {
+    public Insets(double top, double right, double bottom, double left) {
         this.top = top;
         this.right = right;
         this.bottom = bottom;
         this.left = left;
     }
 
-    public int getTop() {
+    public double getTop() {
         return top;
     }
 
-    public int getRight() {
+    public double getRight() {
         return right;
     }
 
-    public int getBottom() {
+    public double getBottom() {
         return bottom;
     }
 
-    public int getLeft() {
+    public double getLeft() {
         return left;
     }
 }

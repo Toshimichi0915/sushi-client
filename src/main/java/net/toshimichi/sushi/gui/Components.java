@@ -22,10 +22,10 @@ public class Components {
     public static ComponentContext<?> getTopContext(int x, int y) {
         for (ComponentContext<?> context : components) {
             Component component = context.getOrigin();
-            int minX = component.getWindowX();
-            int minY = component.getWindowY();
-            int maxX = minX + component.getWidth();
-            int maxY = minY + component.getHeight();
+            double minX = component.getWindowX();
+            double minY = component.getWindowY();
+            double maxX = minX + component.getWidth();
+            double maxY = minY + component.getHeight();
             if (minX <= x && x <= maxX && minY <= y && y <= maxY)
                 return context;
         }

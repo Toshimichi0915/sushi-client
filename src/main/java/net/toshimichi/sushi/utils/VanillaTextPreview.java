@@ -22,19 +22,19 @@ public class VanillaTextPreview implements TextPreview {
     }
 
     @Override
-    public int getWidth() {
+    public double getWidth() {
         return renderer.getStringWidth(text);
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         return renderer.FONT_HEIGHT;
     }
 
     @Override
-    public void draw(int x, int y) {
+    public void draw(double x, double y) {
         GuiUtils.setColor(color);
         renderer.FONT_HEIGHT = pts;
-        renderer.drawString(text, x, y, color.getRGB(), shadow);
+        renderer.drawString(text, (int) x, (int) y, color.getRGB(), shadow);
     }
 }

@@ -4,16 +4,16 @@ import net.toshimichi.sushi.events.input.ClickType;
 
 public interface ComponentHandler {
 
-    default void setX(int x) {
+    default void setX(double x) {
     }
 
-    default void setY(int y) {
+    default void setY(double y) {
     }
 
-    default void setWidth(int width) {
+    default void setWidth(double width) {
     }
 
-    default void setHeight(int height) {
+    default void setHeight(double height) {
     }
 
     default void setMargin(Insets margin) {
