@@ -8,10 +8,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
-import net.toshimichi.sushi.modules.combat.AntiCevBreakModule;
-import net.toshimichi.sushi.modules.combat.AutoTotemModule;
-import net.toshimichi.sushi.modules.combat.SurroundModule;
-import net.toshimichi.sushi.modules.combat.VelocityModule;
+import net.toshimichi.sushi.modules.combat.*;
 import net.toshimichi.sushi.modules.movement.AutoWalkModule;
 import net.toshimichi.sushi.modules.movement.PhaseFlyModule;
 import net.toshimichi.sushi.modules.movement.PhaseWalkModule;
@@ -70,6 +67,7 @@ public class GsonModules implements Modules {
         addModuleFactory("auto_armor", AutoArmorModule::new, true);
         addModuleFactory("scaffold", ScaffoldModule::new, true);
         addModuleFactory("auto_walk", AutoWalkModule::new, true);
+        addModuleFactory("crystal_aura", CrystalAuraModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
