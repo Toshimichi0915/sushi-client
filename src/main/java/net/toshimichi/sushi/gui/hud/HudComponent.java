@@ -15,6 +15,7 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
         addVirtual(new HotbarHudElementComponent());
         addElement(new CoordinatesComponent(constants, conf), conf);
         addElement(new TpsComponent(constants, conf), conf);
+        addElement(new ModuleListComponent(constants), conf);
     }
 
     private void addVirtual(VirtualHudElementComponent component) {

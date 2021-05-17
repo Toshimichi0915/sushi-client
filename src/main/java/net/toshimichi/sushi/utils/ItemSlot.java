@@ -3,8 +3,6 @@ package net.toshimichi.sushi.utils;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 
-import java.util.Comparator;
-
 public class ItemSlot implements Comparable<ItemSlot> {
     private final int index;
     private final ItemStack itemStack;
