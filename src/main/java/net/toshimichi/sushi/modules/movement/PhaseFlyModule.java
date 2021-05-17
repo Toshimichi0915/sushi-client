@@ -50,7 +50,6 @@ public class PhaseFlyModule extends BaseModule {
     public void onMotion(PlayerMotionEvent e) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         player.noClip = !player.world.getCollisionBoxes(null, player.getEntityBoundingBox()).isEmpty();
-        player.fallDistance = 0;
         player.onGround = false;
 
         if (e.getType() != MoverType.SELF || stage != 0) {
