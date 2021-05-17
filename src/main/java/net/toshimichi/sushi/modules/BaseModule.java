@@ -30,10 +30,10 @@ abstract public class BaseModule implements Module {
         this.categories = categories;
         this.factory = factory;
         ConfigurationCategory commonCategory = provider.getCategory("common", "Common Settings", "Common settings for most modules");
-        this.name = provider.get("name", "Module Name", "Module name", String.class, getDefaultName(), () -> true, commonCategory, false, 800);
-        this.category = provider.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName(), () -> true, commonCategory, false, 810);
-        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, null, false, 820);
-        this.isTemporary = provider.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, commonCategory, false, 830);
+        this.name = provider.get("name", "Module Name", "Module name", String.class, getDefaultName(), () -> true, commonCategory, false, 80000);
+        this.category = provider.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName(), () -> true, commonCategory, false, 81000);
+        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, null, false, 82000);
+        this.isTemporary = provider.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, commonCategory, false, 83000);
     }
 
     @Override

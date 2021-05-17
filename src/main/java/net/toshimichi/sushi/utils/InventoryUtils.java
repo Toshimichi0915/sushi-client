@@ -38,7 +38,7 @@ public class InventoryUtils {
     }
 
     public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, InventoryType... allowed) {
-        return findItemSlot(searching, player, Comparator.comparingInt(ItemSlot::getIndex), allowed);
+        return findItemSlot(searching, player, null, allowed);
     }
 
     public static short clickItemSlot(ItemSlot slot, ClickType type, int button) {

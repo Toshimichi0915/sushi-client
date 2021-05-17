@@ -9,8 +9,18 @@ import net.toshimichi.sushi.task.TaskAdapter;
 
 public class TransactionWaitTask extends TaskAdapter<Short, Boolean> {
 
+    private final int maxTicks;
     private boolean received;
     private boolean accepted;
+    private int counter;
+
+    public TransactionWaitTask(int maxTicks) {
+        this.maxTicks = maxTicks;
+    }
+
+    public TransactionWaitTask() {
+        this(5);
+    }
 
     @Override
     public void start(Short input) throws Exception {
@@ -20,7 +30,7 @@ public class TransactionWaitTask extends TaskAdapter<Short, Boolean> {
 
     @Override
     public void tick() throws Exception {
-        if (!received) return;
+        if (!received && counter++ < maxTicks) return;
         stop(accepted);
     }
 

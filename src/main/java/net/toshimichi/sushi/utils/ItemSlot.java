@@ -3,7 +3,9 @@ package net.toshimichi.sushi.utils;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 
-public class ItemSlot {
+import java.util.Comparator;
+
+public class ItemSlot implements Comparable<ItemSlot> {
     private final int index;
     private final ItemStack itemStack;
     private final InventoryType inventoryType;
@@ -30,5 +32,10 @@ public class ItemSlot {
 
     public InventoryType getInventoryType() {
         return inventoryType;
+    }
+
+    @Override
+    public int compareTo(ItemSlot o) {
+        return Integer.compare(getIndex(), o.getIndex());
     }
 }

@@ -187,6 +187,7 @@ public class CrystalAuraModule extends BaseModule {
         CrystalAttack best;
         if (nearby.isEmpty()) best = findBestCrystalAttack(attacks);
         else best = findBestCrystalAttack(nearby);
+        if (best == null) return;
 
         BlockPos crystalPos = best.crystalPos;
         AxisAlignedBB crystalBox = best.crystalBox;
@@ -217,9 +218,8 @@ public class CrystalAuraModule extends BaseModule {
                 .supply(() -> Item.getItemById(426))
                 .then(new ItemSwitchTask(null, switchMode.getValue()))
                 .abortIf(found -> {
-                    if (found) return false;
-                    PositionUtils.pop();
-                    return true;
+                    if (!found) PositionUtils.pop();
+                    return !found;
                 })
                 .then(() -> {
                     PositionUtils.lookAt(lookAt, DesyncMode.LOOK);

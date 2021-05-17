@@ -26,7 +26,7 @@ public class AutoTotemModule extends BaseModule {
     public AutoTotemModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         confirm = provider.get("confirm", "Confirm", null, Boolean.class, true);
-        delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(1, 10, 0, 1), confirm::getValue, null, false, 0);
+        delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(1, 10, 0, 1), () -> !confirm.getValue(), null, false, 0);
     }
 
     @Override
