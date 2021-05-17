@@ -36,6 +36,7 @@ public class CrystalAuraModule extends BaseModule {
     private final Configuration<DoubleRange> range;
     private final Configuration<IntRange> placeCoolTime;
     private final Configuration<IntRange> breakCoolTime;
+    private final Configuration<DoubleRange> minDamage;
     private final Configuration<IntRange> maxTargets;
     private final Configuration<Boolean> customDamage;
     private final Configuration<IntRange> customPower;
@@ -51,6 +52,7 @@ public class CrystalAuraModule extends BaseModule {
         range = provider.get("range", "Range", null, DoubleRange.class, new DoubleRange(4.5, 10, 1, 0.1, 1));
         placeCoolTime = provider.get("place_cool_time", "Place Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
         breakCoolTime = provider.get("break_cool_time", "Break Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        minDamage = provider.get("min_damage", "Min Damage", null, DoubleRange.class, new DoubleRange(6, 20, 0, 0.2, 1));
         maxTargets = provider.get("max_targets", "Max Targets", null, IntRange.class, new IntRange(1, 10, 1, 1));
         customDamage = provider.get("custom_damage", "Custom Damage", null, Boolean.class, false);
         customPower = provider.get("power", "Power", null, IntRange.class, new IntRange(6, 10, 1, 1), customDamage::getValue, null, false, 0);
@@ -112,6 +114,7 @@ public class CrystalAuraModule extends BaseModule {
 
         double selfDamage = getDamage(crystalPos, getPlayer());
         double ratio = selfDamage / attack.getTotalDamage();
+        if (attack.getTotalDamage() < minDamage.getValue().getCurrent()) return false;
         if (selfDamage > maxSelfDamage.getValue().getCurrent()) return false;
         if (ratio > damageRatio.getValue().getCurrent()) return false;
         if (avoidSuicide.getValue() && selfDamage > getPlayer().getHealth()) return false;
