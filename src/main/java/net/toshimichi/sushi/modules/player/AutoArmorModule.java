@@ -81,7 +81,7 @@ public class AutoArmorModule extends BaseModule {
         for (NBTBase enchantBase : enchants) {
             NBTTagCompound enchant = (NBTTagCompound) enchantBase;
             int id = enchant.getInteger("id");
-            int level = enchant.getInteger("level");
+            int level = enchant.getInteger("lvl");
             totalEnchantLevels += level;
             // protection, fire protection, blast protection, projectile protection
             if (id == 0 || id == 1 || id == 3 || id == 4) {
