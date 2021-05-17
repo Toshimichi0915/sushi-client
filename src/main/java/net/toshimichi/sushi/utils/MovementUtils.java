@@ -8,16 +8,12 @@ import net.minecraft.util.math.Vec3d;
 public class MovementUtils {
 
     public static Vec3d getMoveInputs(EntityPlayerSP player) {
-        float moveForward = 0;
         float moveUpward = 0;
-        float moveStrafe = 0;
-        if (player.movementInput.forwardKeyDown) moveForward++;
-        if (player.movementInput.backKeyDown) moveForward--;
-        if (player.movementInput.leftKeyDown) moveStrafe++;
-        if (player.movementInput.rightKeyDown) moveStrafe--;
         if (player.movementInput.jump) moveUpward++;
         if (player.movementInput.sneak) moveUpward--;
-        return new Vec3d(moveForward, moveUpward, moveStrafe);
+        return new Vec3d(player.movementInput.moveForward,
+                moveUpward,
+                player.movementInput.moveStrafe);
     }
 
     public static Vec2f toWorld(Vec2f vec, float yaw) {

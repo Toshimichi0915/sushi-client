@@ -87,7 +87,7 @@ public class PositionUtils {
         boolean rotationPacket = false;
         if (position) {
             if (mode.isPositionDesync()) {
-                positionPacket = true;
+                if (getDesyncMode().isPositionDesync()) positionPacket = true;
                 PositionUtils.x = x;
                 PositionUtils.y = y;
                 PositionUtils.z = z;
@@ -101,7 +101,7 @@ public class PositionUtils {
             while (pitch > 90) pitch -= 180;
             while (pitch < -90) pitch += 180;
             if (mode.isRotationDesync()) {
-                rotationPacket = true;
+                if (getDesyncMode().isRotationDesync()) rotationPacket = true;
                 PositionUtils.yaw = yaw;
                 PositionUtils.pitch = pitch;
             } else {

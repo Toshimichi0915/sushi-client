@@ -22,11 +22,11 @@ public class DesyncHandler {
         DesyncMode mode = PositionUtils.getDesyncMode();
         boolean position = mode.isPositionDesync();
         boolean rotation = mode.isRotationDesync();
-        double x = PositionUtils.getX(player, PositionUtils.getDesyncMode());
-        double y = PositionUtils.getY(player, PositionUtils.getDesyncMode());
-        double z = PositionUtils.getZ(player, PositionUtils.getDesyncMode());
-        float yaw = PositionUtils.getYaw(player, PositionUtils.getDesyncMode());
-        float pitch = PositionUtils.getPitch(player, PositionUtils.getDesyncMode());
+        double x = PositionUtils.getX(player, mode);
+        double y = PositionUtils.getY(player, mode);
+        double z = PositionUtils.getZ(player, mode);
+        float yaw = PositionUtils.getYaw(player, mode);
+        float pitch = PositionUtils.getPitch(player, mode);
         boolean onGround = cp.isOnGround();
         if ((position && rotation || cp instanceof CPacketPlayer.PositionRotation) ||
                 (position && cp instanceof CPacketPlayer.Rotation) ||
