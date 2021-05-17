@@ -12,6 +12,7 @@ import net.toshimichi.sushi.modules.combat.AntiCevBreakModule;
 import net.toshimichi.sushi.modules.combat.AutoTotemModule;
 import net.toshimichi.sushi.modules.combat.SurroundModule;
 import net.toshimichi.sushi.modules.combat.VelocityModule;
+import net.toshimichi.sushi.modules.movement.AutoWalkModule;
 import net.toshimichi.sushi.modules.movement.PhaseFlyModule;
 import net.toshimichi.sushi.modules.movement.PhaseWalkModule;
 import net.toshimichi.sushi.modules.movement.SprintModule;
@@ -68,6 +69,7 @@ public class GsonModules implements Modules {
         addModuleFactory("anti_hunger", AntiHungerModule::new, true);
         addModuleFactory("auto_armor", AutoArmorModule::new, true);
         addModuleFactory("scaffold", ScaffoldModule::new, true);
+        addModuleFactory("auto_walk", AutoWalkModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
