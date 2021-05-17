@@ -29,8 +29,8 @@ public class GsonConfigurations implements Configurations {
     @SuppressWarnings("unchecked")
     @Override
     public <T> Configuration<T> get(String id, String name, String description, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, ConfigurationCategory category, boolean temporary, int priority) {
-        if (!temporary)
-            defaults.put(id, defaultValue);
+        if (priority == 0) priority = counter++ * PRIORITY_DELTA;
+        if (!temporary) defaults.put(id, defaultValue);
         for (GsonConfiguration<?> loaded : list) {
             if (loaded.getId().equals(id)) {
                 if (!loaded.getValueClass().equals(tClass))
@@ -41,16 +41,6 @@ public class GsonConfigurations implements Configurations {
         GsonConfiguration<T> conf = new GsonConfiguration<>(id, name, description, tClass, defaultValue, this, isValid, category, temporary, priority);
         list.add(conf);
         return conf;
-    }
-
-    @Override
-    public <T> Configuration<T> get(String id, String name, String description, Class<T> t, T value) {
-        return get(id, name, description, t, value, () -> true, null, false, counter++ * PRIORITY_DELTA);
-    }
-
-    @Override
-    public <T> Configuration<T> temp(String id, String name, String description, Class<T> t, T defaultValue) {
-        return get(id, name, description, t, defaultValue, () -> true, null, true, counter++ * PRIORITY_DELTA);
     }
 
     @Override
