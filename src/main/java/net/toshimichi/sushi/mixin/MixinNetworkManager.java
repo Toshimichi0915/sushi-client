@@ -1,9 +1,11 @@
 package net.toshimichi.sushi.mixin;
 
+import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.toshimichi.sushi.events.EventHandlers;
+import net.toshimichi.sushi.events.client.ExceptionCatchEvent;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,6 +41,13 @@ public abstract class MixinNetworkManager {
         if (packet == null) {
             info.cancel();
         }
+    }
+
+    @Inject(at = @At("HEAD"), method = "exceptionCaught", cancellable = true)
+    public void onPreExceptionCaught(ChannelHandlerContext context, Throwable throwable, CallbackInfo ci) {
+        ExceptionCatchEvent event = new ExceptionCatchEvent(throwable);
+        EventHandlers.callEvent(event);
+        if (event.isCancelled()) ci.cancel();
     }
 
 }

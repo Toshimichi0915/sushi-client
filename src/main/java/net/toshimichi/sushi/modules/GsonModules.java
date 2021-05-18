@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
+import net.toshimichi.sushi.modules.client.AntiErrorKickModule;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.combat.*;
@@ -69,6 +70,7 @@ public class GsonModules implements Modules {
         addModuleFactory("auto_walk", AutoWalkModule::new, true);
         addModuleFactory("crystal_aura", CrystalAuraModule::new, true);
         addModuleFactory("piston_aura", PistonAuraModule::new, true);
+        addModuleFactory("anti_error_kick", AntiErrorKickModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
