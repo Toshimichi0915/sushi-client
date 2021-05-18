@@ -204,12 +204,13 @@ public class CrystalAuraModule extends BaseModule {
             interact = entities.get(0);
             lookAt = interact.getPositionVector();
         }
-        PositionUtils.desync(DesyncMode.LOOK);
-        PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
         if (interact != null) {
             if (counter - lastBreakTick < breakCoolTime.getValue().getCurrent()) return;
             lastBreakTick = counter;
+            PositionUtils.desync(DesyncMode.LOOK);
+            PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
             getConnection().sendPacket(new CPacketUseEntity(interact));
+            PositionUtils.pop();
         }
 
         if (counter - lastPlaceTick < placeCoolTime.getValue().getCurrent()) return;
@@ -217,15 +218,13 @@ public class CrystalAuraModule extends BaseModule {
         TaskExecutor.newTaskChain()
                 .supply(() -> Item.getItemById(426))
                 .then(new ItemSwitchTask(null, switchMode.getValue()))
-                .abortIf(found -> {
-                    if (!found) PositionUtils.pop();
-                    return !found;
-                })
+                .abortIf(found -> !found)
                 .then(() -> {
+                    PositionUtils.desync(DesyncMode.LOOK);
                     PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
                     PositionUtils.pop();
-                    getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(crystalPos.add(0, -1, 0), EnumFacing.UP, EnumHand.MAIN_HAND,
-                            0.5F, 1, 0.5F));
+                    getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(crystalPos.add(0, -1, 0), EnumFacing.DOWN, EnumHand.MAIN_HAND,
+                            0.5F, 0, 0.5F));
                 })
                 .execute();
     }
