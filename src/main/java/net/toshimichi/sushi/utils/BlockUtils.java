@@ -14,6 +14,14 @@ import net.minecraft.world.World;
 
 public class BlockUtils {
 
+    public static BlockPos toBlockPos(Vec3d vec) {
+        return new BlockPos((int) vec.x, (int) vec.y, (int) vec.z);
+    }
+
+    public static Vec3d toVec3d(BlockPos pos) {
+        return new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+    }
+
     public static boolean isAir(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         return state.getBlock().isAir(state, world, pos);
@@ -39,7 +47,7 @@ public class BlockUtils {
         controller.processRightClickBlock(player, world, pos.offset(face.getFacing().getOpposite()), face.getFacing(), face.getPos().add(vec), EnumHand.MAIN_HAND);
     }
 
-    public static BlockPlaceInfo findFace(World world, BlockPos input) {
+    public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input) {
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPos pos = input.offset(facing);
             EnumFacing opposite = facing.getOpposite();

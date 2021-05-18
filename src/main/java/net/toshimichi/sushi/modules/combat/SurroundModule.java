@@ -56,10 +56,10 @@ public class SurroundModule extends BaseModule {
         ArrayList<BlockPlaceInfo> toBePlaced = new ArrayList<>();
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPos neighbor = pos.offset(facing);
-            BlockPlaceInfo neighborFace = BlockUtils.findFace(getWorld(), neighbor);
+            BlockPlaceInfo neighborFace = BlockUtils.findBlockPlaceInfo(getWorld(), neighbor);
             if (neighborFace == null) {
                 BlockPos under = neighbor.offset(EnumFacing.DOWN);
-                BlockPlaceInfo underFace = BlockUtils.findFace(getWorld(), under);
+                BlockPlaceInfo underFace = BlockUtils.findBlockPlaceInfo(getWorld(), under);
                 if (underFace == null) continue;
                 toBePlaced.add(underFace);
                 toBePlaced.add(new BlockPlaceInfo(neighbor, new BlockFace(new Vec3d(0.5, 1, 0.5), EnumFacing.UP)));

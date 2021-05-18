@@ -51,7 +51,7 @@ public class AntiCevBreakModule extends BaseModule {
             PositionUtils.move(posX, getPlayer().posY + 0.2, posZ, 0, 0, true, false, DesyncMode.POSITION);
             PositionUtils.pop();
             getConnection().sendPacket(new CPacketUseEntity(entity));
-            BlockPlaceInfo face = BlockUtils.findFace(getWorld(), entity.getPosition());
+            BlockPlaceInfo face = BlockUtils.findBlockPlaceInfo(getWorld(), entity.getPosition());
             if (face == null) continue;
             TaskExecutor.newTaskChain()
                     .supply(() -> obsidian)

@@ -68,6 +68,7 @@ public class GsonModules implements Modules {
         addModuleFactory("scaffold", ScaffoldModule::new, true);
         addModuleFactory("auto_walk", AutoWalkModule::new, true);
         addModuleFactory("crystal_aura", CrystalAuraModule::new, true);
+        addModuleFactory("piston_aura", PistonAuraModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
