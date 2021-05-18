@@ -13,6 +13,7 @@ import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.modules.Module;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleComponent> {
 
@@ -48,6 +49,7 @@ public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleCo
             }
             remove(component);
         }
+        sort(Comparator.comparing(m -> m.getModule().getName()));
         if (isEmpty()) setMargin(new Insets(0, 0, 0, 0));
         else setMargin(new Insets(0, 2, 2, 2));
 
