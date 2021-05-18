@@ -75,18 +75,13 @@ public class CrystalAuraModule extends BaseModule {
         EventHandlers.unregister(this);
     }
 
-    private AxisAlignedBB getSpawnEntityBox(BlockPos pos) {
-        return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(),
-                pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
-    }
-
-    private double getDamage(BlockPos pos, EntityPlayer player) {
+    private double getDamage(Vec3d pos, EntityPlayer player) {
         double power = customDamage.getValue() ? customPower.getValue().getCurrent() : 6;
-        double damage = DamageUtils.getExplosionDamage(player, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), power);
+        double damage = DamageUtils.getExplosionDamage(player, pos, power);
         return DamageUtils.applyModifier(player, damage, DamageSource.FIREWORKS);
     }
 
-    private CrystalAttack getCrystalAttack(EntityEnderCrystal crystal, BlockPos pos, AxisAlignedBB box) {
+    private CrystalAttack getCrystalAttack(EntityEnderCrystal crystal, Vec3d pos, AxisAlignedBB box) {
         ArrayList<Map.Entry<EntityPlayer, Double>> damages = new ArrayList<>();
         for (Entity entity : getWorld().loadedEntityList) {
             if (!(entity instanceof EntityPlayer)) continue;
@@ -108,13 +103,13 @@ public class CrystalAuraModule extends BaseModule {
         return new CrystalAttack(crystal, pos, box, sortedMap);
     }
 
-    private boolean filter(CrystalAttack attack) {
-        BlockPos crystalPos = attack.crystalPos;
+    private boolean filter(CrystalAttack attack, boolean checkCollision) {
+        Vec3d crystalPos = attack.crystalPos;
         AxisAlignedBB crystalBox = attack.crystalBox;
 
         List<Entity> entities = getWorld().getEntitiesWithinAABBExcludingEntity(null, crystalBox);
         entities.removeIf(p -> p instanceof EntityEnderCrystal);
-        if (!entities.isEmpty()) return false;
+        if (checkCollision && !entities.isEmpty()) return false;
 
         double selfDamage = getDamage(crystalPos, getPlayer());
         double ratio = selfDamage / attack.getTotalDamage();
@@ -153,9 +148,10 @@ public class CrystalAuraModule extends BaseModule {
             for (int y = -distance; y < distance; y++) {
                 for (int z = -distance; z < distance; z++) {
                     BlockPos pos = new BlockPos(x + (int) getPlayer().posX, y + (int) getPlayer().posY, z + (int) getPlayer().posZ);
+                    Vec3d vec = BlockUtils.toVec3d(pos).add(0.5, 1, 0.5);
 
                     // check distance
-                    double distanceSq = getPlayer().getPositionVector().squareDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+                    double distanceSq = getPlayer().getPositionVector().squareDistanceTo(vec);
                     if (distanceSq > range.getValue().getCurrent() * range.getValue().getCurrent()) continue;
 
                     // check whether the block is obsidian/bedrock
@@ -165,11 +161,12 @@ public class CrystalAuraModule extends BaseModule {
 
                     // check collisions
                     pos = pos.add(0, 1, 0);
-                    AxisAlignedBB crystal = getSpawnEntityBox(pos);
+                    AxisAlignedBB crystal = new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(),
+                            pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
                     if (getWorld().collidesWithAnyBlock(crystal)) continue;
 
-                    CrystalAttack attack = getCrystalAttack(null, pos, crystal);
-                    if (filter(attack)) attacks.add(attack);
+                    CrystalAttack attack = getCrystalAttack(null, vec, crystal);
+                    if (filter(attack, true)) attacks.add(attack);
                 }
             }
         }
@@ -178,11 +175,10 @@ public class CrystalAuraModule extends BaseModule {
         ArrayList<CrystalAttack> nearby = new ArrayList<>();
         for (Entity entity : getWorld().loadedEntityList) {
             if (!(entity instanceof EntityEnderCrystal)) continue;
-            BlockPos pos = new BlockPos((int) entity.posX, (int) entity.posY, (int) entity.posZ);
-            double distanceSq = getPlayer().getPositionVector().squareDistanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+            double distanceSq = getPlayer().getPositionVector().squareDistanceTo(entity.getPositionVector());
             if (distanceSq > range.getValue().getCurrent() * range.getValue().getCurrent()) continue;
-            CrystalAttack attack = getCrystalAttack((EntityEnderCrystal) entity, pos, entity.getEntityBoundingBox());
-            if (filter(attack)) nearby.add(attack);
+            CrystalAttack attack = getCrystalAttack((EntityEnderCrystal) entity, entity.getPositionVector(), entity.getEntityBoundingBox());
+            if (filter(attack, false)) nearby.add(attack);
         }
 
         CrystalAttack best = findBestCrystalAttack(nearby);
@@ -198,8 +194,8 @@ public class CrystalAuraModule extends BaseModule {
 
         // place
         best = findBestCrystalAttack(attacks);
-        BlockPos crystalPos = best.crystalPos;
-        Vec3d lookAt = BlockUtils.toVec3d(crystalPos).add(0.5, 0, 0.5);
+        if (best == null) return;
+        Vec3d crystalPos = best.crystalPos;
         if (counter - lastPlaceTick < placeCoolTime.getValue().getCurrent()) return;
         lastPlaceTick = counter;
         TaskExecutor.newTaskChain()
@@ -208,9 +204,9 @@ public class CrystalAuraModule extends BaseModule {
                 .abortIf(found -> !found)
                 .then(() -> {
                     PositionUtils.desync(DesyncMode.LOOK);
-                    PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
+                    PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
                     PositionUtils.pop();
-                    getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(crystalPos.add(0, -1, 0), EnumFacing.DOWN, EnumHand.MAIN_HAND,
+                    getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0), EnumFacing.DOWN, EnumHand.MAIN_HAND,
                             0.5F, 0, 0.5F));
                 })
                 .execute();
@@ -228,11 +224,11 @@ public class CrystalAuraModule extends BaseModule {
 
     private static class CrystalAttack {
         EntityEnderCrystal entity;
-        BlockPos crystalPos;
+        Vec3d crystalPos;
         AxisAlignedBB crystalBox;
         Map<EntityPlayer, Double> damages;
 
-        CrystalAttack(EntityEnderCrystal entity, BlockPos crystalPos, AxisAlignedBB crystalBox, Map<EntityPlayer, Double> damages) {
+        CrystalAttack(EntityEnderCrystal entity, Vec3d crystalPos, AxisAlignedBB crystalBox, Map<EntityPlayer, Double> damages) {
             this.entity = entity;
             this.crystalPos = crystalPos;
             this.crystalBox = crystalBox;
