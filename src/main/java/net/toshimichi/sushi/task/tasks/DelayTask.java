@@ -12,6 +12,6 @@ public class DelayTask<I> extends TaskAdapter<I, I> {
 
     @Override
     public void tick() throws Exception {
-        if (delay-- < 0) stop(getInput());
+        if (delay-- <= 0) stop(getInput());
     }
 }
