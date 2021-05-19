@@ -9,7 +9,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.client.UpdateLightEvent;
+import net.toshimichi.sushi.events.client.LightUpdateEvent;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.modules.*;
 
@@ -49,7 +49,7 @@ public class NoRenderModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onCheckLight(UpdateLightEvent e) {
+    public void onCheckLight(LightUpdateEvent e) {
         if ((skyLight.getValue() && e.getEnumSkyBlock() == EnumSkyBlock.SKY) ||
                 (blockLight.getValue() && e.getEnumSkyBlock() == EnumSkyBlock.BLOCK))
             e.setCancelled(true);

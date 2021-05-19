@@ -1,14 +1,13 @@
 package net.toshimichi.sushi.events;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class EventHandlers {
 
-    private static final HashSet<EventMap> eventMaps = new HashSet<>();
+    private static final Set<EventMap> eventMaps = new CopyOnWriteArraySet<>();
 
     @SuppressWarnings("unchecked")
     public static <T extends Event> void callEvent(T event) {
@@ -70,12 +69,12 @@ public class EventHandlers {
     private static class EventMap {
         final Object obj;
         final Class<?> eventClass;
-        final ArrayList<EventAdapter<?>> adapters;
+        final List<EventAdapter<?>> adapters;
 
-        EventMap(Object obj, Class<?> eventClass, ArrayList<EventAdapter<?>> adapters) {
+        EventMap(Object obj, Class<?> eventClass, List<EventAdapter<?>> adapters) {
             this.obj = obj;
             this.eventClass = eventClass;
-            this.adapters = adapters;
+            this.adapters = new CopyOnWriteArrayList<>(adapters);
         }
     }
 }

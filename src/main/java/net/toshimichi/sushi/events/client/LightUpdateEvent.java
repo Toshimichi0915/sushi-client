@@ -5,11 +5,11 @@ import net.minecraft.world.EnumSkyBlock;
 import net.toshimichi.sushi.events.CancellableEvent;
 import net.toshimichi.sushi.events.EventTiming;
 
-public class UpdateLightEvent extends CancellableEvent {
+public class LightUpdateEvent extends CancellableEvent {
     private final EnumSkyBlock enumSkyBlock;
     private final BlockPos pos;
 
-    public UpdateLightEvent(EventTiming timing, EnumSkyBlock enumSkyBlock, BlockPos pos) {
+    public LightUpdateEvent(EventTiming timing, EnumSkyBlock enumSkyBlock, BlockPos pos) {
         super(timing);
         this.enumSkyBlock = enumSkyBlock;
         this.pos = pos;

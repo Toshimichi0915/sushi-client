@@ -15,7 +15,6 @@
     "AccessorTimer",
     "MixinEntity",
     "MixinEntityPlayerSP",
-    "MixinGameSettings",
-    "MixinPacketThreadUtil"
+    "MixinGameSettings"
   ]
 }
