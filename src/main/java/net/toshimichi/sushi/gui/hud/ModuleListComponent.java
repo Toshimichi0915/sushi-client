@@ -24,7 +24,7 @@ public class ModuleListComponent extends BaseHudElementComponent {
             if (!module.isEnabled()) continue;
             TextPreview preview = GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true);
             list.add(new AbstractMap.SimpleEntry<>(module, preview));
-            totalWidth = preview.getWidth();
+            if (totalWidth < preview.getWidth()) totalWidth = preview.getWidth();
             totalHeight += preview.getHeight() + 1;
         }
         setWidth(totalWidth);
