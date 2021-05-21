@@ -1,6 +1,5 @@
 package net.toshimichi.sushi.mixin;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;

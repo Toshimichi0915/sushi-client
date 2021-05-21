@@ -16,9 +16,10 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
     private final boolean blocked;
     private final boolean pistonPlaced;
     private final boolean redstonePlaced;
+    private final boolean pistonActivated;
 
     public PistonAuraAttack(BlockPos crystalPos, BlockPos pistonPos, EnumFacing facing, EntityPlayer player, EntityPlayer target,
-                            double damage, EntityEnderCrystal placed, boolean blocked, boolean pistonPlaced, boolean redstonePlaced) {
+                            double damage, EntityEnderCrystal placed, boolean blocked, boolean pistonPlaced, boolean redstonePlaced, boolean pistonActivated) {
         this.crystalPos = crystalPos;
         this.pistonPos = pistonPos;
         this.facing = facing;
@@ -29,6 +30,7 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
         this.blocked = blocked;
         this.pistonPlaced = pistonPlaced;
         this.redstonePlaced = redstonePlaced;
+        this.pistonActivated = pistonActivated;
     }
 
     public BlockPos getCrystalPos() {
@@ -71,13 +73,35 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
         return redstonePlaced;
     }
 
+    public boolean isPistonActivated() {
+        return pistonActivated;
+    }
+
     @Override
     public int compareTo(PistonAuraAttack o) {
         int temp = Boolean.compare(blocked, o.blocked);
         if (temp == 0) temp = Boolean.compare(placed == null, o.placed == null);
         if (temp == 0) temp = Boolean.compare(!pistonPlaced, !o.pistonPlaced);
         if (temp == 0) temp = Boolean.compare(!redstonePlaced, !o.redstonePlaced);
+        if (temp == 0) temp = Boolean.compare(!pistonActivated, !o.pistonActivated);
         if (temp == 0) temp = Double.compare(o.damage, damage);
         return temp;
+    }
+
+    @Override
+    public String toString() {
+        return "PistonAuraAttack{" +
+                "crystalPos=" + crystalPos +
+                ", pistonPos=" + pistonPos +
+                ", facing=" + facing +
+                ", player=" + player +
+                ", target=" + target +
+                ", damage=" + damage +
+                ", placed=" + placed +
+                ", blocked=" + blocked +
+                ", pistonPlaced=" + pistonPlaced +
+                ", redstonePlaced=" + redstonePlaced +
+                ", pistonActivated=" + pistonActivated +
+                '}';
     }
 }

@@ -5,7 +5,7 @@ public enum DesyncMode {
     POSITION(true, false, false),
     LOOK(false, true, false),
     ON_GROUND(false, false, true),
-    NONE(false,false, false);
+    NONE(false, false, false);
 
     private final boolean position;
     private final boolean rotation;

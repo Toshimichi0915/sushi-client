@@ -39,7 +39,7 @@ public class KeybindHandler {
         if (!Minecraft.getMinecraft().inGameHasFocus) return;
         ArrayList<Module> candidates = new ArrayList<>();
         for (Module module : Sushi.getProfile().getModules().getAll()) {
-            if (checkKeybind(module) && (!heldModules.contains(module) || !module.isEnabled())) {
+            if (checkKeybind(module)) {
                 candidates.add(module);
             }
         }
@@ -47,6 +47,7 @@ public class KeybindHandler {
         candidates.sort(Comparator.comparingInt(module -> module.getKeybind().getKeys().length));
         Collections.reverse(candidates);
         Module module = candidates.get(0);
+        if (heldModules.contains(module) && module.isEnabled()) return;
         heldModules.add(module);
         ActivationType type = module.getKeybind().getActivationType();
         if (type == ActivationType.HOLD)

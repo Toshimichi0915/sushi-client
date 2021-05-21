@@ -73,31 +73,28 @@ public class PistonAuraModule extends BaseModule {
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                         PositionUtils.pop();
-                    }).delay(delay1.getValue().getCurrent())
+                    })
                     .then(() -> {
-                        running = false;
                         if (delay1.getValue().getCurrent() == 0) {
                             repeatCounter++;
                             onClientTick(e);
                         }
-                    })
-                    .execute();
-        } else if (attack.isBlocked() || attack.isPistonPlaced() && attack.isRedstonePlaced()) {
+                    }).execute();
+        } else if (attack.isBlocked() || attack.isPistonActivated()) {
             TaskExecutor.newTaskChain()
+                    .delay(delay2.getValue().getCurrent())
                     .then(() -> {
                         PositionUtils.desync(DesyncMode.LOOK);
                         PositionUtils.lookAt(attack.getPlaced().getPositionVector(), DesyncMode.LOOK);
                         getConnection().sendPacket(new CPacketUseEntity(attack.getPlaced()));
                         PositionUtils.pop();
-                    }).delay(delay2.getValue().getCurrent())
+                    })
                     .then(() -> {
-                        running = false;
                         if (delay2.getValue().getCurrent() == 0) {
                             repeatCounter++;
                             onClientTick(e);
                         }
-                    })
-                    .execute();
+                    }).execute();
         } else if (!attack.isPistonPlaced()) {
             BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
             if (info != null) {
@@ -111,15 +108,13 @@ public class PistonAuraModule extends BaseModule {
                             PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
                             BlockUtils.place(info);
                             PositionUtils.pop();
-                        }).delay(delay3.getValue().getCurrent())
+                        })
                         .then(() -> {
-                            running = false;
                             if (delay3.getValue().getCurrent() == 0) {
                                 repeatCounter++;
                                 onClientTick(e);
                             }
-                        })
-                        .execute();
+                        }).execute();
             }
         } else if (!attack.isRedstonePlaced()) {
             for (EnumFacing facing : EnumFacing.values()) {
@@ -131,19 +126,17 @@ public class PistonAuraModule extends BaseModule {
                             .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                             .abortIf(found -> !found)
                             .then(() -> BlockUtils.place(info))
-                            .delay(delay4.getValue().getCurrent())
                             .then(() -> {
-                                running = false;
                                 if (delay4.getValue().getCurrent() == 0) {
                                     repeatCounter++;
                                     onClientTick(e);
                                 }
-                            })
-                            .execute();
+                            }).execute();
                     break;
                 }
             }
         }
+        running = false;
     }
 
     @Override
