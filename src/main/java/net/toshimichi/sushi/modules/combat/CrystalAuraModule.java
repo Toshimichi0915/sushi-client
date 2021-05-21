@@ -34,7 +34,8 @@ import java.util.*;
 
 public class CrystalAuraModule extends BaseModule {
 
-    private final Configuration<DoubleRange> range;
+    private final Configuration<DoubleRange> targetRange;
+    private final Configuration<DoubleRange> crystalRange;
     private final Configuration<ItemSwitchMode> switchMode;
     private final Configuration<IntRange> placeCoolTime;
     private final Configuration<IntRange> breakCoolTime;
@@ -51,7 +52,8 @@ public class CrystalAuraModule extends BaseModule {
 
     public CrystalAuraModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        range = provider.get("range", "Range", null, DoubleRange.class, new DoubleRange(4.5, 10, 1, 0.1, 1));
+        targetRange = provider.get("target_range", "Target Range", null, DoubleRange.class, new DoubleRange(6, 18, 1, 1, 1));
+        crystalRange = provider.get("crystal_range", "Crystal Range", null, DoubleRange.class, new DoubleRange(4.5, 10, 1, 0.1, 1));
         switchMode = provider.get("switch", "Switch Mode", null, ItemSwitchMode.class, ItemSwitchMode.INVENTORY);
         placeCoolTime = provider.get("place_cool_time", "Place Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
         breakCoolTime = provider.get("break_cool_time", "Break Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
@@ -84,6 +86,8 @@ public class CrystalAuraModule extends BaseModule {
         ArrayList<Map.Entry<EntityPlayer, Double>> damages = new ArrayList<>();
         for (Entity entity : getWorld().loadedEntityList) {
             if (!(entity instanceof EntityPlayer)) continue;
+            double range = targetRange.getValue().getCurrent();
+            if (getPlayer().getDistanceSq(entity) > range * range) continue;
             EntityPlayer player = (EntityPlayer) entity;
             if (player.getName().equals(getPlayer().getName())) continue;
             damages.add(new AbstractMap.SimpleEntry<>(player, getDamage(pos, player)));
@@ -139,7 +143,7 @@ public class CrystalAuraModule extends BaseModule {
         Block bedrock = Block.getBlockById(7);
         Block obsidian = Block.getBlockById(49);
 
-        int distance = (int) Math.ceil(range.getValue().getCurrent());
+        int distance = (int) Math.ceil(crystalRange.getValue().getCurrent());
 
         // refresh possible crystal placements
         ArrayList<CrystalAttack> attacks = new ArrayList<>();
@@ -151,7 +155,8 @@ public class CrystalAuraModule extends BaseModule {
 
                     // check distance
                     double distanceSq = getPlayer().getPositionVector().squareDistanceTo(vec);
-                    if (distanceSq > range.getValue().getCurrent() * range.getValue().getCurrent()) continue;
+                    if (distanceSq > crystalRange.getValue().getCurrent() * crystalRange.getValue().getCurrent())
+                        continue;
 
                     // check whether the block is obsidian/bedrock
                     IBlockState blockState = getWorld().getBlockState(pos);
@@ -175,7 +180,7 @@ public class CrystalAuraModule extends BaseModule {
         for (Entity entity : getWorld().loadedEntityList) {
             if (!(entity instanceof EntityEnderCrystal)) continue;
             double distanceSq = getPlayer().getPositionVector().squareDistanceTo(entity.getPositionVector());
-            if (distanceSq > range.getValue().getCurrent() * range.getValue().getCurrent()) continue;
+            if (distanceSq > crystalRange.getValue().getCurrent() * crystalRange.getValue().getCurrent()) continue;
             CrystalAttack attack = getCrystalAttack((EntityEnderCrystal) entity, entity.getPositionVector(), entity.getEntityBoundingBox());
             if (filter(attack, false)) nearby.add(attack);
         }
