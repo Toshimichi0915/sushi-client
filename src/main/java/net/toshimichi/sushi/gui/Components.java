@@ -19,30 +19,17 @@ public class Components {
         component.getOrigin().setFocused(true);
     }
 
-    public static ComponentContext<?> getTopContext(int x, int y) {
-        for (ComponentContext<?> context : components) {
-            Component component = context.getOrigin();
-            double minX = component.getWindowX();
-            double minY = component.getWindowY();
-            double maxX = minX + component.getWidth();
-            double maxY = minY + component.getHeight();
-            if (minX <= x && x <= maxX && minY <= y && y <= maxY)
-                return context;
-        }
-        return null;
-    }
-
-    public static <T extends Component> ComponentContext<T> show(T component, boolean close, int index) {
+    public static <T extends Component> ComponentContext<T> show(T component, boolean overlay, boolean close, int index) {
         if (close) closeAll();
-        BaseComponentContext<T> context = new BaseComponentContext<>(component);
+        BaseComponentContext<T> context = new BaseComponentContext<>(component, overlay);
         components.add(index, context);
         component.setContext(context);
         component.setVisible(true);
         return context;
     }
 
-    public static <T extends Component> ComponentContext<T> show(T component, boolean close) {
-        return show(component, close, 0);
+    public static <T extends Component> ComponentContext<T> show(T component, boolean overlay, boolean close) {
+        return show(component, overlay, close, 0);
     }
 
     private static void close(ComponentContext<?> component) {
@@ -60,14 +47,21 @@ public class Components {
 
     private static class BaseComponentContext<T extends Component> implements ComponentContext<T> {
         final T origin;
+        final boolean overlay;
 
-        public BaseComponentContext(T origin) {
+        public BaseComponentContext(T origin, boolean overlay) {
             this.origin = origin;
+            this.overlay = overlay;
         }
 
         @Override
         public T getOrigin() {
             return origin;
+        }
+
+        @Override
+        public boolean isOverlay() {
+            return overlay;
         }
 
         @Override

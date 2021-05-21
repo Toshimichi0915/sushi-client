@@ -39,7 +39,7 @@ public class ClickGuiModule extends BaseModule {
             }
         }
         PanelComponent<?> component = theme.newClickGui(this);
-        context = Components.show(component, false);
+        context = Components.show(component, false, false);
         GuiUtils.lockGame(() -> setEnabled(false));
     }
 

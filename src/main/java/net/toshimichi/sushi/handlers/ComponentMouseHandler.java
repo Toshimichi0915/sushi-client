@@ -29,6 +29,19 @@ public class ComponentMouseHandler {
         return null;
     }
 
+    public static ComponentContext<?> getTopContext(int x, int y) {
+        for (ComponentContext<?> context : Components.getAll()) {
+            if (context.isOverlay()) continue;
+            Component component = context.getOrigin();
+            double minX = component.getWindowX();
+            double minY = component.getWindowY();
+            double maxX = minX + component.getWidth();
+            double maxY = minY + component.getHeight();
+            if (minX <= x && x <= maxX && minY <= y && y <= maxY)
+                return context;
+        }
+        return null;
+    }
 
     @EventHandler(timing = EventTiming.PRE)
     public void onMousePress(MousePressEvent e) {
@@ -62,8 +75,8 @@ public class ComponentMouseHandler {
             status.x = (int) GuiUtils.toScaledX(Mouse.getX());
             status.y = (int) GuiUtils.toScaledY(Mouse.getY());
 
-            ComponentContext<?> lastContext = Components.getTopContext(status.lastX, status.lastY);
-            ComponentContext<?> context = Components.getTopContext(status.x, status.y);
+            ComponentContext<?> lastContext = getTopContext(status.lastX, status.lastY);
+            ComponentContext<?> context = getTopContext(status.x, status.y);
             Component lastComponent = lastContext == null ? null : lastContext.getOrigin();
             Component component = context == null ? null : context.getOrigin();
 
@@ -78,7 +91,7 @@ public class ComponentMouseHandler {
                 if (HOLD_DELAY < status.lastTickMillis - status.clickMillis ||
                         CLICK_THRESHOLD < MathHelper.sqrt(Math.pow(status.lastX - status.clickX, 2) + Math.pow(status.lastY - status.clickY, 2))) {
                     lastComponent.onHold(status.lastX, status.lastY, status.x, status.y, type, MouseStatus.IN_PROGRESS);
-                    context = Components.getTopContext(status.x, status.y);
+                    context = getTopContext(status.x, status.y);
                     component = context == null ? null : context.getOrigin();
                     if (!lastComponent.equals(component))
                         lastComponent.onHold(status.x, status.y, status.x, status.y, type, MouseStatus.CANCEL);

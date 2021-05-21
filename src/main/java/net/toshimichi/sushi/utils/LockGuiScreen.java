@@ -2,6 +2,9 @@ package net.toshimichi.sushi.utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.toshimichi.sushi.events.EventHandlers;
+import net.toshimichi.sushi.events.EventTiming;
+import net.toshimichi.sushi.events.tick.GuiRenderEvent;
 
 class LockGuiScreen extends GuiScreen {
 
@@ -11,6 +14,13 @@ class LockGuiScreen extends GuiScreen {
     public LockGuiScreen(GuiScreen parent, Runnable onClose) {
         this.parent = parent;
         this.onClose = onClose;
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        EventHandlers.callEvent(new GuiRenderEvent(EventTiming.PRE));
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        EventHandlers.callEvent(new GuiRenderEvent(EventTiming.POST));
     }
 
     @Override
