@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -78,7 +77,7 @@ public class CrystalAuraModule extends BaseModule {
     private double getDamage(Vec3d pos, EntityPlayer player) {
         double power = customDamage.getValue() ? customPower.getValue().getCurrent() : 6;
         double damage = DamageUtils.getExplosionDamage(player, pos, power);
-        return DamageUtils.applyModifier(player, damage, DamageSource.FIREWORKS);
+        return DamageUtils.applyModifier(player, damage, DamageUtils.EXPLOSION);
     }
 
     private CrystalAttack getCrystalAttack(EntityEnderCrystal crystal, Vec3d pos, AxisAlignedBB box) {

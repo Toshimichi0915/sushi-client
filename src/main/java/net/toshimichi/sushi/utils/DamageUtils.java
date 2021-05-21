@@ -15,6 +15,8 @@ import net.minecraft.util.math.Vec3d;
 
 public class DamageUtils {
 
+    public static final DamageSource EXPLOSION = new DamageSource("player.explosion").setDifficultyScaled().setExplosion();
+
     public static double applyModifier(EntityLivingBase entity, double damage, DamageSource source) {
         if (source.isUnblockable()) return damage;
         if (entity instanceof EntityPlayer && ((EntityPlayer) entity).isCreative() && !source.canHarmInCreative()) {
@@ -46,7 +48,13 @@ public class DamageUtils {
             }
         }
         damage *= (1 - modifier / 25D);
-        return damage;
+
+        // difficulty
+        if (source.isDifficultyScaled()) {
+            damage *= entity.world.getDifficulty().getId() * 0.5;
+        }
+
+        return Math.max(0, damage);
     }
 
     public static double getExplosionDamage(EntityLivingBase entity, Vec3d crystal, double power) {
