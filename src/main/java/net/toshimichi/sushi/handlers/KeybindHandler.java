@@ -13,6 +13,8 @@ import net.toshimichi.sushi.modules.ActivationType;
 import net.toshimichi.sushi.modules.Module;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class KeybindHandler {
 
@@ -35,17 +37,23 @@ public class KeybindHandler {
     public void onKeyPress(KeyPressEvent e) {
         heldKeys.add(e.getKeyCode());
         if (!Minecraft.getMinecraft().inGameHasFocus) return;
+        ArrayList<Module> candidates = new ArrayList<>();
         for (Module module : Sushi.getProfile().getModules().getAll()) {
-            if (!checkKeybind(module) || (heldModules.contains(module) && module.isEnabled()))
-                continue;
-            heldModules.add(module);
-            ActivationType type = module.getKeybind().getActivationType();
-            if (type == ActivationType.HOLD)
-                module.setEnabled(true);
-            else if (type == ActivationType.TOGGLE)
-                module.setEnabled(!module.isEnabled());
-            e.setCancelled(true);
+            if (checkKeybind(module) && (!heldModules.contains(module) || !module.isEnabled())) {
+                candidates.add(module);
+            }
         }
+        if (candidates.isEmpty()) return;
+        candidates.sort(Comparator.comparingInt(module -> module.getKeybind().getKeys().length));
+        Collections.reverse(candidates);
+        Module module = candidates.get(0);
+        heldModules.add(module);
+        ActivationType type = module.getKeybind().getActivationType();
+        if (type == ActivationType.HOLD)
+            module.setEnabled(true);
+        else if (type == ActivationType.TOGGLE)
+            module.setEnabled(!module.isEnabled());
+        e.setCancelled(true);
     }
 
     @EventHandler(timing = EventTiming.PRE)
