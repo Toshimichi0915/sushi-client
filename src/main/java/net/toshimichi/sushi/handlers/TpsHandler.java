@@ -14,7 +14,7 @@ public class TpsHandler {
     public void onPacketReceive(PacketReceiveEvent e) {
         if (!(e.getPacket() instanceof SPacketTimeUpdate)) return;
         long lastTime = this.lastTime;
-        TpsUtils.setTps((System.currentTimeMillis() - lastTime) / 50D);
+        TpsUtils.setTps(20000D / (System.currentTimeMillis() - lastTime));
         this.lastTime = System.currentTimeMillis();
     }
 }
