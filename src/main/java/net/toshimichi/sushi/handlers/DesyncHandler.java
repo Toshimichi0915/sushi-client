@@ -7,11 +7,12 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import net.toshimichi.sushi.utils.DesyncMode;
+import net.toshimichi.sushi.utils.PlayerUtils;
 import net.toshimichi.sushi.utils.PositionUtils;
 
 public class DesyncHandler {
 
-    @EventHandler(timing = EventTiming.PRE)
+    @EventHandler(timing = EventTiming.PRE, priority = 8000)
     public void onPositionPacket(PacketSendEvent e) {
         if (!(e.getPacket() instanceof CPacketPlayer)) return;
 
@@ -22,20 +23,13 @@ public class DesyncHandler {
         DesyncMode mode = PositionUtils.getDesyncMode();
         boolean position = mode.isPositionDesync();
         boolean rotation = mode.isRotationDesync();
-        double x = PositionUtils.getX(player, mode);
-        double y = PositionUtils.getY(player, mode);
-        double z = PositionUtils.getZ(player, mode);
-        float yaw = PositionUtils.getYaw(player, mode);
-        float pitch = PositionUtils.getPitch(player, mode);
-        boolean onGround = cp.isOnGround();
-        if ((position && rotation || cp instanceof CPacketPlayer.PositionRotation) ||
-                (position && cp instanceof CPacketPlayer.Rotation) ||
-                (rotation && cp instanceof CPacketPlayer.Position)) {
-            e.setPacket(new CPacketPlayer.PositionRotation(x, y, z, yaw, pitch, onGround));
-        } else if (position || cp instanceof CPacketPlayer.Position) {
-            e.setPacket(new CPacketPlayer.Position(x, y, z, onGround));
-        } else if (rotation || cp instanceof CPacketPlayer.Rotation) {
-            e.setPacket(new CPacketPlayer.Rotation(yaw, pitch, onGround));
-        }
+        boolean flying = mode.isOnGroundDesync();
+        double x = PositionUtils.getX();
+        double y = PositionUtils.getY();
+        double z = PositionUtils.getZ();
+        float yaw = PositionUtils.getYaw();
+        float pitch = PositionUtils.getPitch();
+        boolean onGround = PositionUtils.isOnGround();
+        e.setPacket(PlayerUtils.newCPacketPlayer(cp, x, y, z, yaw, pitch, onGround, position, rotation, flying));
     }
 }

@@ -19,6 +19,7 @@ public class PositionUtils {
     private static double z;
     private static float yaw;
     private static float pitch;
+    private static boolean onGround;
 
     public static DesyncMode getDesyncMode() {
         return mode;
@@ -44,31 +45,16 @@ public class PositionUtils {
         return pitch;
     }
 
-    public static double getX(EntityPlayerSP player, DesyncMode mode) {
-        return mode.isPositionDesync() ? getX() : player.posX;
-    }
-
-    public static double getY(EntityPlayerSP player, DesyncMode mode) {
-        return mode.isPositionDesync() ? getY() : player.posY;
-    }
-
-    public static double getZ(EntityPlayerSP player, DesyncMode mode) {
-        return mode.isPositionDesync() ? getZ() : player.posZ;
-    }
-
-    public static float getYaw(EntityPlayerSP player, DesyncMode mode) {
-        return mode.isRotationDesync() ? getYaw() : player.rotationYaw;
-    }
-
-    public static float getPitch(EntityPlayerSP player, DesyncMode mode) {
-        return mode.isRotationDesync() ? getPitch() : player.rotationPitch;
+    public static boolean isOnGround() {
+        return onGround;
     }
 
     public static void desync(DesyncMode newMode) {
         boolean position = mode.isPositionDesync() || newMode.isPositionDesync();
         boolean rotation = mode.isRotationDesync() || newMode.isRotationDesync();
+        boolean onGround = mode.isOnGroundDesync() || newMode.isOnGroundDesync();
         stack.push(mode);
-        mode = DesyncMode.valueOf(position, rotation);
+        mode = DesyncMode.valueOf(position, rotation, onGround);
     }
 
     public static void pop() {
