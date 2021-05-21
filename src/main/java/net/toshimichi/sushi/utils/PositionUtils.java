@@ -54,7 +54,7 @@ public class PositionUtils {
         boolean rotation = mode.isRotationDesync() || newMode.isRotationDesync();
         boolean onGround = mode.isOnGroundDesync() || newMode.isOnGroundDesync();
         stack.push(mode);
-        mode = DesyncMode.valueOf(position, rotation, onGround);
+        mode = new DesyncMode(position, rotation, onGround);
     }
 
     public static void pop() {
