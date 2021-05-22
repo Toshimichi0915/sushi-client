@@ -67,6 +67,7 @@ public class SurroundModule extends BaseModule {
                 toBePlaced.add(neighborFace);
             }
         }
+        if (toBePlaced.isEmpty()) return;
 
         running = true;
         TaskExecutor.newTaskChain()
