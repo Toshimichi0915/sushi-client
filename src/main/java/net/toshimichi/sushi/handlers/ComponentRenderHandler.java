@@ -31,7 +31,7 @@ public class ComponentRenderHandler {
         render(false);
     }
 
-    @EventHandler(timing = EventTiming.PRE)
+    @EventHandler(timing = EventTiming.POST)
     public void onOverlayRender(OverlayRenderEvent e) {
         render(true);
     }
