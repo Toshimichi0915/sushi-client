@@ -6,7 +6,7 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
-import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
+import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import net.toshimichi.sushi.modules.*;
 
 public class AntiHungerModule extends BaseModule {
@@ -31,7 +31,7 @@ public class AntiHungerModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE, priority = -1000)
-    public void onPacketSend(PlayerUpdateEvent e) {
+    public void onPacketSend(PlayerPacketEvent e) {
         sprinting = getPlayer().isSprinting();
         getPlayer().setSprinting(false);
         if (effective.getValue()) {

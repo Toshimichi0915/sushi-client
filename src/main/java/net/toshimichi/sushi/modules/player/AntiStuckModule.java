@@ -7,7 +7,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.player.PlayerMoveEvent;
+import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.modules.*;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class AntiStuckModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onPlayerMove(PlayerMoveEvent e) {
+    public void onPlayerTravel(PlayerTravelEvent e) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         AxisAlignedBB box = player.getEntityBoundingBox();
         AxisAlignedBB ceil = box.grow(0, -SIZE, 0).offset(0, SIZE, 0);

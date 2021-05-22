@@ -10,7 +10,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.input.InputUpdateEvent;
 import net.toshimichi.sushi.events.player.PlayerMoveEvent;
-import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
+import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,7 +37,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
     @Inject(at = @At("HEAD"), method = "onUpdateWalkingPlayer", cancellable = true)
     public void onPreUpdateWalkingPlayer(CallbackInfo ci) {
-        PlayerUpdateEvent event = new PlayerUpdateEvent(EventTiming.PRE);
+        PlayerPacketEvent event = new PlayerPacketEvent(EventTiming.PRE);
         EventHandlers.callEvent(event);
         if (event.isCancelled())
             ci.cancel();
@@ -45,7 +45,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
     @Inject(at = @At("TAIL"), method = "onUpdateWalkingPlayer")
     public void onPostUpdateWalkingPlayer(CallbackInfo ci) {
-        PlayerUpdateEvent event = new PlayerUpdateEvent(EventTiming.POST);
+        PlayerPacketEvent event = new PlayerPacketEvent(EventTiming.POST);
         EventHandlers.callEvent(event);
     }
 

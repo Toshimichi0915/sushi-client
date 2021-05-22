@@ -2,7 +2,6 @@ package net.toshimichi.sushi.modules.movement;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.MoverType;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
@@ -13,8 +12,8 @@ import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.player.PlayerMoveEvent;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;
+import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.DesyncMode;
 import net.toshimichi.sushi.utils.MovementUtils;
@@ -52,14 +51,10 @@ public class PhaseWalkModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onPrePlayerMove(PlayerMoveEvent e) {
+    public void onPrePlayerTravel(PlayerTravelEvent e) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         player.noClip = true;
         player.onGround = true;
-        if (e.getType() != MoverType.SELF) {
-            e.setCancelled(true);
-            return;
-        }
 
         double horizontalSpeed = horizontal.getValue().getCurrent() / 10;
         Vec3d inputs = MovementUtils.getMoveInputs(player);
@@ -70,22 +65,15 @@ public class PhaseWalkModule extends BaseModule {
         player.motionX = vec.x;
         player.motionY = 0;
         player.motionZ = vec.y;
-        e.setX(vec.x);
-        e.setY(0);
-        e.setZ(vec.y);
     }
 
     @EventHandler(timing = EventTiming.POST)
-    public void onPostPlayerMove(PlayerMoveEvent e) {
+    public void onPostPlayerTravel(PlayerTravelEvent e) {
         clipping = false;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (e.getType() != MoverType.SELF) {
-            e.setCancelled(true);
-            return;
-        }
         int step = range.getValue().getCurrent();
         boolean isAboveAir = false;
-        for (int y = step; y >= -step; y--) {
+        for (int y = step; y >= -step - 1; y--) {
             AxisAlignedBB boundingBox = player.getEntityBoundingBox().offset(0, y, 0);
             boundingBox = boundingBox.grow(-(boundingBox.maxX - boundingBox.minX) / 2, 0, -(boundingBox.maxZ - boundingBox.minZ) / 2);
             List<AxisAlignedBB> collisions = player.world.getCollisionBoxes(null, boundingBox);

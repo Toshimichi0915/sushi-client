@@ -8,7 +8,7 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
-import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
+import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.PlayerUtils;
 
@@ -34,7 +34,7 @@ public class NoFallModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.POST)
-    public void onPlayerUpdate(PlayerUpdateEvent e) {
+    public void onPlayerUpdate(PlayerPacketEvent e) {
         isElytraFlying = getPlayer().isElytraFlying();
     }
 

@@ -2,7 +2,6 @@ package net.toshimichi.sushi.modules.movement;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.MoverType;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
@@ -11,8 +10,9 @@ import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.player.PlayerMoveEvent;
+import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;
+import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.DesyncMode;
@@ -27,6 +27,10 @@ public class PhaseFlyModule extends BaseModule {
     private final Configuration<Boolean> auto;
     private final Configuration<Boolean> tpsSync;
     private int stage;
+
+    // for compatibility issue
+    private boolean noClip;
+    private boolean collidedVertically;
 
     public PhaseFlyModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -47,16 +51,17 @@ public class PhaseFlyModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onMotion(PlayerMoveEvent e) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+    public void onPlayerTravel(PlayerTravelEvent e) {
+        EntityPlayerSP player = getPlayer();
+        if (stage != 0) {
+            player.motionX = 0;
+            player.motionY = 0;
+            player.motionZ = 0;
+            return;
+        }
         player.noClip = !player.world.getCollisionBoxes(null, player.getEntityBoundingBox()).isEmpty();
         player.fallDistance = 0;
         player.onGround = false;
-
-        if (e.getType() != MoverType.SELF || stage != 0) {
-            e.setCancelled(true);
-            return;
-        }
 
         double horizontalSpeed = horizontal.getValue().getCurrent() / 10;
         double verticalSpeed = vertical.getValue().getCurrent() / 10;
@@ -75,16 +80,19 @@ public class PhaseFlyModule extends BaseModule {
         player.motionX = vec.x;
         player.motionY = moveUpward;
         player.motionZ = vec.y;
-        e.setX(vec.x);
-        e.setY(moveUpward);
-        e.setZ(vec.y);
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void onPlayerUpdate(PlayerUpdateEvent e) {
+        noClip = getPlayer().noClip;
+        collidedVertically = getPlayer().collidedVertically;
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onPlayerUpdate(PlayerUpdateEvent e) {
+    public void onPlayerPacket(PlayerPacketEvent e) {
         if (!auto.getValue()) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (stage == 0 && (player.movementInput.sneak || player.noClip || !player.collidedVertically)) return;
+        if (stage == 0 && (getPlayer().movementInput.sneak || noClip || !collidedVertically)) return;
         if (stage == 0 || stage == 1) {
             player.movementInput.sneak = true;
             stage++;

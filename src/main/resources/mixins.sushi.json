@@ -14,6 +14,8 @@
     "AccessorMinecraft",
     "AccessorTimer",
     "MixinEntity",
+    "MixinEntityLivingBase",
+    "MixinEntityPlayer",
     "MixinEntityPlayerSP",
     "MixinGameSettings"
   ]

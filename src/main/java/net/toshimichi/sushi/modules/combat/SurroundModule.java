@@ -9,7 +9,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
+import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
@@ -81,7 +81,7 @@ public class SurroundModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onPlayerUpdate(PlayerUpdateEvent e) {
+    public void onPlayerUpdate(PlayerPacketEvent e) {
         surround();
     }
 

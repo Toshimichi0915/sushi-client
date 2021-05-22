@@ -1,6 +1,5 @@
 package net.toshimichi.sushi.modules.world;
 
-import net.minecraft.entity.MoverType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -8,7 +7,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.player.PlayerMoveEvent;
+import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.BlockPlaceInfo;
@@ -33,8 +32,7 @@ public class ScaffoldModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onPlayerMove(PlayerMoveEvent e) {
-        if (e.getType() != MoverType.SELF) return;
+    public void onPlayerTravel(PlayerTravelEvent e) {
         if (getPlayer().movementInput.jump) {
             getPlayer().motionY = 0.42;
         }
