@@ -33,7 +33,7 @@ public class ScaffoldModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
         Vec3d floor = getPlayer().getPositionVector().add(0, -1, 0);
-        BlockPos floorPos = new BlockPos((int) floor.x, (int) floor.y, (int) floor.z);
+        BlockPos floorPos = BlockUtils.toBlockPos(floor);
         BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), floorPos);
         if (info == null && BlockUtils.isAir(getWorld(), floorPos)) {
             for (EnumFacing facing : EnumFacing.values()) {

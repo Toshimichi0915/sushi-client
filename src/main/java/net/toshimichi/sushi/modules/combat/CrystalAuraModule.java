@@ -150,7 +150,7 @@ public class CrystalAuraModule extends BaseModule {
         for (int x = -distance; x < distance; x++) {
             for (int y = -distance; y < distance; y++) {
                 for (int z = -distance; z < distance; z++) {
-                    BlockPos pos = new BlockPos(x + (int) getPlayer().posX, y + (int) getPlayer().posY, z + (int) getPlayer().posZ);
+                    BlockPos pos = new BlockPos(x + getPlayer().posX, y + getPlayer().posY, z + getPlayer().posZ);
                     Vec3d vec = BlockUtils.toVec3d(pos).add(0.5, 1, 0.5);
 
                     // check distance

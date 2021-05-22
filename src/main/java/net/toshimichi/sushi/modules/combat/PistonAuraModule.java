@@ -28,6 +28,7 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> delay2;
     private final Configuration<IntRange> delay3;
     private final Configuration<IntRange> delay4;
+    private final Configuration<IntRange> delay5;
     private boolean running;
     private int repeatCounter;
 
@@ -37,6 +38,7 @@ public class PistonAuraModule extends BaseModule {
         delay2 = provider.get("delay_2", "Delay 2", null, IntRange.class, new IntRange(1, 20, 0, 1));
         delay3 = provider.get("delay_3", "Delay 3", null, IntRange.class, new IntRange(1, 20, 0, 1));
         delay4 = provider.get("delay_4", "Delay 4", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        delay5 = provider.get("delay_5", "Delay 5", null, IntRange.class, new IntRange(1, 20, 0, 1));
     }
 
     @Override
@@ -61,26 +63,33 @@ public class PistonAuraModule extends BaseModule {
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
         PistonAuraAttack attack = attacks.get(0);
-        running = true;
         if (attack.getPlaced() == null) {
+            running = true;
             TaskExecutor.newTaskChain()
                     .supply(() -> Item.getItemById(426))
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                    .abortIf(found -> !found)
+                    .abortIf(found -> {
+                        if (!found) running = false;
+                        return !found;
+                    })
                     .then(() -> {
                         PositionUtils.desync(DesyncMode.LOOK);
                         PositionUtils.lookAt(BlockUtils.toVec3d(attack.getCrystalPos()), DesyncMode.LOOK);
+                    }).delay(delay5.getValue().getCurrent())
+                    .then(() -> {
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                         PositionUtils.pop();
                     })
                     .then(() -> {
+                        running = false;
                         if (delay1.getValue().getCurrent() == 0) {
                             repeatCounter++;
                             onClientTick(e);
                         }
                     }).execute();
         } else if (attack.isBlocked() || attack.isPistonActivated()) {
+            running = true;
             TaskExecutor.newTaskChain()
                     .delay(delay2.getValue().getCurrent())
                     .then(() -> {
@@ -90,19 +99,25 @@ public class PistonAuraModule extends BaseModule {
                         PositionUtils.pop();
                     })
                     .then(() -> {
+                        running = false;
                         if (delay2.getValue().getCurrent() == 0) {
                             repeatCounter++;
                             onClientTick(e);
                         }
                     }).execute();
         } else if (!attack.isPistonPlaced()) {
+            running = true;
             BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
             if (info != null) {
                 Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
                 TaskExecutor.newTaskChain()
                         .supply(() -> Item.getItemById(33))
                         .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                        .abortIf(found -> !found)
+                        .abortIf(found -> {
+                            if (!found) running = false;
+                            return !found;
+                        })
+                        .delay(delay3.getValue().getCurrent())
                         .then(() -> {
                             PositionUtils.desync(DesyncMode.LOOK);
                             PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
@@ -110,6 +125,7 @@ public class PistonAuraModule extends BaseModule {
                             PositionUtils.pop();
                         })
                         .then(() -> {
+                            running = false;
                             if (delay3.getValue().getCurrent() == 0) {
                                 repeatCounter++;
                                 onClientTick(e);
@@ -117,6 +133,7 @@ public class PistonAuraModule extends BaseModule {
                         }).execute();
             }
         } else if (!attack.isRedstonePlaced()) {
+            running = true;
             for (EnumFacing facing : EnumFacing.values()) {
                 BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos().offset(facing));
                 if (info != null) {
@@ -124,9 +141,13 @@ public class PistonAuraModule extends BaseModule {
                     TaskExecutor.newTaskChain()
                             .supply(() -> Item.getItemById(152))
                             .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                            .abortIf(found -> !found)
+                            .abortIf(found -> {
+                                if (!found) running = false;
+                                return !found;
+                            })
                             .then(() -> BlockUtils.place(info))
                             .then(() -> {
+                                running = false;
                                 if (delay4.getValue().getCurrent() == 0) {
                                     repeatCounter++;
                                     onClientTick(e);
@@ -136,7 +157,6 @@ public class PistonAuraModule extends BaseModule {
                 }
             }
         }
-        running = false;
     }
 
     @Override

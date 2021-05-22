@@ -55,7 +55,7 @@ public class PistonAuraUtils {
             Vec3d crystalPos = BlockUtils.toVec3d(pos).add(0.5, 0.5, 0.5).add(new Vec3d(facing.getDirectionVec()).scale(0.5));
             double rawDamage = DamageUtils.getCrystalDamage(target, crystalPos);
             double damage = DamageUtils.applyModifier(target, rawDamage, DamageUtils.EXPLOSION);
-            if (rawDamage < 30) continue;
+            if (rawDamage < 50) continue;
 
             EnumFacing opposite = facing.getOpposite();
             BlockPos airPos = pos.offset(opposite);

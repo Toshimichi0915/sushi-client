@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 public class BlockUtils {
 
     public static BlockPos toBlockPos(Vec3d vec) {
-        return new BlockPos((int) vec.x, (int) vec.y, (int) vec.z);
+        return new BlockPos(vec.x, vec.y, vec.z);
     }
 
     public static Vec3d toVec3d(BlockPos pos) {
