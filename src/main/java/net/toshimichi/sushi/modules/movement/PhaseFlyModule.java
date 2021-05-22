@@ -11,7 +11,7 @@ import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.player.PlayerMotionEvent;
+import net.toshimichi.sushi.events.player.PlayerMoveEvent;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;
 import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.modules.*;
@@ -47,7 +47,7 @@ public class PhaseFlyModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onMotion(PlayerMotionEvent e) {
+    public void onMotion(PlayerMoveEvent e) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         player.noClip = !player.world.getCollisionBoxes(null, player.getEntityBoundingBox()).isEmpty();
         player.fallDistance = 0;

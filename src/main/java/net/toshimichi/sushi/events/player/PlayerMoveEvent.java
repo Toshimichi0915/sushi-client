@@ -4,13 +4,13 @@ import net.minecraft.entity.MoverType;
 import net.toshimichi.sushi.events.CancellableEvent;
 import net.toshimichi.sushi.events.EventTiming;
 
-public class PlayerMotionEvent extends CancellableEvent {
+public class PlayerMoveEvent extends CancellableEvent {
     private MoverType type;
     private double x;
     private double y;
     private double z;
 
-    public PlayerMotionEvent(EventTiming timing, MoverType type, double x, double y, double z) {
+    public PlayerMoveEvent(EventTiming timing, MoverType type, double x, double y, double z) {
         super(timing);
         this.type = type;
         this.x = x;

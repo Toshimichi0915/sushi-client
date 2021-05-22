@@ -13,7 +13,7 @@ import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.player.PlayerMotionEvent;
+import net.toshimichi.sushi.events.player.PlayerMoveEvent;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.DesyncMode;
@@ -52,7 +52,7 @@ public class PhaseWalkModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onPrePlayerMotion(PlayerMotionEvent e) {
+    public void onPrePlayerMove(PlayerMoveEvent e) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         player.noClip = true;
         player.onGround = true;
@@ -76,7 +76,7 @@ public class PhaseWalkModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.POST)
-    public void onPostPlayerMotion(PlayerMotionEvent e) {
+    public void onPostPlayerMove(PlayerMoveEvent e) {
         clipping = false;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (e.getType() != MoverType.SELF) {

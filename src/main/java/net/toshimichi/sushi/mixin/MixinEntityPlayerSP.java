@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.input.InputUpdateEvent;
-import net.toshimichi.sushi.events.player.PlayerMotionEvent;
+import net.toshimichi.sushi.events.player.PlayerMoveEvent;
 import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,12 +26,12 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;move(Lnet/minecraft/entity/MoverType;DDD)V"), method = "move")
     public void onMove(AbstractClientPlayer abstractClientPlayer, MoverType type, double x, double y, double z) {
-        PlayerMotionEvent pre = new PlayerMotionEvent(EventTiming.PRE, type, x, y, z);
+        PlayerMoveEvent pre = new PlayerMoveEvent(EventTiming.PRE, type, x, y, z);
         EventHandlers.callEvent(pre);
         if (!pre.isCancelled()) {
             super.move(pre.getType(), pre.getX(), pre.getY(), pre.getZ());
         }
-        PlayerMotionEvent post = new PlayerMotionEvent(EventTiming.POST, type, x, y, z);
+        PlayerMoveEvent post = new PlayerMoveEvent(EventTiming.POST, type, x, y, z);
         EventHandlers.callEvent(post);
     }
 
