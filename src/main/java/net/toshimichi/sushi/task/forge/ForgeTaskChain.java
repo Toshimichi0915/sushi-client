@@ -32,8 +32,8 @@ class ForgeTaskChain<I> implements TaskChain<I> {
     }
 
     @Override
-    public void execute() {
-        getTaskExecutor().execute();
+    public void execute(boolean instant) {
+        getTaskExecutor().execute(instant);
     }
 
     public TaskExecutor getTaskExecutor() {

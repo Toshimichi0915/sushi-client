@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.modules.combat;
 
+import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
@@ -28,17 +29,17 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> delay2;
     private final Configuration<IntRange> delay3;
     private final Configuration<IntRange> delay4;
-    private final Configuration<IntRange> delay5;
+    private PistonAuraAttack attack;
+    private EntityEnderCrystal exploded;
     private boolean running;
     private int repeatCounter;
 
     public PistonAuraModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        delay1 = provider.get("delay_1", "Delay 1", null, IntRange.class, new IntRange(1, 20, 0, 1));
-        delay2 = provider.get("delay_2", "Delay 2", null, IntRange.class, new IntRange(1, 20, 0, 1));
-        delay3 = provider.get("delay_3", "Delay 3", null, IntRange.class, new IntRange(1, 20, 0, 1));
-        delay4 = provider.get("delay_4", "Delay 4", null, IntRange.class, new IntRange(1, 20, 0, 1));
-        delay5 = provider.get("delay_5", "Delay 5", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        delay1 = provider.get("delay_1", "Crystal Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        delay2 = provider.get("delay_2", "Crystal Break Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        delay3 = provider.get("delay_3", "Piston Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        delay4 = provider.get("delay_4", "Redstone Place delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
     }
 
     @Override
@@ -52,19 +53,22 @@ public class PistonAuraModule extends BaseModule {
         running = false;
     }
 
-    @EventHandler(timing = EventTiming.PRE)
-    public void onClientTick(ClientTickEvent e) {
+    public void update() {
         if (running) return;
-        if (repeatCounter >= 4) {
+        if (repeatCounter >= 100) {
             repeatCounter = 0;
             return;
         }
-        List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer());
-        if (attacks.isEmpty()) return;
-        Collections.sort(attacks);
-        PistonAuraAttack attack = attacks.get(0);
-        if (attack.getPlaced() == null) {
-            running = true;
+        if (attack == null || repeatCounter == 0) {
+            List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer());
+            if (attacks.isEmpty()) return;
+            Collections.sort(attacks);
+            attack = attacks.get(0);
+        }
+        if (attack == null) return;
+        if (exploded != null && exploded.isAddedToWorld()) return;
+        running = true;
+        if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
                     .supply(() -> Item.getItemById(426))
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
@@ -75,38 +79,39 @@ public class PistonAuraModule extends BaseModule {
                     .then(() -> {
                         PositionUtils.desync(DesyncMode.LOOK);
                         PositionUtils.lookAt(BlockUtils.toVec3d(attack.getCrystalPos()), DesyncMode.LOOK);
-                    }).delay(delay5.getValue().getCurrent())
-                    .then(() -> {
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                         PositionUtils.pop();
-                    })
-                    .then(() -> {
                         running = false;
+                        attack.setCrystalPlaced(true);
                         if (delay1.getValue().getCurrent() == 0) {
                             repeatCounter++;
-                            onClientTick(e);
+                            update();
+                        } else {
+                            repeatCounter = 0;
                         }
-                    }).execute();
-        } else if (attack.isBlocked() || attack.isPistonActivated()) {
-            running = true;
+                    }).execute(true);
+        } else if (attack.getCrystal() != null && (attack.getCrystal() == exploded || attack.isBlocked() || attack.isPistonActivated())) {
             TaskExecutor.newTaskChain()
                     .delay(delay2.getValue().getCurrent())
                     .then(() -> {
                         PositionUtils.desync(DesyncMode.LOOK);
-                        PositionUtils.lookAt(attack.getPlaced().getPositionVector(), DesyncMode.LOOK);
-                        getConnection().sendPacket(new CPacketUseEntity(attack.getPlaced()));
+                        PositionUtils.lookAt(attack.getCrystal().getPositionVector(), DesyncMode.LOOK);
+                        getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal()));
+                        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
+                                EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                         PositionUtils.pop();
-                    })
-                    .then(() -> {
+                        exploded = attack.getCrystal();
                         running = false;
+                        attack = null;
                         if (delay2.getValue().getCurrent() == 0) {
                             repeatCounter++;
-                            onClientTick(e);
+                            update();
+                        } else {
+                            repeatCounter = 0;
                         }
-                    }).execute();
+                    }).execute(true);
         } else if (!attack.isPistonPlaced()) {
-            running = true;
             BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
             if (info != null) {
                 Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
@@ -117,47 +122,62 @@ public class PistonAuraModule extends BaseModule {
                             if (!found) running = false;
                             return !found;
                         })
-                        .delay(delay3.getValue().getCurrent())
                         .then(() -> {
                             PositionUtils.desync(DesyncMode.LOOK);
                             PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
-                            BlockUtils.place(info);
-                            PositionUtils.pop();
                         })
+                        .delay(delay3.getValue().getCurrent())
                         .then(() -> {
+                            BlockUtils.place(info);
                             running = false;
+                            attack.setPistonPlaced(true);
                             if (delay3.getValue().getCurrent() == 0) {
                                 repeatCounter++;
-                                onClientTick(e);
+                                update();
+                            } else {
+                                repeatCounter = 0;
                             }
-                        }).execute();
+                        })
+                        .delay(1)
+                        .then(PositionUtils::pop).execute(true);
             }
         } else if (!attack.isRedstonePlaced()) {
-            running = true;
             for (EnumFacing facing : EnumFacing.values()) {
+                if (facing == attack.getFacing()) continue;
                 BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos().offset(facing));
-                if (info != null) {
-                    PositionUtils.lookAt(info, DesyncMode.LOOK);
-                    TaskExecutor.newTaskChain()
-                            .supply(() -> Item.getItemById(152))
-                            .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                            .abortIf(found -> {
-                                if (!found) running = false;
-                                return !found;
-                            })
-                            .delay(delay4.getValue().getCurrent())
-                            .then(() -> BlockUtils.place(info))
-                            .then(() -> {
-                                running = false;
-                                if (delay4.getValue().getCurrent() == 0) {
-                                    repeatCounter++;
-                                    onClientTick(e);
-                                }
-                            }).execute();
-                    break;
-                }
+                if (info == null) continue;
+                PositionUtils.lookAt(info, DesyncMode.LOOK);
+                TaskExecutor.newTaskChain()
+                        .supply(() -> Item.getItemById(152))
+                        .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
+                        .abortIf(found -> {
+                            if (!found) running = false;
+                            return !found;
+                        })
+                        .delay(delay4.getValue().getCurrent())
+                        .then(() -> {
+                            BlockUtils.place(info);
+                            running = false;
+                            attack.setRedstonePlaced(true);
+                            if (delay4.getValue().getCurrent() == 0) {
+                                repeatCounter++;
+                                update();
+                            } else {
+                                repeatCounter = 0;
+                            }
+                        }).execute(true);
+                break;
             }
+        } else {
+            running = false;
+            attack = null;
+            repeatCounter = 0;
         }
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void onPostClientTick(ClientTickEvent e) {
+        update();
     }
 
     @Override

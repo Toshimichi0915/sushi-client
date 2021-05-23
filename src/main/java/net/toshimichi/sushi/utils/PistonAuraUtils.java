@@ -29,8 +29,7 @@ public class PistonAuraUtils {
         Block bedrock = Block.getBlockById(7);
         Block obsidian = Block.getBlockById(49);
         Block piston = Block.getBlockById(33);
-        Block pistonHead = Block.getBlockById(34);
-        Block pistonHead2 = Block.getBlockById(36);
+        Block pistonHead = Block.getBlockById(36);
         Block stickyPiston = Block.getBlockById(29);
         Block redstone = Block.getBlockById(152);
 
@@ -49,18 +48,20 @@ public class PistonAuraUtils {
         if (placed == null && block != bedrock && block != obsidian) return null;
         if (placed == null && !player.world.checkNoEntityCollision(box)) return null;
 
+        double originalDamage = DamageUtils.getCrystalDamage(target, BlockUtils.toVec3d(pos).add(0.5, 0, 0.5));
         ArrayList<PistonAuraAttack> result = new ArrayList<>();
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) continue;
-            Vec3d crystalPos = BlockUtils.toVec3d(pos).add(0.5, 0.5, 0.5).add(new Vec3d(facing.getDirectionVec()).scale(0.5));
+            Vec3d crystalPos = BlockUtils.toVec3d(pos).add(0.5, 0, 0.5).add(new Vec3d(facing.getDirectionVec()).scale(0.5));
             double rawDamage = DamageUtils.getCrystalDamage(target, crystalPos);
             double damage = DamageUtils.applyModifier(target, rawDamage, DamageUtils.EXPLOSION);
             if (rawDamage < 50) continue;
+            if (rawDamage - originalDamage < 30) continue;
 
             EnumFacing opposite = facing.getOpposite();
             BlockPos airPos = pos.offset(opposite);
             BlockPos pistonPos = airPos.offset(opposite);
-            BlockState state1 = getBlockState(player, airPos, pistonHead, pistonHead2);
+            BlockState state1 = getBlockState(player, airPos, pistonHead);
             BlockState state2 = getBlockState(player, pistonPos, piston, stickyPiston);
             BlockState state3 = BlockState.UNREACHABLE;
             for (EnumFacing facing1 : EnumFacing.values()) {
@@ -82,7 +83,7 @@ public class PistonAuraUtils {
             if (state2 != BlockState.PLACED && BlockUtils.findBlockPlaceInfo(player.world, pistonPos) == null) continue;
             boolean blocked = state1 == BlockState.BLOCKED || state2 == BlockState.BLOCKED || state3 == BlockState.BLOCKED;
 
-            result.add(new PistonAuraAttack(pos, pistonPos, facing, player, target, damage, placed, blocked,
+            result.add(new PistonAuraAttack(pos, pistonPos, facing, player, target, damage, placed, blocked, placed != null,
                     state2 == BlockState.PLACED, state3 == BlockState.PLACED, state1 == BlockState.PLACED));
         }
         return result;

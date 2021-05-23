@@ -77,7 +77,7 @@ public class SurroundModule extends BaseModule {
                 .supply(() -> toBePlaced)
                 .then(new BlockPlaceTask(DesyncMode.LOOK))
                 .then(() -> running = false)
-                .execute();
+                .execute(true);
     }
 
     @EventHandler(timing = EventTiming.PRE)

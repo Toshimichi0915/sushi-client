@@ -53,9 +53,10 @@ public class TaskExecutor {
         abort.add(adapter);
     }
 
-    protected void execute() {
+    protected void execute(boolean instant) {
         if (Minecraft.getMinecraft().world == null) return;
         EventHandlers.register(this);
+        if (instant) onClientTick(null);
     }
 
     private <I, R> void executeTask(TaskAdapter<I, R> task, Task exec) {

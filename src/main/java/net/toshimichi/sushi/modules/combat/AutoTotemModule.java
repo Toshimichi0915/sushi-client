@@ -56,14 +56,14 @@ public class AutoTotemModule extends BaseModule {
                     .then(new TransactionWaitTask())
                     .then(() -> InventoryUtils.clickItemSlot(new ItemSlot(offhandSlot, getPlayer()), ClickType.PICKUP, 0))
                     .then(() -> running = false)
-                    .execute();
+                    .execute(true);
         } else {
             TaskExecutor.newTaskChain()
                     .then(() -> InventoryUtils.clickItemSlot(itemSlot, ClickType.PICKUP, 0))
                     .delay(delay.getValue().getCurrent())
                     .then(() -> InventoryUtils.clickItemSlot(new ItemSlot(offhandSlot, getPlayer()), ClickType.PICKUP, 0))
                     .then(() -> running = false)
-                    .execute();
+                    .execute(true);
         }
     }
 

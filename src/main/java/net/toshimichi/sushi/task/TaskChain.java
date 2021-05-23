@@ -10,7 +10,7 @@ public interface TaskChain<I> {
 
     TaskChain<I> abortIf(boolean delay, TaskAdapter<? super I, Boolean> task);
 
-    void execute();
+    void execute(boolean instant);
 
     default <R> TaskChain<R> then(TaskAdapter<? super I, R> task) {
         return then(false, task);

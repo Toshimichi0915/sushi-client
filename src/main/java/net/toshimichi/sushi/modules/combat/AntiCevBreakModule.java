@@ -59,7 +59,7 @@ public class AntiCevBreakModule extends BaseModule {
                     .abortIf(found -> !found)
                     .supply(() -> Collections.singletonList(face))
                     .then(new BlockPlaceTask(DesyncMode.LOOK))
-                    .execute();
+                    .execute(true);
         }
     }
 
