@@ -145,6 +145,7 @@ public class PistonAuraModule extends BaseModule {
                                 if (!found) running = false;
                                 return !found;
                             })
+                            .delay(delay4.getValue().getCurrent())
                             .then(() -> BlockUtils.place(info))
                             .then(() -> {
                                 running = false;
