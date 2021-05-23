@@ -71,7 +71,7 @@ public class TaskExecutor {
             for (TaskAdapter<? super Exception, ?> handler : context.getExceptionHandlers()) {
                 executeTask(handler, () -> handler.start(e));
                 running.add(handler);
-                updateTask(handler, false);
+                updateTask(handler, !delay.contains(handler));
             }
         }
     }
