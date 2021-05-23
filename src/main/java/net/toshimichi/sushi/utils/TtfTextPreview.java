@@ -21,8 +21,8 @@ public class TtfTextPreview implements TextPreview {
 
     private final String text;
     private final UnicodeFont font;
-    private final Color color;
     private final boolean shadow;
+    private Color color;
 
     public TtfTextPreview(String text, UnicodeFont font, Color color, boolean shadow) {
         this.text = text;
@@ -56,6 +56,10 @@ public class TtfTextPreview implements TextPreview {
         glDisable(GL_TEXTURE_2D);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        if (color == null) {
+            double h = System.currentTimeMillis() / 10000D - System.currentTimeMillis() / 10000;
+            color = Color.getHSBColor((float) (y / 10000D + h), 1, 1);
+        }
         org.newdawn.slick.Color c = new org.newdawn.slick.Color((float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, (float) color.getAlpha() / 255);
         if (shadow) {
             org.newdawn.slick.Color shadowColor = new org.newdawn.slick.Color(0.39F, 0.39F, 0.39F, (float) color.getAlpha() / 255);

@@ -9,9 +9,9 @@ public class VanillaTextPreview implements TextPreview {
 
     private final FontRenderer renderer;
     private final String text;
-    private final Color color;
     private final int pts;
     private final boolean shadow;
+    private Color color;
 
     public VanillaTextPreview(String text, Color color, int pts, boolean shadow) {
         this.renderer = Minecraft.getMinecraft().fontRenderer;
@@ -35,6 +35,10 @@ public class VanillaTextPreview implements TextPreview {
     public void draw(double x, double y) {
         GuiUtils.setColor(color);
         renderer.FONT_HEIGHT = pts;
+        if (color == null) {
+            double h = System.currentTimeMillis() / 10000D - System.currentTimeMillis() / 10000;
+            color = Color.getHSBColor((float) (y / 10000D + h), 1, 1);
+        }
         renderer.drawString(text, (int) x, (int) y, color.getRGB(), shadow);
     }
 }
