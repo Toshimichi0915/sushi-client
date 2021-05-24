@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.modules.client;
 
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.hud.HudComponent;
 import net.toshimichi.sushi.gui.hud.HudEditComponent;
@@ -10,7 +10,7 @@ public class HudModule extends BaseModule {
 
     private final HudComponent hudComponent;
 
-    public HudModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public HudModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         this.hudComponent = newHudComponent(provider);
         provider.temp("editor", "Open Editor", null, Runnable.class, () -> {
@@ -20,7 +20,7 @@ public class HudModule extends BaseModule {
         });
     }
 
-    protected HudComponent newHudComponent(Configurations configurations) {
+    protected HudComponent newHudComponent(RootConfigurations configurations) {
         return new HudComponent(configurations, this);
     }
 

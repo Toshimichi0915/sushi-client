@@ -2,7 +2,7 @@ package net.toshimichi.sushi.modules.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.GameSettingsSaveEvent;
@@ -13,7 +13,7 @@ public class FullBrightModule extends BaseModule {
     private final GameSettings settings = Minecraft.getMinecraft().gameSettings;
     private float oldGamma;
 
-    public FullBrightModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public FullBrightModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 

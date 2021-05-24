@@ -14,7 +14,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
@@ -50,7 +50,7 @@ public class CrystalAuraModule extends BaseModule {
     private long lastBreakTick;
     private long counter;
 
-    public CrystalAuraModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public CrystalAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         targetRange = provider.get("target_range", "Target Range", null, DoubleRange.class, new DoubleRange(6, 18, 1, 1, 1));
         crystalRange = provider.get("crystal_range", "Crystal Range", null, DoubleRange.class, new DoubleRange(4.5, 10, 1, 0.1, 1));
@@ -60,7 +60,7 @@ public class CrystalAuraModule extends BaseModule {
         minDamage = provider.get("min_damage", "Min Damage", null, DoubleRange.class, new DoubleRange(6, 20, 0, 0.2, 1));
         maxTargets = provider.get("max_targets", "Max Targets", null, IntRange.class, new IntRange(1, 10, 1, 1));
         customDamage = provider.get("custom_damage", "Custom Damage", null, Boolean.class, false);
-        customPower = provider.get("power", "Power", null, IntRange.class, new IntRange(6, 10, 1, 1), customDamage::getValue, null, false, 0);
+        customPower = provider.get("power", "Power", null, IntRange.class, new IntRange(6, 10, 1, 1), customDamage::getValue, false, 0);
         damageRatio = provider.get("damage_ratio", "Damage Ratio", null, DoubleRange.class, new DoubleRange(0.5, 1, 0, 0.05, 2));
         maxSelfDamage = provider.get("max_self_damage", "Max Self Damage", null, DoubleRange.class, new DoubleRange(6, 20, 0, 0.2, 1));
         avoidSuicide = provider.get("avoid_suicide", "Avoid Suicide", null, Boolean.class, true);

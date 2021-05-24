@@ -5,7 +5,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketMaps;
 import net.minecraft.world.EnumSkyBlock;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -21,7 +21,7 @@ public class NoRenderModule extends BaseModule {
     private final Configuration<Boolean> blockLight;
     private final Configuration<Boolean> mapIcons;
 
-    public NoRenderModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public NoRenderModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         skyLight = provider.get("sky_light", "Sky Light", null, Boolean.class, false);
         blockLight = provider.get("block_light", "Block Light", null, Boolean.class, false);

@@ -3,7 +3,7 @@ package net.toshimichi.sushi.modules.world;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -17,7 +17,7 @@ import net.toshimichi.sushi.utils.PositionUtils;
 
 public class ScaffoldModule extends BaseModule {
 
-    public ScaffoldModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public ScaffoldModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 

@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.MovementInput;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -15,7 +15,7 @@ public class SprintModule extends BaseModule {
 
     private final Configuration<Boolean> multiDirection;
 
-    public SprintModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public SprintModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         multiDirection = provider.get("multi", "Multi Direction", null, Boolean.class, false);
     }

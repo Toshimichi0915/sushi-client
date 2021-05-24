@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.modules.player;
 
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.TimerUtils;
@@ -12,7 +12,7 @@ public class TimerModule extends BaseModule {
     private final Configuration<DoubleRange> multiplier;
     private final Configuration<Boolean> tpsSync;
 
-    public TimerModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public TimerModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         multiplier = provider.get("multiplier", "Mutliplier", null, DoubleRange.class, new DoubleRange(1, 10, 0.1, 0.1, 1));
         tpsSync = provider.get("tps_sync", "TPS Sync", null, Boolean.class, false);

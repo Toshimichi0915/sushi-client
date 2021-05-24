@@ -3,7 +3,7 @@ package net.toshimichi.sushi.modules.client;
 import net.minecraft.client.Minecraft;
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.PanelComponent;
@@ -18,7 +18,7 @@ public class ClickGuiModule extends BaseModule {
     private final Configuration<String> theme;
     private ComponentContext<PanelComponent<? extends net.toshimichi.sushi.gui.Component>> context;
 
-    public ClickGuiModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public ClickGuiModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         fallbackTheme = Sushi.getDefaultTheme();
         theme = provider.get("theme", "Theme", "ClickGUI Theme", String.class, fallbackTheme.getId());

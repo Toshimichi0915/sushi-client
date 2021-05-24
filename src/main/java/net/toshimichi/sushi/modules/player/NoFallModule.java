@@ -2,7 +2,7 @@ package net.toshimichi.sushi.modules.player;
 
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -20,11 +20,11 @@ public class NoFallModule extends BaseModule {
     private boolean isElytraFlying;
     private double fallY;
 
-    public NoFallModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public NoFallModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         noFallMode = provider.get("mode", "Mode", null, NoFallMode.class, NoFallMode.PACKET);
         distance = provider.get("distance", "Distance", null, DoubleRange.class, new DoubleRange(3, 20, 1, 0.5, 1),
-                () -> noFallMode.getValue() == NoFallMode.PACKET, null, false, 0);
+                () -> noFallMode.getValue() == NoFallMode.PACKET, false, 0);
         pauseOnElytra = provider.get("elytra_pause", "Pause On Elytra", null, Boolean.class, true);
     }
 

@@ -4,7 +4,7 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -23,10 +23,10 @@ public class AutoTotemModule extends BaseModule {
     private final Configuration<IntRange> delay;
     private boolean running;
 
-    public AutoTotemModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public AutoTotemModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         confirm = provider.get("confirm", "Confirm", null, Boolean.class, true);
-        delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(1, 10, 0, 1), () -> !confirm.getValue(), null, false, 0);
+        delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(1, 10, 0, 1), () -> !confirm.getValue(), false, 0);
     }
 
     @Override

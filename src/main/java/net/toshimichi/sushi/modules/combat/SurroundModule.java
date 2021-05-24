@@ -5,7 +5,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -25,7 +25,7 @@ public class SurroundModule extends BaseModule {
     private final Configuration<Boolean> disableOnJump;
     private boolean running;
 
-    public SurroundModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public SurroundModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         pull = provider.get("pull", "Pull", null, Boolean.class, true);
         disableAfter = provider.get("disable_after", "Disable After", null, Boolean.class, false);

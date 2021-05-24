@@ -14,7 +14,7 @@ import net.toshimichi.sushi.command.client.PrefixCommand;
 import net.toshimichi.sushi.command.client.SetCommand;
 import net.toshimichi.sushi.command.client.ToggleCommand;
 import net.toshimichi.sushi.config.Configurations;
-import net.toshimichi.sushi.config.GsonConfigurations;
+import net.toshimichi.sushi.config.GsonRootConfigurations;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.WorldLoadEvent;
@@ -45,7 +45,7 @@ public class SushiMod {
     private final File modConfigFile = new File(baseDir, "config.json");
     private final File themeDir = new File(baseDir, "themes");
     private ModConfig modConfig;
-    private final HashMap<File, GsonConfigurations> configs = new HashMap<>();
+    private final HashMap<File, GsonRootConfigurations> configs = new HashMap<>();
 
     private Theme loadTheme(File file, Function<Configurations, Theme> func) {
         JsonObject object = null;
@@ -57,7 +57,7 @@ public class SushiMod {
         }
         if (object == null)
             object = new JsonObject();
-        GsonConfigurations conf = new GsonConfigurations(gson);
+        GsonRootConfigurations conf = new GsonRootConfigurations(gson);
         conf.load(object);
         configs.put(file, conf);
 
@@ -125,7 +125,7 @@ public class SushiMod {
         if (e.getClient() != null) return;
         try {
             FileUtils.writeStringToFile(modConfigFile, gson.toJson(modConfig), StandardCharsets.UTF_8);
-            for (Map.Entry<File, GsonConfigurations> entry : configs.entrySet()) {
+            for (Map.Entry<File, GsonRootConfigurations> entry : configs.entrySet()) {
                 try {
                     FileUtils.writeStringToFile(entry.getKey(), gson.toJson(entry.getValue().save()), StandardCharsets.UTF_8);
                 } catch (IOException e1) {

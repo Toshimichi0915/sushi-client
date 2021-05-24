@@ -2,7 +2,7 @@ package net.toshimichi.sushi.modules.player;
 
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -16,7 +16,7 @@ public class LockYawModule extends BaseModule {
     private final Configuration<Integer> x;
     private final Configuration<Integer> z;
 
-    public LockYawModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public LockYawModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         x = provider.get("x", "X", null, Integer.class, 0);
         z = provider.get("z", "Z", null, Integer.class, 0);

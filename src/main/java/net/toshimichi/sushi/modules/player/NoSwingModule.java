@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.modules.player;
 
 import net.minecraft.network.play.client.CPacketAnimation;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -9,7 +9,7 @@ import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import net.toshimichi.sushi.modules.*;
 
 public class NoSwingModule extends BaseModule {
-    public NoSwingModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public NoSwingModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 

@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.config;
 
-public interface ConfigurationCategory {
+public interface ConfigurationCategory extends Configurations {
     String getId();
 
     String getName();

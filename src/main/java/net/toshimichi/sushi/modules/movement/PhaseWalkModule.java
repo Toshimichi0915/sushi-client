@@ -6,7 +6,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
@@ -28,7 +28,7 @@ public class PhaseWalkModule extends BaseModule {
     private final Configuration<IntRange> range;
     private boolean clipping;
 
-    public PhaseWalkModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public PhaseWalkModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         horizontal = provider.get("horizontal_speed", "Horizontal Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
         delta = provider.get("delta", "Delta", null, DoubleRange.class, new DoubleRange(0.5, 1, 0.1, 0.1, 1));

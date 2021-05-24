@@ -3,7 +3,7 @@ package net.toshimichi.sushi.modules.player;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -16,7 +16,7 @@ public class AntiStuckModule extends BaseModule {
 
     private static final double SIZE = 0.03;
 
-    public AntiStuckModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public AntiStuckModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 

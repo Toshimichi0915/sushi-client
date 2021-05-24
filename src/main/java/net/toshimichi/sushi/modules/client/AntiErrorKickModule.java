@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.modules.client;
 
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -8,7 +8,7 @@ import net.toshimichi.sushi.events.client.ExceptionCatchEvent;
 import net.toshimichi.sushi.modules.*;
 
 public class AntiErrorKickModule extends BaseModule {
-    public AntiErrorKickModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public AntiErrorKickModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 

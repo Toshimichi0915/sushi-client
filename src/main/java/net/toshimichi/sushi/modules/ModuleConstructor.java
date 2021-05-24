@@ -1,8 +1,8 @@
 package net.toshimichi.sushi.modules;
 
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 
 @FunctionalInterface
 public interface ModuleConstructor {
-    Module newModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory);
+    Module newModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory);
 }

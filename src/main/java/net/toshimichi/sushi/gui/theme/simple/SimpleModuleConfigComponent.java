@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
     public SimpleModuleConfigComponent(ThemeConstants constants, Theme theme, Module module) {
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
-        add(new SimpleModuleCategoryComponent(theme, module, null));
+        add(new SimpleModuleCategoryComponent(theme, module, module.getConfigurations()));
         for (ConfigurationCategory category : module.getConfigurations().getCategories()) {
             SimpleModuleCategoryComponent categoryComponent = new SimpleModuleCategoryComponent(theme, module, category);
             if (category.getId().equals("common")) {

@@ -1,12 +1,14 @@
 package net.toshimichi.sushi.config;
 
-public class GsonConfigurationCategory implements ConfigurationCategory {
+public class GsonConfigurationCategory extends GsonConfigurations implements ConfigurationCategory {
 
+    private final GsonRootConfigurations root;
     private final String id;
     private final String name;
     private final String description;
 
-    public GsonConfigurationCategory(String id, String name, String description) {
+    public GsonConfigurationCategory(GsonRootConfigurations root, String id, String name, String description) {
+        this.root = root;
         this.id = id;
         this.name = name;
         this.description = description;
@@ -25,5 +27,15 @@ public class GsonConfigurationCategory implements ConfigurationCategory {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    protected ConfigurationCategory getConfigurationCategory() {
+        return this;
+    }
+
+    @Override
+    protected GsonRootConfigurations getRoot() {
+        return root;
     }
 }

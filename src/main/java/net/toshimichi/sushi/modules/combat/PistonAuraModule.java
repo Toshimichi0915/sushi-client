@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -34,7 +34,7 @@ public class PistonAuraModule extends BaseModule {
     private boolean running;
     private int repeatCounter;
 
-    public PistonAuraModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public PistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         delay1 = provider.get("delay_1", "Crystal Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
         delay2 = provider.get("delay_2", "Crystal Break Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));

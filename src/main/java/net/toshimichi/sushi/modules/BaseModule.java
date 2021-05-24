@@ -7,12 +7,12 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 
 abstract public class BaseModule implements Module {
 
     private final String id;
-    private final Configurations provider;
+    private final RootConfigurations provider;
     private final Modules modules;
     private final Categories categories;
     private final Configuration<String> name;
@@ -23,17 +23,17 @@ abstract public class BaseModule implements Module {
     private boolean isEnabled;
     private boolean isPaused;
 
-    public BaseModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public BaseModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         this.id = id;
         this.provider = provider;
         this.modules = modules;
         this.categories = categories;
         this.factory = factory;
         ConfigurationCategory commonCategory = provider.getCategory("common", "Common Settings", "Common settings for most modules");
-        this.name = provider.get("name", "Module Name", "Module name", String.class, getDefaultName(), () -> true, commonCategory, false, 80000);
-        this.category = provider.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName(), () -> true, commonCategory, false, 81000);
-        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, null, false, 82000);
-        this.isTemporary = provider.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, commonCategory, false, 83000);
+        this.name = commonCategory.get("name", "Module Name", "Module name", String.class, getDefaultName(), () -> true, false, 80000);
+        this.category = commonCategory.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName(), () -> true, false, 81000);
+        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, false, 82000);
+        this.isTemporary = commonCategory.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, false, 83000);
     }
 
     @Override
@@ -89,7 +89,7 @@ abstract public class BaseModule implements Module {
     }
 
     @Override
-    public Configurations getConfigurations() {
+    public RootConfigurations getConfigurations() {
         return provider;
     }
 

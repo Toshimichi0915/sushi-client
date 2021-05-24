@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -40,7 +40,7 @@ public class AutoArmorModule extends BaseModule {
     private final Configuration<Boolean> preferElytra;
     private boolean running;
 
-    public AutoArmorModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public AutoArmorModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         preferThorns = provider.get("prefer_thorns", "Prefer Thorns", null, Boolean.class, true);
         preferElytra = provider.get("prefer_elytra", "Prefer Elytra", null, Boolean.class, false);

@@ -6,7 +6,7 @@ import net.minecraft.network.play.server.SPacketEntityTeleport;
 import net.minecraft.network.play.server.SPacketUnloadChunk;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -36,12 +36,12 @@ public class PacketCancellerModule extends BaseModule {
     private final Configuration<Boolean> entityTeleport;
 
     private Configuration<Boolean> newBool(ConfigurationCategory category, String id, String name, Class<?> packetClass) {
-        Configuration<Boolean> conf = getConfigurations().get(id, name, null, Boolean.class, false, () -> true, category, false, 0);
+        Configuration<Boolean> conf = category.get(id, name, null, Boolean.class, false, () -> true, false, 0);
         cancelled.put(conf, packetClass);
         return conf;
     }
 
-    public PacketCancellerModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public PacketCancellerModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         ConfigurationCategory serverBound = provider.getCategory("server_bound", "Server Bound", "Packets sent to the server");
         ConfigurationCategory clientBound = provider.getCategory("client_bound", "Client Bound", "Packets sent to the client");

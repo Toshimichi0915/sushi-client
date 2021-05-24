@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.modules;
 
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 
 public interface Module {
 
@@ -28,7 +28,7 @@ public interface Module {
 
     void setKeybind(Keybind bind);
 
-    Configurations getConfigurations();
+    RootConfigurations getConfigurations();
 
     ModuleFactory getModuleFactory();
 }

@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.modules.player;
 
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -15,7 +15,7 @@ public class AntiHungerModule extends BaseModule {
     private boolean sprinting;
     private boolean onGround;
 
-    public AntiHungerModule(String id, Modules modules, Categories categories, Configurations provider, ModuleFactory factory) {
+    public AntiHungerModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         effective = provider.get("effective", "Effective", null, Boolean.class, false);
     }

@@ -44,7 +44,7 @@ public class SetCommand extends BaseCommand {
             if (stack.isEmpty())
                 throw new ParseException("A configuration name/id was missing at index " + original.size());
             String key = stack.pop();
-            for (Configuration<?> conf : module.getConfigurations().getAll()) {
+            for (Configuration<?> conf : module.getConfigurations().getAll(true)) {
                 if (!conf.getId().equalsIgnoreCase(key) && !conf.getName().equalsIgnoreCase(key)) continue;
                 Object value = ((TypeParser<Object>) findParser(conf.getValueClass())).parse(original.size(), stack, conf.getValue());
                 ((Configuration<Object>) conf).setValue(value);

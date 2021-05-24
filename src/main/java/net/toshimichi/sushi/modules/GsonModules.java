@@ -4,8 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.GsonConfigurations;
+import net.toshimichi.sushi.config.GsonRootConfigurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.modules.client.AntiErrorKickModule;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
@@ -103,7 +104,7 @@ public class GsonModules implements Modules {
 
     @Override
     public Module addModule(String id, ModuleFactory factory) {
-        GsonConfigurations provider = new GsonConfigurations(gson);
+        GsonRootConfigurations provider = new GsonRootConfigurations(gson);
         JsonObject object = loadJson(id);
         object.add(FACTORY_TAG, new JsonPrimitive(factory.getId()));
         if (!object.has(ENABLED_TAG)) object.add(ENABLED_TAG, new JsonPrimitive(false));
@@ -136,11 +137,11 @@ public class GsonModules implements Modules {
         try {
             JsonObject savedRoot = new JsonObject();
             for (Module module : modules) {
-                Configurations conf = module.getConfigurations();
+                RootConfigurations conf = module.getConfigurations();
                 if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
-                JsonObject obj = ((GsonConfigurations) conf).save();
+                JsonObject obj = ((GsonRootConfigurations) conf).save();
                 obj.add(FACTORY_TAG, new JsonPrimitive(module.getModuleFactory().getId()));
-                savedRoot.add(module.getId(), ((GsonConfigurations) conf).save());
+                savedRoot.add(module.getId(), ((GsonRootConfigurations) conf).save());
             }
             FileUtils.writeStringToFile(conf, gson.toJson(savedRoot), StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -187,8 +188,8 @@ public class GsonModules implements Modules {
         if (enabled) return;
         enabled = true;
         for (Module module : modules) {
-            if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
-            JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
+            if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
+            JsonObject object = ((GsonRootConfigurations) module.getConfigurations()).save();
             JsonPrimitive enabledTag = object.getAsJsonPrimitive(ENABLED_TAG);
             if (enabledTag != null && enabledTag.getAsBoolean())
                 module.setEnabled(true);
@@ -200,8 +201,8 @@ public class GsonModules implements Modules {
         if (!enabled) return;
         enabled = false;
         for (Module module : modules) {
-            if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
-            JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
+            if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
+            JsonObject object = ((GsonRootConfigurations) module.getConfigurations()).save();
             if (!module.isTemporary())
                 object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
             module.setEnabled(false);
@@ -211,8 +212,8 @@ public class GsonModules implements Modules {
     @Override
     public void reload() {
         for (Module module : modules) {
-            if (!(module.getConfigurations() instanceof GsonConfigurations)) continue;
-            JsonObject object = ((GsonConfigurations) module.getConfigurations()).save();
+            if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
+            JsonObject object = ((GsonRootConfigurations) module.getConfigurations()).save();
             object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
         }
     }
