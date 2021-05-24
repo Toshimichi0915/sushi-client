@@ -1,8 +1,11 @@
 package net.toshimichi.sushi.utils;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 public class BlockFace {
     private final Vec3d pos;
@@ -28,5 +31,14 @@ public class BlockFace {
 
     public EnumFacing getFacing() {
         return facing;
+    }
+
+    public BlockPlaceInfo toBlockPlaceInfo(World world) {
+        BlockPos offset = getBlockPos().offset(facing);
+        IBlockState blockState = world.getBlockState(getBlockPos());
+        AxisAlignedBB box = blockState.getBoundingBox(world, offset);
+        box = box.offset(-box.minX, -box.minY, -box.minZ).offset(new Vec3d(facing.getDirectionVec()).scale(0.5));
+        Vec3d center = box.getCenter();
+        return new BlockPlaceInfo(offset, new BlockFace(center, facing));
     }
 }

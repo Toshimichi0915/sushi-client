@@ -7,7 +7,6 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -49,14 +48,9 @@ public class BlockUtils {
 
     public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input) {
         for (EnumFacing facing : EnumFacing.values()) {
-            BlockPos pos = input.offset(facing);
-            EnumFacing opposite = facing.getOpposite();
-            IBlockState blockState = world.getBlockState(pos);
-            AxisAlignedBB box = blockState.getBoundingBox(world, pos);
-            box = box.offset(-box.minX, -box.minY, -box.minZ).offset(new Vec3d(opposite.getDirectionVec()).scale(0.5));
-            Vec3d center = box.getCenter();
-            if (!canPlace(world, new BlockPlaceInfo(input, new BlockFace(center, opposite)))) continue;
-            return new BlockPlaceInfo(input, new BlockFace(center, opposite));
+            BlockPlaceInfo info = new BlockFace(input.offset(facing), facing.getOpposite()).toBlockPlaceInfo(world);
+            if (!canPlace(world, info)) continue;
+            return info;
         }
         return null;
     }
