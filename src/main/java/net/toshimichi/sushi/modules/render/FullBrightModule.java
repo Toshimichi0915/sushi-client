@@ -5,7 +5,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.client.GameSettingsSaveEvnet;
+import net.toshimichi.sushi.events.client.GameSettingsSaveEvent;
 import net.toshimichi.sushi.modules.*;
 
 public class FullBrightModule extends BaseModule {
@@ -29,12 +29,12 @@ public class FullBrightModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onPreSave(GameSettingsSaveEvnet e) {
+    public void onPreSave(GameSettingsSaveEvent e) {
         settings.gammaSetting = oldGamma;
     }
 
     @EventHandler(timing = EventTiming.POST)
-    public void onPostSave(GameSettingsSaveEvnet e) {
+    public void onPostSave(GameSettingsSaveEvent e) {
         settings.gammaSetting = 15;
     }
 
