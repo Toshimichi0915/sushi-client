@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.gui.hud;
 
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.gui.Anchor;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.Origin;
@@ -27,8 +27,8 @@ public class ConfigHandler implements HudElementComponentHandler {
     private final Consumer<String> parentHandler;
     private final Consumer<Boolean> activeHandler;
 
-    public ConfigHandler(HudElementComponent component, HudComponent hud, Configurations configurations) {
-        String id = component.getId();
+    public ConfigHandler(HudElementComponent component, HudComponent hud, ConfigurationCategory configurations) {
+        String id = configurations.getId();
         String name = component.getName();
         this.component = component;
         this.hud = hud;

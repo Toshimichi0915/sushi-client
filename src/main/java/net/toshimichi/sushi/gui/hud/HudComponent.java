@@ -11,12 +11,10 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
 
     private final RootConfigurations conf;
     private final Module module;
-    private final HudConstants constants;
 
     public HudComponent(RootConfigurations conf, Module module) {
         this.conf = conf;
         this.module = module;
-        this.constants = new HudConstants(conf);
         addVirtual(new HotbarHudElementComponent());
         addElement(CoordinatesComponent::new, "coordinates", "Coordinates");
         addElement(TpsComponent::new, "tps", "TPS");
@@ -29,7 +27,7 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
 
     private void addElement(ElementConstructor constructor, String id, String name) {
         ConfigurationCategory category = conf.getCategory(id, name, null);
-        HudElementComponent component = constructor.newElement(category, constants, id, name);
+        HudElementComponent component = constructor.newElement(category, new HudConstants(category), id, name);
         component.addHandler(new ConfigHandler(component, this, category));
         add(component, true);
     }
