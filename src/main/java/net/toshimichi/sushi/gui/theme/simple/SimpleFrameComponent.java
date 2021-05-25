@@ -84,6 +84,8 @@ public class SimpleFrameComponent<T extends Component> extends BasePanelComponen
     public void onClick(int x, int y, ClickType type) {
         if (isCrossMark(x, y)) {
             getContext().close();
+        } else {
+            super.onClick(x, y, type);
         }
     }
 
