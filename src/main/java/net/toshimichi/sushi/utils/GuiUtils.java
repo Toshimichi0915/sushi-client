@@ -3,6 +3,7 @@ package net.toshimichi.sushi.utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.toshimichi.sushi.gui.Component;
 
 import java.awt.Color;
@@ -107,12 +108,12 @@ public class GuiUtils {
     }
 
     public static void setColor(Color color) {
-        glColor4d((double) color.getRed() / 255, (double) color.getGreen() / 255, (double) color.getBlue() / 255, (double) color.getAlpha() / 255);
+        GlStateManager.color((float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, (float) color.getAlpha() / 255);
     }
 
     public static TextPreview prepareText(String text, String font, Color color, int pts, boolean shadow) {
         if (font != null) {
-            TtfTextPreview preview = TtfTextPreview.newTextPreview(text, font, color, pts, shadow);
+            SystemFontTextPreview preview = SystemFontTextPreview.newTextPreview(text, font, color, pts, shadow);
             if (preview != null) return preview;
         }
 
