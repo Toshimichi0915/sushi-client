@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.gui.hud;
 
 import net.toshimichi.sushi.Sushi;
+import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
 import net.toshimichi.sushi.utils.TextPreview;
@@ -11,7 +12,8 @@ public class ModuleListComponent extends BaseHudElementComponent {
 
     private final HudConstants constants;
 
-    public ModuleListComponent(HudConstants constants) {
+    public ModuleListComponent(Configurations configurations, HudConstants constants, String id, String name) {
+        super(configurations, id, name);
         this.constants = constants;
     }
 

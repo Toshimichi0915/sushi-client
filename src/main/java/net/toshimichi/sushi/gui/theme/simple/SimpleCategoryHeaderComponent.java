@@ -26,7 +26,7 @@ public class SimpleCategoryHeaderComponent extends BaseComponent {
 
     @Override
     public void onRender() {
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.menuBarColor.getValue());
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.headerColor.getValue());
         TextPreview preview = GuiUtils.prepareText(category.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true);
         preview.draw(getWindowX() + (getWidth() - preview.getWidth()) / 2 - 1, getWindowY() + (getHeight() - preview.getHeight()) / 2 - 1);
     }

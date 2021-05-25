@@ -1,10 +1,9 @@
 package net.toshimichi.sushi.gui.hud;
 
 import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.gui.Component;
-import net.toshimichi.sushi.gui.MouseStatus;
-import net.toshimichi.sushi.gui.Origin;
+import net.toshimichi.sushi.gui.*;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
+import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.utils.GuiUtils;
 
 import java.awt.Color;
@@ -14,18 +13,20 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
 
     private static final Color ACTIVE_COLOR = new Color(60, 60, 60, 100);
     private static final Color INACTIVE_COLOR = new Color(250, 30, 30, 100);
-
     private static final Color LINE_COLOR = new Color(100, 160, 60);
 
+    private final Theme theme;
     private final ArrayList<HudElementComponent> inactive = new ArrayList<>();
     private final HudComponent hud;
+    private ComponentContext<?> configComponent;
     private int holdX;
     private int holdY;
     private int currentX;
     private int currentY;
     private CornerComponent corner;
 
-    public HudEditComponent(HudComponent hud) {
+    public HudEditComponent(Theme theme, HudComponent hud) {
+        this.theme = theme;
         this.hud = hud;
     }
 
@@ -127,8 +128,21 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
     public void onClick(int x, int y, ClickType type) {
         HudElementComponent component = hud.getTopComponent(x, y);
         if (component == null) return;
-        if (inactive.contains(component)) inactive.remove(component);
-        else inactive.add(component);
+        if (!(component instanceof BaseHudElementComponent)) return;
+        if (type == ClickType.LEFT) {
+            if (configComponent != null) {
+                configComponent.close();
+            }
+            Component configCategory = theme.newConfigCategoryComponent(((BaseHudElementComponent) component).getConfigurations());
+            configComponent = Components.show(theme.newFrameComponent(configCategory), false, false);
+            configComponent.getOrigin().setX(200);
+            configComponent.getOrigin().setY(200);
+            configComponent.getOrigin().setWidth(100);
+            configComponent.getOrigin().setHeight(200);
+        } else {
+            if (inactive.contains(component)) inactive.remove(component);
+            else inactive.add(component);
+        }
     }
 
     private void onHoldLeft(int fromX, int fromY, int toX, int toY, MouseStatus status) {

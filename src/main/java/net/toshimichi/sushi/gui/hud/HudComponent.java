@@ -1,29 +1,36 @@
 package net.toshimichi.sushi.gui.hud;
 
+import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
 
 public class HudComponent extends BasePanelComponent<HudElementComponent> {
 
+    private final RootConfigurations conf;
     private final Module module;
+    private final HudConstants constants;
 
-    public HudComponent(Configurations conf, Module module) {
+    public HudComponent(RootConfigurations conf, Module module) {
+        this.conf = conf;
         this.module = module;
-        HudConstants constants = new HudConstants(conf);
+        this.constants = new HudConstants(conf);
         addVirtual(new HotbarHudElementComponent());
-        addElement(new CoordinatesComponent(constants, conf), conf);
-        addElement(new TpsComponent(constants, conf), conf);
-        addElement(new ModuleListComponent(constants), conf);
+        addElement(CoordinatesComponent::new, "coordinates", "Coordinates");
+        addElement(TpsComponent::new, "tps", "TPS");
+        addElement(ModuleListComponent::new, "modules", "Modules");
     }
 
     private void addVirtual(VirtualHudElementComponent component) {
         add(component, true);
     }
 
-    private void addElement(HudElementComponent component, Configurations conf) {
-        component.addHandler(new ConfigHandler(component, this, conf));
+    private void addElement(ElementConstructor constructor, String id, String name) {
+        ConfigurationCategory category = conf.getCategory(id, name, null);
+        HudElementComponent component = constructor.newElement(category, constants, id, name);
+        component.addHandler(new ConfigHandler(component, this, category));
         add(component, true);
     }
 
@@ -70,5 +77,10 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
     @Override
     public void onClose() {
         module.setEnabled(false);
+    }
+
+    @FunctionalInterface
+    private interface ElementConstructor {
+        BaseHudElementComponent newElement(Configurations configurations, HudConstants constants, String id, String name);
     }
 }

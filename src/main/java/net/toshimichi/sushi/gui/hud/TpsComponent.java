@@ -13,7 +13,8 @@ public class TpsComponent extends BaseHudElementComponent implements HudElementC
     private final HudConstants constants;
     private final Configuration<String> format;
 
-    public TpsComponent(HudConstants constants, Configurations configurations) {
+    public TpsComponent(Configurations configurations, HudConstants constants, String id, String name) {
+        super(configurations, id, name);
         this.constants = constants;
         this.format = configurations.get("element.tps.format", "TPS Format", null, String.class, "{tps} TPS");
     }

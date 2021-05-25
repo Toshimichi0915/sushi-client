@@ -3,13 +3,6 @@
   "compatibilityLevel": "JAVA_8",
   "package": "net.toshimichi.sushi.mixin",
   "refmap": "mixins.sushi.refmap.json",
-  "client": [
-    "MixinGuiChat",
-    "MixinGuiIngameForge",
-    "MixinMinecraft",
-    "MixinNetworkManager",
-    "MixinWorld"
-  ],
   "mixins": [
     "AccessorMinecraft",
     "AccessorTimer",
@@ -17,6 +10,11 @@
     "MixinEntityLivingBase",
     "MixinEntityPlayer",
     "MixinEntityPlayerSP",
-    "MixinGameSettings"
+    "MixinGameSettings",
+    "MixinGuiChat",
+    "MixinGuiIngameForge",
+    "MixinMinecraft",
+    "MixinNetworkManager",
+    "MixinWorld"
   ]
 }

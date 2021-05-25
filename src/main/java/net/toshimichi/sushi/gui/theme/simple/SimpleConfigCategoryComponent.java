@@ -1,70 +1,60 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.config.ConfigurationCategory;
-import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.gui.Insets;
-import net.toshimichi.sushi.gui.MouseStatus;
-import net.toshimichi.sushi.gui.SmoothCollapseComponent;
-import net.toshimichi.sushi.gui.base.BaseSettingComponent;
-import net.toshimichi.sushi.gui.theme.ThemeConstants;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.ConfigComponent;
+import net.toshimichi.sushi.gui.base.BasePanelComponent;
+import net.toshimichi.sushi.gui.layout.FlowDirection;
+import net.toshimichi.sushi.gui.layout.FlowLayout;
+import net.toshimichi.sushi.gui.theme.Theme;
 
-import java.awt.Color;
+import java.util.ArrayList;
 
-public class SimpleConfigCategoryComponent extends BaseSettingComponent<ConfigurationCategory> {
+public class SimpleConfigCategoryComponent extends BasePanelComponent<Component> {
 
-    private final ThemeConstants constants;
-    private final ConfigurationCategory configCategory;
-    private final SmoothCollapseComponent<?> component;
-    private boolean hover;
+    private final Theme theme;
+    private final Configurations configurations;
 
-    public SimpleConfigCategoryComponent(ThemeConstants constants, ConfigurationCategory configCategory, SmoothCollapseComponent<?> component) {
-        this.constants = constants;
-        this.configCategory = configCategory;
-        this.component = component;
-        setHeight(16);
-        setMargin(new Insets(2, 2, 2, 2));
+    public SimpleConfigCategoryComponent(Theme theme, Configurations configurations) {
+        this.theme = theme;
+        this.configurations = configurations;
+        setLayout(new FlowLayout(this, FlowDirection.DOWN));
     }
 
-    @Override
-    public void onRender() {
-        GuiUtils.prepareArea(this);
-        Configuration<Color> color;
-        if (component.isCollapsed()) {
-            if (hover) color = constants.selectedHoverColor;
-            else color = constants.enabledColor;
-        } else {
-            if (hover) color = constants.unselectedHoverColor;
-            else color = constants.disabledColor;
+    private boolean contains(Configuration<?> conf) {
+        for (Component component : this) {
+            if (!(component instanceof ConfigComponent)) continue;
+            if (((ConfigComponent<?>) component).getValue().equals(conf)) return true;
         }
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color.getValue());
-        GuiUtils.prepareText(configCategory.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true)
-                .draw(getWindowX() + 5, getWindowY() + 3);
-        GuiUtils.releaseArea();
-
-        hover = false;
+        return false;
     }
 
     @Override
-    public void onClick(int x, int y, ClickType type) {
-        if (type != ClickType.RIGHT) return;
-        component.setCollapsed(!component.isCollapsed());
-    }
+    public void onRelocate() {
+        for (Configuration<?> conf : configurations.getAll()) {
+            if (!conf.isValid()) continue;
+            if (contains(conf)) continue;
+            ConfigComponent<?> component = theme.newConfigComponent(conf);
+            if (component == null) continue;
+            add(component, true);
+        }
+        for (Component component : new ArrayList<>(this)) {
+            if (!(component instanceof ConfigComponent)) continue;
+            if (((ConfigComponent<?>) component).getValue().isValid()) continue;
+            remove(component);
+        }
 
-    @Override
-    public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
-        if (status != MouseStatus.END || type != ClickType.RIGHT) return;
-        component.setCollapsed(!component.isCollapsed());
-    }
+        sort((a, b) -> {
+            int aPriority = 1000000;
+            int bPriority = 1000000;
+            if (a instanceof ConfigComponent)
+                aPriority = ((ConfigComponent<?>) a).getValue().getPriority();
+            if (b instanceof ConfigComponent)
+                bPriority = ((ConfigComponent<?>) b).getValue().getPriority();
+            return Integer.compare(aPriority, bPriority);
+        });
 
-    @Override
-    public void onHover(int x, int y) {
-        hover = true;
-    }
-
-    @Override
-    public ConfigurationCategory getValue() {
-        return configCategory;
+        super.onRelocate();
     }
 }

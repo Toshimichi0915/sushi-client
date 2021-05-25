@@ -4,9 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
-import net.toshimichi.sushi.gui.PanelComponent;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.GuiUtils;
@@ -16,7 +16,7 @@ public class ClickGuiModule extends BaseModule {
 
     private final Theme fallbackTheme;
     private final Configuration<String> theme;
-    private ComponentContext<PanelComponent<? extends net.toshimichi.sushi.gui.Component>> context;
+    private ComponentContext<Component> context;
 
     public ClickGuiModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -38,7 +38,7 @@ public class ClickGuiModule extends BaseModule {
                 break;
             }
         }
-        PanelComponent<?> component = theme.newClickGui(this);
+        Component component = theme.newClickGui(this);
         context = Components.show(component, false, false);
         GuiUtils.lockGame(() -> setEnabled(false));
     }

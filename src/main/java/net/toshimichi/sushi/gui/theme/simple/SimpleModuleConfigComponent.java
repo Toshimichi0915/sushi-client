@@ -13,15 +13,17 @@ import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.modules.Modules;
+import net.toshimichi.sushi.modules.client.HudModule;
 
 import java.util.Arrays;
 
 public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
     public SimpleModuleConfigComponent(ThemeConstants constants, Theme theme, Module module) {
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
-        add(new SimpleModuleCategoryComponent(theme, module, module.getConfigurations()));
+        add(new SimpleConfigCategoryComponent(theme, module.getConfigurations()));
         for (ConfigurationCategory category : module.getConfigurations().getCategories()) {
-            SimpleModuleCategoryComponent categoryComponent = new SimpleModuleCategoryComponent(theme, module, category);
+            SimpleConfigCategoryComponent categoryComponent = new SimpleConfigCategoryComponent(theme, category);
+            if (module instanceof HudModule && !category.getId().equals("common")) continue;
             if (category.getId().equals("common")) {
                 Modules modules = Sushi.getProfile().getModules();
                 categoryComponent.add(new SimpleClickComponent(constants, "Clone this module", () -> {
@@ -38,7 +40,7 @@ public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
             }
             SmoothCollapseComponent<?> component = new SmoothCollapseComponent<>(categoryComponent, CollapseMode.UP, 100);
             component.setMargin(new Insets(0, 2, 0, 2));
-            add(new SimpleConfigCategoryComponent(constants, category, component));
+            add(new SimpleConfigCategoryHeaderComponent(constants, category, component));
             add(component);
         }
     }

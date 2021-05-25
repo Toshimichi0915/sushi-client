@@ -14,7 +14,8 @@ public class CoordinatesComponent extends BaseHudElementComponent implements Hud
     private final HudConstants constants;
     private final Configuration<String> format;
 
-    public CoordinatesComponent(HudConstants constants, Configurations configurations) {
+    public CoordinatesComponent(Configurations configurations, HudConstants constants, String id, String name) {
+        super(configurations, id, name);
         this.constants = constants;
         this.format = configurations.get("element.coordinates.format", "Coordinates Format", "Coordinates format", String.class, "{x} {y} {z}");
     }
