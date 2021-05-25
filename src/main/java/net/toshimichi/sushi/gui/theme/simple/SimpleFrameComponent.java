@@ -3,6 +3,7 @@ package net.toshimichi.sushi.gui.theme.simple;
 import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.FrameComponent;
+import net.toshimichi.sushi.gui.Insets;
 import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.Layout;
@@ -115,5 +116,10 @@ public class SimpleFrameComponent<T extends Component> extends BasePanelComponen
         component.setWidth(getWidth() - 2 * MARGIN);
         component.setHeight(getHeight() - 2 * MARGIN);
         component.onRelocate();
+    }
+
+    @Override
+    public Insets getFrame() {
+        return new Insets(BAR_HEIGHT + 2 * MARGIN, MARGIN, MARGIN, MARGIN);
     }
 }

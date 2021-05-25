@@ -18,7 +18,7 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
     private final Theme theme;
     private final ArrayList<HudElementComponent> inactive = new ArrayList<>();
     private final HudComponent hud;
-    private ComponentContext<?> configComponent;
+    private ComponentContext<FrameComponent<?>> configComponent;
     private int holdX;
     private int holdY;
     private int currentX;
@@ -130,13 +130,17 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
         if (component == null) return;
         if (!(component instanceof BaseHudElementComponent)) return;
         if (type == ClickType.LEFT) {
+            double configX = 200;
+            double configY = 200;
             if (configComponent != null) {
                 configComponent.close();
+                configX = configComponent.getOrigin().getX();
+                configY = configComponent.getOrigin().getY();
             }
             Component configCategory = theme.newConfigCategoryComponent(((BaseHudElementComponent) component).getConfigurations());
             configComponent = Components.show(theme.newFrameComponent(configCategory), false, false);
-            configComponent.getOrigin().setX(200);
-            configComponent.getOrigin().setY(200);
+            configComponent.getOrigin().setX(configX);
+            configComponent.getOrigin().setY(configY);
             configComponent.getOrigin().setWidth(100);
             configComponent.getOrigin().setHeight(200);
         } else {
@@ -197,6 +201,15 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
         if (type == ClickType.LEFT) onHoldLeft(fromX, fromY, toX, toY, status);
         if (type == ClickType.RIGHT) onHoldRight(fromX, fromY, toX, toY, status);
+    }
+
+    @Override
+    public void onRelocate() {
+        if (configComponent != null) {
+            FrameComponent<?> comp = configComponent.getOrigin();
+            comp.setHeight(comp.getValue().getHeight() + comp.getFrame().getTop() + comp.getFrame().getBottom());
+        }
+        super.onRelocate();
     }
 
     @Override

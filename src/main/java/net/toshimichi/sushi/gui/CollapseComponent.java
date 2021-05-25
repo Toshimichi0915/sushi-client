@@ -65,4 +65,9 @@ public class CollapseComponent<T extends Component> extends BasePanelComponent<T
     public T getValue() {
         return component;
     }
+
+    @Override
+    public Insets getFrame() {
+        return getMargin();
+    }
 }
