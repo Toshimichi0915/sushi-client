@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
 
     private final Gson gson;
     private final ArrayList<ConfigurationCategory> categories = new ArrayList<>();
+    private final HashMap<String, Object> defaults = new HashMap<>();
     private JsonObject root;
 
     public GsonRootConfigurations(Gson gson) {
@@ -24,7 +26,7 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
     }
 
     public JsonObject save() {
-        for (Map.Entry<String, Object> entry : getDefaults().entrySet()) {
+        for (Map.Entry<String, Object> entry : defaults.entrySet()) {
             setRawValue(root, entry.getKey(), entry.getValue(), false);
         }
         return root;
@@ -62,7 +64,7 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
             // use default
         }
         if (checkDefault) {
-            Object result = getDefaults().get(id);
+            Object result = defaults.get(id);
             if (result != null && result.getClass().isAssignableFrom(tClass)) return (T) result;
         }
         return null;
@@ -74,6 +76,10 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
 
     protected void setRawValue(String id, Object o) {
         setRawValue(root, id, o, true);
+    }
+
+    protected void putDefault(String id, Object obj) {
+        defaults.put(id, obj);
     }
 
     @Override

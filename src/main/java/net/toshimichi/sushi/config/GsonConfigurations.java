@@ -1,9 +1,7 @@
 package net.toshimichi.sushi.config;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 abstract public class GsonConfigurations implements Configurations {
@@ -11,14 +9,13 @@ abstract public class GsonConfigurations implements Configurations {
     private static final int PRIORITY_DELTA = 100;
 
     private final ArrayList<GsonConfiguration<?>> list = new ArrayList<>();
-    private final HashMap<String, Object> defaults = new HashMap<>();
     private int counter;
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> Configuration<T> get(String id, String name, String description, Class<T> tClass, T defaultValue, Supplier<Boolean> isValid, boolean temporary, int priority) {
         if (priority == 0) priority = counter++ * PRIORITY_DELTA;
-        if (!temporary) defaults.put(id, defaultValue);
+        if (!temporary) getRoot().putDefault(id, defaultValue);
         for (GsonConfiguration<?> loaded : list) {
             if (loaded.getId().equals(id)) {
                 if (!loaded.getValueClass().equals(tClass))
@@ -34,10 +31,6 @@ abstract public class GsonConfigurations implements Configurations {
     @Override
     public List<Configuration<?>> getAll() {
         return new ArrayList<>(list);
-    }
-
-    protected Map<String, Object> getDefaults() {
-        return defaults;
     }
 
     abstract protected ConfigurationCategory getConfigurationCategory();
