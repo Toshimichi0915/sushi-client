@@ -91,7 +91,10 @@ public class SimpleFrameComponent<T extends Component> extends BasePanelComponen
 
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
-        if (type != ClickType.LEFT) return;
+        if (type != ClickType.LEFT) {
+            super.onHold(fromX, fromY, toX, toY, type, status);
+            return;
+        }
         if (isCrossMark(fromX, fromY)) {
             hold = true;
             if (status == MouseStatus.END) {
