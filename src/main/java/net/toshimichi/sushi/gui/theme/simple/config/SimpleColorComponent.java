@@ -6,6 +6,7 @@ import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.gui.base.BaseConfigComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.TextPreview;
 
 import java.awt.Color;
 
@@ -15,11 +16,11 @@ public class SimpleColorComponent extends BaseConfigComponent<Color> {
 
     private static final int SEGMENTS = 5;
     private static final double R = 1;
-    private static final double TOP_MARGIN = 0;
-    private static final double LEFT_MARGIN = 0;
-    private static final double BOTTOM_MARGIN = 0;
-    private static final double CENTER_MARGIN = 3;
-    private static final double RIGHT_MARGIN = 0;
+    private static final double MARGIN_TOP = 10;
+    private static final double MARGIN_LEFT = 2;
+    private static final double MARGIN_BOTTOM = 2;
+    private static final double MARGIN_CENTER = 3;
+    private static final double MARGIN_RIGHT = 2;
     private static final int MAIN_X = 50;
     private static final double SUB_X = 10;
     private static final int Y = 100;
@@ -30,11 +31,14 @@ public class SimpleColorComponent extends BaseConfigComponent<Color> {
     private float saturation;
     private float brightness;
     private boolean updating;
+    private double oldX;
+    private double oldY;
+    private double oldWidth;
+    private double oldHeight;
 
     public SimpleColorComponent(ThemeConstants constants, Configuration<Color> configuration) {
         super(configuration);
         this.constants = constants;
-        updateColor(configuration.getValue());
         configuration.addHandler(this::updateColor);
     }
 
@@ -45,11 +49,11 @@ public class SimpleColorComponent extends BaseConfigComponent<Color> {
     public void updateColor(Color color) {
         float[] hsb = getHSB(color);
         if (updating) return;
-        cursorX = getMainX() / MAIN_X * getMainWidth() + getMainStartX() - getWindowX();
-        cursorY = getMainY() / Y * getMainHeight() + getMainStartY() - getWindowY();
         hue = hsb[0];
         saturation = hsb[1];
         brightness = hsb[2];
+        cursorX = getMainX() / MAIN_X * getMainWidth();
+        cursorY = getMainY() / Y * getMainHeight();
     }
 
     private Color getMainColor(double x, double y) {
@@ -76,27 +80,27 @@ public class SimpleColorComponent extends BaseConfigComponent<Color> {
     }
 
     private double getMainStartX() {
-        return getWindowX() + LEFT_MARGIN;
+        return getWindowX() + MARGIN_LEFT;
     }
 
     private double getMainStartY() {
-        return getWindowY() + TOP_MARGIN;
+        return getWindowY() + MARGIN_TOP;
     }
 
     private double getMainWidth() {
-        return getWidth() - CENTER_MARGIN - RIGHT_MARGIN - SUB_X;
+        return getWidth() - MARGIN_CENTER - MARGIN_RIGHT - SUB_X;
     }
 
     private double getMainHeight() {
-        return getHeight() - TOP_MARGIN - BOTTOM_MARGIN;
+        return getHeight() - MARGIN_TOP - MARGIN_BOTTOM;
     }
 
     private double getSubStartX() {
-        return getWindowX() + getWidth() - LEFT_MARGIN - SUB_X;
+        return getWindowX() + getWidth() - MARGIN_LEFT - SUB_X;
     }
 
     private double getSubStartY() {
-        return getWindowY() + TOP_MARGIN;
+        return getWindowY() + MARGIN_TOP;
     }
 
     private double getSubWidth() {
@@ -104,7 +108,7 @@ public class SimpleColorComponent extends BaseConfigComponent<Color> {
     }
 
     private double getSubHeight() {
-        return getHeight() - TOP_MARGIN - BOTTOM_MARGIN;
+        return getHeight() - MARGIN_TOP - MARGIN_BOTTOM;
     }
 
     private boolean isMain(double x, double y) {
@@ -137,8 +141,8 @@ public class SimpleColorComponent extends BaseConfigComponent<Color> {
 
     private boolean updateColor(int x, int y) {
         if (isMain(x, y)) {
-            cursorX = x - getWindowX();
-            cursorY = y - getWindowY();
+            cursorX = x - getMainStartX();
+            cursorY = y - getMainStartY();
             Color color = getMainColor((x - getMainStartX()) * MAIN_X / getMainWidth(), (y - getMainStartY()) * Y / getMainHeight());
             float[] hsb = getHSB(color);
             updating = true;
@@ -171,7 +175,11 @@ public class SimpleColorComponent extends BaseConfigComponent<Color> {
 
     @Override
     public void onRender() {
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.backgroundColor.getValue());
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
+        TextPreview preview = GuiUtils.prepareText(getValue().getName(), constants.font.getValue(), constants.textColor.getValue(), 9, true);
+        preview.draw(getWindowX() + (getWidth() - preview.getWidth()) / 2 - 1, getWindowY() + (MARGIN_TOP - preview.getHeight()) / 2 - 1);
+
+        // main
         GuiUtils.prepare2D();
         glShadeModel(GL_SMOOTH);
         glBegin(GL_QUADS);
@@ -186,18 +194,27 @@ public class SimpleColorComponent extends BaseConfigComponent<Color> {
         glEnd();
         GuiUtils.release2D();
 
+        // sub
         for (int y = 0; y < Y - 1; y++) {
             double y1 = (double) y / Y * getSubHeight() + getSubStartY();
             GuiUtils.drawRect(getSubStartX(), y1, getSubWidth(), getSubHeight() / Y, getSubColor(y));
         }
 
-        drawCircle(cursorX + getWindowX(), cursorY + getWindowY());
+        // circle
+        drawCircle(cursorX + getMainStartX(), cursorY + getMainStartY());
         drawCircle(getSubStartX() + getSubWidth() / 2, getSubY() / Y * getSubHeight() + getSubStartY());
     }
 
     @Override
     public void onRelocate() {
-        double mainWidth = getWidth() - LEFT_MARGIN - CENTER_MARGIN - SUB_X - RIGHT_MARGIN;
-        setHeight(mainWidth + TOP_MARGIN + BOTTOM_MARGIN);
+        double mainWidth = getWidth() - MARGIN_LEFT - MARGIN_CENTER - SUB_X - MARGIN_RIGHT;
+        setHeight(mainWidth + MARGIN_TOP + MARGIN_BOTTOM);
+        if (oldX != getX() || oldY != getY() || oldWidth != getWidth() || oldHeight != getHeight()) {
+            oldX = getX();
+            oldY = getY();
+            oldWidth = getWidth();
+            oldHeight = getHeight();
+            updateColor(getValue().getValue());
+        }
     }
 }
