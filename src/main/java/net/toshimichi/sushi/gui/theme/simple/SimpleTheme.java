@@ -16,6 +16,7 @@ import net.toshimichi.sushi.gui.theme.simple.config.*;
 import net.toshimichi.sushi.modules.Keybind;
 import net.toshimichi.sushi.modules.Module;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +37,7 @@ public class SimpleTheme implements Theme {
         newFactory(Boolean.class, c -> new SimpleBooleanComponent(constants, c));
         newFactory(Integer.class, c -> new SimpleIntComponent(constants, c));
         newFactory(Named.class, c -> new SimpleNamedComponent<>(constants, c));
+        newFactory(Color.class, c -> new SimpleColorComponent(constants, c));
     }
 
     public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {
