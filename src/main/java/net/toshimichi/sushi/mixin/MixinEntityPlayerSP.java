@@ -4,11 +4,9 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.MoverType;
-import net.minecraft.util.MovementInput;
 import net.minecraft.world.World;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.input.InputUpdateEvent;
 import net.toshimichi.sushi.events.player.PlayerMoveEvent;
 import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,14 +45,5 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     public void onPostUpdateWalkingPlayer(CallbackInfo ci) {
         PlayerPacketEvent event = new PlayerPacketEvent(EventTiming.POST);
         EventHandlers.callEvent(event);
-    }
-
-    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/MovementInput;updatePlayerMoveState()V"), method = "onLivingUpdate")
-    public void onUpdatePlayerMoveState(MovementInput movementInput) {
-        InputUpdateEvent pre = new InputUpdateEvent(EventTiming.PRE);
-        EventHandlers.callEvent(pre);
-        if (!pre.isCancelled()) movementInput.updatePlayerMoveState();
-        InputUpdateEvent post = new InputUpdateEvent(EventTiming.POST);
-        EventHandlers.callEvent(post);
     }
 }

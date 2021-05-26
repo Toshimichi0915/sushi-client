@@ -14,6 +14,7 @@
     "MixinGuiChat",
     "MixinGuiIngameForge",
     "MixinMinecraft",
+    "MixinMovementInputFromOptions",
     "MixinNetworkManager",
     "MixinWorld"
   ]
