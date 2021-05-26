@@ -173,7 +173,7 @@ public class GuiUtils {
 
         Scissor(Component component) {
             x = GuiUtils.toWindowX(component.getWindowX());
-            y = GuiUtils.getWindowHeight() - GuiUtils.toWindowY(component.getWindowY() + component.getHeight());
+            y = Math.max(GuiUtils.getWindowHeight() - GuiUtils.toWindowY(component.getWindowY() + component.getHeight()), 0);
             width = GuiUtils.toWindowX(component.getWidth());
             height = GuiUtils.toWindowY(component.getHeight());
         }
