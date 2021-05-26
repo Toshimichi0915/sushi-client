@@ -40,6 +40,7 @@ public class CrystalAuraModule extends BaseModule {
     private final Configuration<IntRange> placeCoolTime;
     private final Configuration<IntRange> breakCoolTime;
     private final Configuration<DoubleRange> minDamage;
+    private final Configuration<DoubleRange> facePlace;
     private final Configuration<IntRange> maxTargets;
     private final Configuration<Boolean> customDamage;
     private final Configuration<IntRange> customPower;
@@ -58,6 +59,7 @@ public class CrystalAuraModule extends BaseModule {
         placeCoolTime = provider.get("place_cool_time", "Place Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
         breakCoolTime = provider.get("break_cool_time", "Break Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
         minDamage = provider.get("min_damage", "Min Damage", null, DoubleRange.class, new DoubleRange(6, 20, 0, 0.2, 1));
+        facePlace = provider.get("face_place", "Face Place", null, DoubleRange.class, new DoubleRange(5, 20, 0, 0.2, 1));
         maxTargets = provider.get("max_targets", "Max Targets", null, IntRange.class, new IntRange(1, 10, 1, 1));
         customDamage = provider.get("custom_damage", "Custom Damage", null, Boolean.class, false);
         customPower = provider.get("power", "Power", null, IntRange.class, new IntRange(6, 10, 1, 1), customDamage::getValue, false, 0);
@@ -92,7 +94,6 @@ public class CrystalAuraModule extends BaseModule {
             if (player.getName().equals(getPlayer().getName())) continue;
             damages.add(new AbstractMap.SimpleEntry<>(player, getDamage(pos, player)));
         }
-
         // sort
         damages.sort(Comparator.comparingDouble(Map.Entry::getValue));
         Collections.reverse(damages);
@@ -116,7 +117,10 @@ public class CrystalAuraModule extends BaseModule {
 
         double selfDamage = getDamage(crystalPos, getPlayer());
         double ratio = selfDamage / attack.getTotalDamage();
-        if (attack.getTotalDamage() < minDamage.getValue().getCurrent()) return false;
+        if (attack.getTotalDamage() < minDamage.getValue().getCurrent() &&
+                (attack.damages.isEmpty() || attack.getTotalDamage() <= 2 || new ArrayList<>(attack.damages.values()).get(0) < facePlace.getValue().getCurrent())) {
+            return false;
+        }
         if (selfDamage > maxSelfDamage.getValue().getCurrent()) return false;
         if (ratio > damageRatio.getValue().getCurrent()) return false;
         if (avoidSuicide.getValue() && selfDamage > getPlayer().getHealth()) return false;
@@ -230,9 +234,10 @@ public class CrystalAuraModule extends BaseModule {
         EntityEnderCrystal entity;
         Vec3d crystalPos;
         AxisAlignedBB crystalBox;
-        Map<EntityPlayer, Double> damages;
+        LinkedHashMap<EntityPlayer, Double> damages;
+        double cachedTotalDamage = -1;
 
-        CrystalAttack(EntityEnderCrystal entity, Vec3d crystalPos, AxisAlignedBB crystalBox, Map<EntityPlayer, Double> damages) {
+        CrystalAttack(EntityEnderCrystal entity, Vec3d crystalPos, AxisAlignedBB crystalBox, LinkedHashMap<EntityPlayer, Double> damages) {
             this.entity = entity;
             this.crystalPos = crystalPos;
             this.crystalBox = crystalBox;
@@ -240,8 +245,10 @@ public class CrystalAuraModule extends BaseModule {
         }
 
         double getTotalDamage() {
+            if (cachedTotalDamage != -1) return cachedTotalDamage;
             double total = 0;
             for (double damage : damages.values()) total += damage;
+            cachedTotalDamage = total;
             return total;
         }
     }
