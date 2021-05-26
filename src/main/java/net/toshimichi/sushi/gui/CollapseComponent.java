@@ -29,6 +29,7 @@ public class CollapseComponent<T extends Component> extends BasePanelComponent<T
 
     public void setProgress(double progress) {
         this.progress = MathHelper.clamp(progress, 0, 1);
+        component.setVisible(this.progress != 0);
     }
 
     @Override

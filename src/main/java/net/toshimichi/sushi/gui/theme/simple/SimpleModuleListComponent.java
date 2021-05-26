@@ -20,6 +20,7 @@ public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleCo
     private final ThemeConstants constants;
     private final Theme theme;
     private final Category category;
+    private long lastUpdate;
 
     public SimpleModuleListComponent(ThemeConstants constants, Theme theme, Category category) {
         this.constants = constants;
@@ -29,8 +30,7 @@ public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleCo
         onRelocate();
     }
 
-    @Override
-    public void onRelocate() {
+    private void update() {
         addModule:
         for (Module module : Sushi.getProfile().getModules().getModules(category)) {
             for (SimpleModuleComponent component : this) {
@@ -48,6 +48,14 @@ public class SimpleModuleListComponent extends BasePanelComponent<SimpleModuleCo
                 if (component.getModule().equals(module)) continue removeModule;
             }
             remove(component);
+        }
+    }
+
+    @Override
+    public void onRelocate() {
+        if (System.currentTimeMillis() - lastUpdate > 1000) {
+            update();
+            lastUpdate = System.currentTimeMillis();
         }
         sort(Comparator.comparing(m -> m.getModule().getName()));
         if (isEmpty()) setMargin(new Insets(0, 0, 0, 0));

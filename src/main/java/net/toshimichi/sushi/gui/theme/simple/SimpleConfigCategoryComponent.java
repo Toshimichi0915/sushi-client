@@ -15,6 +15,7 @@ public class SimpleConfigCategoryComponent extends BasePanelComponent<Component>
 
     private final Theme theme;
     private final Configurations configurations;
+    private long lastUpdate;
 
     public SimpleConfigCategoryComponent(Theme theme, Configurations configurations) {
         this.theme = theme;
@@ -30,8 +31,7 @@ public class SimpleConfigCategoryComponent extends BasePanelComponent<Component>
         return false;
     }
 
-    @Override
-    public void onRelocate() {
+    private void update() {
         for (Configuration<?> conf : configurations.getAll()) {
             if (!conf.isValid()) continue;
             if (contains(conf)) continue;
@@ -54,7 +54,13 @@ public class SimpleConfigCategoryComponent extends BasePanelComponent<Component>
                 bPriority = ((ConfigComponent<?>) b).getValue().getPriority();
             return Integer.compare(aPriority, bPriority);
         });
+    }
 
+    @Override
+    public void onRelocate() {
+        if (System.currentTimeMillis() - lastUpdate > 10000) {
+            update();
+        }
         super.onRelocate();
     }
 }
