@@ -151,23 +151,23 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
 
     private void onHoldLeft(int fromX, int fromY, int toX, int toY, MouseStatus status) {
         // component
-        Component component = hud.getTopComponent(fromX, fromY);
-        if (component != null) {
-            if (status == MouseStatus.START) {
-                this.holdX = (int) (fromX - component.getWindowX());
-                this.holdY = (int) (fromY - component.getWindowY());
+        Component from = hud.getTopComponent(fromX, fromY);
+        Component to = hud.getTopComponent(toX, toY);
+        if (this.corner == null && (from != null || to != null)) {
+            if (status == MouseStatus.START || from == null) {
+                if (from == null) from = to;
+                this.holdX = (int) (toX - from.getWindowX());
+                this.holdY = (int) (toY - from.getWindowY());
             }
-            if (this.corner == null) {
-                component.setWindowX(toX - holdX);
-                component.setWindowY(toY - holdY);
-                if (component.getParent() == null)
-                    calculateWindowComponent(component);
-            }
+            from.setWindowX(toX - holdX);
+            from.setWindowY(toY - holdY);
+            if (from.getParent() == null)
+                calculateWindowComponent(from);
         }
 
         // corner box
         CornerComponent corner = getTopComponent(fromX, fromY);
-        if (status == MouseStatus.START && corner != null && !(corner.getParent() instanceof VirtualHudElementComponent)) {
+        if (corner != null && status == MouseStatus.START && !(corner.getParent() instanceof VirtualHudElementComponent)) {
             this.holdX = (int) getCenterWindowX(corner);
             this.holdY = (int) getCenterWindowY(corner);
             this.corner = corner;

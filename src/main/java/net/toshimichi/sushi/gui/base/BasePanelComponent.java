@@ -7,6 +7,7 @@ import net.toshimichi.sushi.gui.layout.NullLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -89,12 +90,18 @@ public class BasePanelComponent<T extends Component> extends BaseListComponent<T
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
         T from = getTopComponent(fromX, fromY);
         T to = getTopComponent(toX, toY);
-        if (from == null) return;
-        if (!from.equals(to) && status != MouseStatus.START) {
-            from.onHold(fromX, fromY, toX, toY, type, MouseStatus.IN_PROGRESS);
-            to = getTopComponent(toX, toY);
-            if (!from.equals(to))
-                from.onHold(toX, toY, toX, toY, type, MouseStatus.CANCEL);
+        if (!Objects.equals(to, from) && status != MouseStatus.START) {
+            if (from != null) {
+                from.onHold(fromX, fromY, toX, toY, type, MouseStatus.IN_PROGRESS);
+                to = getTopComponent(toX, toY);
+                if (!from.equals(to))
+                    from.onHold(toX, toY, toX, toY, type, MouseStatus.CANCEL);
+            }
+            if (to != null && !to.equals(from)) {
+                to.onHold(fromX, fromY, toX, toY, type, MouseStatus.START);
+                setFocusedComponent(to);
+            }
+            return;
         }
         if (to == null) return;
         setFocusedComponent(to);

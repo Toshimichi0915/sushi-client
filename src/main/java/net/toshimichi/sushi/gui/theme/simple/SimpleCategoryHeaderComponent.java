@@ -35,8 +35,8 @@ public class SimpleCategoryHeaderComponent extends BaseComponent {
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
         if (type != ClickType.LEFT) return;
         if (status == MouseStatus.START) {
-            this.holdX = (int) (fromX - getWindowX());
-            this.holdY = (int) (fromY - getWindowY());
+            this.holdX = (int) (toX - getWindowX());
+            this.holdY = (int) (toY - getWindowY());
             return;
         }
         parent.setWindowX(toX - holdX);

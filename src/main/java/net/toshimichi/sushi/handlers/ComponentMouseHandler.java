@@ -14,6 +14,8 @@ import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.utils.GuiUtils;
 import org.lwjgl.input.Mouse;
 
+import java.util.Objects;
+
 public class ComponentMouseHandler {
 
     private static final int HOLD_DELAY = 100;
@@ -84,20 +86,22 @@ public class ComponentMouseHandler {
                 if (component != null) component.onHover(status.x, status.y);
                 continue;
             }
-            if (lastComponent == null) continue;
 
             // component changed
-            if (!lastComponent.equals(component) && status.isLastClicked) {
-                if (HOLD_DELAY < status.lastTickMillis - status.clickMillis ||
-                        CLICK_THRESHOLD < MathHelper.sqrt(Math.pow(status.lastX - status.clickX, 2) + Math.pow(status.lastY - status.clickY, 2))) {
+            if (!Objects.equals(component, lastComponent) && status.isLastClicked &&
+                    (HOLD_DELAY < status.lastTickMillis - status.clickMillis ||
+                            CLICK_THRESHOLD < MathHelper.sqrt(Math.pow(status.lastX - status.clickX, 2) + Math.pow(status.lastY - status.clickY, 2)))) {
+                if (lastComponent != null) {
                     lastComponent.onHold(status.lastX, status.lastY, status.x, status.y, type, MouseStatus.IN_PROGRESS);
                     context = getTopContext(status.x, status.y);
                     component = context == null ? null : context.getOrigin();
                     if (!lastComponent.equals(component))
                         lastComponent.onHold(status.x, status.y, status.x, status.y, type, MouseStatus.CANCEL);
-                } else {
-                    lastComponent.onClick(status.lastX, status.lastY, type);
                 }
+                if (component != null && !component.equals(lastComponent)) {
+                    component.onHold(status.lastX, status.lastY, status.x, status.y, type, MouseStatus.START);
+                }
+                return;
             }
 
             // component not changed

@@ -19,8 +19,6 @@ public class SimpleFrameComponent<T extends Component> extends BasePanelComponen
     private static final double BAR_HEIGHT = 8;
     private final ThemeConstants constants;
     private final T component;
-    private int holdX;
-    private int holdY;
     private boolean hover;
     private boolean hold;
 
@@ -101,13 +99,8 @@ public class SimpleFrameComponent<T extends Component> extends BasePanelComponen
                 getContext().close();
             }
         } else if (isMenuBar(fromX, fromY)) {
-            if (status == MouseStatus.START) {
-                this.holdX = (int) (fromX - getWindowX());
-                this.holdY = (int) (fromY - getWindowY());
-                return;
-            }
-            setWindowX(toX - holdX);
-            setWindowY(toY - holdY);
+            setWindowX(toX - fromX + getWindowX());
+            setWindowY(toY - fromY + getWindowY());
         } else {
             super.onHold(fromX, fromY, toX, toY, type, status);
         }

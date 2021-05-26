@@ -42,7 +42,7 @@ abstract public class SimpleBarComponent extends BaseComponent {
 
     @Override
     public void onClick(int x, int y, ClickType type) {
-        double progress = (double) (x - getWindowX()) / getWidth();
+        double progress = (x - getWindowX()) / getWidth();
         progress = MathHelper.clamp(progress, 0, 1);
         setProgress(progress);
     }
