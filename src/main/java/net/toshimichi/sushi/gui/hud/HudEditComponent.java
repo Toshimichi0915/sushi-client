@@ -151,11 +151,12 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
 
     private void onHoldLeft(int fromX, int fromY, int toX, int toY, MouseStatus status) {
         // component
-        Component from = hud.getTopComponent(fromX, fromY);
-        Component to = hud.getTopComponent(toX, toY);
+        HudElementComponent from = hud.getTopComponent(fromX, fromY);
+        HudElementComponent to = hud.getTopComponent(toX, toY);
         if (this.corner == null && (from != null || to != null)) {
             if (status == MouseStatus.START || from == null) {
                 if (from == null) from = to;
+                hud.setFocusedComponent(from);
                 this.holdX = (int) (toX - from.getWindowX());
                 this.holdY = (int) (toY - from.getWindowY());
             }
