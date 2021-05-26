@@ -1,20 +1,16 @@
 package net.toshimichi.sushi.modules.player;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.network.play.server.SPacketEntityTeleport;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.player.PlayerTravelEvent;
+import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.modules.*;
-
-import java.util.List;
+import net.toshimichi.sushi.utils.DesyncMode;
+import net.toshimichi.sushi.utils.PositionUtils;
 
 public class AntiStuckModule extends BaseModule {
-
-    private static final double SIZE = 0.03;
 
     public AntiStuckModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -30,20 +26,14 @@ public class AntiStuckModule extends BaseModule {
         EventHandlers.unregister(this);
     }
 
-    @EventHandler(timing = EventTiming.PRE)
-    public void onPlayerTravel(PlayerTravelEvent e) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        AxisAlignedBB box = player.getEntityBoundingBox();
-        AxisAlignedBB ceil = box.grow(0, -SIZE, 0).offset(0, SIZE, 0);
-        AxisAlignedBB floor = box.grow(0, -player.height / 2 + SIZE, 0).offset(0, -player.height / 2 + SIZE, 0);
-        List<AxisAlignedBB> ceilBlocks = player.world.getCollisionBoxes(null, ceil);
-        List<AxisAlignedBB> floorBlocks = player.world.getCollisionBoxes(null, floor);
-        if (!ceilBlocks.isEmpty() || floorBlocks.isEmpty()) return;
-        double maxY = 0;
-        for (AxisAlignedBB block : floorBlocks) {
-            if (maxY < block.maxY) maxY = block.maxY;
-        }
-        player.setPosition(player.posX, maxY + 0.1, player.posZ);
+    @EventHandler(timing = EventTiming.POST)
+    public void onPlayerTravel(PacketReceiveEvent e) {
+        if (!(e.getPacket() instanceof SPacketEntityTeleport)) return;
+        SPacketEntityTeleport packet = (SPacketEntityTeleport) e.getPacket();
+        if (getPlayer().getEntityId() != packet.getEntityId()) return;
+        getClient().addScheduledTask(() -> {
+            PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.1, getPlayer().posZ, 0, 0, true, false, DesyncMode.NONE);
+        });
     }
 
     @Override
