@@ -16,7 +16,7 @@ public class RenderTickHandler {
         else
             timing = EventTiming.POST;
 
-        RenderTickEvent event = new RenderTickEvent(timing);
+        RenderTickEvent event = new RenderTickEvent(timing, e.renderTickTime);
         EventHandlers.callEvent(event);
     }
 }

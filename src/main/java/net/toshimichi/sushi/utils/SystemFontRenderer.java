@@ -64,7 +64,7 @@ public class SystemFontRenderer extends SystemFont {
             GlStateManager.scale(0.5D, 0.5D, 0.5D);
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GlStateManager.color(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
+            GL11.glColor4d(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
             int size = text.length();
             GlStateManager.enableTexture2D();
             GlStateManager.bindTexture(tex.getGlTextureId());
@@ -91,7 +91,7 @@ public class SystemFontRenderer extends SystemFont {
                         if ((colorIndex < 0) || (colorIndex > 15)) colorIndex = 15;
                         if (shadow) colorIndex += 16;
                         int colorcode = this.colorCode[colorIndex];
-                        GlStateManager.color((colorcode >> 16 & 0xFF) / 255.0F, (colorcode >> 8 & 0xFF) / 255.0F, (colorcode & 0xFF) / 255.0F, color.getAlpha());
+                        GL11.glColor4d((colorcode >> 16 & 0xFF) / 255.0F, (colorcode >> 8 & 0xFF) / 255.0F, (colorcode & 0xFF) / 255.0F, color.getAlpha());
                     } else if (colorIndex == 16) {
                         randomCase = true;
                     } else if (colorIndex == 17) {
@@ -130,7 +130,7 @@ public class SystemFontRenderer extends SystemFont {
                         randomCase = false;
                         underline = false;
                         strikethrough = false;
-                        GlStateManager.color(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
+                        GL11.glColor4d(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
                         GlStateManager.bindTexture(tex.getGlTextureId());
                         // GL11.glBindTexture(GL11.GL_TEXTURE_2D,
                         // tex.getGlTextureId());

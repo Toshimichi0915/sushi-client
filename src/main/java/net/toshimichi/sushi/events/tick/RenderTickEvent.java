@@ -5,7 +5,14 @@ import net.toshimichi.sushi.events.EventTiming;
 
 public class RenderTickEvent extends BaseEvent {
 
-    public RenderTickEvent(EventTiming timing) {
+    private final float partialTicks;
+
+    public RenderTickEvent(EventTiming timing, float partialTicks) {
         super(timing);
+        this.partialTicks = partialTicks;
+    }
+
+    public float getPartialTicks() {
+        return partialTicks;
     }
 }
