@@ -14,6 +14,7 @@ public class RenderUtils {
         glPushMatrix();
         glPushAttrib(GL_ENABLE_BIT);
         glDisable(GL_TEXTURE_2D);
+        glEnable(GL_CULL_FACE);
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
         double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
@@ -48,6 +49,32 @@ public class RenderUtils {
         glVertex3d(box.maxX, box.minY, box.minZ);
         glVertex3d(box.maxX, box.maxY, box.minZ);
         glVertex3d(box.minX, box.maxY, box.minZ);
+        glEnd();
+        release3D();
+    }
+
+    public static void drawFilled(AxisAlignedBB box, Color color) {
+        GuiUtils.setColor(color);
+        prepare3D();
+        glBegin(GL_QUAD_STRIP);
+        glVertex3d(box.maxX, box.maxY, box.maxZ);
+        glVertex3d(box.maxX, box.maxY, box.minZ);
+        glVertex3d(box.minX, box.maxY, box.maxZ);
+        glVertex3d(box.minX, box.maxY, box.minZ);
+        glVertex3d(box.minX, box.minY, box.maxZ);
+        glVertex3d(box.minX, box.minY, box.minZ);
+        glVertex3d(box.maxX, box.minY, box.maxZ);
+        glVertex3d(box.maxX, box.minY, box.minZ);
+        glEnd();
+        glBegin(GL_QUAD_STRIP);
+        glVertex3d(box.minX, box.minY, box.minZ);
+        glVertex3d(box.minX, box.maxY, box.minZ);
+        glVertex3d(box.maxX, box.minY, box.minZ);
+        glVertex3d(box.maxX, box.maxY, box.minZ);
+        glVertex3d(box.maxX, box.minY, box.maxZ);
+        glVertex3d(box.maxX, box.maxY, box.maxZ);
+        glVertex3d(box.minX, box.minY, box.maxZ);
+        glVertex3d(box.minX, box.maxY, box.maxZ);
         glEnd();
         release3D();
     }

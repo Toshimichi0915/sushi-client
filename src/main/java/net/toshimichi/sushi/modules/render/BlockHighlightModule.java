@@ -20,15 +20,21 @@ import java.awt.Color;
 
 public class BlockHighlightModule extends BaseModule {
 
+    private final Configuration<RenderMode> renderMode;
+    private final Configuration<Boolean> outline;
     private final Configuration<Color> outlineColor;
     private final Configuration<DoubleRange> outlineWidth;
-    private final Configuration<OutlineMode> outlineMode;
+    private final Configuration<Boolean> fill;
+    private final Configuration<Color> fillColor;
 
     public BlockHighlightModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        outlineColor = provider.get("outline_color", "Outline Color", null, Color.class, new Color(255, 0, 0));
-        outlineWidth = provider.get("outline_width", "Outline Width", null, DoubleRange.class, new DoubleRange(1.0, 10, 0.1, 0.1, 1));
-        outlineMode = provider.get("outline_mode", "Outline Mode", null, OutlineMode.class, OutlineMode.SURFACE);
+        renderMode = provider.get("render mode", "Render Mode", null, RenderMode.class, RenderMode.SURFACE);
+        outline = provider.get("outline", "Outline", null, Boolean.class, true);
+        outlineColor = provider.get("outline_color", "Outline Color", null, Color.class, new Color(255, 0, 0), outline::getValue, false, 0);
+        outlineWidth = provider.get("outline_width", "Outline Width", null, DoubleRange.class, new DoubleRange(1.0, 10, 0.1, 0.1, 1), outline::getValue, false, 0);
+        fill = provider.get("fill", "Fill", null, Boolean.class, true);
+        fillColor = provider.get("fill_color", "Fill Color", null, Color.class, new Color(255, 0, 0), fill::getValue, false, 0);
     }
 
     @Override
@@ -48,10 +54,15 @@ public class BlockHighlightModule extends BaseModule {
         BlockPos pos = result.getBlockPos();
         IBlockState state = getWorld().getBlockState(pos);
         if (state.getMaterial() == Material.AIR) return;
-        AxisAlignedBB box = state.getBoundingBox(getWorld(), pos).offset(pos).grow(0.0001, 0.0001, 0.0001);
-        if (outlineMode.getValue() != OutlineMode.NONE) {
-            if (outlineMode.getValue() == OutlineMode.FULL) GL11.glDisable(GL11.GL_DEPTH_TEST);
-            RenderUtils.drawOutline(box, outlineColor.getValue(), outlineWidth.getValue().getCurrent());
+        AxisAlignedBB box = state.getBoundingBox(getWorld(), pos).offset(pos).grow(0.0005, 0.0005, 0.0005);
+        if (renderMode.getValue() != RenderMode.NONE) {
+            if (renderMode.getValue() == RenderMode.FULL) GL11.glDisable(GL11.GL_DEPTH_TEST);
+            if (outline.getValue()) {
+                RenderUtils.drawOutline(box, outlineColor.getValue(), outlineWidth.getValue().getCurrent());
+            }
+            if (fill.getValue()) {
+                RenderUtils.drawFilled(box, fillColor.getValue());
+            }
             GL11.glEnable(GL11.GL_DEPTH_TEST);
         }
     }
