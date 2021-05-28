@@ -63,7 +63,6 @@ public class BlockHighlightModule extends BaseModule {
                 RenderUtils.drawOutline(box, outlineColor.getValue().getCurrentColor(), outlineWidth.getValue().getCurrent());
             }
             if (fill.getValue()) {
-                Color color = fillColor.getValue().getCurrentColor();
                 RenderUtils.drawFilled(box, fillColor.getValue().getCurrentColor());
             }
             GL11.glEnable(GL11.GL_DEPTH_TEST);
