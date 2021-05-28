@@ -3,6 +3,7 @@ package net.toshimichi.sushi.config;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -16,7 +17,7 @@ public class ConfigInjector {
 
     @SuppressWarnings("unchecked")
     public void inject(Object obj) {
-        HashMap<Field, Config> configs = new HashMap<>();
+        LinkedHashMap<Field, Config> configs = new LinkedHashMap<>();
         HashMap<Field, Config> suppliers = new HashMap<>();
         HashMap<Config, Supplier<Boolean>> validators = new HashMap<>();
         for (Field field : obj.getClass().getDeclaredFields()) {
