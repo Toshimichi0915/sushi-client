@@ -26,6 +26,7 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
     }
 
     public JsonObject save() {
+        getAll(true).forEach(it -> ((GsonConfiguration<?>) it).save());
         for (Map.Entry<String, Object> entry : defaults.entrySet()) {
             setRawValue(root, entry.getKey(), entry.getValue(), false);
         }
@@ -46,7 +47,6 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
         }
     }
 
-    @SuppressWarnings("unchecked")
     private <T> T getRawValue(JsonObject object, String id, Class<T> tClass) {
         try {
             if (id.contains(".")) {

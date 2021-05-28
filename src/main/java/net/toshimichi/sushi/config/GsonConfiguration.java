@@ -16,7 +16,8 @@ public class GsonConfiguration<T> implements Configuration<T> {
     private final int priority;
     private final ConfigurationCategory category;
     private final boolean temporary;
-    private final ArrayList<Consumer<T>> handlers = new ArrayList<>();
+    private final ArrayList<ConfigurationHandler<T>> handlers = new ArrayList<>();
+    private final ArrayList<Consumer<T>> consumers = new ArrayList<>();
 
     public GsonConfiguration(String id, String name, String description, Class<T> tClass, T defaultValue, GsonRootConfigurations provider, Supplier<Boolean> isValid, ConfigurationCategory category, boolean temporary, int priority) {
         this.id = id;
@@ -35,8 +36,11 @@ public class GsonConfiguration<T> implements Configuration<T> {
     public T getValue() {
         if (temporary)
             return defaultValue;
-        else
+        else {
+            T value = provider.getRawValue(id, tClass);
+            handlers.forEach(c -> c.getValue(value));
             return provider.getRawValue(id, tClass);
+        }
     }
 
     @Override
@@ -44,7 +48,8 @@ public class GsonConfiguration<T> implements Configuration<T> {
         if (temporary)
             throw new IllegalStateException("Could not set value of temporary configuration: " + id);
         provider.setRawValue(id, value);
-        handlers.forEach(c -> c.accept(value));
+        handlers.forEach(c -> c.setValue(value));
+        consumers.forEach(c -> c.accept(value));
     }
 
     @Override
@@ -93,12 +98,26 @@ public class GsonConfiguration<T> implements Configuration<T> {
     }
 
     @Override
-    public void addHandler(Consumer<T> handler) {
+    public void addHandler(ConfigurationHandler<T> handler) {
         handlers.add(handler);
     }
 
     @Override
-    public void removeHandler(Consumer<T> handler) {
+    public void removeHandler(ConfigurationHandler<T> handler) {
         handlers.remove(handler);
+    }
+
+    @Override
+    public void addHandler(Consumer<T> handler) {
+        consumers.add(handler);
+    }
+
+    @Override
+    public void removeHandler(Consumer<T> handler) {
+        consumers.remove(handler);
+    }
+
+    public void save() {
+        handlers.forEach(ConfigurationHandler::save);
     }
 }

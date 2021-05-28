@@ -25,6 +25,10 @@ public interface Configuration<T> {
 
     T getDefaultValue();
 
+    void addHandler(ConfigurationHandler<T> handler);
+
+    void removeHandler(ConfigurationHandler<T> handler);
+
     void addHandler(Consumer<T> handler);
 
     void removeHandler(Consumer<T> handler);

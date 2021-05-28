@@ -13,7 +13,8 @@ public class FakeConfiguration<T> implements Configuration<T> {
     private final T defaultValue;
     private final Supplier<Boolean> valid;
     private T value;
-    private final ArrayList<Consumer<T>> handlers = new ArrayList<>();
+    private final ArrayList<ConfigurationHandler<T>> handlers = new ArrayList<>();
+    private final ArrayList<Consumer<T>> consumers = new ArrayList<>();
 
     public FakeConfiguration(String id, String name, String description, Class<T> valueClass, T value, Supplier<Boolean> valid) {
         this.id = id;
@@ -41,13 +42,15 @@ public class FakeConfiguration<T> implements Configuration<T> {
 
     @Override
     public T getValue() {
+        handlers.forEach(c -> c.getValue(value));
         return value;
     }
 
     @Override
     public void setValue(T value) {
         this.value = value;
-        handlers.forEach(c -> c.accept(value));
+        handlers.forEach(c -> c.setValue(value));
+        consumers.forEach(c -> c.accept(value));
     }
 
     @Override
@@ -86,12 +89,22 @@ public class FakeConfiguration<T> implements Configuration<T> {
     }
 
     @Override
-    public void addHandler(Consumer<T> handler) {
+    public void addHandler(ConfigurationHandler<T> handler) {
         handlers.add(handler);
     }
 
     @Override
-    public void removeHandler(Consumer<T> handler) {
+    public void removeHandler(ConfigurationHandler<T> handler) {
         handlers.remove(handler);
+    }
+
+    @Override
+    public void addHandler(Consumer<T> handler) {
+        consumers.add(handler);
+    }
+
+    @Override
+    public void removeHandler(Consumer<T> handler) {
+        consumers.remove(handler);
     }
 }
