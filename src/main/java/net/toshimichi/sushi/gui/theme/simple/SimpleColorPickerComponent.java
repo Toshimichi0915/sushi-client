@@ -238,6 +238,7 @@ public class SimpleColorPickerComponent extends BaseComponent {
             oldY = getY();
             oldWidth = getWidth();
             oldHeight = getHeight();
+            setColor(color);
         }
     }
 
@@ -245,6 +246,7 @@ public class SimpleColorPickerComponent extends BaseComponent {
 
 
     public void setColor(Color color) {
+        this.color = color;
         float[] hsb = getHSB(color);
         hue = hsb[0];
         saturation = hsb[1];
