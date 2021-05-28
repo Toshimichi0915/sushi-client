@@ -12,9 +12,11 @@ public class RenderUtils {
 
     public static void prepare3D() {
         glPushMatrix();
-        glPushAttrib(GL_ENABLE_BIT);
+        glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_CULL_FACE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
         double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;

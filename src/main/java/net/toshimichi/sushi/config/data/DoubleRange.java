@@ -37,4 +37,8 @@ public class DoubleRange {
     public int getDigits() {
         return digits;
     }
+
+    public DoubleRange setCurrent(double current) {
+        return new DoubleRange(current, top, bottom, step, digits);
+    }
 }

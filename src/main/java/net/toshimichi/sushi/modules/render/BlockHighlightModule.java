@@ -8,6 +8,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
+import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -22,19 +23,20 @@ public class BlockHighlightModule extends BaseModule {
 
     private final Configuration<RenderMode> renderMode;
     private final Configuration<Boolean> outline;
-    private final Configuration<Color> outlineColor;
+    private final Configuration<EspColor> outlineColor;
     private final Configuration<DoubleRange> outlineWidth;
     private final Configuration<Boolean> fill;
-    private final Configuration<Color> fillColor;
+    private final Configuration<EspColor> fillColor;
 
     public BlockHighlightModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        EspColor defaultColor = new EspColor(new Color(255, 0, 0), false, false);
         renderMode = provider.get("render mode", "Render Mode", null, RenderMode.class, RenderMode.SURFACE);
         outline = provider.get("outline", "Outline", null, Boolean.class, true);
-        outlineColor = provider.get("outline_color", "Outline Color", null, Color.class, new Color(255, 0, 0), outline::getValue, false, 0);
+        outlineColor = provider.get("outline_color", "Outline Color", null, EspColor.class, defaultColor, outline::getValue, false, 0);
         outlineWidth = provider.get("outline_width", "Outline Width", null, DoubleRange.class, new DoubleRange(1.0, 10, 0.1, 0.1, 1), outline::getValue, false, 0);
         fill = provider.get("fill", "Fill", null, Boolean.class, true);
-        fillColor = provider.get("fill_color", "Fill Color", null, Color.class, new Color(255, 0, 0), fill::getValue, false, 0);
+        fillColor = provider.get("fill_color", "Fill Color", null, EspColor.class, defaultColor, fill::getValue, false, 0);
     }
 
     @Override
@@ -58,10 +60,11 @@ public class BlockHighlightModule extends BaseModule {
         if (renderMode.getValue() != RenderMode.NONE) {
             if (renderMode.getValue() == RenderMode.FULL) GL11.glDisable(GL11.GL_DEPTH_TEST);
             if (outline.getValue()) {
-                RenderUtils.drawOutline(box, outlineColor.getValue(), outlineWidth.getValue().getCurrent());
+                RenderUtils.drawOutline(box, outlineColor.getValue().getCurrentColor(), outlineWidth.getValue().getCurrent());
             }
             if (fill.getValue()) {
-                RenderUtils.drawFilled(box, fillColor.getValue());
+                Color color = fillColor.getValue().getCurrentColor();
+                RenderUtils.drawFilled(box, fillColor.getValue().getCurrentColor());
             }
             GL11.glEnable(GL11.GL_DEPTH_TEST);
         }

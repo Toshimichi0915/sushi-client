@@ -59,6 +59,7 @@ public class SimpleConfigCategoryComponent extends BasePanelComponent<Component>
     @Override
     public void onRelocate() {
         if (System.currentTimeMillis() - lastUpdate > 10000) {
+            lastUpdate = System.currentTimeMillis();
             update();
         }
         super.onRelocate();

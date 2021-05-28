@@ -3,6 +3,7 @@ package net.toshimichi.sushi.gui.theme.simple;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
+import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.config.data.Named;
 import net.toshimichi.sushi.gui.Component;
@@ -38,6 +39,7 @@ public class SimpleTheme implements Theme {
         newFactory(Integer.class, c -> new SimpleIntComponent(constants, c));
         newFactory(Named.class, c -> new SimpleNamedComponent<>(constants, c));
         newFactory(Color.class, c -> new SimpleColorComponent(constants, c));
+        newFactory(EspColor.class, c -> new SimpleEspComponent(constants, c));
     }
 
     public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {

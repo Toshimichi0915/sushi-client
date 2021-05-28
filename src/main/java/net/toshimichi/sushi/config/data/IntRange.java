@@ -31,4 +31,8 @@ public class IntRange {
     public int getStep() {
         return step;
     }
+
+    public IntRange setCurrent(int current) {
+        return new IntRange(current, top, bottom, step);
+    }
 }

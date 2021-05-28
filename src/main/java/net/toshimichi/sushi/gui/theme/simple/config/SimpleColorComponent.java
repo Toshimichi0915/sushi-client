@@ -1,220 +1,37 @@
 package net.toshimichi.sushi.gui.theme.simple.config;
 
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.gui.MouseStatus;
-import net.toshimichi.sushi.gui.base.BaseConfigComponent;
+import net.toshimichi.sushi.gui.ConfigComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
-import net.toshimichi.sushi.utils.GuiUtils;
-import net.toshimichi.sushi.utils.TextPreview;
+import net.toshimichi.sushi.gui.theme.simple.SimpleColorPickerComponent;
 
 import java.awt.Color;
 
-import static org.lwjgl.opengl.GL11.*;
+public class SimpleColorComponent extends SimpleColorPickerComponent implements ConfigComponent<Color> {
 
-public class SimpleColorComponent extends BaseConfigComponent<Color> {
-
-    private static final int SEGMENTS = 5;
-    private static final double R = 1;
-    private static final double MARGIN_TOP = 10;
-    private static final double MARGIN_LEFT = 2;
-    private static final double MARGIN_BOTTOM = 2;
-    private static final double MARGIN_CENTER = 3;
-    private static final double MARGIN_RIGHT = 2;
-    private static final int MAIN_X = 50;
-    private static final double SUB_X = 10;
-    private static final int Y = 100;
-    private final ThemeConstants constants;
-    private double cursorX;
-    private double cursorY;
-    private float hue;
-    private float saturation;
-    private float brightness;
-    private boolean updating;
-    private double oldX;
-    private double oldY;
-    private double oldWidth;
-    private double oldHeight;
+    private final Configuration<Color> configuration;
+    private boolean ignoreUpdate;
 
     public SimpleColorComponent(ThemeConstants constants, Configuration<Color> configuration) {
-        super(configuration);
-        this.constants = constants;
-        configuration.addHandler(this::updateColor);
-    }
-
-    private float[] getHSB(Color color) {
-        return Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-    }
-
-    public void updateColor(Color color) {
-        float[] hsb = getHSB(color);
-        if (updating) return;
-        hue = hsb[0];
-        saturation = hsb[1];
-        brightness = hsb[2];
-        cursorX = getMainX() / MAIN_X * getMainWidth();
-        cursorY = getMainY() / Y * getMainHeight();
-    }
-
-    private Color getMainColor(double x, double y) {
-        float saturation = (float) x / MAIN_X;
-        float brightness = 1 - (float) y / Y;
-        return Color.getHSBColor(hue, saturation, brightness);
-    }
-
-    private Color getSubColor(double y) {
-        float hue = (float) y / Y;
-        return Color.getHSBColor(hue, 1, 1);
-    }
-
-    private double getMainX() {
-        return saturation * MAIN_X;
-    }
-
-    private double getMainY() {
-        return (1 - brightness) * Y;
-    }
-
-    private double getSubY() {
-        return hue * Y;
-    }
-
-    private double getMainStartX() {
-        return getWindowX() + MARGIN_LEFT;
-    }
-
-    private double getMainStartY() {
-        return getWindowY() + MARGIN_TOP;
-    }
-
-    private double getMainWidth() {
-        return getWidth() - MARGIN_CENTER - MARGIN_RIGHT - SUB_X;
-    }
-
-    private double getMainHeight() {
-        return getHeight() - MARGIN_TOP - MARGIN_BOTTOM;
-    }
-
-    private double getSubStartX() {
-        return getWindowX() + getWidth() - MARGIN_LEFT - SUB_X;
-    }
-
-    private double getSubStartY() {
-        return getWindowY() + MARGIN_TOP;
-    }
-
-    private double getSubWidth() {
-        return SUB_X;
-    }
-
-    private double getSubHeight() {
-        return getHeight() - MARGIN_TOP - MARGIN_BOTTOM;
-    }
-
-    private boolean isMain(double x, double y) {
-        return getMainStartX() <= x &&
-                getMainStartY() <= y &&
-                x <= getMainStartX() + getMainWidth() &&
-                y <= getMainStartY() + getMainHeight();
-    }
-
-    private boolean isSub(int x, int y) {
-        return getSubStartX() <= x &&
-                getSubStartY() <= y &&
-                x <= getSubStartX() + getSubWidth() &&
-                y <= getSubStartY() + getSubHeight();
-    }
-
-    private void drawCircle(double oX, double oY) {
-        GuiUtils.prepare2D();
-        GuiUtils.setColor(new Color(255, 255, 255));
-        glBegin(GL_LINE_LOOP);
-        for (int i = 0; i < SEGMENTS; i++) {
-            double theta = 2 * Math.PI * i / SEGMENTS;
-            double x = R * Math.cos(theta);
-            double y = R * Math.sin(theta);
-            glVertex2d(x + oX, y + oY);
-        }
-        glEnd();
-        GuiUtils.release2D();
-    }
-
-    private boolean updateColor(int x, int y) {
-        if (isMain(x, y)) {
-            cursorX = x - getMainStartX();
-            cursorY = y - getMainStartY();
-            Color color = getMainColor((x - getMainStartX()) * MAIN_X / getMainWidth(), (y - getMainStartY()) * Y / getMainHeight());
-            float[] hsb = getHSB(color);
-            updating = true;
-            getValue().setValue(Color.getHSBColor(hue, hsb[1], hsb[2]));
-            updating = false;
-            saturation = hsb[1];
-            brightness = hsb[2];
-            return true;
-        } else if (isSub(x, y)) {
-            Color color = getSubColor((y - getSubStartY()) * Y / getSubHeight());
-            float[] hsb = getHSB(color);
-            updating = true;
-            getValue().setValue(Color.getHSBColor(hsb[0], saturation, brightness));
-            updating = false;
-            hue = hsb[0];
-            return true;
-        }
-        return false;
+        super(constants, configuration.getName(), configuration.getValue());
+        this.configuration = configuration;
+        configuration.addHandler(c -> {
+            if (ignoreUpdate) return;
+            setColor(c);
+        });
     }
 
     @Override
-    public void onClick(int x, int y, ClickType type) {
-        if (!updateColor(x, y)) super.onClick(x, y, type);
-    }
-
-    @Override
-    public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
-        if (!updateColor(fromX, fromY)) super.onHold(fromX, fromY, toX, toY, type, status);
-    }
-
-    @Override
-    public void onRender() {
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
-        TextPreview preview = GuiUtils.prepareText(getValue().getName(), constants.font.getValue(), constants.textColor.getValue(), 9, true);
-        preview.draw(getWindowX() + (getWidth() - preview.getWidth()) / 2 - 1, getWindowY() + (MARGIN_TOP - preview.getHeight()) / 2 - 1);
-
-        // main
-        GuiUtils.prepare2D();
-        glShadeModel(GL_SMOOTH);
-        glBegin(GL_QUADS);
-        GuiUtils.setColor(getMainColor(0, 0));
-        glVertex2d(getMainStartX(), getMainStartY());
-        GuiUtils.setColor(getMainColor(MAIN_X, 0));
-        glVertex2d(getMainStartX() + getMainWidth(), getMainStartY());
-        GuiUtils.setColor(getMainColor(MAIN_X, Y));
-        glVertex2d(getMainStartX() + getMainWidth(), getMainStartY() + getMainHeight());
-        GuiUtils.setColor(getMainColor(0, Y));
-        glVertex2d(getMainStartX(), getMainStartY() + getMainHeight());
-        glEnd();
-        GuiUtils.release2D();
-
-        // sub
-        for (int y = 0; y < Y - 1; y++) {
-            double y1 = (double) y / Y * getSubHeight() + getSubStartY();
-            GuiUtils.drawRect(getSubStartX(), y1, getSubWidth(), getSubHeight() / Y, getSubColor(y));
+    protected void onChange(Color color) {
+        if (!configuration.getValue().equals(color)) {
+            ignoreUpdate = true;
+            configuration.setValue(color);
+            ignoreUpdate = false;
         }
-
-        // circle
-        drawCircle(cursorX + getMainStartX(), cursorY + getMainStartY());
-        drawCircle(getSubStartX() + getSubWidth() / 2, getSubY() / Y * getSubHeight() + getSubStartY());
     }
 
     @Override
-    public void onRelocate() {
-        double mainWidth = getWidth() - MARGIN_LEFT - MARGIN_CENTER - SUB_X - MARGIN_RIGHT;
-        setHeight(mainWidth + MARGIN_TOP + MARGIN_BOTTOM);
-        if (oldX != getX() || oldY != getY() || oldWidth != getWidth() || oldHeight != getHeight()) {
-            oldX = getX();
-            oldY = getY();
-            oldWidth = getWidth();
-            oldHeight = getHeight();
-            updateColor(getValue().getValue());
-        }
+    public Configuration<Color> getValue() {
+        return configuration;
     }
 }
