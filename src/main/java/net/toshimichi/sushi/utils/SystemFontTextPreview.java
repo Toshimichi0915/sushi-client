@@ -38,7 +38,7 @@ public class SystemFontTextPreview implements TextPreview {
             color = Color.getHSBColor((float) (y / 10000D + h), 1, 1);
         }
         if (shadow) {
-            renderer.drawString(text, x + 0.5F, y + 2.5F, new Color(100, 100, 100), false);
+            renderer.drawString(text, x + 0.5F, y + 2.5F, new Color(100, 100, 100, color.getAlpha()), false);
         }
         renderer.drawString(text, x, y + 2, color, false);
     }

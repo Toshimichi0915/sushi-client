@@ -27,7 +27,7 @@ public class CoordinatesComponent extends BaseHudElementComponent implements Hud
         String text = format.getValue().replace("{x}", FORMATTER.format(player.posX))
                 .replace("{y}", FORMATTER.format(player.posY))
                 .replace("{z}", FORMATTER.format(player.posZ));
-        TextPreview preview = GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, true);
+        TextPreview preview = GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue().getCurrentColor(), 10, true);
         preview.draw(getWindowX() + 1, getWindowY() + 1);
         setWidth(preview.getWidth() + 3);
         setHeight(preview.getHeight() + 4);

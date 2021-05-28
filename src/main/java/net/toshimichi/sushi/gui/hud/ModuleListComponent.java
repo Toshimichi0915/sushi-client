@@ -24,7 +24,7 @@ public class ModuleListComponent extends BaseHudElementComponent {
         double totalHeight = 0;
         for (Module module : Sushi.getProfile().getModules().getAll()) {
             if (!module.isEnabled()) continue;
-            TextPreview preview = GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true);
+            TextPreview preview = GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue().getCurrentColor(), 10, true);
             list.add(new AbstractMap.SimpleEntry<>(module, preview));
             if (totalWidth < preview.getWidth()) totalWidth = preview.getWidth();
             totalHeight += preview.getHeight() + 1;
