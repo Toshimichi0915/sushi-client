@@ -3,6 +3,7 @@ package net.toshimichi.sushi.utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.gui.Component;
 
 import java.awt.Color;
@@ -111,13 +112,17 @@ public class GuiUtils {
         glColor4f((float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, (float) color.getAlpha() / 255);
     }
 
-    public static TextPreview prepareText(String text, String font, Color color, int pts, boolean shadow) {
+    public static TextPreview prepareText(String text, String font, EspColor color, int pts, boolean shadow) {
         if (font != null) {
             SystemFontTextPreview preview = SystemFontTextPreview.newTextPreview(text, font, color, pts, shadow);
             if (preview != null) return preview;
         }
 
         return new VanillaTextPreview(text, color, pts, shadow);
+    }
+
+    public static TextPreview prepareText(String text, String font, Color color, int pts, boolean shadow) {
+        return prepareText(text, font, new EspColor(color, false, true), pts, shadow);
     }
 
     public static void drawLine(double x1, double y1, double x2, double y2, Color color, double width) {

@@ -1,9 +1,12 @@
-package net.toshimichi.sushi.gui.hud;
+package net.toshimichi.sushi.gui.hud.elements;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.gui.hud.BaseHudElementComponent;
+import net.toshimichi.sushi.gui.hud.HudConstants;
+import net.toshimichi.sushi.gui.hud.HudElementComponent;
 import net.toshimichi.sushi.utils.GuiUtils;
 import net.toshimichi.sushi.utils.TextPreview;
 
@@ -27,7 +30,7 @@ public class CoordinatesComponent extends BaseHudElementComponent implements Hud
         String text = format.getValue().replace("{x}", FORMATTER.format(player.posX))
                 .replace("{y}", FORMATTER.format(player.posY))
                 .replace("{z}", FORMATTER.format(player.posZ));
-        TextPreview preview = GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue().getCurrentColor(), 10, true);
+        TextPreview preview = GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, true);
         preview.draw(getWindowX() + 1, getWindowY() + 1);
         setWidth(preview.getWidth() + 3);
         setHeight(preview.getHeight() + 4);

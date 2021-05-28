@@ -4,6 +4,9 @@ import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
+import net.toshimichi.sushi.gui.hud.elements.CoordinatesComponent;
+import net.toshimichi.sushi.gui.hud.elements.ModuleListComponent;
+import net.toshimichi.sushi.gui.hud.elements.TpsComponent;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
 

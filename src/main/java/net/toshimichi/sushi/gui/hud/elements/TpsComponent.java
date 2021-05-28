@@ -1,7 +1,10 @@
-package net.toshimichi.sushi.gui.hud;
+package net.toshimichi.sushi.gui.hud.elements;
 
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.gui.hud.BaseHudElementComponent;
+import net.toshimichi.sushi.gui.hud.HudConstants;
+import net.toshimichi.sushi.gui.hud.HudElementComponent;
 import net.toshimichi.sushi.utils.GuiUtils;
 import net.toshimichi.sushi.utils.TextPreview;
 import net.toshimichi.sushi.utils.TpsUtils;
@@ -22,7 +25,7 @@ public class TpsComponent extends BaseHudElementComponent implements HudElementC
     @Override
     public void onRender() {
         String text = format.getValue().replace("{tps}", FORMATTER.format(TpsUtils.getTps()));
-        TextPreview preview = GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue().getCurrentColor(), 10, true);
+        TextPreview preview = GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, true);
         preview.draw(getWindowX() + 1, getWindowY() + 1);
         setWidth(preview.getWidth() + 3);
         setHeight(preview.getHeight() + 4);

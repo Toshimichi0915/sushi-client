@@ -1,7 +1,9 @@
-package net.toshimichi.sushi.gui.hud;
+package net.toshimichi.sushi.gui.hud.elements;
 
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.gui.hud.BaseHudElementComponent;
+import net.toshimichi.sushi.gui.hud.HudConstants;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.GuiUtils;
 import net.toshimichi.sushi.utils.TextPreview;
@@ -24,7 +26,7 @@ public class ModuleListComponent extends BaseHudElementComponent {
         double totalHeight = 0;
         for (Module module : Sushi.getProfile().getModules().getAll()) {
             if (!module.isEnabled()) continue;
-            TextPreview preview = GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue().getCurrentColor(), 10, true);
+            TextPreview preview = GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true);
             list.add(new AbstractMap.SimpleEntry<>(module, preview));
             if (totalWidth < preview.getWidth()) totalWidth = preview.getWidth();
             totalHeight += preview.getHeight() + 1;

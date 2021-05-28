@@ -1,5 +1,7 @@
 package net.toshimichi.sushi.utils;
 
+import net.toshimichi.sushi.config.data.EspColor;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -12,9 +14,9 @@ public class SystemFontTextPreview implements TextPreview {
     private final String text;
     private final SystemFontRenderer renderer;
     private final boolean shadow;
-    private Color color;
+    private EspColor color;
 
-    public SystemFontTextPreview(String text, SystemFontRenderer renderer, Color color, boolean shadow) {
+    public SystemFontTextPreview(String text, SystemFontRenderer renderer, EspColor color, boolean shadow) {
         this.text = text;
         this.renderer = renderer;
         this.color = color;
@@ -33,17 +35,17 @@ public class SystemFontTextPreview implements TextPreview {
 
     @Override
     public void draw(double x, double y) {
-        if (color == null) {
+        if (color.isRainbow()) {
             double h = System.currentTimeMillis() / 10000D - System.currentTimeMillis() / 10000;
-            color = Color.getHSBColor((float) (y / 10000D + h), 1, 1);
+            color = color.setColor(Color.getHSBColor((float) (y / GuiUtils.getWindowHeight() + h), 1, 1));
         }
         if (shadow) {
-            renderer.drawString(text, x + 0.5F, y + 2.5F, new Color(100, 100, 100, color.getAlpha()), false);
+            renderer.drawString(text, x + 0.5F, y + 2.5F, new Color(100, 100, 100, color.getColor().getAlpha()), false);
         }
-        renderer.drawString(text, x, y + 2, color, false);
+        renderer.drawString(text, x, y + 2, color.getCurrentColor(), false);
     }
 
-    public static SystemFontTextPreview newTextPreview(String text, String font, Color color, int pts, boolean shadow) {
+    public static SystemFontTextPreview newTextPreview(String text, String font, EspColor color, int pts, boolean shadow) {
         // load from cached fonts
         for (FontData ttf : cachedFonts) {
             if (ttf.fontName.equals(font) && ttf.size == pts) {
