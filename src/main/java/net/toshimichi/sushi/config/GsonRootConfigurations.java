@@ -47,31 +47,35 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getRawValue(JsonObject object, String id, Class<T> tClass, boolean checkDefault) {
+    private <T> T getRawValue(JsonObject object, String id, Class<T> tClass) {
         try {
             if (id.contains(".")) {
                 String key = id.split("\\.")[0];
                 JsonElement element = object.get(key);
                 if (element != null && element.isJsonObject()) {
-                    T rawValue = getRawValue(element.getAsJsonObject(), id.replaceFirst(key + "\\.", ""), tClass, false);
+                    T rawValue = getRawValue(element.getAsJsonObject(), id.replaceFirst(key + "\\.", ""), tClass);
                     if (rawValue != null) return rawValue;
                 }
             } else {
                 JsonElement element = object.get(id);
-                if (element != null) return gson.fromJson(object.get(id), tClass);
+                if (element != null) {
+                    return gson.fromJson(object.get(id), tClass);
+                }
             }
         } catch (JsonParseException e) {
             // use default
         }
-        if (checkDefault) {
-            Object result = defaults.get(id);
-            if (result != null && result.getClass().isAssignableFrom(tClass)) return (T) result;
-        }
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> T getRawValue(String id, Class<T> tClass) {
-        return getRawValue(root, id, tClass, true);
+        T rawValue = getRawValue(root, id, tClass);
+        if (rawValue != null) return rawValue;
+
+        Object result = defaults.get(id);
+        if (result != null && result.getClass().isAssignableFrom(tClass)) return (T) result;
+        else return null;
     }
 
     protected void setRawValue(String id, Object o) {
