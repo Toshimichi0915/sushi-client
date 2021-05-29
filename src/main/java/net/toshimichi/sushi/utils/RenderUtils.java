@@ -3,6 +3,7 @@ package net.toshimichi.sushi.utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 
 import java.awt.Color;
 
@@ -17,17 +18,22 @@ public class RenderUtils {
         glEnable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
-        double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
-        double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
-        double dz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
-        glTranslated(-dx, -dy, -dz);
+        Vec3d interpolated = getInterpolatedPos();
+        glTranslated(-interpolated.x, -interpolated.y, -interpolated.z);
     }
 
     public static void release3D() {
         glPopMatrix();
         glPopAttrib();
+    }
+
+    public static Vec3d getInterpolatedPos() {
+        float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
+        double y = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
+        double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
+        return new Vec3d(x, y, z);
     }
 
     public static void drawOutline(AxisAlignedBB box, Color color, double width) {
