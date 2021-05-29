@@ -35,6 +35,9 @@ public class StorageEspModule extends BaseModule {
     @Config(id = "fill", name = "Fill")
     private Boolean fill = true;
 
+    @Config(id = "tracers", name = "tracers")
+    private Boolean tracers = true;
+
     @Config(id = "chest", name = "Chest")
     private Boolean chest = true;
 
@@ -91,6 +94,7 @@ public class StorageEspModule extends BaseModule {
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         Vec3d interpolated = RenderUtils.getInterpolatedPos();
         frustum.setPosition(interpolated.x, interpolated.y, interpolated.z);
+        Vec3d camera = RenderUtils.getCameraPos();
         for (TileEntity tileEntity : getWorld().loadedTileEntityList) {
             Color color = getColor(tileEntity);
             if (color == null) continue;
@@ -110,6 +114,9 @@ public class StorageEspModule extends BaseModule {
                 rendered.add(chest.adjacentChestZNeg);
             }
             box = box.grow(0.002, 0.002, 0.002);
+            if (tracers) {
+                RenderUtils.drawLine(camera, box.getCenter(), color, 1);
+            }
             if (!frustum.isBoundingBoxInFrustum(box)) continue;
             if (outline) {
                 RenderUtils.drawOutline(box, new Color(color.getRGB()), 1);

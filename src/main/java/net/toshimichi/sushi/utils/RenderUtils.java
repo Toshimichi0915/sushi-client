@@ -2,12 +2,14 @@ package net.toshimichi.sushi.utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.Color;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 
 public class RenderUtils {
 
@@ -17,6 +19,7 @@ public class RenderUtils {
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_CULL_FACE);
         glEnable(GL_BLEND);
+        glEnable(GL_DEPTH_CLAMP);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         Vec3d interpolated = getInterpolatedPos();
         glTranslated(-interpolated.x, -interpolated.y, -interpolated.z);
@@ -34,6 +37,21 @@ public class RenderUtils {
         double y = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
         double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
         return new Vec3d(x, y, z);
+    }
+
+    public static Vec3d getCameraPos() {
+        return getInterpolatedPos().add(ActiveRenderInfo.getCameraPosition());
+    }
+
+    public static void drawLine(Vec3d from, Vec3d to, Color color, double width) {
+        glLineWidth((float) width);
+        GuiUtils.setColor(color);
+        prepare3D();
+        glBegin(GL_LINES);
+        glVertex3d(from.x, from.y, from.z);
+        glVertex3d(to.x, to.y, to.z);
+        glEnd();
+        release3D();
     }
 
     public static void drawOutline(AxisAlignedBB box, Color color, double width) {
