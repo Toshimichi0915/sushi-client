@@ -3,9 +3,7 @@ package net.toshimichi.sushi.utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.gui.Component;
 

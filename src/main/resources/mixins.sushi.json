@@ -6,6 +6,9 @@
   "mixins": [
     "AccessorMinecraft",
     "AccessorTimer",
+    "MixinBlock",
+    "MixinBlockFluidRenderer",
+    "MixinBlockModelRenderer",
     "MixinEntity",
     "MixinEntityLivingBase",
     "MixinEntityPlayer",
@@ -17,6 +20,8 @@
     "MixinMinecraft",
     "MixinMovementInputFromOptions",
     "MixinNetworkManager",
+    "MixinStateImplementation",
+    "MixinTileEntityRendererDispatcher",
     "MixinWorld"
   ]
 }
