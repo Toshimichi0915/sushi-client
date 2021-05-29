@@ -130,7 +130,7 @@ public class StorageEspModule extends BaseModule {
 
     @Override
     public String getDefaultName() {
-        return "Storage ESP";
+        return "StorageESP";
     }
 
     @Override
