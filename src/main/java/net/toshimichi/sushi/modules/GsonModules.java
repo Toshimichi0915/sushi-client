@@ -79,7 +79,7 @@ public class GsonModules implements Modules {
         addModuleFactory("block_highlight", BlockHighlightModule::new, true);
         addModuleFactory("storage_esp", StorageEspModule::new, true);
         addModuleFactory("no_entity_trace", NoEntityTraceModule::new, true);
-        addModuleFactory("xray", XrayModule::new, true);
+        addModuleFactory("xray", XrayModule::new, false);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
