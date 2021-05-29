@@ -3,6 +3,7 @@ package net.toshimichi.sushi.modules.world;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.item.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.toshimichi.sushi.config.Config;
@@ -36,6 +37,9 @@ public class NoEntityTraceModule extends BaseModule {
 
     @Config(id = "tile_entity", name = "Tile Entity")
     private Boolean tileEntity = true;
+
+    @Config(id = "exclude_crystal", name = "Exclude Crystal")
+    private Boolean excludeCrystal = true;
 
     public NoEntityTraceModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -75,7 +79,11 @@ public class NoEntityTraceModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onEntityTrace(EntityTraceEvent e) {
         if (!shouldCancel()) return;
-        e.getEntities().clear();
+        if (excludeCrystal) {
+            e.getEntities().removeIf(it -> !(it instanceof EntityEnderCrystal));
+        } else {
+            e.getEntities().clear();
+        }
     }
 
     @Override
