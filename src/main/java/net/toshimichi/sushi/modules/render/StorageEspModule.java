@@ -35,7 +35,7 @@ public class StorageEspModule extends BaseModule {
     @Config(id = "fill", name = "Fill")
     private Boolean fill = true;
 
-    @Config(id = "tracers", name = "tracers")
+    @Config(id = "tracers", name = "Tracers")
     private Boolean tracers = true;
 
     @Config(id = "chest", name = "Chest")
