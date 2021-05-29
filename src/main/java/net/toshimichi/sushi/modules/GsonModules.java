@@ -19,6 +19,7 @@ import net.toshimichi.sushi.modules.player.*;
 import net.toshimichi.sushi.modules.render.BlockHighlightModule;
 import net.toshimichi.sushi.modules.render.FullBrightModule;
 import net.toshimichi.sushi.modules.render.StorageEspModule;
+import net.toshimichi.sushi.modules.world.NoEntityTraceModule;
 import net.toshimichi.sushi.modules.world.ScaffoldModule;
 import org.apache.commons.io.FileUtils;
 
@@ -76,6 +77,7 @@ public class GsonModules implements Modules {
         addModuleFactory("anti_error_kick", AntiErrorKickModule::new, true);
         addModuleFactory("block_highlight", BlockHighlightModule::new, true);
         addModuleFactory("storage_esp", StorageEspModule::new, true);
+        addModuleFactory("no_entity_trace", NoEntityTraceModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

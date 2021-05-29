@@ -10,6 +10,7 @@
     "MixinEntityLivingBase",
     "MixinEntityPlayer",
     "MixinEntityPlayerSP",
+    "MixinEntityRenderer",
     "MixinGameSettings",
     "MixinGuiChat",
     "MixinGuiIngameForge",
