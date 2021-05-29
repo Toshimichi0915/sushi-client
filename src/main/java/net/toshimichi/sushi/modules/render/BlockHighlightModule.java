@@ -53,6 +53,7 @@ public class BlockHighlightModule extends BaseModule {
     public void onBlockHighlight(BlockHighlightEvent event) {
         event.setCancelled(true);
         RayTraceResult result = event.getTarget();
+        if (result.typeOfHit != RayTraceResult.Type.BLOCK) return;
         BlockPos pos = result.getBlockPos();
         IBlockState state = getWorld().getBlockState(pos);
         if (state.getMaterial() == Material.AIR) return;
