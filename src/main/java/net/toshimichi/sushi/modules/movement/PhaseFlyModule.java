@@ -26,6 +26,7 @@ public class PhaseFlyModule extends BaseModule {
     private final Configuration<DoubleRange> vertical;
     private final Configuration<Boolean> auto;
     private final Configuration<Boolean> tpsSync;
+    private final Configuration<Boolean> capAt20;
     private int stage;
 
     // for compatibility issue
@@ -38,6 +39,7 @@ public class PhaseFlyModule extends BaseModule {
         vertical = provider.get("vertical_speed", "Vertical Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
         auto = provider.get("auto", "Auto", null, Boolean.class, false);
         tpsSync = provider.get("tps_sync", "TPS Sync", null, Boolean.class, false);
+        capAt20 = provider.get("cap_at_20", "Cap At 20", null, Boolean.class, false, tpsSync::getValue, false, 0);
     }
 
     @Override
@@ -71,9 +73,11 @@ public class PhaseFlyModule extends BaseModule {
         float moveStrafe = (float) (inputs.z * horizontalSpeed);
 
         if (tpsSync.getValue()) {
-            moveForward *= TpsUtils.getTps() / 20;
-            moveStrafe *= TpsUtils.getTps() / 20;
-            moveUpward *= TpsUtils.getTps() / 20;
+            double tps = TpsUtils.getTps();
+            if (capAt20.getValue()) tps = Math.max(20, tps);
+            moveForward *= tps / 20;
+            moveStrafe *= tps / 20;
+            moveUpward *= tps / 20;
         }
 
         Vec2f vec = MovementUtils.toWorld(new Vec2f(moveForward, moveStrafe), player.rotationYaw);
