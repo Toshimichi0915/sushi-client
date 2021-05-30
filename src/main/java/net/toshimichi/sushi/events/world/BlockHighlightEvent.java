@@ -3,10 +3,11 @@ package net.toshimichi.sushi.events.world;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
 import net.toshimichi.sushi.events.CancellableEvent;
 import net.toshimichi.sushi.events.EventTiming;
 
-public class BlockHighlightEvent extends CancellableEvent {
+public class BlockHighlightEvent extends CancellableEvent implements WorldEvent {
 
     private final RenderGlobal context;
     private final EntityPlayer player;
@@ -41,5 +42,10 @@ public class BlockHighlightEvent extends CancellableEvent {
 
     public float getPartialTicks() {
         return partialTicks;
+    }
+
+    @Override
+    public World getWorld() {
+        return player.world;
     }
 }

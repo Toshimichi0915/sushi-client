@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.modules.world;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -9,12 +10,13 @@ import net.toshimichi.sushi.utils.BlockVisibility;
 import net.toshimichi.sushi.utils.XrayUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class XrayModule extends BaseModule {
 
     @Config(id = "blocks", name = "Blocks")
-    private List<Block> blocks = new ArrayList<>();
+    private List<Block> blocks = new ArrayList<>(Arrays.asList(Blocks.DIAMOND_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE, Blocks.IRON_ORE, Blocks.COAL_ORE));
 
     public XrayModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

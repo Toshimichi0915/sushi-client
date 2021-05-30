@@ -104,6 +104,7 @@ public class SushiMod {
         MinecraftForge.EVENT_BUS.register(new ClientChatHandler());
         MinecraftForge.EVENT_BUS.register(new WorldRenderHandler());
         MinecraftForge.EVENT_BUS.register(new DrawBlockHighlightHandler());
+        MinecraftForge.EVENT_BUS.register(new ChunkHandler());
         EventHandlers.register(new KeyReleaseHandler());
         EventHandlers.register(new KeybindHandler());
         EventHandlers.register(new ComponentMouseHandler());

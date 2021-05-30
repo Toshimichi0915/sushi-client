@@ -8,7 +8,6 @@ import net.toshimichi.sushi.events.client.ExceptionCatchEvent;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -16,9 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(NetworkManager.class)
 public abstract class MixinNetworkManager {
-
-    @Shadow
-    public abstract void sendPacket(Packet<?> packetIn);
 
     @ModifyVariable(at = @At(value = "HEAD", ordinal = 0), method = "sendPacket(Lnet/minecraft/network/Packet;)V")
     public Packet<?> onModifySendPacket(Packet<?> packet) {

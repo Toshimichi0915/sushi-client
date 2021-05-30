@@ -1,10 +1,12 @@
 package net.toshimichi.sushi.utils;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class XrayUtils {
 
@@ -38,5 +40,9 @@ public class XrayUtils {
 
     public static boolean isEnabled() {
         return enabled;
+    }
+
+    public static Map<Block, BlockVisibility> getAll() {
+        return ImmutableMap.copyOf(visibilityMap);
     }
 }
