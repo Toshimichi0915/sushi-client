@@ -41,7 +41,7 @@ public class MethodEventAdapter implements EventAdapter<Event> {
             if (timings.contains(event.getTiming()))
                 method.invoke(obj, event);
         } catch (InvocationTargetException e) {
-            e.getTargetException().printStackTrace();
+            new RuntimeException("An exception occurred during the execution of " + method, e.getTargetException()).printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
