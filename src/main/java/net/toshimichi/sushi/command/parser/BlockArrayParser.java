@@ -1,23 +1,26 @@
 package net.toshimichi.sushi.command.parser;
 
-import net.minecraft.block.Block;
 import net.toshimichi.sushi.command.ParseException;
+import net.toshimichi.sushi.config.data.BlockName;
 
 import java.util.Stack;
 
-public class BlockArrayParser implements TypeParser<String[]> {
+public class BlockArrayParser implements TypeParser<BlockName[]> {
 
     @Override
-    public String[] parse(int index, Stack<String> args) throws ParseException {
+    public BlockName[] parse(int index, Stack<String> args) throws ParseException {
         if (args.isEmpty())
             throw new ParseException("Missing list at index " + index);
         String text = args.pop();
         String[] split = text.split(",");
-        for (String s : split) {
-            if (Block.getBlockFromName(s) == null)
-                throw new ParseException(s + " is not a valid block name");
+        BlockName[] result = new BlockName[split.length];
+        for (int i = 0; i < split.length; i++) {
+            BlockName name = BlockName.fromName(split[i]);
+            if (name == null)
+                throw new ParseException(split[i] + " is not a valid block name");
+            result[i] = name;
         }
-        return split;
+        return result;
     }
 
     @Override
@@ -26,7 +29,7 @@ public class BlockArrayParser implements TypeParser<String[]> {
     }
 
     @Override
-    public Class<String[]> getType() {
-        return String[].class;
+    public Class<BlockName[]> getType() {
+        return BlockName[].class;
     }
 }

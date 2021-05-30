@@ -5,6 +5,7 @@ import net.minecraft.init.Blocks;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.config.data.BlockName;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.BlockVisibility;
 import net.toshimichi.sushi.utils.XrayUtils;
@@ -13,10 +14,10 @@ import java.util.Arrays;
 
 public class XrayModule extends BaseModule {
 
-    private Block[] init = {Blocks.DIAMOND_ORE, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE, Blocks.IRON_ORE, Blocks.COAL_ORE};
+    private static final Block[] INIT_VALUES = {Blocks.DIAMOND_ORE, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE, Blocks.IRON_ORE, Blocks.COAL_ORE};
 
     @Config(id = "blocks", name = "Blocks")
-    private String[] blocks = Arrays.stream(init).map(it -> it.getRegistryName().getPath()).toArray(String[]::new);
+    private BlockName[] blocks = Arrays.stream(INIT_VALUES).map(BlockName::new).toArray(BlockName[]::new);
 
     public XrayModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -26,7 +27,7 @@ public class XrayModule extends BaseModule {
     @Override
     public void onEnable() {
         for (Block block : Block.REGISTRY) {
-            if (!Arrays.asList(blocks).contains(block.getRegistryName().getPath())) {
+            if (!Arrays.asList(blocks).contains(new BlockName(block))) {
                 XrayUtils.setBlockVisibility(block, BlockVisibility.INVISIBLE);
             }
         }
