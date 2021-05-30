@@ -9,14 +9,14 @@ import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.BlockVisibility;
 import net.toshimichi.sushi.utils.XrayUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class XrayModule extends BaseModule {
 
+    private Block[] init = {Blocks.DIAMOND_ORE, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE, Blocks.IRON_ORE, Blocks.COAL_ORE};
+
     @Config(id = "blocks", name = "Blocks")
-    private List<Block> blocks = new ArrayList<>(Arrays.asList(Blocks.DIAMOND_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE, Blocks.IRON_ORE, Blocks.COAL_ORE));
+    private String[] blocks = Arrays.stream(init).map(it -> it.getRegistryName().getPath()).toArray(String[]::new);
 
     public XrayModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -26,7 +26,7 @@ public class XrayModule extends BaseModule {
     @Override
     public void onEnable() {
         for (Block block : Block.REGISTRY) {
-            if (blocks.contains(block)) {
+            if (!Arrays.asList(blocks).contains(block.getRegistryName().getPath())) {
                 XrayUtils.setBlockVisibility(block, BlockVisibility.INVISIBLE);
             }
         }

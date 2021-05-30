@@ -22,6 +22,7 @@ public class Commands {
         addTypeParser(new BooleanParser());
         addTypeParser(new MessageHandlerParser());
         addTypeParser(new ModuleParser());
+        addTypeParser(new BlockArrayParser());
     }
 
     public static List<Command> getCommands() {
@@ -30,6 +31,14 @@ public class Commands {
 
     public static Set<TypeParser<?>> getTypeParsers() {
         return new HashSet<>(parsers);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> TypeParser<T> findParser(Class<T> c) throws ParseException {
+        return (TypeParser<T>) getTypeParsers().stream()
+                .filter(p -> c.isAssignableFrom(p.getType()))
+                .min(Comparator.comparingInt(TypeParser::getPriority))
+                .orElseThrow(() -> new ParseException(TypeParser.UNMODIFIABLE_ERROR));
     }
 
     public static void register(Object obj) {

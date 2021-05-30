@@ -5,7 +5,10 @@ import net.toshimichi.sushi.command.parser.TypeParser;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.modules.Module;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
 
 public class SetCommand extends BaseCommand {
 
@@ -25,14 +28,6 @@ public class SetCommand extends BaseCommand {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> TypeParser<T> findParser(Class<T> c) throws ParseException {
-        return (TypeParser<T>) Commands.getTypeParsers().stream()
-                .filter(p -> c.isAssignableFrom(p.getType()))
-                .min(Comparator.comparingInt(TypeParser::getPriority))
-                .orElseThrow(() -> new ParseException(TypeParser.UNMODIFIABLE_ERROR));
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     protected void executeDefault(MessageHandler out, List<String> args, List<String> original) {
         try {
@@ -40,13 +35,13 @@ public class SetCommand extends BaseCommand {
             ArrayList<String> reverse = new ArrayList<>(args);
             Collections.reverse(reverse);
             stack.addAll(reverse);
-            Module module = findParser(Module.class).parse(original.size() - stack.size(), stack);
+            Module module = Commands.findParser(Module.class).parse(original.size() - stack.size(), stack);
             if (stack.isEmpty())
                 throw new ParseException("A configuration name/id was missing at index " + original.size());
             String key = stack.pop();
             for (Configuration<?> conf : module.getConfigurations().getAll(true)) {
                 if (!conf.getId().equalsIgnoreCase(key) && !conf.getName().equalsIgnoreCase(key)) continue;
-                Object value = ((TypeParser<Object>) findParser(conf.getValueClass())).parse(original.size(), stack, conf.getValue());
+                Object value = ((TypeParser<Object>) Commands.findParser(conf.getValueClass())).parse(original.size(), stack, conf.getValue());
                 ((Configuration<Object>) conf).setValue(value);
                 out.send("Changed configuration " + conf.getName(), LogLevel.INFO);
                 return;

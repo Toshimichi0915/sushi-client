@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Block.class)
 public class MixinBlock {
 
-    @Inject(at = @At("HEAD"), method = "getLightOpacity(Lnet/minecraft/block/state/IBlockState;)I", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "getLightValue(Lnet/minecraft/block/state/IBlockState;)I", cancellable = true)
     public void getLightValue(IBlockState state, CallbackInfoReturnable<Integer> cir) {
-        if (XrayUtils.getBlockVisibility(state.getBlock()) == BlockVisibility.INVISIBLE) cir.setReturnValue(0);
+        if (XrayUtils.getBlockVisibility(state.getBlock()) == BlockVisibility.VISIBLE) cir.setReturnValue(15);
     }
 }
