@@ -2,6 +2,7 @@ package net.toshimichi.sushi.modules.combat;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.math.BlockPos;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
@@ -39,14 +40,9 @@ public class AntiPistonAuraModule extends BaseModule {
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
         if (running) return;
-        List<PistonAuraAttack> prev = attacks;
         attacks = PistonAuraUtils.find(getPlayer(), getPlayer());
-        attacks.removeIf(it -> !it.isCrystalPlaced() || !it.isPistonActivated());
-        root:
-        for (PistonAuraAttack attack : prev) {
-            for (PistonAuraAttack test : attacks) {
-                if (attack.getCrystal().equals(test.getCrystal())) continue root;
-            }
+        attacks.removeIf(it -> it.getCrystal() == null);
+        for (PistonAuraAttack attack : attacks) {
             BlockPos pos1 = attack.getCrystalPos();
             BlockPos pos2 = attack.getPistonPos();
             BlockPlaceInfo info1 = BlockUtils.findBlockPlaceInfo(getWorld(), pos1);
@@ -55,6 +51,10 @@ public class AntiPistonAuraModule extends BaseModule {
             if (info1 != null) placed.add(info1);
             if (info2 != null) placed.add(info2);
             if (placed.isEmpty()) return;
+            PositionUtils.desync(DesyncMode.LOOK);
+            PositionUtils.lookAt(attack.getCrystal().getPositionVector(), DesyncMode.LOOK);
+            PositionUtils.pop();
+            getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal()));
             TaskExecutor.newTaskChain()
                     .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
