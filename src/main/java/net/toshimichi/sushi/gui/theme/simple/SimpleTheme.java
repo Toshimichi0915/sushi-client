@@ -39,7 +39,7 @@ public class SimpleTheme implements Theme {
         newFactory(Integer.class, c -> new SimpleIntComponent(constants, c));
         newFactory(Named.class, c -> new SimpleNamedComponent<>(constants, c));
         newFactory(Color.class, c -> new SimpleColorComponent(constants, c));
-        newFactory(EspColor.class, c -> new SimpleEspComponent(constants, c));
+        newFactory(EspColor.class, c -> new SimpleEspColorComponent(constants, c));
     }
 
     public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {

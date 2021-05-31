@@ -15,7 +15,7 @@ import net.toshimichi.sushi.utils.GuiUtils;
 
 import java.awt.Color;
 
-public class SimpleEspComponent extends BasePanelComponent<Component> implements ConfigComponent<EspColor> {
+public class SimpleEspColorComponent extends BasePanelComponent<Component> implements ConfigComponent<EspColor> {
 
     private final ThemeConstants constants;
     private final Configuration<EspColor> configuration;
@@ -28,11 +28,11 @@ public class SimpleEspComponent extends BasePanelComponent<Component> implements
     private final SimpleBooleanComponent alphaEnabledComponent;
     private final SimpleIntRangeComponent alphaComponent;
 
-    public SimpleEspComponent(ThemeConstants constants, Configuration<EspColor> c) {
+    public SimpleEspColorComponent(ThemeConstants constants, Configuration<EspColor> c) {
         this.constants = constants;
         this.configuration = c;
         EspColor espColor = c.getValue();
-        this.color = new FakeConfiguration<>("color", c.getName() + " Color", null, Color.class, espColor.getColor());
+        this.color = new FakeConfiguration<>("color", c.getName(), null, Color.class, espColor.getColor());
         this.rainbow = new FakeConfiguration<>("rainbow", "Rainbow", null, Boolean.class, espColor.isRainbow());
         this.alphaEnabled = new FakeConfiguration<>("alpha_enabled", "Alpha Enabled", null, Boolean.class, espColor.isAlphaEnabled());
         this.alpha = new FakeConfiguration<>("alpha", "Alpha", null, IntRange.class, new IntRange(espColor.getColor().getAlpha(), 255, 0, 1));
