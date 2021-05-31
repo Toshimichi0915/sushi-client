@@ -29,7 +29,8 @@ public class PistonAuraUtils {
         Block bedrock = Block.getBlockById(7);
         Block obsidian = Block.getBlockById(49);
         Block piston = Block.getBlockById(33);
-        Block pistonHead = Block.getBlockById(36);
+        Block pistonHead = Block.getBlockById(34);
+        Block pistonHead2 = Block.getBlockById(36);
         Block stickyPiston = Block.getBlockById(29);
         Block redstone = Block.getBlockById(152);
 
@@ -61,7 +62,7 @@ public class PistonAuraUtils {
             EnumFacing opposite = facing.getOpposite();
             BlockPos airPos = pos.offset(opposite);
             BlockPos pistonPos = airPos.offset(opposite);
-            BlockState state1 = getBlockState(player, airPos, pistonHead);
+            BlockState state1 = getBlockState(player, airPos, pistonHead, pistonHead2);
             BlockState state2 = getBlockState(player, pistonPos, piston, stickyPiston);
             BlockState state3 = BlockState.UNREACHABLE;
             for (EnumFacing facing1 : EnumFacing.values()) {

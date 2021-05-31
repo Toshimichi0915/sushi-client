@@ -82,6 +82,7 @@ public class GsonModules implements Modules {
         addModuleFactory("no_entity_trace", NoEntityTraceModule::new, true);
         addModuleFactory("xray", XrayModule::new, true);
         addModuleFactory("search", SearchModule::new, true);
+        addModuleFactory("anti_piston_aura", AntiPistonAuraModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
