@@ -1,6 +1,5 @@
 package net.toshimichi.sushi.modules.world;
 
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -10,10 +9,14 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.task.forge.TaskExecutor;
+import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
 import net.toshimichi.sushi.utils.player.DesyncMode;
-import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
+import net.toshimichi.sushi.utils.world.BlockPlaceUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
+
+import java.util.List;
 
 public class ScaffoldModule extends BaseModule {
 
@@ -42,23 +45,11 @@ public class ScaffoldModule extends BaseModule {
     public void onClientTick(ClientTickEvent e) {
         Vec3d floor = getPlayer().getPositionVector().add(0, -1, 0);
         BlockPos floorPos = BlockUtils.toBlockPos(floor);
-        BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), floorPos);
-        if (info == null && BlockUtils.isAir(getWorld(), floorPos)) {
-            for (EnumFacing facing : EnumFacing.values()) {
-                BlockPlaceInfo sub = BlockUtils.findBlockPlaceInfo(getWorld(), floorPos.offset(facing));
-                if (sub == null) continue;
-                PositionUtils.desync(DesyncMode.LOOK);
-                PositionUtils.lookAt(sub, DesyncMode.LOOK);
-                BlockUtils.place(sub);
-                PositionUtils.pop();
-                break;
-            }
-        } else if (info != null) {
-            PositionUtils.desync(DesyncMode.LOOK);
-            PositionUtils.lookAt(info, DesyncMode.LOOK);
-            BlockUtils.place(info);
-            PositionUtils.pop();
-        }
+        List<BlockPlaceInfo> tasks = BlockPlaceUtils.search(getWorld(), floorPos, 3);
+        TaskExecutor.newTaskChain()
+                .supply(() -> tasks)
+                .then(new BlockPlaceTask(DesyncMode.LOOK))
+                .execute(true);
     }
 
     @Override

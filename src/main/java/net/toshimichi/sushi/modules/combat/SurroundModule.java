@@ -3,7 +3,6 @@ package net.toshimichi.sushi.modules.combat;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
@@ -16,9 +15,8 @@ import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
-import net.toshimichi.sushi.utils.world.BlockFace;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
-import net.toshimichi.sushi.utils.world.BlockUtils;
+import net.toshimichi.sushi.utils.world.BlockPlaceUtils;
 
 import java.util.ArrayList;
 
@@ -57,28 +55,17 @@ public class SurroundModule extends BaseModule {
         if (disableOnJump.getValue() && getPlayer().movementInput.jump || disableAfter.getValue()) {
             setEnabled(false);
         }
-        ArrayList<BlockPlaceInfo> toBePlaced = new ArrayList<>();
+        ArrayList<BlockPlaceInfo> placeList = new ArrayList<>();
         for (EnumFacing facing : EnumFacing.values()) {
-            BlockPos neighbor = pos.offset(facing);
-            BlockPlaceInfo neighborFace = BlockUtils.findBlockPlaceInfo(getWorld(), neighbor);
-            if (neighborFace == null) {
-                BlockPos under = neighbor.offset(EnumFacing.DOWN);
-                BlockPlaceInfo underFace = BlockUtils.findBlockPlaceInfo(getWorld(), under);
-                if (underFace == null) continue;
-                toBePlaced.add(underFace);
-                toBePlaced.add(new BlockPlaceInfo(neighbor, new BlockFace(new Vec3d(0.5, 1, 0.5), EnumFacing.UP)));
-            } else {
-                toBePlaced.add(neighborFace);
-            }
+            if (facing == EnumFacing.UP) continue;
+            placeList.addAll(BlockPlaceUtils.search(getWorld(), pos.offset(facing), 3));
         }
-        if (toBePlaced.isEmpty()) return;
-
         running = true;
         TaskExecutor.newTaskChain()
                 .supply(() -> Item.getItemById(49))
                 .then(new ItemSwitchTask(null, true))
                 .abortIf(found -> !found)
-                .supply(() -> toBePlaced)
+                .supply(() -> placeList)
                 .then(new BlockPlaceTask(DesyncMode.LOOK))
                 .then(() -> running = false)
                 .execute(true);
