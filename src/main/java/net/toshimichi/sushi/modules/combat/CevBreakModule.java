@@ -61,7 +61,7 @@ public class CevBreakModule extends BaseModule {
                     .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
                     .then(() -> BlockUtils.place(info))
-                    .execute(true);
+                    .execute();
             BlockUtils.place(info);
         } else if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
@@ -70,7 +70,7 @@ public class CevBreakModule extends BaseModule {
                     .then(() -> {
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getObsidianPos(), EnumFacing.DOWN, EnumHand.MAIN_HAND,
                                 0.5F, 0, 0.5F));
-                    }).execute(true);
+                    }).execute();
         } else {
             if (!attack.getObsidianPos().equals(breakingBlock)) {
                 breakingBlock = attack.getObsidianPos();
@@ -82,13 +82,13 @@ public class CevBreakModule extends BaseModule {
                         .supply(() -> Items.DIAMOND_PICKAXE)
                         .then(new ItemSwitchTask(null, true))
                         .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN)))
-                        .execute(true);
+                        .execute();
             } else {
                 TaskExecutor.newTaskChain()
                         .supply(() -> Items.DIAMOND_PICKAXE)
                         .then(new ItemSwitchTask(null, true))
                         .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN)))
-                        .execute(true);
+                        .execute();
             }
         }
     }

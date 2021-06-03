@@ -217,7 +217,7 @@ public class CrystalAuraModule extends BaseModule {
                     getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0), EnumFacing.DOWN, EnumHand.MAIN_HAND,
                             0.5F, 0, 0.5F));
                 })
-                .execute(true);
+                .execute();
     }
 
     @Override

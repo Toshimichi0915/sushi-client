@@ -1,75 +1,46 @@
 package net.toshimichi.sushi.task;
 
 import net.toshimichi.sushi.task.tasks.DelayTask;
+import net.toshimichi.sushi.task.tasks.LastTask;
 
 public interface TaskChain<I> {
 
-    <R> TaskChain<R> then(boolean delay, TaskAdapter<? super I, R> task);
+    <R> TaskChain<R> then(TaskAdapter<? super I, R> task);
 
-    <R> TaskChain<R> fail(boolean delay, TaskAdapter<? super Exception, R> task);
+    <R> TaskChain<R> fail(TaskAdapter<? super Exception, R> task);
 
-    TaskChain<I> abortIf(boolean delay, TaskAdapter<? super I, Boolean> task);
+    TaskChain<I> last(TaskAdapter<? super I, I> task);
 
-    void execute(boolean instant);
+    TaskChain<I> abortIf(TaskAdapter<? super I, Boolean> task);
 
-    default <R> TaskChain<R> then(TaskAdapter<? super I, R> task) {
-        return then(false, task);
-    }
-
-    default <R> TaskChain<R> fail(TaskAdapter<? super Exception, R> task) {
-        return fail(false, task);
-    }
-
-    default TaskChain<I> abortIf(TaskAdapter<? super I, Boolean> task) {
-        return abortIf(false, task);
-    }
-
-    default TaskChain<Object> then(boolean delay, Task task) {
-        return then(delay, new FunctionalTask(task));
-    }
-
-    default TaskChain<Object> consume(boolean delay, ConsumerTask<I> task) {
-        return then(delay, new FunctionalConsumerTask<>(task));
-    }
-
-    default <R> TaskChain<R> supply(boolean delay, SupplierTask<R> task) {
-        return then(delay, new FunctionalSupplierTask<>(task));
-    }
-
-    default <R> TaskChain<R> supply(boolean delay, PipeTask<I, R> task) {
-        return then(delay, new FunctionalPipeTask<>(task));
-    }
-
-    default TaskChain<Object> fail(boolean delay, ConsumerTask<? super Exception> task) {
-        return fail(delay, new FunctionalConsumerTask<>(task));
-    }
-
-    default TaskChain<I> abortIf(boolean delay, PipeTask<? super I, Boolean> task) {
-        return abortIf(delay, new FunctionalPipeTask<>(task));
-    }
+    void execute();
 
     default TaskChain<Object> then(Task task) {
-        return then(false, task);
+        return then(new FunctionalTask(task));
     }
 
     default TaskChain<Object> consume(ConsumerTask<I> task) {
-        return consume(false, task);
+        return then(new FunctionalConsumerTask<>(task));
     }
 
     default <R> TaskChain<R> supply(SupplierTask<R> task) {
-        return supply(false, task);
+        return then(new FunctionalSupplierTask<>(task));
     }
 
     default <R> TaskChain<R> supply(PipeTask<I, R> task) {
-        return supply(false, task);
+        return then(new FunctionalPipeTask<>(task));
     }
 
-    default <R> TaskChain<R> fail(PipeTask<? super Exception, R> task) {
-        return fail(false, new FunctionalPipeTask<>(task));
+    default TaskChain<Object> fail(ConsumerTask<? super Exception> task) {
+        return fail(new FunctionalConsumerTask<>(task));
+    }
+
+    default TaskChain<I> last(Task task) {
+        return last(new LastTask<>(task));
     }
 
     default TaskChain<I> abortIf(PipeTask<? super I, Boolean> task) {
-        return abortIf(false, new FunctionalPipeTask<>(task));
+        return abortIf(new FunctionalPipeTask<>(task));
     }
 
     default TaskChain<I> delay(int delay) {

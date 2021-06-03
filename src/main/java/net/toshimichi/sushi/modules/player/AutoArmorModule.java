@@ -129,8 +129,8 @@ public class AutoArmorModule extends BaseModule {
             if (getPlayer().inventory.getStackInSlot(armorSlot).isEmpty()) {
                 TaskExecutor.newTaskChain()
                         .then(() -> InventoryUtils.clickItemSlot(items.get(0), ClickType.QUICK_MOVE, 0))
-                        .then(() -> running = false)
-                        .execute(true);
+                        .last(() -> running = false)
+                        .execute();
             } else {
                 TaskExecutor.newTaskChain()
                         .supply(() -> InventoryUtils.clickItemSlot(items.get(0), ClickType.PICKUP, 0))
@@ -138,8 +138,8 @@ public class AutoArmorModule extends BaseModule {
                         .supply(() -> InventoryUtils.clickItemSlot(new ItemSlot(armorSlot, getPlayer()), ClickType.PICKUP, 0))
                         .then(new TransactionWaitTask())
                         .then(() -> InventoryUtils.clickItemSlot(items.get(0), ClickType.PICKUP, 0))
-                        .then(() -> running = false)
-                        .execute(true);
+                        .last(() -> running = false)
+                        .execute();
             }
             return;
         }

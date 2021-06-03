@@ -49,7 +49,7 @@ public class ScaffoldModule extends BaseModule {
         TaskExecutor.newTaskChain()
                 .supply(() -> tasks)
                 .then(new BlockPlaceTask(DesyncMode.LOOK))
-                .execute(true);
+                .execute();
     }
 
     @Override

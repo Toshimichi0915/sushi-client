@@ -17,13 +17,13 @@ public class TaskExecutor {
 
     private final ArrayList<TaskContext> contexts = new ArrayList<>();
     private final ArrayList<TaskAdapter<?, ?>> running;
-    private final ArrayList<TaskAdapter<?, Boolean>> abort;
-    private final ArrayList<TaskAdapter<?, ?>> delay;
+    private final ArrayList<TaskAdapter<?, Boolean>> abortTasks;
+    private final ArrayList<TaskAdapter<?, ?>> lastTasks;
 
     private TaskExecutor(ArrayList<TaskAdapter<?, ?>> running) {
         this.running = running;
-        this.abort = new ArrayList<>();
-        this.delay = new ArrayList<>();
+        this.abortTasks = new ArrayList<>();
+        this.lastTasks = new ArrayList<>();
     }
 
     private TaskContext getTaskContext(TaskAdapter<?, ?> origin, boolean create) {
@@ -38,25 +38,27 @@ public class TaskExecutor {
         return context;
     }
 
-    protected void addTaskAdapter(TaskAdapter<?, ?> origin, TaskAdapter<?, ?> adapter, boolean delay) {
+    protected void addTaskAdapter(TaskAdapter<?, ?> origin, TaskAdapter<?, ?> adapter) {
         getTaskContext(origin, true).addTaskAdapter(adapter);
-        if (delay) this.delay.add(adapter);
     }
 
-    protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<? super Exception, ?> handler, boolean delay) {
+    protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<? super Exception, ?> handler) {
         getTaskContext(origin, true).addExceptionHandler(handler);
-        if (delay) this.delay.add(handler);
     }
 
-    protected void addAbortHandler(TaskAdapter<?, ?> origin, TaskAdapter<?, Boolean> adapter, boolean delay) {
-        addTaskAdapter(origin, adapter, delay);
-        abort.add(adapter);
+    protected void addAbortHandler(TaskAdapter<?, ?> origin, TaskAdapter<?, Boolean> adapter) {
+        addTaskAdapter(origin, adapter);
+        abortTasks.add(adapter);
     }
 
-    protected void execute(boolean instant) {
+    protected void addLastTaskAdapter(TaskAdapter<?, ?> adapter) {
+        lastTasks.add(adapter);
+    }
+
+    protected void execute() {
         if (Minecraft.getMinecraft().world == null) return;
         EventHandlers.register(this);
-        if (instant) onClientTick(null);
+        onClientTick(null);
     }
 
     private <I, R> void executeTask(TaskAdapter<I, R> task, Task exec) {
@@ -72,9 +74,19 @@ public class TaskExecutor {
             for (TaskAdapter<? super Exception, ?> handler : context.getExceptionHandlers()) {
                 executeTask(handler, () -> handler.start(e));
                 running.add(handler);
-                updateTask(handler, !delay.contains(handler));
             }
+            if (running.isEmpty()) startLastTasks();
+            updateTask();
         }
+    }
+
+    private void startLastTasks() {
+        for (TaskAdapter<?, ?> last : lastTasks) {
+            executeTask(last, () -> last.start(null));
+            running.add(last);
+        }
+        lastTasks.clear();
+        updateTask();
     }
 
     /**
@@ -86,28 +98,30 @@ public class TaskExecutor {
     @SuppressWarnings("unchecked")
     private boolean refresh(TaskAdapter<?, ?> task) {
         TaskContext context = getTaskContext(task, false);
-        if (!task.isRunning()) {
-            if (abort.contains(task) && ((TaskAdapter<?, Boolean>) task).getResult()) {
-                running.clear();
-                return false;
-            }
-            if (context != null) {
-                for (TaskAdapter<?, ?> child : context.getTaskAdapters()) {
-                    TaskAdapter<Object, ?> consumer = (TaskAdapter<Object, ?>) child;
-                    executeTask(consumer, () -> consumer.start(task.getResult()));
-                    running.add(child);
-                    updateTask(child, !delay.contains(child));
-                }
-            }
-            running.remove(task);
-            return true;
+        if (task.isRunning()) return true;
+        if (abortTasks.contains(task) && ((TaskAdapter<?, Boolean>) task).getResult()) {
+            running.clear();
+            startLastTasks();
+            return false;
         }
+        running.remove(task);
+        if (context != null) {
+            for (TaskAdapter<?, ?> child : context.getTaskAdapters()) {
+                TaskAdapter<Object, ?> consumer = (TaskAdapter<Object, ?>) child;
+                executeTask(consumer, () -> consumer.start(task.getResult()));
+                running.add(child);
+            }
+            updateTask();
+        }
+        if (running.isEmpty()) startLastTasks();
         return false;
     }
 
-    private void updateTask(TaskAdapter<?, ?> task, boolean tick) {
+    private void updateTask() {
+        if (running.isEmpty()) return;
+        TaskAdapter<?, ?> task = running.get(0);
         executeTask(task, () -> {
-            if (!refresh(task) && tick) {
+            if (refresh(task)) {
                 task.tick();
                 refresh(task);
             }
@@ -121,9 +135,7 @@ public class TaskExecutor {
             return;
         }
 
-        for (TaskAdapter<?, ?> task : new ArrayList<>(running)) {
-            updateTask(task, true);
-        }
+        updateTask();
     }
 
     @EventHandler(timing = EventTiming.PRE)

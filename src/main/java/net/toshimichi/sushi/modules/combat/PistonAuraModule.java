@@ -58,6 +58,15 @@ public class PistonAuraModule extends BaseModule {
         running = false;
     }
 
+    private void update(Configuration<IntRange> conf) {
+        if (conf.getValue().getCurrent() == 0) {
+            repeatCounter++;
+            update();
+        } else {
+            repeatCounter = 0;
+        }
+    }
+
     public void update() {
         if (running) return;
         if (repeatCounter >= 100) {
@@ -77,25 +86,18 @@ public class PistonAuraModule extends BaseModule {
             TaskExecutor.newTaskChain()
                     .supply(() -> Item.getItemById(426))
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                    .abortIf(found -> {
-                        if (!found) running = false;
-                        return !found;
-                    })
+                    .abortIf(found -> !found)
                     .then(() -> {
                         PositionUtils.desync(DesyncMode.LOOK);
                         PositionUtils.lookAt(BlockUtils.toVec3d(attack.getCrystalPos()), DesyncMode.LOOK);
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                         PositionUtils.pop();
-                        running = false;
                         attack.setCrystalPlaced(true);
-                        if (delay1.getValue().getCurrent() == 0) {
-                            repeatCounter++;
-                            update();
-                        } else {
-                            repeatCounter = 0;
-                        }
-                    }).execute(true);
+                        update(delay1);
+                    })
+                    .last(() -> running = false)
+                    .execute();
         } else if (attack.getCrystal() != null && (attack.getCrystal() == exploded || attack.isBlocked() || attack.isPistonActivated())) {
             TaskExecutor.newTaskChain()
                     .delay(delay2.getValue().getCurrent())
@@ -107,15 +109,11 @@ public class PistonAuraModule extends BaseModule {
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                         PositionUtils.pop();
                         exploded = attack.getCrystal();
-                        running = false;
                         attack = null;
-                        if (delay2.getValue().getCurrent() == 0) {
-                            repeatCounter++;
-                            update();
-                        } else {
-                            repeatCounter = 0;
-                        }
-                    }).execute(true);
+                        update(delay2);
+                    })
+                    .last(() -> running = false)
+                    .execute();
         } else if (!attack.isPistonPlaced()) {
             BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
             if (info != null) {
@@ -123,10 +121,7 @@ public class PistonAuraModule extends BaseModule {
                 TaskExecutor.newTaskChain()
                         .supply(() -> Item.getItemById(33))
                         .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                        .abortIf(found -> {
-                            if (!found) running = false;
-                            return !found;
-                        })
+                        .abortIf(found -> !found)
                         .then(() -> {
                             PositionUtils.desync(DesyncMode.LOOK);
                             PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
@@ -134,17 +129,13 @@ public class PistonAuraModule extends BaseModule {
                         .delay(delay3.getValue().getCurrent())
                         .then(() -> {
                             BlockUtils.place(info);
-                            running = false;
                             attack.setPistonPlaced(true);
-                            if (delay3.getValue().getCurrent() == 0) {
-                                repeatCounter++;
-                                update();
-                            } else {
-                                repeatCounter = 0;
-                            }
+                            update(delay3);
                         })
                         .delay(1)
-                        .then(PositionUtils::pop).execute(true);
+                        .then(PositionUtils::pop)
+                        .last(() -> running = false)
+                        .execute();
             }
         } else if (!attack.isRedstonePlaced()) {
             for (EnumFacing facing : EnumFacing.values()) {
@@ -155,22 +146,15 @@ public class PistonAuraModule extends BaseModule {
                 TaskExecutor.newTaskChain()
                         .supply(() -> Item.getItemById(152))
                         .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                        .abortIf(found -> {
-                            if (!found) running = false;
-                            return !found;
-                        })
+                        .abortIf(found -> !found)
                         .delay(delay4.getValue().getCurrent())
                         .then(() -> {
                             BlockUtils.place(info);
-                            running = false;
                             attack.setRedstonePlaced(true);
-                            if (delay4.getValue().getCurrent() == 0) {
-                                repeatCounter++;
-                                update();
-                            } else {
-                                repeatCounter = 0;
-                            }
-                        }).execute(true);
+                            update(delay4);
+                        })
+                        .last(() -> running = false)
+                        .execute();
                 break;
             }
         } else {

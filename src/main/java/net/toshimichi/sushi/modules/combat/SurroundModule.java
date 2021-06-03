@@ -67,8 +67,8 @@ public class SurroundModule extends BaseModule {
                 .abortIf(found -> !found)
                 .supply(() -> placeList)
                 .then(new BlockPlaceTask(DesyncMode.LOOK))
-                .then(() -> running = false)
-                .execute(true);
+                .last(() -> running = false)
+                .execute();
     }
 
     @EventHandler(timing = EventTiming.PRE)
