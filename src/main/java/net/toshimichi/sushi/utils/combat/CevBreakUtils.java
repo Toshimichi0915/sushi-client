@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.utils.world.BlockUtils;
@@ -25,6 +26,10 @@ public class CevBreakUtils {
             if (!(crystal instanceof EntityEnderCrystal)) continue;
             if (crystal.getPositionVector().squareDistanceTo(crystalPos) > 0.3) continue;
             placed = (EntityEnderCrystal) crystal;
+        }
+        if (placed == null) {
+            AxisAlignedBB box = new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
+            if (player.world.collidesWithAnyBlock(box) || !player.world.checkNoEntityCollision(box)) return null;
         }
         return new CevBreakAttack(pos, obsidianPos, player, target, placed, placed != null, obsidianPlaced);
     }
