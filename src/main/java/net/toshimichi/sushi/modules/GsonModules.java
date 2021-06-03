@@ -16,10 +16,7 @@ import net.toshimichi.sushi.modules.movement.PhaseFlyModule;
 import net.toshimichi.sushi.modules.movement.PhaseWalkModule;
 import net.toshimichi.sushi.modules.movement.SprintModule;
 import net.toshimichi.sushi.modules.player.*;
-import net.toshimichi.sushi.modules.render.BlockHighlightModule;
-import net.toshimichi.sushi.modules.render.FullBrightModule;
-import net.toshimichi.sushi.modules.render.SearchModule;
-import net.toshimichi.sushi.modules.render.StorageEspModule;
+import net.toshimichi.sushi.modules.render.*;
 import net.toshimichi.sushi.modules.world.NoEntityTraceModule;
 import net.toshimichi.sushi.modules.world.ScaffoldModule;
 import net.toshimichi.sushi.modules.world.XrayModule;
@@ -84,6 +81,7 @@ public class GsonModules implements Modules {
         addModuleFactory("search", SearchModule::new, true);
         addModuleFactory("anti_piston_aura", AntiPistonAuraModule::new, true);
         addModuleFactory("cev_break", CevBreakModule::new, true);
+        addModuleFactory("cev_break_helper", CevBreakHelperModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
