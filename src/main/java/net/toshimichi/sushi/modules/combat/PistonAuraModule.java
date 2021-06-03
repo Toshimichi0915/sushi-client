@@ -138,7 +138,6 @@ public class PistonAuraModule extends BaseModule {
                             attack.setPistonPlaced(true);
                             update(delay3);
                         })
-                        .delay(1)
                         .last(this::stop)
                         .execute();
             }
