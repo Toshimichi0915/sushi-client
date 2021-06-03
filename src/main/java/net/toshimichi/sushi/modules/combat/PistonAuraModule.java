@@ -42,10 +42,10 @@ public class PistonAuraModule extends BaseModule {
 
     public PistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        delay1 = provider.get("delay_1", "Crystal Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        delay1 = provider.get("delay_1", "Crystal Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
         delay2 = provider.get("delay_2", "Crystal Break Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
-        delay3 = provider.get("delay_3", "Piston Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
-        delay4 = provider.get("delay_4", "Redstone Place delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        delay3 = provider.get("delay_3", "Piston Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
+        delay4 = provider.get("delay_4", "Redstone Place delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
     }
 
     @Override
@@ -61,6 +61,7 @@ public class PistonAuraModule extends BaseModule {
 
     private void update(Configuration<IntRange> conf) {
         if (conf.getValue().getCurrent() == 0) {
+            running = false;
             repeatCounter++;
             update();
         } else {
