@@ -6,8 +6,8 @@ import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.gui.base.BaseComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
-import net.toshimichi.sushi.utils.GuiUtils;
-import net.toshimichi.sushi.utils.TextPreview;
+import net.toshimichi.sushi.utils.render.GuiUtils;
+import net.toshimichi.sushi.utils.render.TextPreview;
 
 public class SimpleCategoryHeaderComponent extends BaseComponent {
 

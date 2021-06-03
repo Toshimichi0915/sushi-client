@@ -10,7 +10,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.PlayerUtils;
+import net.toshimichi.sushi.utils.player.PlayerUtils;
 
 public class NoFallModule extends BaseModule {
 

@@ -8,8 +8,8 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.DesyncMode;
-import net.toshimichi.sushi.utils.PositionUtils;
+import net.toshimichi.sushi.utils.player.DesyncMode;
+import net.toshimichi.sushi.utils.player.PositionUtils;
 
 public class LockYawModule extends BaseModule {
 

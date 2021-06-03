@@ -3,6 +3,8 @@ package net.toshimichi.sushi.utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.toshimichi.sushi.config.data.EspColor;
+import net.toshimichi.sushi.utils.render.GuiUtils;
+import net.toshimichi.sushi.utils.render.TextPreview;
 
 import java.awt.Color;
 

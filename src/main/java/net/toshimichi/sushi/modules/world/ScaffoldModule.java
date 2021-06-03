@@ -10,10 +10,10 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.BlockPlaceInfo;
-import net.toshimichi.sushi.utils.BlockUtils;
-import net.toshimichi.sushi.utils.DesyncMode;
-import net.toshimichi.sushi.utils.PositionUtils;
+import net.toshimichi.sushi.utils.player.DesyncMode;
+import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
+import net.toshimichi.sushi.utils.world.BlockUtils;
 
 public class ScaffoldModule extends BaseModule {
 

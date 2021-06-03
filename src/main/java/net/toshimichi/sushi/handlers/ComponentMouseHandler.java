@@ -11,7 +11,7 @@ import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.MouseStatus;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 import org.lwjgl.input.Mouse;
 
 import java.util.Objects;

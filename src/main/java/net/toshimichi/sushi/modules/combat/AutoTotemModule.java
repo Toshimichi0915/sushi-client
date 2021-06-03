@@ -13,9 +13,9 @@ import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.TransactionWaitTask;
-import net.toshimichi.sushi.utils.InventoryType;
-import net.toshimichi.sushi.utils.InventoryUtils;
-import net.toshimichi.sushi.utils.ItemSlot;
+import net.toshimichi.sushi.utils.player.InventoryType;
+import net.toshimichi.sushi.utils.player.InventoryUtils;
+import net.toshimichi.sushi.utils.player.ItemSlot;
 
 public class AutoTotemModule extends BaseModule {
 

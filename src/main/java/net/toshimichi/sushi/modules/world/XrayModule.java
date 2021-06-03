@@ -7,8 +7,8 @@ import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.BlockName;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.BlockVisibility;
-import net.toshimichi.sushi.utils.XrayUtils;
+import net.toshimichi.sushi.utils.world.BlockVisibility;
+import net.toshimichi.sushi.utils.world.XrayUtils;
 
 import java.util.Arrays;
 

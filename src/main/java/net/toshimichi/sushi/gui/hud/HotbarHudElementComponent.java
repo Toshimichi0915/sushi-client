@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.gui.hud;
 
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 public class HotbarHudElementComponent extends VirtualHudElementComponent {
     @Override

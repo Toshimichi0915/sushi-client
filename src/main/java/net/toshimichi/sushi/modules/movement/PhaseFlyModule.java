@@ -15,10 +15,10 @@ import net.toshimichi.sushi.events.player.PlayerPushEvent;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.DesyncMode;
-import net.toshimichi.sushi.utils.MovementUtils;
-import net.toshimichi.sushi.utils.PositionUtils;
 import net.toshimichi.sushi.utils.TpsUtils;
+import net.toshimichi.sushi.utils.player.DesyncMode;
+import net.toshimichi.sushi.utils.player.MovementUtils;
+import net.toshimichi.sushi.utils.player.PositionUtils;
 
 public class PhaseFlyModule extends BaseModule {
 

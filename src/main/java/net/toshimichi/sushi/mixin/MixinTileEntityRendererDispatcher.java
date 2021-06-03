@@ -2,8 +2,8 @@ package net.toshimichi.sushi.mixin;
 
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
-import net.toshimichi.sushi.utils.BlockVisibility;
-import net.toshimichi.sushi.utils.XrayUtils;
+import net.toshimichi.sushi.utils.world.BlockVisibility;
+import net.toshimichi.sushi.utils.world.XrayUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -9,7 +9,7 @@ import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 import org.lwjgl.input.Keyboard;
 
 public class ClickGuiModule extends BaseModule {

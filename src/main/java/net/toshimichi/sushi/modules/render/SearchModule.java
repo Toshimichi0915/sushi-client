@@ -14,8 +14,8 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.RenderUtils;
-import net.toshimichi.sushi.utils.SearchMap;
+import net.toshimichi.sushi.utils.player.RenderUtils;
+import net.toshimichi.sushi.utils.render.SearchMap;
 
 import java.awt.Color;
 import java.util.Arrays;

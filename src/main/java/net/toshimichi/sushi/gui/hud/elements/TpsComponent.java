@@ -5,9 +5,9 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.gui.hud.BaseHudElementComponent;
 import net.toshimichi.sushi.gui.hud.HudConstants;
 import net.toshimichi.sushi.gui.hud.HudElementComponent;
-import net.toshimichi.sushi.utils.GuiUtils;
-import net.toshimichi.sushi.utils.TextPreview;
 import net.toshimichi.sushi.utils.TpsUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
+import net.toshimichi.sushi.utils.render.TextPreview;
 
 import java.text.DecimalFormat;
 

@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.gui.hud;
 
 import net.toshimichi.sushi.gui.base.BaseComponent;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 import java.awt.Color;
 

@@ -8,7 +8,7 @@ import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.gui.SmoothCollapseComponent;
 import net.toshimichi.sushi.gui.base.BaseSettingComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 import java.awt.Color;
 

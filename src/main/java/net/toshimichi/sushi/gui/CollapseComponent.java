@@ -3,7 +3,7 @@ package net.toshimichi.sushi.gui;
 import net.minecraft.util.math.MathHelper;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.EmptyLayout;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 public class CollapseComponent<T extends Component> extends BasePanelComponent<T> implements FrameComponent<T> {
 

@@ -3,10 +3,10 @@ package net.toshimichi.sushi.task.tasks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.toshimichi.sushi.task.TaskAdapter;
-import net.toshimichi.sushi.utils.BlockPlaceInfo;
-import net.toshimichi.sushi.utils.BlockUtils;
-import net.toshimichi.sushi.utils.DesyncMode;
-import net.toshimichi.sushi.utils.PositionUtils;
+import net.toshimichi.sushi.utils.player.DesyncMode;
+import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
+import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.List;
 

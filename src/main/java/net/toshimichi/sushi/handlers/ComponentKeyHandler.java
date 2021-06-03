@@ -6,7 +6,7 @@ import net.toshimichi.sushi.events.input.KeyPressEvent;
 import net.toshimichi.sushi.events.input.KeyReleaseEvent;
 import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 public class ComponentKeyHandler {
 

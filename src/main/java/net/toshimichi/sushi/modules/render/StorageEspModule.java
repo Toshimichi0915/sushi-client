@@ -13,7 +13,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.RenderUtils;
+import net.toshimichi.sushi.utils.player.RenderUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

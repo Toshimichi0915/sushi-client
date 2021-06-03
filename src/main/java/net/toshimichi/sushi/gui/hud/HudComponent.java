@@ -8,7 +8,7 @@ import net.toshimichi.sushi.gui.hud.elements.CoordinatesComponent;
 import net.toshimichi.sushi.gui.hud.elements.ModuleListComponent;
 import net.toshimichi.sushi.gui.hud.elements.TpsComponent;
 import net.toshimichi.sushi.modules.Module;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 public class HudComponent extends BasePanelComponent<HudElementComponent> {
 

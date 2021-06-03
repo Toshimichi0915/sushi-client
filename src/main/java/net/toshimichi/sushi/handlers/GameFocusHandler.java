@@ -3,7 +3,7 @@ package net.toshimichi.sushi.handlers;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.GameFocusEvent;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 public class GameFocusHandler {
 

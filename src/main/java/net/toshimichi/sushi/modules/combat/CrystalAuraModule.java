@@ -25,10 +25,10 @@ import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
-import net.toshimichi.sushi.utils.BlockUtils;
-import net.toshimichi.sushi.utils.DamageUtils;
-import net.toshimichi.sushi.utils.DesyncMode;
-import net.toshimichi.sushi.utils.PositionUtils;
+import net.toshimichi.sushi.utils.combat.DamageUtils;
+import net.toshimichi.sushi.utils.player.DesyncMode;
+import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.*;
 

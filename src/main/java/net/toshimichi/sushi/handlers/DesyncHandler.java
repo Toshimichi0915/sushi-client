@@ -6,9 +6,9 @@ import net.minecraft.network.play.client.CPacketPlayer;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
-import net.toshimichi.sushi.utils.DesyncMode;
-import net.toshimichi.sushi.utils.PlayerUtils;
-import net.toshimichi.sushi.utils.PositionUtils;
+import net.toshimichi.sushi.utils.player.DesyncMode;
+import net.toshimichi.sushi.utils.player.PlayerUtils;
+import net.toshimichi.sushi.utils.player.PositionUtils;
 
 public class DesyncHandler {
 

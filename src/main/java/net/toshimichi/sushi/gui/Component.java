@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.gui;
 
 import net.toshimichi.sushi.events.input.ClickType;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 import java.util.List;
 

@@ -5,7 +5,7 @@ import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.gui.base.BaseComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
-import net.toshimichi.sushi.utils.GuiUtils;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
