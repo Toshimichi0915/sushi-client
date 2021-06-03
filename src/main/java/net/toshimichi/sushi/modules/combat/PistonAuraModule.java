@@ -36,6 +36,7 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> delay4;
     private PistonAuraAttack attack;
     private EntityEnderCrystal exploded;
+    private boolean desync;
     private boolean running;
     private int repeatCounter;
 
@@ -55,7 +56,7 @@ public class PistonAuraModule extends BaseModule {
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
-        running = false;
+        stop();
     }
 
     private void update(Configuration<IntRange> conf) {
@@ -64,6 +65,14 @@ public class PistonAuraModule extends BaseModule {
             update();
         } else {
             repeatCounter = 0;
+        }
+    }
+
+    private void stop() {
+        running = false;
+        if (desync) {
+            desync = false;
+            PositionUtils.pop();
         }
     }
 
@@ -82,49 +91,46 @@ public class PistonAuraModule extends BaseModule {
         if (attack == null) return;
         if (exploded != null && exploded.isAddedToWorld()) return;
         running = true;
+        Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
+        if (!desync) {
+            desync = true;
+            PositionUtils.desync(DesyncMode.LOOK);
+            PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
+        }
         if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
                     .supply(() -> Item.getItemById(426))
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                     .abortIf(found -> !found)
                     .then(() -> {
-                        PositionUtils.desync(DesyncMode.LOOK);
-                        PositionUtils.lookAt(BlockUtils.toVec3d(attack.getCrystalPos()), DesyncMode.LOOK);
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
-                        PositionUtils.pop();
                         attack.setCrystalPlaced(true);
                         update(delay1);
                     })
-                    .last(() -> running = false)
+                    .last(this::stop)
                     .execute();
         } else if (attack.getCrystal() != null && (attack.getCrystal() == exploded || attack.isBlocked() || attack.isPistonActivated())) {
             TaskExecutor.newTaskChain()
                     .delay(delay2.getValue().getCurrent())
                     .then(() -> {
-                        PositionUtils.desync(DesyncMode.LOOK);
-                        PositionUtils.lookAt(attack.getCrystal().getPositionVector(), DesyncMode.LOOK);
                         getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal()));
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
-                        PositionUtils.pop();
                         exploded = attack.getCrystal();
                         attack = null;
                         update(delay2);
                     })
-                    .last(() -> running = false)
+                    .last(this::stop)
                     .execute();
         } else if (!attack.isPistonPlaced()) {
             BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
             if (info != null) {
-                Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
                 TaskExecutor.newTaskChain()
                         .supply(() -> Item.getItemById(33))
                         .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                         .abortIf(found -> !found)
                         .then(() -> {
-                            PositionUtils.desync(DesyncMode.LOOK);
-                            PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
                         })
                         .delay(delay3.getValue().getCurrent())
                         .then(() -> {
@@ -133,8 +139,7 @@ public class PistonAuraModule extends BaseModule {
                             update(delay3);
                         })
                         .delay(1)
-                        .then(PositionUtils::pop)
-                        .last(() -> running = false)
+                        .last(this::stop)
                         .execute();
             }
         } else if (!attack.isRedstonePlaced()) {
@@ -142,7 +147,6 @@ public class PistonAuraModule extends BaseModule {
                 if (facing == attack.getFacing()) continue;
                 BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos().offset(facing));
                 if (info == null) continue;
-                PositionUtils.lookAt(info, DesyncMode.LOOK);
                 TaskExecutor.newTaskChain()
                         .supply(() -> Item.getItemById(152))
                         .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
@@ -153,12 +157,12 @@ public class PistonAuraModule extends BaseModule {
                             attack.setRedstonePlaced(true);
                             update(delay4);
                         })
-                        .last(() -> running = false)
+                        .last(this::stop)
                         .execute();
                 break;
             }
         } else {
-            running = false;
+            stop();
             attack = null;
             repeatCounter = 0;
         }
