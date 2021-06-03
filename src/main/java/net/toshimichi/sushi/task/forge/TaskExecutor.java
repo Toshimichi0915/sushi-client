@@ -19,6 +19,7 @@ public class TaskExecutor {
     private final ArrayList<TaskAdapter<?, ?>> running;
     private final ArrayList<TaskAdapter<?, Boolean>> abortTasks;
     private final ArrayList<TaskAdapter<?, ?>> lastTasks;
+    private static int ticks;
 
     private TaskExecutor(ArrayList<TaskAdapter<?, ?>> running) {
         this.running = running;
@@ -58,9 +59,10 @@ public class TaskExecutor {
     protected void execute() {
         if (Minecraft.getMinecraft().world == null) return;
         EventHandlers.register(this);
-        onClientTick(null);
+        updateTask();
     }
 
+    @SuppressWarnings("unchecked")
     private <I, R> void executeTask(TaskAdapter<I, R> task, Task exec) {
         TaskContext context = getTaskContext(task, false);
         try {
@@ -71,22 +73,25 @@ public class TaskExecutor {
                 e.printStackTrace();
                 return;
             }
-            for (TaskAdapter<? super Exception, ?> handler : context.getExceptionHandlers()) {
+            running.addAll(0, context.getExceptionHandlers());
+            if (!running.isEmpty()) {
+                TaskAdapter<? super Exception, ?> handler = (TaskAdapter<? super Exception, ?>) running.get(0);
                 executeTask(handler, () -> handler.start(e));
-                running.add(handler);
+                updateTask();
+            } else {
+                startLastTasks();
             }
-            if (running.isEmpty()) startLastTasks();
-            updateTask();
         }
     }
 
     private void startLastTasks() {
-        for (TaskAdapter<?, ?> last : lastTasks) {
-            executeTask(last, () -> last.start(null));
-            running.add(last);
-        }
+        running.addAll(0, lastTasks);
         lastTasks.clear();
-        updateTask();
+        if (!running.isEmpty()) {
+            TaskAdapter<?, ?> last = running.get(0);
+            executeTask(last, () -> last.start(null));
+            updateTask();
+        }
     }
 
     /**
@@ -106,20 +111,24 @@ public class TaskExecutor {
         }
         running.remove(task);
         if (context != null) {
-            for (TaskAdapter<?, ?> child : context.getTaskAdapters()) {
-                TaskAdapter<Object, ?> consumer = (TaskAdapter<Object, ?>) child;
+            running.addAll(0, context.getTaskAdapters());
+            if (!running.isEmpty()) {
+                TaskAdapter<Object, ?> consumer = (TaskAdapter<Object, ?>) running.get(0);
                 executeTask(consumer, () -> consumer.start(task.getResult()));
-                running.add(child);
+                updateTask();
             }
-            updateTask();
         }
         if (running.isEmpty()) startLastTasks();
         return false;
     }
 
     private void updateTask() {
-        if (running.isEmpty()) return;
+        if (running.isEmpty()) {
+            EventHandlers.unregister(this);
+            return;
+        }
         TaskAdapter<?, ?> task = running.get(0);
+        System.out.println("ticks: " + ticks + " task: " + task.getClass().getSimpleName());
         executeTask(task, () -> {
             if (refresh(task)) {
                 task.tick();
@@ -130,11 +139,7 @@ public class TaskExecutor {
 
     @EventHandler(timing = EventTiming.PRE, priority = 1000)
     public void onClientTick(ClientTickEvent e) {
-        if (running.isEmpty()) {
-            EventHandlers.unregister(this);
-            return;
-        }
-
+        ticks++;
         updateTask();
     }
 

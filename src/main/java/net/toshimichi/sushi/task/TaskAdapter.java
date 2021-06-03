@@ -17,7 +17,6 @@ abstract public class TaskAdapter<I, R> implements Tickable {
         this.result = result;
     }
 
-    @Override
     public boolean isRunning() {
         return running;
     }
