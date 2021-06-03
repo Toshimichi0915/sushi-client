@@ -45,7 +45,8 @@ public class CevBreakUtils {
             if (!(entity instanceof EntityPlayer)) continue;
             if (entity.getDistanceSq(player) > 12) continue;
             if (entity.getName().equals(player.getName())) continue;
-            result.add(find(player, (EntityPlayer) entity));
+            CevBreakAttack attack = find(player, (EntityPlayer) entity);
+            if (attack != null) result.add(attack);
         }
         return result;
     }
