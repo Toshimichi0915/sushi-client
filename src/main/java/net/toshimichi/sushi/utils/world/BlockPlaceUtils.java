@@ -43,7 +43,6 @@ public class BlockPlaceUtils {
     public static List<BlockPlaceInfo> search(World world, BlockPos target, int distance) {
         ArrayList<BlockPlaceInfo> result = new ArrayList<>();
         searchRecursively(world, target, target, null, 0, distance, new HashSet<>(), result);
-        System.out.println("result: " + result);
         return result;
     }
 
