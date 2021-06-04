@@ -15,6 +15,7 @@ import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.combat.CevBreakAttack;
 import net.toshimichi.sushi.utils.combat.CevBreakUtils;
 import net.toshimichi.sushi.utils.player.RenderUtils;
+import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -56,7 +57,9 @@ public class CevBreakHelperModule extends BaseModule {
         List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer());
         candidates.clear();
         for (CevBreakAttack attack : attacks) {
-            if (attack.getObsidianPos() != null) candidates.add(attack.getObsidianPos());
+            if (attack.getObsidianPos() == null) continue;
+            if (BlockUtils.findBlockPlaceInfo(getWorld(), attack.getObsidianPos()) == null) continue;
+            candidates.add(attack.getObsidianPos());
         }
     }
 
