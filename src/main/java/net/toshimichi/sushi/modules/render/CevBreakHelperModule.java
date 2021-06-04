@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.modules.render;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.toshimichi.sushi.config.Config;
@@ -58,7 +59,8 @@ public class CevBreakHelperModule extends BaseModule {
         candidates.clear();
         for (CevBreakAttack attack : attacks) {
             if (attack.getObsidianPos() == null) continue;
-            if (BlockUtils.findBlockPlaceInfo(getWorld(), attack.getObsidianPos()) == null) continue;
+            if (getWorld().getBlockState(attack.getObsidianPos()).getBlock() != Blocks.OBSIDIAN &&
+                    BlockUtils.findBlockPlaceInfo(getWorld(), attack.getObsidianPos()) == null) continue;
             candidates.add(attack.getObsidianPos());
         }
     }

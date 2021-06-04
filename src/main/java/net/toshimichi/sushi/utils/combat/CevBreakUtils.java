@@ -38,10 +38,10 @@ public class CevBreakUtils {
         BlockPos origin = BlockUtils.toBlockPos(target.getPositionVector());
         ArrayList<CevBreakAttack> result = new ArrayList<>();
         CevBreakAttack above = find(player, target, new BlockPos(origin.getX(), origin.getY() + 3, origin.getZ()));
-        result.add(above);
-        if (BlockUtils.isAir(player.world, origin.add(0, 3, 0))) {
+        if (above != null) result.add(above);
+        if (BlockUtils.isAir(player.world, origin.add(0, 2, 0))) {
             CevBreakAttack above2 = find(player, target, new BlockPos(origin.getX(), origin.getY() + 4, origin.getZ()));
-            result.add(above2);
+            if (above2 != null) result.add(above2);
         }
         return result;
     }
