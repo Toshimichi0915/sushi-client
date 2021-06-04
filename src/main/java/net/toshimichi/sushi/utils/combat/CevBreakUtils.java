@@ -34,19 +34,25 @@ public class CevBreakUtils {
         return new CevBreakAttack(pos, obsidianPos, player, target, placed, placed != null, obsidianPlaced);
     }
 
-    public static CevBreakAttack find(EntityPlayer player, EntityPlayer target) {
+    public static List<CevBreakAttack> find(EntityPlayer player, EntityPlayer target) {
         BlockPos origin = BlockUtils.toBlockPos(target.getPositionVector());
-        return find(player, target, new BlockPos(origin.getX(), origin.getY() + 3, origin.getZ()));
+        ArrayList<CevBreakAttack> result = new ArrayList<>();
+        CevBreakAttack above = find(player, target, new BlockPos(origin.getX(), origin.getY() + 3, origin.getZ()));
+        result.add(above);
+        if (BlockUtils.isAir(player.world, origin.add(0, 3, 0))) {
+            CevBreakAttack above2 = find(player, target, new BlockPos(origin.getX(), origin.getY() + 4, origin.getZ()));
+            result.add(above2);
+        }
+        return result;
     }
 
     public static List<CevBreakAttack> find(EntityPlayer player) {
         ArrayList<CevBreakAttack> result = new ArrayList<>();
         for (Entity entity : player.world.loadedEntityList) {
             if (!(entity instanceof EntityPlayer)) continue;
-            if (entity.getDistanceSq(player) > 12) continue;
+            if (entity.getDistanceSq(player) > 15) continue;
             if (entity.getName().equals(player.getName())) continue;
-            CevBreakAttack attack = find(player, (EntityPlayer) entity);
-            if (attack != null) result.add(attack);
+            result.addAll(find(player, (EntityPlayer) entity));
         }
         return result;
     }
