@@ -46,6 +46,7 @@ public class ScaffoldModule extends BaseModule {
         Vec3d floor = getPlayer().getPositionVector().add(0, -1, 0);
         BlockPos floorPos = BlockUtils.toBlockPos(floor);
         List<BlockPlaceInfo> tasks = BlockPlaceUtils.search(getWorld(), floorPos, 3);
+        if (tasks == null) return;
         TaskExecutor.newTaskChain()
                 .supply(() -> tasks)
                 .then(new BlockPlaceTask(DesyncMode.LOOK))

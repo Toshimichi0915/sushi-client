@@ -7,6 +7,7 @@ import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -28,7 +29,9 @@ public class BlockUtils {
 
     public static boolean canPlace(World world, BlockPlaceInfo face) {
         BlockPos pos = face.getBlockPos();
-        EnumFacing facing = face.getBlockFace().getFacing();
+        EnumFacing facing = face.getBlockFace() == null ? null : face.getBlockFace().getFacing();
+        AxisAlignedBB box = world.getBlockState(pos).getBoundingBox(world, pos);
+        if (world.collidesWithAnyBlock(box) || !world.checkNoEntityCollision(box)) return false;
         if (facing == null) return world.getBlockState(pos).getBlock().canPlaceBlockAt(world, pos);
         else if (isAir(world, pos.offset(facing.getOpposite()))) return false;
         else return world.getBlockState(pos).getBlock().canPlaceBlockOnSide(world, pos, facing.getOpposite());

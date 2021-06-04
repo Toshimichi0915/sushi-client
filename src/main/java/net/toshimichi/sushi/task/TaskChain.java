@@ -23,12 +23,20 @@ public interface TaskChain<I> {
         return then(new FunctionalConsumerTask<>(task));
     }
 
+    default <R> TaskChain<R> supply(boolean instant, SupplierTask<R> task) {
+        return then(new FunctionalSupplierTask<>(instant, task));
+    }
+
     default <R> TaskChain<R> supply(SupplierTask<R> task) {
-        return then(new FunctionalSupplierTask<>(task));
+        return supply(true, task);
+    }
+
+    default <R> TaskChain<R> supply(boolean instant, PipeTask<I, R> task) {
+        return then(new FunctionalPipeTask<>(instant, task));
     }
 
     default <R> TaskChain<R> supply(PipeTask<I, R> task) {
-        return then(new FunctionalPipeTask<>(task));
+        return supply(true, task);
     }
 
     default TaskChain<Object> fail(ConsumerTask<? super Exception> task) {
@@ -40,7 +48,7 @@ public interface TaskChain<I> {
     }
 
     default TaskChain<I> abortIf(PipeTask<? super I, Boolean> task) {
-        return abortIf(new FunctionalPipeTask<>(task));
+        return abortIf(new FunctionalPipeTask<>(true, task));
     }
 
     default TaskChain<I> delay(int delay) {

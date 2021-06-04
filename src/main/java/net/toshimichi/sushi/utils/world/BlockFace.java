@@ -41,4 +41,30 @@ public class BlockFace {
         Vec3d center = box.getCenter();
         return new BlockPlaceInfo(offset, new BlockFace(center, facing));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BlockFace blockFace = (BlockFace) o;
+
+        if (pos != null ? !pos.equals(blockFace.pos) : blockFace.pos != null) return false;
+        return facing == blockFace.facing;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = pos != null ? pos.hashCode() : 0;
+        result = 31 * result + (facing != null ? facing.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockFace{" +
+                "pos=" + pos +
+                ", facing=" + facing +
+                '}';
+    }
 }

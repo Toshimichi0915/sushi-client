@@ -7,31 +7,34 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 
 public class BlockPlaceUtils {
 
     private static boolean searchRecursively(World world, BlockPos target, BlockPos current, EnumFacing exclude, int real, int distance,
-                                             HashSet<BlockPos> closed, List<BlockPlaceInfo> result) {
+                                             HashSet<BlockPos> closed, List<BlockPlaceInfo> result, Function<BlockPos, Boolean> access) {
         if (real > distance) return false;
-        if (!BlockUtils.isAir(world, current)) return false;
-        if (!world.checkNoEntityCollision(world.getBlockState(current).getBoundingBox(world, current))) return false;
+        if (!BlockUtils.canPlace(world, new BlockPlaceInfo(current, null))) return false;
+        if (closed.contains(current)) return false;
+        if (!access.apply(current)) return false;
+
         BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(world, current);
         if (info != null) {
             result.add(info);
             return true;
         }
-        ArrayList<BlockNode> nodes = new ArrayList<>();
+        ArrayList<BlockNode> nodes = new ArrayList<>(5);
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing == exclude) continue;
             BlockPos pos = current.offset(facing);
-            if (closed.contains(pos)) continue;
+            closed.add(pos);
             double fake = target.distanceSq(pos);
             nodes.add(new BlockNode(pos, facing, real, fake));
         }
         nodes.sort(null);
         for (BlockNode node : nodes) {
-            closed.add(node.pos);
-            boolean found = searchRecursively(world, target, node.pos, node.facing.getOpposite(), real + 1, distance, closed, result);
+            boolean found = searchRecursively(world, target, node.pos, node.facing.getOpposite(), real + 1, distance, closed, result, access);
             if (found) {
                 result.add(new BlockFace(node.pos, node.facing.getOpposite()).toBlockPlaceInfo(world));
                 return true;
@@ -40,10 +43,15 @@ public class BlockPlaceUtils {
         return false;
     }
 
-    public static List<BlockPlaceInfo> search(World world, BlockPos target, int distance) {
+    public static List<BlockPlaceInfo> search(World world, BlockPos target, int distance, Set<BlockPos> closed, Function<BlockPos, Boolean> access) {
         ArrayList<BlockPlaceInfo> result = new ArrayList<>();
-        searchRecursively(world, target, target, null, 0, distance, new HashSet<>(), result);
-        return result;
+        boolean found = searchRecursively(world, target, target, null, 0, distance, new HashSet<>(closed), result, access);
+        if (found) return result;
+        else return null;
+    }
+
+    public static List<BlockPlaceInfo> search(World world, BlockPos target, int distance) {
+        return search(world, target, distance, new HashSet<>(), p -> true);
     }
 
     private static class BlockNode implements Comparable<BlockNode> {

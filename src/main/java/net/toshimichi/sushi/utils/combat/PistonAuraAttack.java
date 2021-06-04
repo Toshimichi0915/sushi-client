@@ -4,6 +4,9 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
+
+import java.util.List;
 
 public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
     private BlockPos crystalPos;
@@ -18,9 +21,13 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
     private boolean pistonPlaced;
     private boolean redstonePlaced;
     private boolean pistonActivated;
+    private List<BlockPlaceInfo> obsidianPlace;
+    private List<BlockPlaceInfo> pistonPlace;
+    private int placeCost;
 
     public PistonAuraAttack(BlockPos crystalPos, BlockPos pistonPos, EnumFacing facing, EntityPlayer player, EntityPlayer target,
-                            double damage, EntityEnderCrystal crystal, boolean blocked, boolean crystalPlaced, boolean pistonPlaced, boolean redstonePlaced, boolean pistonActivated) {
+                            double damage, EntityEnderCrystal crystal, boolean blocked, boolean crystalPlaced, boolean pistonPlaced, boolean redstonePlaced, boolean pistonActivated,
+                            List<BlockPlaceInfo> obsidianPlace, List<BlockPlaceInfo> pistonPlace) {
         this.crystalPos = crystalPos;
         this.pistonPos = pistonPos;
         this.facing = facing;
@@ -33,6 +40,9 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
         this.pistonPlaced = pistonPlaced;
         this.redstonePlaced = redstonePlaced;
         this.pistonActivated = pistonActivated;
+        this.obsidianPlace = obsidianPlace;
+        this.pistonPlace = pistonPlace;
+        this.placeCost = (obsidianPlace == null ? 0 : obsidianPlace.size()) + (pistonPlace == null ? 0 : pistonPlace.size());
     }
 
     public BlockPos getCrystalPos() {
@@ -131,6 +141,30 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
         this.pistonActivated = pistonActivated;
     }
 
+    public List<BlockPlaceInfo> getObsidianPlace() {
+        return obsidianPlace;
+    }
+
+    public void setObsidianPlace(List<BlockPlaceInfo> obsidianPlace) {
+        this.obsidianPlace = obsidianPlace;
+    }
+
+    public List<BlockPlaceInfo> getPistonPlace() {
+        return pistonPlace;
+    }
+
+    public void setPistonPlace(List<BlockPlaceInfo> pistonPlace) {
+        this.pistonPlace = pistonPlace;
+    }
+
+    public int getPlaceCost() {
+        return placeCost;
+    }
+
+    public void setPlaceCost(int placeCost) {
+        this.placeCost = placeCost;
+    }
+
     @Override
     public int compareTo(PistonAuraAttack o) {
         int temp = Boolean.compare(blocked, o.blocked);
@@ -138,6 +172,7 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
         if (temp == 0) temp = Boolean.compare(!pistonPlaced, !o.pistonPlaced);
         if (temp == 0) temp = Boolean.compare(!redstonePlaced, !o.redstonePlaced);
         if (temp == 0) temp = Boolean.compare(!pistonActivated, !o.pistonActivated);
+        if (temp == 0) temp = Integer.compare(placeCost, o.placeCost);
         if (temp == 0) temp = Double.compare(o.damage, damage);
         return temp;
     }
@@ -157,6 +192,9 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
                 ", pistonPlaced=" + pistonPlaced +
                 ", redstonePlaced=" + redstonePlaced +
                 ", pistonActivated=" + pistonActivated +
+                ", obsidianPlace=" + obsidianPlace +
+                ", pistonPlace=" + pistonPlace +
+                ", placeCost=" + placeCost +
                 '}';
     }
 }

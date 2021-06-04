@@ -25,6 +25,10 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
 
     @Override
     public void tick() throws Exception {
+        if (getInput() == null) {
+            stop(null);
+            return;
+        }
         if (++index >= getInput().size()) {
             stop(null);
             return;

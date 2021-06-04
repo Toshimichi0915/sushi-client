@@ -1,6 +1,8 @@
 package net.toshimichi.sushi.modules.combat;
 
 import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
@@ -16,6 +18,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
+import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
 import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.combat.PistonAuraAttack;
@@ -34,6 +37,7 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> delay2;
     private final Configuration<IntRange> delay3;
     private final Configuration<IntRange> delay4;
+    private final Configuration<IntRange> delay5;
     private PistonAuraAttack attack;
     private EntityEnderCrystal exploded;
     private boolean desync;
@@ -46,6 +50,7 @@ public class PistonAuraModule extends BaseModule {
         delay2 = provider.get("delay_2", "Crystal Break Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
         delay3 = provider.get("delay_3", "Piston Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
         delay4 = provider.get("delay_4", "Redstone Place delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
+        delay5 = provider.get("delay_5", "Obsidian Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
     }
 
     @Override
@@ -56,6 +61,7 @@ public class PistonAuraModule extends BaseModule {
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
+        exploded = null;
         stop();
     }
 
@@ -79,7 +85,7 @@ public class PistonAuraModule extends BaseModule {
 
     public void update() {
         if (running) return;
-        if (repeatCounter >= 100) {
+        if (repeatCounter >= 5) {
             repeatCounter = 0;
             return;
         }
@@ -92,15 +98,22 @@ public class PistonAuraModule extends BaseModule {
         if (attack == null) return;
         if (exploded != null && exploded.isAddedToWorld()) return;
         running = true;
-        Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
         if (!desync) {
             desync = true;
             PositionUtils.desync(DesyncMode.LOOK);
-            PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
         }
+        Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
+        PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
         if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
-                    .supply(() -> Item.getItemById(426))
+                    .delay(delay1.getValue().getCurrent())
+                    .supply(() -> attack.getObsidianPlace() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
+                    .then(new ItemSwitchTask(null, true))
+                    .abortIf(found -> !found)
+                    .supply(() -> attack.getObsidianPlace())
+                    .then(new BlockPlaceTask(DesyncMode.LOOK))
+                    .delay(attack.getObsidianPlace() == null ? 0 : delay5.getValue().getCurrent())
+                    .supply(() -> Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                     .abortIf(found -> !found)
                     .then(() -> {
@@ -125,33 +138,36 @@ public class PistonAuraModule extends BaseModule {
                     .last(this::stop)
                     .execute();
         } else if (!attack.isPistonPlaced()) {
-            BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
-            if (info != null) {
-                TaskExecutor.newTaskChain()
-                        .supply(() -> Item.getItemById(33))
-                        .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                        .abortIf(found -> !found)
-                        .then(() -> {
-                        })
-                        .delay(delay3.getValue().getCurrent())
-                        .then(() -> {
-                            BlockUtils.place(info);
-                            attack.setPistonPlaced(true);
-                            update(delay3);
-                        })
-                        .last(this::stop)
-                        .execute();
-            }
+            TaskExecutor.newTaskChain()
+                    .delay(delay3.getValue().getCurrent())
+                    .supply(() -> attack.getPistonPlace() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
+                    .then(new ItemSwitchTask(null, true))
+                    .abortIf(found -> !found)
+                    .supply(() -> attack.getPistonPlace())
+                    .then(new BlockPlaceTask(DesyncMode.LOOK))
+                    .delay(attack.getPistonPlace() == null ? 0 : delay5.getValue().getCurrent())
+                    .supply(() -> Item.getItemFromBlock(Blocks.PISTON))
+                    .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
+                    .abortIf(found -> !found)
+                    .then(() -> {
+                        BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
+                        if (info == null) return;
+                        BlockUtils.place(info);
+                        attack.setPistonPlaced(true);
+                        update(delay3);
+                    })
+                    .last(this::stop)
+                    .execute();
         } else if (!attack.isRedstonePlaced()) {
             for (EnumFacing facing : EnumFacing.values()) {
                 if (facing == attack.getFacing()) continue;
                 BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos().offset(facing));
                 if (info == null) continue;
                 TaskExecutor.newTaskChain()
-                        .supply(() -> Item.getItemById(152))
+                        .delay(delay4.getValue().getCurrent())
+                        .supply(() -> Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
                         .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                         .abortIf(found -> !found)
-                        .delay(delay4.getValue().getCurrent())
                         .then(() -> {
                             BlockUtils.place(info);
                             attack.setRedstonePlaced(true);

@@ -33,6 +33,10 @@ public class ItemSwitchTask extends TaskAdapter<Item, Boolean> {
 
     @Override
     public void tick() throws Exception {
+        if (getInput() == null) {
+            stop(true);
+            return;
+        }
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) {
             stop(false);

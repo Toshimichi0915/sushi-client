@@ -19,6 +19,7 @@ import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockPlaceUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SurroundModule extends BaseModule {
 
@@ -58,7 +59,9 @@ public class SurroundModule extends BaseModule {
         ArrayList<BlockPlaceInfo> placeList = new ArrayList<>();
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing == EnumFacing.UP) continue;
-            placeList.addAll(BlockPlaceUtils.search(getWorld(), pos.offset(facing), 3));
+            List<BlockPlaceInfo> info = BlockPlaceUtils.search(getWorld(), pos.offset(facing), 3);
+            if (info == null) continue;
+            placeList.addAll(info);
         }
         running = true;
         TaskExecutor.newTaskChain()
