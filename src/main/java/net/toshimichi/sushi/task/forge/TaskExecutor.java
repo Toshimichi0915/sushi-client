@@ -128,7 +128,6 @@ public class TaskExecutor {
             return;
         }
         TaskAdapter<?, ?> task = running.get(0);
-        System.out.println("ticks: " + ticks + " task: " + task.getClass().getSimpleName());
         executeTask(task, () -> {
             if (refresh(task)) {
                 task.tick();
