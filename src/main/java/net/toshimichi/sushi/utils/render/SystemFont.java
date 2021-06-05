@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 
 public class SystemFont {
 
-    private final float imgSize = 512;
+    private final float imgSize = 1024;
     protected CharData[] charData = new CharData[256];
     protected Font font;
     protected boolean antiAlias;
@@ -106,10 +106,6 @@ public class SystemFont {
         GL11.glVertex2d(x + width, y);
     }
 
-    public int getStringHeight(String text) {
-        return getHeight();
-    }
-
     public int getHeight() {
         return (this.fontHeight - 8) / 2;
     }
@@ -117,53 +113,17 @@ public class SystemFont {
     public int getStringWidth(String text) {
         int width = 0;
         for (char c : text.toCharArray()) {
-            if ((c < this.charData.length) && (c >= 0)) {
+            if (c < this.charData.length) {
                 width += this.charData[c].width - 8 + this.charOffset;
             }
         }
         return width / 2;
     }
 
-    public boolean isAntiAlias() {
-        return this.antiAlias;
-    }
-
-    public void setAntiAlias(boolean antiAlias) {
-        if (this.antiAlias != antiAlias) {
-            this.antiAlias = antiAlias;
-            tex = setupTexture(this.font, antiAlias, this.fractionalMetrics, this.charData);
-        }
-    }
-
-    public boolean isFractionalMetrics() {
-        return this.fractionalMetrics;
-    }
-
-    public void setFractionalMetrics(boolean fractionalMetrics) {
-        if (this.fractionalMetrics != fractionalMetrics) {
-            this.fractionalMetrics = fractionalMetrics;
-            tex = setupTexture(this.font, this.antiAlias, fractionalMetrics, this.charData);
-        }
-    }
-
-    public Font getFont() {
-        return this.font;
-    }
-
-    public void setFont(Font font) {
-        this.font = font;
-        tex = setupTexture(font, this.antiAlias, this.fractionalMetrics, this.charData);
-    }
-
     protected static class CharData {
-
         public int width;
         public int height;
         public int storedX;
         public int storedY;
-
-        protected CharData() {
-
-        }
     }
 }
