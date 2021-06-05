@@ -82,6 +82,7 @@ public class GsonModules implements Modules {
         addModuleFactory("anti_piston_aura", AntiPistonAuraModule::new, true);
         addModuleFactory("cev_break", CevBreakModule::new, true);
         addModuleFactory("cev_break_helper", CevBreakHelperModule::new, true);
+        addModuleFactory("name_tags", NameTagsModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

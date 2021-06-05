@@ -18,6 +18,7 @@ public class BlockPlaceUtils {
         if (!BlockUtils.canPlace(world, new BlockPlaceInfo(current, null))) return false;
         if (closed.contains(current)) return false;
         if (!access.apply(current)) return false;
+        closed.add(current);
 
         BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(world, current);
         if (info != null) {
@@ -28,7 +29,6 @@ public class BlockPlaceUtils {
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing == exclude) continue;
             BlockPos pos = current.offset(facing);
-            closed.add(pos);
             double fake = target.distanceSq(pos);
             nodes.add(new BlockNode(pos, facing, real, fake));
         }

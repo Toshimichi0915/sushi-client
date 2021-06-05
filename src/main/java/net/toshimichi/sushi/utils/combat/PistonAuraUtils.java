@@ -50,7 +50,7 @@ public class PistonAuraUtils {
                     p -> p.getY() <= obsidianPos.getY() && (p.getX() != targetPos.getX() || p.getZ() != targetPos.getZ()));
             if (obsidianPlace == null) return null;
         }
-        if (placed == null && (player.world.collidesWithAnyBlock(box) || !player.world.checkNoEntityCollision(box)))
+        if (placed == null && BlockUtils.checkCollision(player.world, box))
             return null;
 
         double originalDamage = DamageUtils.getCrystalDamage(target, BlockUtils.toVec3d(pos).add(0.5, 0, 0.5));

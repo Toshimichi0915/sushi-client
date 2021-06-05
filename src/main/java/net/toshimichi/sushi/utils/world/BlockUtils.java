@@ -27,11 +27,15 @@ public class BlockUtils {
         return state.getBlock().isAir(state, world, pos);
     }
 
+    public static boolean checkCollision(World world, AxisAlignedBB box) {
+        return world.collidesWithAnyBlock(box) || !world.checkNoEntityCollision(box);
+    }
+
     public static boolean canPlace(World world, BlockPlaceInfo face) {
         BlockPos pos = face.getBlockPos();
         EnumFacing facing = face.getBlockFace() == null ? null : face.getBlockFace().getFacing();
-        AxisAlignedBB box = world.getBlockState(pos).getBoundingBox(world, pos);
-        if (world.collidesWithAnyBlock(box) || !world.checkNoEntityCollision(box)) return false;
+        AxisAlignedBB box = world.getBlockState(pos).getBoundingBox(world, pos).offset(pos);
+        if (checkCollision(world, box)) return false;
         if (facing == null) return world.getBlockState(pos).getBlock().canPlaceBlockAt(world, pos);
         else if (isAir(world, pos.offset(facing.getOpposite()))) return false;
         else return world.getBlockState(pos).getBlock().canPlaceBlockOnSide(world, pos, facing.getOpposite());
