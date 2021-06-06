@@ -27,7 +27,7 @@ public class CevBreakHelperModule extends BaseModule {
     private final HashSet<BlockPos> candidates = new HashSet<>();
 
     @Config(id = "color", name = "Color")
-    private EspColor color = new EspColor(Color.RED, false, true);
+    public EspColor color = new EspColor(Color.RED, false, true);
 
     public CevBreakHelperModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

@@ -18,28 +18,28 @@ import net.toshimichi.sushi.modules.*;
 public class NoEntityTraceModule extends BaseModule {
 
     @Config(id = "sword", name = "Sword")
-    private Boolean sword = false;
+    public Boolean sword = false;
 
     @Config(id = "pickaxe", name = "Pickaxe")
-    private Boolean pickaxe = true;
+    public Boolean pickaxe = true;
 
     @Config(id = "axe", name = "Axe")
-    private Boolean axe = true;
+    public Boolean axe = true;
 
     @Config(id = "shovel", name = "Shovel")
-    private Boolean shovel = true;
+    public Boolean shovel = true;
 
     @Config(id = "hoe", name = "Hoe")
-    private Boolean hoe = true;
+    public Boolean hoe = true;
 
     @Config(id = "obsidian", name = "Obsidian")
-    private Boolean obsidian = true;
+    public Boolean obsidian = true;
 
     @Config(id = "tile_entity", name = "Tile Entity")
-    private Boolean tileEntity = true;
+    public Boolean tileEntity = true;
 
     @Config(id = "exclude_crystal", name = "Exclude Crystal")
-    private Boolean excludeCrystal = true;
+    public Boolean excludeCrystal = true;
 
     public NoEntityTraceModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

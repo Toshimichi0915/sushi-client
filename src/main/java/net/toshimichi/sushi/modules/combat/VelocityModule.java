@@ -15,7 +15,7 @@ import net.toshimichi.sushi.modules.*;
 public class VelocityModule extends BaseModule {
 
     @Config(id = "no_push", name = "No Push")
-    private Boolean noPush = true;
+    public Boolean noPush = true;
 
     public VelocityModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

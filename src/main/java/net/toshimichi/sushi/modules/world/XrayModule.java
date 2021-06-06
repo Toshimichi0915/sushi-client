@@ -17,7 +17,7 @@ public class XrayModule extends BaseModule {
     private static final Block[] INIT_VALUES = {Blocks.DIAMOND_ORE, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE, Blocks.IRON_ORE, Blocks.COAL_ORE};
 
     @Config(id = "blocks", name = "Blocks")
-    private BlockName[] blocks = Arrays.stream(INIT_VALUES).map(BlockName::new).toArray(BlockName[]::new);
+    public BlockName[] blocks = Arrays.stream(INIT_VALUES).map(BlockName::new).toArray(BlockName[]::new);
 
     public XrayModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

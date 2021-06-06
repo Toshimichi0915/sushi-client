@@ -30,25 +30,25 @@ public class SearchModule extends BaseModule {
     private SearchMap searchMap;
 
     @Config(id = "blocks", name = "Blocks")
-    private BlockName[] blocks = new BlockName[0];
+    public BlockName[] blocks = new BlockName[0];
 
     @Config(id = "outline", name = "Outline")
-    private Boolean outline = true;
+    public Boolean outline = true;
 
     @Config(id = "outline_color", name = "Outline Color", when = "outline")
-    private EspColor outlineColor = new EspColor(new Color(255, 0, 0), false, true);
+    public EspColor outlineColor = new EspColor(new Color(255, 0, 0), false, true);
 
     @Config(id = "fill", name = "Fill")
-    private Boolean fill = true;
+    public Boolean fill = true;
 
     @Config(id = "fill_color", name = "Fill Color", when = "fill")
-    private EspColor fillColor = new EspColor(new Color(255, 0, 0), false, true);
+    public EspColor fillColor = new EspColor(new Color(255, 0, 0), false, true);
 
     @Config(id = "tracers", name = "Tracers")
-    private Boolean tracers = true;
+    public Boolean tracers = true;
 
     @Config(id = "tracers_color", name = "Tracers Color", when = "tracers")
-    private EspColor tracerColor = new EspColor(new Color(255, 0, 0), false, true);
+    public EspColor tracerColor = new EspColor(new Color(255, 0, 0), false, true);
 
     public SearchModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

@@ -30,31 +30,31 @@ public class StorageEspModule extends BaseModule {
     private final HashSet<TileEntityChest> rendered = new HashSet<>();
 
     @Config(id = "outline", name = "Outline")
-    private Boolean outline = true;
+    public Boolean outline = true;
 
     @Config(id = "fill", name = "Fill")
-    private Boolean fill = true;
+    public Boolean fill = true;
 
     @Config(id = "tracers", name = "Tracers")
-    private Boolean tracers = true;
+    public Boolean tracers = true;
 
     @Config(id = "chest", name = "Chest")
-    private Boolean chest = true;
+    public Boolean chest = true;
 
     @Config(id = "ender_chest", name = "Ender Chest")
-    private Boolean enderChest = false;
+    public Boolean enderChest = false;
 
     @Config(id = "dispenser", name = "Dispenser")
-    private Boolean dispenser = false;
+    public Boolean dispenser = false;
 
     @Config(id = "shulker Box", name = "Shulker Box")
-    private Boolean shulkerBox = false;
+    public Boolean shulkerBox = false;
 
     @Config(id = "furnace", name = "Furnace")
-    private Boolean furnace = false;
+    public Boolean furnace = false;
 
     @Config(id = "hopper", name = "Hopper")
-    private Boolean hopper = false;
+    public Boolean hopper = false;
 
     public StorageEspModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

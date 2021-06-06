@@ -28,25 +28,25 @@ public class NameTagsModule extends BaseModule {
     private static final DecimalFormat FORMAT = new DecimalFormat("0.0");
 
     @Config(id = "player", name = "Show players")
-    private Boolean player = true;
+    public Boolean player = true;
 
     @Config(id = "self", name = "Show self", when = "player")
-    private Boolean self = false;
+    public Boolean self = false;
 
     @Config(id = "mob", name = "Show mobs")
-    private Boolean mob = false;
+    public Boolean mob = false;
 
     @Config(id = "passive", name = "Show Passive Mobs", when = "mob")
-    private Boolean passive = false;
+    public Boolean passive = false;
 
     @Config(id = "neutral", name = "Show Neutral Mobs", when = "mob")
-    private Boolean neutral = false;
+    public Boolean neutral = false;
 
     @Config(id = "hostile", name = "Show Hostile Mobs", when = "mob")
-    private Boolean hostile = false;
+    public Boolean hostile = false;
 
     @Config(id = "scale_multiplier", name = "Scale Multiplier")
-    private DoubleRange scaleMultiplier = new DoubleRange(3, 10, 1, 0.1, 1);
+    public DoubleRange scaleMultiplier = new DoubleRange(3, 10, 1, 0.1, 1);
 
     public NameTagsModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
