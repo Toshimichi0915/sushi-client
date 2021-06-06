@@ -84,6 +84,7 @@ public class GsonModules implements Modules {
         addModuleFactory("cev_break_helper", CevBreakHelperModule::new, true);
         addModuleFactory("name_tags", NameTagsModule::new, true);
         addModuleFactory("tracers", TracersModule::new, true);
+        addModuleFactory("auto_tool", AutoToolModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

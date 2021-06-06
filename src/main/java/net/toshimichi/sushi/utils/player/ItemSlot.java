@@ -1,23 +1,22 @@
 package net.toshimichi.sushi.utils.player;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 
 public class ItemSlot implements Comparable<ItemSlot> {
     private final int index;
-    private final ItemStack itemStack;
     private final InventoryType inventoryType;
+    private final EntityPlayerSP player;
 
     public ItemSlot(int index, EntityPlayerSP player) {
         this.index = index;
-        this.itemStack = player.inventory.getStackInSlot(index);
         this.inventoryType = InventoryType.valueOf(index);
+        this.player = player;
     }
 
-    public ItemSlot(int index, ItemStack itemStack, InventoryType inventoryType) {
-        this.index = index;
-        this.itemStack = itemStack;
-        this.inventoryType = inventoryType;
+    public ItemSlot(int index) {
+        this(index, Minecraft.getMinecraft().player);
     }
 
     public int getIndex() {
@@ -25,7 +24,7 @@ public class ItemSlot implements Comparable<ItemSlot> {
     }
 
     public ItemStack getItemStack() {
-        return itemStack;
+        return player.inventory.getStackInSlot(index);
     }
 
     public InventoryType getInventoryType() {

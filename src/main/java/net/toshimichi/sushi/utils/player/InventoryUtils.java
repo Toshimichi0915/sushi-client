@@ -1,13 +1,17 @@
 package net.toshimichi.sushi.utils.player;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.CPacketClickWindow;
 
 import java.util.ArrayList;
@@ -51,5 +55,79 @@ public class InventoryUtils {
         connection.sendPacket(new CPacketClickWindow(0, index, button, type, slot.getItemStack(), transactionId));
         Minecraft.getMinecraft().playerController.updateController();
         return transactionId;
+    }
+
+    public static void moveToHotbar(ItemSlot itemSlot) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        ItemSlot emptyHotbar = InventoryUtils.findItemSlot(null, player, InventoryType.HOTBAR);
+        if (emptyHotbar == null) {
+            InventoryUtils.clickItemSlot(itemSlot, ClickType.SWAP, player.inventory.currentItem);
+        } else {
+            InventoryUtils.clickItemSlot(itemSlot, ClickType.QUICK_MOVE, 0);
+            InventoryUtils.moveHotbar(emptyHotbar.getIndex());
+        }
+    }
+
+    public static ItemSlot findBestWeapon(boolean fromInventory, boolean preferAxe) {
+        int max = fromInventory ? 36 : 9;
+        ItemSlot item = null;
+        float maxDamage = 0;
+        for (int i = 0; i < max; i++) {
+            ItemSlot itemSlot = new ItemSlot(i, Minecraft.getMinecraft().player);
+            ItemStack itemStack = itemSlot.getItemStack();
+            float damage = ItemUtils.getAttackDamage(itemStack);
+            if (preferAxe) {
+                if (item != null && item.getItemStack().getItem() instanceof ItemAxe) {
+                    if (itemStack.getItem() instanceof ItemAxe && damage > maxDamage) {
+                        item = itemSlot;
+                        maxDamage = damage;
+                    }
+                } else if (!(itemStack.getItem() instanceof ItemAxe) && damage > maxDamage) {
+                    item = itemSlot;
+                    maxDamage = damage;
+                }
+            } else if (damage > maxDamage) {
+                item = itemSlot;
+                maxDamage = damage;
+            }
+        }
+        return item;
+    }
+
+    public static ItemSlot findBestTool(boolean fromInventory, boolean preferSilkTouch, IBlockState blockState) {
+        int max = fromInventory ? 36 : 9;
+        ItemSlot item = null;
+        float fastest = 0;
+        for (int i = 0; i < max; i++) {
+            ItemSlot itemSlot = new ItemSlot(i, Minecraft.getMinecraft().player);
+            ItemStack itemStack = itemSlot.getItemStack();
+            float destroySpeed = itemStack.getDestroySpeed(blockState);
+            if (destroySpeed > 1) {
+                int level = ItemUtils.getEnchantmentLevel(itemStack, Enchantments.EFFICIENCY);
+                destroySpeed += level * level + 1;
+            }
+            if (preferSilkTouch) {
+                if (item != null && ItemUtils.getEnchantmentLevel(item.getItemStack(), Enchantments.SILK_TOUCH) != 0) {
+                    if (ItemUtils.getEnchantmentLevel(itemStack, Enchantments.SILK_TOUCH) != 0 && destroySpeed > fastest) {
+                        item = itemSlot;
+                        fastest = destroySpeed;
+                    }
+                } else if (destroySpeed > fastest) {
+                    item = itemSlot;
+                    fastest = destroySpeed;
+                }
+            } else if (destroySpeed > fastest) {
+                item = itemSlot;
+                fastest = destroySpeed;
+            }
+        }
+        if (Double.compare(fastest, 1) == 0) {
+            for (int i = 0; i < 9; i++) {
+                ItemSlot hotbarItemSlot = new ItemSlot(i);
+                Item hotbarItem = hotbarItemSlot.getItemStack().getItem();
+                if (!(hotbarItem instanceof ItemTool)) return hotbarItemSlot;
+            }
+        }
+        return item;
     }
 }

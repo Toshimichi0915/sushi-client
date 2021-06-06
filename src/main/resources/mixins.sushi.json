@@ -5,6 +5,7 @@
   "refmap": "mixins.sushi.refmap.json",
   "mixins": [
     "AccessorEntityRenderer",
+    "AccessorItemTool",
     "AccessorMinecraft",
     "AccessorTimer",
     "MixinBlock",
@@ -21,6 +22,7 @@
     "MixinMinecraft",
     "MixinMovementInputFromOptions",
     "MixinNetworkManager",
+    "MixinPlayerControllerMP",
     "MixinStateImplementation",
     "MixinTileEntityRendererDispatcher",
     "MixinWorld"
