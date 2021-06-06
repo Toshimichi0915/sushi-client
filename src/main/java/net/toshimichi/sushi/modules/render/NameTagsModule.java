@@ -1,7 +1,6 @@
 package net.toshimichi.sushi.modules.render;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.Vec2f;
 import net.toshimichi.sushi.config.Config;

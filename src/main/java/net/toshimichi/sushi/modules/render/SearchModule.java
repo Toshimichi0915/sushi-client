@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 
 public class SearchModule extends BaseModule {
 
@@ -73,7 +72,6 @@ public class SearchModule extends BaseModule {
         Vec3d interpolated = RenderUtils.getInterpolatedPos();
         frustum.setPosition(interpolated.x, interpolated.y, interpolated.z);
         glDisable(GL_DEPTH_TEST);
-        glEnable(GL_DEPTH_CLAMP);
         for (BlockPos pos : searchMap.getResults()) {
             AxisAlignedBB box = getWorld().getBlockState(pos).getBoundingBox(getWorld(), pos).offset(pos);
             if (tracers) {
@@ -88,7 +86,6 @@ public class SearchModule extends BaseModule {
             }
         }
         glEnable(GL_DEPTH_TEST);
-        glDisable(GL_DEPTH_CLAMP);
     }
 
     @Override
