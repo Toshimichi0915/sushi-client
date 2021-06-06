@@ -58,7 +58,7 @@ public class NameTagsModule extends BaseModule {
 
             StringBuilder text = new StringBuilder(entity.getName());
             text.append(' ');
-            text.append(FORMAT.format(((EntityLiving) entity).getHealth()));
+            text.append(FORMAT.format(((EntityLivingBase) entity).getHealth()));
             TextPreview preview = GuiUtils.prepareText(text.toString(), "Calibri", Color.WHITE, 30, true);
             double width = preview.getWidth();
             double height = preview.getHeight();
