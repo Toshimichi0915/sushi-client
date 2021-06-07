@@ -90,7 +90,7 @@ public class PistonAuraModule extends BaseModule {
             return;
         }
         if (attack == null || repeatCounter == 0) {
-            List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer());
+            List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer(), 3);
             if (attacks.isEmpty()) return;
             Collections.sort(attacks);
             attack = attacks.get(0);

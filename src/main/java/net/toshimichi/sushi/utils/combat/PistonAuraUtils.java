@@ -28,7 +28,7 @@ public class PistonAuraUtils {
         else return BlockState.BLOCKED;
     }
 
-    private static List<PistonAuraAttack> find(EntityPlayer player, EntityPlayer target, BlockPos obsidianPos) {
+    private static List<PistonAuraAttack> find(EntityPlayer player, EntityPlayer target, BlockPos obsidianPos, int distance) {
 
         Block block = player.world.getBlockState(obsidianPos).getBlock();
         BlockPos pos = obsidianPos.add(0, 1, 0);
@@ -46,7 +46,7 @@ public class PistonAuraUtils {
         if (placed == null && block != Blocks.BEDROCK && block != Blocks.OBSIDIAN) {
             if (block != Blocks.AIR) return null;
             BlockPos targetPos = BlockUtils.toBlockPos(target.getPositionVector());
-            obsidianPlace = BlockPlaceUtils.search(player.world, obsidianPos, 3, new HashSet<>(),
+            obsidianPlace = BlockPlaceUtils.search(player.world, obsidianPos, distance, new HashSet<>(),
                     p -> p.getY() <= obsidianPos.getY() && (p.getX() != targetPos.getX() || p.getZ() != targetPos.getZ()));
             if (obsidianPlace == null) return null;
         }
@@ -97,7 +97,7 @@ public class PistonAuraUtils {
                     closed.add(obsidianPos);
                     closed.add(pos);
                     closed.add(pos.add(0, 1, 0));
-                    List<BlockPlaceInfo> candidate = BlockPlaceUtils.search(player.world, pistonPos.offset(value), 3, closed, p -> true);
+                    List<BlockPlaceInfo> candidate = BlockPlaceUtils.search(player.world, pistonPos.offset(value), distance, closed, p -> true);
                     if (candidate == null) continue;
                     if (pistonPlace == null || candidate.size() < pistonPlace.size()) pistonPlace = candidate;
                 }
@@ -111,14 +111,14 @@ public class PistonAuraUtils {
         return result;
     }
 
-    public static List<PistonAuraAttack> find(EntityPlayer player, EntityPlayer target) {
+    public static List<PistonAuraAttack> find(EntityPlayer player, EntityPlayer target, int distance) {
         BlockPos origin = BlockUtils.toBlockPos(target.getPositionVector());
         ArrayList<PistonAuraAttack> list = new ArrayList<>();
         for (int x = -1; x <= 1; x++) {
             for (int y = 1; y <= 3; y++) {
                 for (int z = -1; z <= 1; z++) {
                     BlockPos pos = origin.add(x, y, z);
-                    List<PistonAuraAttack> attacks = find(player, target, pos);
+                    List<PistonAuraAttack> attacks = find(player, target, pos, distance);
                     if (attacks != null) list.addAll(attacks);
                 }
             }
@@ -126,13 +126,13 @@ public class PistonAuraUtils {
         return list;
     }
 
-    public static List<PistonAuraAttack> find(EntityPlayer player) {
+    public static List<PistonAuraAttack> find(EntityPlayer player, int distance) {
         ArrayList<PistonAuraAttack> result = new ArrayList<>();
         for (Entity entity : player.world.loadedEntityList) {
             if (!(entity instanceof EntityPlayer)) continue;
             if (entity.getDistanceSq(player) > 12) continue;
             if (entity.getName().equals(player.getName())) continue;
-            result.addAll(find(player, (EntityPlayer) entity));
+            result.addAll(find(player, (EntityPlayer) entity, distance));
         }
         return result;
     }

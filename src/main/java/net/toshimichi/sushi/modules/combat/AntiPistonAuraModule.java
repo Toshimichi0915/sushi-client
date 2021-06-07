@@ -45,7 +45,7 @@ public class AntiPistonAuraModule extends BaseModule {
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
         if (running) return;
-        attacks = PistonAuraUtils.find(getPlayer(), getPlayer());
+        attacks = PistonAuraUtils.find(getPlayer(), getPlayer(), 0);
         attacks.removeIf(it -> it.getCrystal() == null);
         for (PistonAuraAttack attack : attacks) {
             BlockPos pos1 = attack.getCrystalPos();
