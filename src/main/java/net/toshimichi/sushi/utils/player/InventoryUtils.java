@@ -9,8 +9,8 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.CPacketClickWindow;
 
@@ -76,13 +76,13 @@ public class InventoryUtils {
             ItemSlot itemSlot = new ItemSlot(i, Minecraft.getMinecraft().player);
             ItemStack itemStack = itemSlot.getItemStack();
             float damage = ItemUtils.getAttackDamage(itemStack);
-            if (preferAxe) {
-                if (item != null && item.getItemStack().getItem() instanceof ItemAxe) {
-                    if (itemStack.getItem() instanceof ItemAxe && damage > maxDamage) {
+            if (!preferAxe) {
+                if (item != null && item.getItemStack().getItem() instanceof ItemSword) {
+                    if (itemStack.getItem() instanceof ItemSword && damage > maxDamage) {
                         item = itemSlot;
                         maxDamage = damage;
                     }
-                } else if (!(itemStack.getItem() instanceof ItemAxe) && damage > maxDamage) {
+                } else if (damage > maxDamage) {
                     item = itemSlot;
                     maxDamage = damage;
                 }
