@@ -10,8 +10,8 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
+import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.render.hole.HoleInfo;
@@ -48,7 +48,7 @@ public class AnchorModule extends BaseModule {
     @Config(id = "hole_selector", name = "Allowed Hole")
     public HoleSelector selector = HoleSelector.BOTH;
 
-    private boolean isPausing;
+    private int pausing;
 
     public AnchorModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -66,8 +66,12 @@ public class AnchorModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onClientTick(PlayerTravelEvent e) {
-        if (isPausing) return;
+    public void onClientTick(ClientTickEvent e) {
+        pausing--;
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onPlayerTravel(PlayerTravelEvent e) {
         boolean isInHole = getHole(0, selector.getAllowedTypes()) != null;
         boolean validPitch = !pitchTrigger || getPlayer().rotationPitch > pitch.getCurrent();
         if (isInHole) {
@@ -76,14 +80,12 @@ public class AnchorModule extends BaseModule {
                 return;
             }
             if (pauseInHole) {
-                TaskExecutor.newTaskChain()
-                        .delay(pauseTicks.getCurrent())
-                        .then(() -> isPausing = false)
-                        .execute();
-                isPausing = true;
+                pausing = pauseTicks.getCurrent();
+                return;
             }
         }
 
+        if (pausing > 0) return;
         if (!validPitch) return;
         HoleInfo hole = getHole(range.getCurrent(), selector.getAllowedTypes());
         if (hole == null) return;
