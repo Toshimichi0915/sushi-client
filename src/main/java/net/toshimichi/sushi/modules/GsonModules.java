@@ -11,10 +11,7 @@ import net.toshimichi.sushi.modules.client.AntiErrorKickModule;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.combat.*;
-import net.toshimichi.sushi.modules.movement.AutoWalkModule;
-import net.toshimichi.sushi.modules.movement.PhaseFlyModule;
-import net.toshimichi.sushi.modules.movement.PhaseWalkModule;
-import net.toshimichi.sushi.modules.movement.SprintModule;
+import net.toshimichi.sushi.modules.movement.*;
 import net.toshimichi.sushi.modules.player.*;
 import net.toshimichi.sushi.modules.render.*;
 import net.toshimichi.sushi.modules.world.NoEntityTraceModule;
@@ -86,6 +83,7 @@ public class GsonModules implements Modules {
         addModuleFactory("tracers", TracersModule::new, true);
         addModuleFactory("auto_tool", AutoToolModule::new, true);
         addModuleFactory("hole_esp", HoleEspModule::new, true);
+        addModuleFactory("anchor", AnchorModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
