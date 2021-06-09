@@ -16,6 +16,7 @@ import net.toshimichi.sushi.modules.player.*;
 import net.toshimichi.sushi.modules.render.*;
 import net.toshimichi.sushi.modules.world.NoEntityTraceModule;
 import net.toshimichi.sushi.modules.world.ScaffoldModule;
+import net.toshimichi.sushi.modules.world.WeatherModule;
 import net.toshimichi.sushi.modules.world.XrayModule;
 import org.apache.commons.io.FileUtils;
 
@@ -84,6 +85,7 @@ public class GsonModules implements Modules {
         addModuleFactory("auto_tool", AutoToolModule::new, true);
         addModuleFactory("hole_esp", HoleEspModule::new, true);
         addModuleFactory("anchor", AnchorModule::new, true);
+        addModuleFactory("weather", WeatherModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
