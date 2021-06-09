@@ -186,6 +186,7 @@ public class PistonAuraModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onPostClientTick(ClientTickEvent e) {
+        repeatCounter = 0;
         update();
     }
 
