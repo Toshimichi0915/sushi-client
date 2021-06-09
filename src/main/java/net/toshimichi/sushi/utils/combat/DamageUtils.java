@@ -47,7 +47,7 @@ public class DamageUtils {
                 if (enchant != null) modifier += enchant.calcModifierDamage(level, source);
             }
         }
-        damage *= (1 - modifier / 25D);
+        damage *= (1 - Math.min(modifier, 0.8) / 25D);
 
         // difficulty
         if (source.isDifficultyScaled()) {
