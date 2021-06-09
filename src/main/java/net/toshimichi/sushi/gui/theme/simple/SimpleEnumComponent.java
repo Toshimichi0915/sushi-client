@@ -47,7 +47,7 @@ public class SimpleEnumComponent<T extends Named> extends BaseComponent {
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
         GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, false)
                 .draw(getWindowX() + 1, getWindowY() + 2);
-        TextPreview preview = GuiUtils.prepareText(getNamed(counter).getName(), constants.font.getValue(), constants.textColor.getValue(), 9, false);
+        TextPreview preview = GuiUtils.prepareText(getNamed(counter).getName(), constants.font.getValue(), constants.textColor.getValue(), 10, false);
         preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 2);
         hover = false;
     }
