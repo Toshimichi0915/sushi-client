@@ -23,7 +23,7 @@ public class PistonAuraUtils {
     public static BlockState getBlockState(EntityPlayer player, BlockPos pos, Block... blocks) {
         Block block = player.world.getBlockState(pos).getBlock();
         if (Arrays.asList(blocks).contains(block)) return BlockState.PLACED;
-        else if (BlockUtils.isAir(player.world, pos)) return BlockState.AIR;
+        else if (BlockUtils.canPlace(player.world, new BlockPlaceInfo(pos, null))) return BlockState.AIR;
         else if (block == Blocks.BEDROCK || block == Blocks.OBSIDIAN) return BlockState.UNREACHABLE;
         else return BlockState.BLOCKED;
     }
