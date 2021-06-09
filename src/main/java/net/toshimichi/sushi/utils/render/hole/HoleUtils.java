@@ -1,8 +1,6 @@
 package net.toshimichi.sushi.utils.render.hole;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -33,10 +31,10 @@ public class HoleUtils {
 
     private static HoleInfo getDoubleHole(World world, BlockPos origin) {
         if (world.getBlockState(origin).getBlock() != Blocks.AIR) return null;
-        boolean isObsidian = false;
         root:
         for (EnumFacing facing : new EnumFacing[]{EnumFacing.SOUTH, EnumFacing.EAST}) {
-            if (world.getBlockState(origin.offset(facing)).getBlock() != Blocks.AIR) return null;
+            boolean isObsidian = false;
+            if (world.getBlockState(origin.offset(facing)).getBlock() != Blocks.AIR) continue;
             for (EnumFacing i : EnumFacing.values()) {
                 if (i == facing || i == EnumFacing.UP) continue;
                 Block b = world.getBlockState(origin.offset(i)).getBlock();
@@ -48,7 +46,7 @@ public class HoleUtils {
                     else if (block != Blocks.BEDROCK) continue root;
                 }
             }
-            return new HoleInfo(new BlockPos[]{origin, origin.offset(facing)}, isObsidian ? HoleType.SAFE_DOUBLE : HoleType.UNSAFE_DOUBLE);
+            return new HoleInfo(new BlockPos[]{origin, origin.offset(facing)}, isObsidian ? HoleType.UNSAFE_DOUBLE : HoleType.SAFE_DOUBLE);
         }
         return null;
     }
@@ -60,7 +58,6 @@ public class HoleUtils {
     }
 
     public static void findHoles(World world, BlockPos from, BlockPos to, Consumer<HoleInfo> onFound) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
         for (int x = from.getX(); x <= to.getX(); x++) {
             for (int y = from.getY(); y <= to.getY(); y++) {
                 for (int z = from.getZ(); z <= to.getZ(); z++) {
