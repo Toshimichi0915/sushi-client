@@ -1,4 +1,4 @@
-package net.toshimichi.sushi.modules.player;
+package net.toshimichi.sushi.modules.render;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
