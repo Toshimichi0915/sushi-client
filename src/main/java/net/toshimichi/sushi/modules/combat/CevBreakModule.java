@@ -46,6 +46,11 @@ public class CevBreakModule extends BaseModule {
         hasStarted = false;
     }
 
+    private void placeCrystal(CevBreakAttack attack) {
+        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getObsidianPos(), EnumFacing.DOWN, EnumHand.MAIN_HAND,
+                0.5F, 0, 0.5F));
+    }
+
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
         List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer());
@@ -60,17 +65,21 @@ public class CevBreakModule extends BaseModule {
             TaskExecutor.newTaskChain()
                     .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
+                    .abortIf(found -> !found)
                     .then(() -> BlockUtils.place(info))
+                    .supply(() -> Items.END_CRYSTAL)
+                    .then(new ItemSwitchTask(null, true))
+                    .abortIf(found -> !found)
+                    .then(() -> placeCrystal(attack))
                     .execute();
             BlockUtils.place(info);
         } else if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
                     .supply(() -> Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, true))
-                    .then(() -> {
-                        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getObsidianPos(), EnumFacing.DOWN, EnumHand.MAIN_HAND,
-                                0.5F, 0, 0.5F));
-                    }).execute();
+                    .abortIf(found -> !found)
+                    .then(() -> placeCrystal(attack))
+                    .execute();
         } else {
             if (!attack.getObsidianPos().equals(breakingBlock)) {
                 breakingBlock = attack.getObsidianPos();
