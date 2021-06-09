@@ -12,6 +12,8 @@
     "MixinBlock",
     "MixinBlockFluidRenderer",
     "MixinBlockModelRenderer",
+    "MixinBlockSoulSand",
+    "MixinBlockWeb",
     "MixinEntity",
     "MixinEntityLivingBase",
     "MixinEntityPlayer",
