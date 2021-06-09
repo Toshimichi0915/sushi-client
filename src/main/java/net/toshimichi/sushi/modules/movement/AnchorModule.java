@@ -30,9 +30,6 @@ public class AnchorModule extends BaseModule {
     @Config(id = "range", name = "Range")
     public IntRange range = new IntRange(3, 10, 1, 1);
 
-    @Config(id = "pause_ticks", name = "Pause Ticks")
-    public IntRange pauseTicks = new IntRange(0, 100, 0, 1);
-
     @Config(id = "pitch_trigger", name = "Pitch Trigger")
     public Boolean pitchTrigger = true;
 
@@ -41,6 +38,9 @@ public class AnchorModule extends BaseModule {
 
     @Config(id = "pause_in_hole", name = "Pause In Hole")
     public Boolean pauseInHole = true;
+
+    @Config(id = "pause_ticks", name = "Pause Ticks", when = "pause_in_hole")
+    public IntRange pauseTicks = new IntRange(0, 100, 0, 1);
 
     @Config(id = "disable_in_hole", name = "Disable In Hole")
     public Boolean disableInHole = false;
