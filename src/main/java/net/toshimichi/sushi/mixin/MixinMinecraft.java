@@ -40,13 +40,13 @@ public class MixinMinecraft {
         callGameFocusEvent(EventTiming.POST, false);
     }
 
-    @Inject(at = @At("HEAD"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;)V")
-    public void onPreLoadWorld(WorldClient client, CallbackInfo info) {
+    @Inject(at = @At("HEAD"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V")
+    public void onPreLoadWorld(WorldClient client, String loadingMessage, CallbackInfo ci) {
         EventHandlers.callEvent(new WorldLoadEvent(EventTiming.PRE, client));
     }
 
-    @Inject(at = @At("TAIL"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;)V")
-    public void onPostLoadWorld(WorldClient client, CallbackInfo info) {
+    @Inject(at = @At("TAIL"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V")
+    public void onPostLoadWorld(WorldClient client, String loadingMessage, CallbackInfo info) {
         EventHandlers.callEvent(new WorldLoadEvent(EventTiming.POST, client));
     }
 }

@@ -16,6 +16,6 @@ public class ChunkHandler {
 
     @SubscribeEvent
     public void onChunkUnload(ChunkEvent.Unload e) {
-        EventHandlers.callEvent(new ChunkUnloadEvent(EventTiming.POST, e.getChunk()));
+        EventHandlers.callEvent(new ChunkUnloadEvent(EventTiming.PRE, e.getChunk()));
     }
 }

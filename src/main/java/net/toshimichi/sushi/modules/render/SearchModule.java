@@ -57,14 +57,14 @@ public class SearchModule extends BaseModule {
 
     @Override
     public void onEnable() {
-        EventHandlers.register(this);
         searchMap = new SearchMap(Arrays.stream(blocks).map(BlockName::toBlock).collect(Collectors.toList()));
+        EventHandlers.register(this);
     }
 
     @Override
     public void onDisable() {
-        EventHandlers.unregister(this);
         searchMap.close();
+        EventHandlers.unregister(this);
     }
 
     @EventHandler(timing = EventTiming.POST)
@@ -72,7 +72,7 @@ public class SearchModule extends BaseModule {
         Vec3d interpolated = RenderUtils.getInterpolatedPos();
         frustum.setPosition(interpolated.x, interpolated.y, interpolated.z);
         glDisable(GL_DEPTH_TEST);
-        for (BlockPos pos : searchMap.getResults()) {
+        for (BlockPos pos : searchMap.getResult()) {
             AxisAlignedBB box = getWorld().getBlockState(pos).getBoundingBox(getWorld(), pos).offset(pos);
             if (tracers) {
                 RenderUtils.drawLine(RenderUtils.getCameraPos(), box.getCenter(), tracerColor.getCurrentColor(), 1);

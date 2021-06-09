@@ -16,7 +16,7 @@ public class SearchUtils {
             for (int y = 0; y < world.getHeight(); y++) {
                 for (int z = 0; z < 16; z++) {
                     BlockPos pos = new BlockPos((chunk.x << 4) + x, y, (chunk.z << 4) + z);
-                    Block block = world.getBlockState(pos).getBlock();
+                    Block block = chunk.getBlockState(pos).getBlock();
                     if (targets.contains(block)) consumer.accept(pos);
                 }
             }

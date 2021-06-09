@@ -6,6 +6,7 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.toshimichi.sushi.utils.MathUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 
 import java.util.Stack;
@@ -115,7 +116,7 @@ public class PositionUtils {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) return;
         Vec3d direction = loc.subtract(new Vec3d(player.posX, player.posY + player.eyeHeight, player.posZ)).normalize();
-        if (Math.abs(Math.abs(direction.y) - 1) < EPSILON) {
+        if (MathUtils.absMinus(direction.y, 1) < EPSILON) {
             // workaround for Math#asin returning Double.NaN
             direction = new Vec3d(direction.x, Math.signum(direction.y) * (1 - EPSILON), direction.z);
         }

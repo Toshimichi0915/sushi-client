@@ -85,6 +85,7 @@ public class GsonModules implements Modules {
         addModuleFactory("name_tags", NameTagsModule::new, true);
         addModuleFactory("tracers", TracersModule::new, true);
         addModuleFactory("auto_tool", AutoToolModule::new, true);
+        addModuleFactory("hole_esp", HoleEspModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

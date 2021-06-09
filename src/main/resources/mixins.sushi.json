@@ -4,6 +4,7 @@
   "package": "net.toshimichi.sushi.mixin",
   "refmap": "mixins.sushi.refmap.json",
   "mixins": [
+    "AccessorChunkProviderClient",
     "AccessorEntityRenderer",
     "AccessorItemTool",
     "AccessorMinecraft",
