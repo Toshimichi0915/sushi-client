@@ -93,7 +93,8 @@ public class AnchorModule extends BaseModule {
         getPlayer().motionX = 0;
         if (instant) getPlayer().motionY = 0;
         getPlayer().motionZ = 0;
-        PositionUtils.move((int) getPlayer().posX + 0.5, posY, (int) getPlayer().posZ + 0.5,
+        BlockPos floorPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
+        PositionUtils.move(floorPos.getX() + 0.5, posY, floorPos.getZ() + 0.5,
                 0, 0, true, false, DesyncMode.NONE);
     }
 
