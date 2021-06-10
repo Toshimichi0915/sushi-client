@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.utils.combat;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,13 +16,20 @@ import java.util.List;
 
 public class CevBreakUtils {
 
-    private static CevBreakAttack find(EntityPlayer player, EntityPlayer target, BlockPos pos) {
+    private static CevBreakAttack find(EntityPlayer player, EntityPlayer target, BlockPos pos, BlockPos breakingBlock) {
         BlockPos obsidianPos = pos.add(0, -1, 0);
-        Block floorBlock = player.world.getBlockState(obsidianPos).getBlock();
+        IBlockState floorState = player.world.getBlockState(obsidianPos);
+        Block floorBlock = floorState.getBlock();
         if (floorBlock != Blocks.OBSIDIAN && floorBlock != Blocks.AIR) return null;
         boolean obsidianPlaced = floorBlock == Blocks.OBSIDIAN;
         EntityEnderCrystal placed = null;
         Vec3d crystalPos = BlockUtils.toVec3d(pos).add(0.5, 0, 0.5);
+        player.world.setBlockState(obsidianPos, Blocks.AIR.getDefaultState());
+        double damage = DamageUtils.getCrystalDamage(target, crystalPos);
+        double selfDamage = DamageUtils.getCrystalDamage(player, crystalPos);
+        player.world.setBlockState(obsidianPos, floorState);
+        if (damage < 100) return null;
+        if (selfDamage > 30) return null;
         for (Entity crystal : player.world.loadedEntityList) {
             if (!(crystal instanceof EntityEnderCrystal)) continue;
             if (crystal.getPositionVector().squareDistanceTo(crystalPos) > 0.3) continue;
@@ -31,28 +39,30 @@ public class CevBreakUtils {
             AxisAlignedBB box = new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
             if (BlockUtils.checkCollision(player.world, box)) return null;
         }
-        return new CevBreakAttack(pos, obsidianPos, player, target, placed, placed != null, obsidianPlaced);
+        return new CevBreakAttack(pos, obsidianPos, player, target, placed, breakingBlock, damage, placed != null, obsidianPlaced);
     }
 
-    public static List<CevBreakAttack> find(EntityPlayer player, EntityPlayer target) {
+    public static List<CevBreakAttack> find(EntityPlayer player, EntityPlayer target, BlockPos breakingBlock) {
         BlockPos origin = BlockUtils.toBlockPos(target.getPositionVector());
         ArrayList<CevBreakAttack> result = new ArrayList<>();
-        CevBreakAttack above = find(player, target, new BlockPos(origin.getX(), origin.getY() + 3, origin.getZ()));
-        if (above != null) result.add(above);
-        if (BlockUtils.isAir(player.world, origin.add(0, 2, 0))) {
-            CevBreakAttack above2 = find(player, target, new BlockPos(origin.getX(), origin.getY() + 4, origin.getZ()));
-            if (above2 != null) result.add(above2);
+        for (int x = -1; x <= 1; x++) {
+            for (int y = 2; y <= 4; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    CevBreakAttack attack = find(player, target, new BlockPos(origin.getX() + x, origin.getY() + y, origin.getZ() + z), breakingBlock);
+                    if (attack != null) result.add(attack);
+                }
+            }
         }
         return result;
     }
 
-    public static List<CevBreakAttack> find(EntityPlayer player) {
+    public static List<CevBreakAttack> find(EntityPlayer player, BlockPos breakingBlock) {
         ArrayList<CevBreakAttack> result = new ArrayList<>();
         for (Entity entity : player.world.loadedEntityList) {
             if (!(entity instanceof EntityPlayer)) continue;
             if (entity.getDistanceSq(player) > 15) continue;
             if (entity.getName().equals(player.getName())) continue;
-            result.addAll(find(player, (EntityPlayer) entity));
+            result.addAll(find(player, (EntityPlayer) entity, breakingBlock));
         }
         return result;
     }

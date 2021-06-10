@@ -1,7 +1,6 @@
 package net.toshimichi.sushi.events.world;
 
 import net.toshimichi.sushi.events.BaseEvent;
-import net.toshimichi.sushi.events.CancellableEvent;
 import net.toshimichi.sushi.events.EventTiming;
 
 public class GetThunderStrengthEvent extends BaseEvent {

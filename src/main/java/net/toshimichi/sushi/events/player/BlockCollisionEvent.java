@@ -6,7 +6,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.toshimichi.sushi.events.CancellableEvent;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public class BlockCollisionEvent extends CancellableEvent {
     private final World worldIn;

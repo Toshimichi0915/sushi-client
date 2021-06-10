@@ -53,7 +53,7 @@ public class CevBreakModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer());
+        List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer(), breakingBlock);
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
         CevBreakAttack attack = attacks.get(0);
@@ -100,6 +100,10 @@ public class CevBreakModule extends BaseModule {
                         .execute();
             }
         }
+    }
+
+    public BlockPos getBreakingBlock() {
+        return breakingBlock;
     }
 
     @Override
