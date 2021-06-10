@@ -46,5 +46,6 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
             PositionUtils.pop();
         }
         BlockUtils.place(info);
+        if (index >= getInput().size()) stop(null);
     }
 }
