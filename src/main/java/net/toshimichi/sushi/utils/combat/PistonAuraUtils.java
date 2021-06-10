@@ -20,6 +20,8 @@ import java.util.List;
 
 public class PistonAuraUtils {
 
+    private static final double ROOT_2 = Math.sqrt(2);
+
     public static BlockState getBlockState(EntityPlayer player, BlockPos pos, Block... blocks) {
         Block block = player.world.getBlockState(pos).getBlock();
         if (Arrays.asList(blocks).contains(block)) return BlockState.PLACED;
@@ -66,6 +68,9 @@ public class PistonAuraUtils {
             EnumFacing opposite = facing.getOpposite();
             BlockPos airPos = pos.offset(opposite);
             BlockPos pistonPos = airPos.offset(opposite);
+            double sin = (pistonPos.getY() + 0.5 - player.posY) /
+                    player.getPositionVector().distanceTo(BlockUtils.toVec3d(pistonPos).add(0.5, 0.5, 0.5));
+            if (Math.abs(sin) > 1 / ROOT_2) return null;
             BlockState state1 = getBlockState(player, airPos, Blocks.PISTON_HEAD, Blocks.PISTON_EXTENSION);
             BlockState state2 = getBlockState(player, pistonPos, Blocks.PISTON, Blocks.STICKY_PISTON);
             BlockState state3 = BlockState.UNREACHABLE;
