@@ -144,7 +144,7 @@ public class PistonAuraModule extends BaseModule {
                     .then(new ItemSwitchTask(null, true))
                     .abortIf(found -> !found)
                     .supply(() -> attack.getPistonPlace())
-                    .then(new BlockPlaceTask(true, true))
+                    .then(new BlockPlaceTask(false, false))
                     .delay(attack.getPistonPlace() == null ? 0 : delay5.getValue().getCurrent())
                     .supply(() -> Item.getItemFromBlock(Blocks.PISTON))
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
