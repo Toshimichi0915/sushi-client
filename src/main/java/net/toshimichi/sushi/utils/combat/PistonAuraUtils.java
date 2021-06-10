@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockPlaceUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
@@ -19,8 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 
 public class PistonAuraUtils {
-
-    private static final double ROOT_2 = Math.sqrt(2);
 
     public static BlockState getBlockState(EntityPlayer player, BlockPos pos, Block... blocks) {
         Block block = player.world.getBlockState(pos).getBlock();
@@ -68,9 +67,9 @@ public class PistonAuraUtils {
             EnumFacing opposite = facing.getOpposite();
             BlockPos airPos = pos.offset(opposite);
             BlockPos pistonPos = airPos.offset(opposite);
-            double sin = (pistonPos.getY() + 0.5 - player.posY) /
-                    player.getPositionVector().distanceTo(BlockUtils.toVec3d(pistonPos).add(0.5, 0.5, 0.5));
-            if (Math.abs(sin) > 1 / ROOT_2) return null;
+            double sin = (pistonPos.getY() - player.posY) /
+                    player.getPositionVector().distanceTo(BlockUtils.toVec3d(pistonPos).add(0.5, 0, 0.5));
+            if (Math.abs(sin) > 0.5D) return null;
             BlockState state1 = getBlockState(player, airPos, Blocks.PISTON_HEAD, Blocks.PISTON_EXTENSION);
             BlockState state2 = getBlockState(player, pistonPos, Blocks.PISTON, Blocks.STICKY_PISTON);
             BlockState state3 = BlockState.UNREACHABLE;
@@ -133,11 +132,8 @@ public class PistonAuraUtils {
 
     public static List<PistonAuraAttack> find(EntityPlayer player, int distance) {
         ArrayList<PistonAuraAttack> result = new ArrayList<>();
-        for (Entity entity : player.world.loadedEntityList) {
-            if (!(entity instanceof EntityPlayer)) continue;
-            if (entity.getDistanceSq(player) > 12) continue;
-            if (entity.getName().equals(player.getName())) continue;
-            result.addAll(find(player, (EntityPlayer) entity, distance));
+        for (EntityPlayer entity : EntityUtils.getNearbyPlayers(3.5)) {
+            result.addAll(find(player, entity, distance));
         }
         return result;
     }

@@ -9,6 +9,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.ArrayList;
@@ -58,11 +59,8 @@ public class CevBreakUtils {
 
     public static List<CevBreakAttack> find(EntityPlayer player, BlockPos breakingBlock) {
         ArrayList<CevBreakAttack> result = new ArrayList<>();
-        for (Entity entity : player.world.loadedEntityList) {
-            if (!(entity instanceof EntityPlayer)) continue;
-            if (entity.getDistanceSq(player) > 15) continue;
-            if (entity.getName().equals(player.getName())) continue;
-            result.addAll(find(player, (EntityPlayer) entity, breakingBlock));
+        for (EntityPlayer entity : EntityUtils.getNearbyPlayers(4)) {
+            result.addAll(find(player, entity, breakingBlock));
         }
         return result;
     }

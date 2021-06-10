@@ -11,7 +11,6 @@ import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
-import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockPlaceUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
@@ -49,7 +48,7 @@ public class ScaffoldModule extends BaseModule {
         if (tasks == null) return;
         TaskExecutor.newTaskChain()
                 .supply(() -> tasks)
-                .then(new BlockPlaceTask(DesyncMode.LOOK))
+                .then(new BlockPlaceTask(true, true))
                 .execute();
     }
 

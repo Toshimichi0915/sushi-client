@@ -1,6 +1,8 @@
 package net.toshimichi.sushi.utils;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
@@ -10,8 +12,27 @@ import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityUtils {
+
+    public static List<EntityPlayer> getNearbyPlayers(double distance) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        World world = Minecraft.getMinecraft().world;
+        if (world == null) return new ArrayList<>();
+        ArrayList<EntityPlayer> result = new ArrayList<>();
+        for (Entity entity : world.loadedEntityList) {
+            if (!(entity instanceof EntityPlayer)) continue;
+            if (entity.getDistanceSq(player) > distance * distance) continue;
+            if (entity.getName().equals(player.getName())) continue;
+            result.add((EntityPlayer) entity);
+        }
+        return result;
+    }
 
     private static boolean isAggressive(EntityLivingBase entity) {
         if (entity instanceof EntityPigZombie) {

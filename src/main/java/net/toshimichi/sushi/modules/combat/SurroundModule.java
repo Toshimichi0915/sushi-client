@@ -69,7 +69,7 @@ public class SurroundModule extends BaseModule {
                 .then(new ItemSwitchTask(null, true))
                 .abortIf(found -> !found)
                 .supply(() -> placeList)
-                .then(new BlockPlaceTask(DesyncMode.LOOK))
+                .then(new BlockPlaceTask(true, true))
                 .last(() -> running = false)
                 .execute();
     }

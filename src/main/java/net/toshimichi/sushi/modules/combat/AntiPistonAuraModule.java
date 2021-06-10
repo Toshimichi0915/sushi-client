@@ -64,7 +64,7 @@ public class AntiPistonAuraModule extends BaseModule {
                     .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
                     .abortIf(found -> !found).supply(() -> placed)
-                    .then(new BlockPlaceTask(DesyncMode.LOOK))
+                    .then(new BlockPlaceTask(true, true))
                     .last(() -> running = false)
                     .execute();
         }
