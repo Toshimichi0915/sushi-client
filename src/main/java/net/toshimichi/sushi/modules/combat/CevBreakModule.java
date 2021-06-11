@@ -57,6 +57,7 @@ public class CevBreakModule extends BaseModule {
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
         CevBreakAttack attack = attacks.get(0);
+        System.out.println(attack);
         if (attack.isCrystalPlaced() && !attack.isObsidianPlaced()) {
             getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal()));
         } else if (!attack.isObsidianPlaced()) {

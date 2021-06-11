@@ -57,8 +57,23 @@ public class CevBreakAttack implements Comparable<CevBreakAttack> {
 
     @Override
     public int compareTo(CevBreakAttack o) {
-        int result = Boolean.compare(obsidianPos.equals(breakingBlock), o.obsidianPos.equals(obsidianPos));
+        int result = Boolean.compare(o.obsidianPos.equals(o.breakingBlock), obsidianPos.equals(breakingBlock));
         if (result == 0) result = Double.compare(player.getDistanceSq(target), player.getDistanceSq(o.target));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "CevBreakAttack{" +
+                "crystalPos=" + crystalPos +
+                ", obsidianPos=" + obsidianPos +
+                ", player=" + player +
+                ", target=" + target +
+                ", crystal=" + crystal +
+                ", breakingBlock=" + breakingBlock +
+                ", damage=" + damage +
+                ", crystalPlaced=" + crystalPlaced +
+                ", obsidianPlaced=" + obsidianPlaced +
+                '}';
     }
 }
