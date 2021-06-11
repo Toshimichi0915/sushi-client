@@ -98,11 +98,21 @@ public class AnchorModule extends BaseModule {
                 0, 0, true, false, DesyncMode.NONE);
     }
 
+    private boolean canAccess(HoleInfo info) {
+        BlockPos holePos = info.getBlockPos()[0];
+        for (int y = holePos.getY(); y <= getPlayer().posY; y++) {
+            BlockPos pos = new BlockPos(holePos.getX(), y, holePos.getZ());
+            if (!BlockUtils.isAir(getWorld(), pos)) return false;
+        }
+        return true;
+    }
+
     private HoleInfo getHole(int range, HoleType... allowed) {
         BlockPos from = BlockUtils.toBlockPos(getPlayer().getPositionVector().subtract(0, range, 0));
         BlockPos to = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         AtomicReference<HoleInfo> result = new AtomicReference<>();
         HoleUtils.findHoles(getWorld(), from, to, info -> {
+            if (!canAccess(info)) return;
             if (Arrays.asList(allowed).contains(info.getHoleType())) {
                 result.set(info);
             }
