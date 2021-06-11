@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
+import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
@@ -32,25 +33,32 @@ import java.util.Collections;
 import java.util.List;
 
 public class PistonAuraModule extends BaseModule {
-
     private final Configuration<IntRange> delay1;
     private final Configuration<IntRange> delay2;
     private final Configuration<IntRange> delay3;
     private final Configuration<IntRange> delay4;
     private final Configuration<IntRange> delay5;
+    private final Configuration<IntRange> maxObsidian;
+    private final Configuration<IntRange> recalculationDelay;
+
     private PistonAuraAttack attack;
     private EntityEnderCrystal exploded;
     private boolean desync;
     private boolean running;
     private int repeatCounter;
+    private int recalculationCoolTime;
 
     public PistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        delay1 = provider.get("delay_1", "Crystal Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
-        delay2 = provider.get("delay_2", "Crystal Break Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
-        delay3 = provider.get("delay_3", "Piston Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
-        delay4 = provider.get("delay_4", "Redstone Place delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
-        delay5 = provider.get("delay_5", "Obsidian Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        ConfigurationCategory delay = provider.getCategory("delay", "Delay Settings", null);
+        delay1 = delay.get("delay_1", "Crystal Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
+        delay2 = delay.get("delay_2", "Crystal Break Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        delay3 = delay.get("delay_3", "Piston Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
+        delay4 = delay.get("delay_4", "Redstone Place delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
+        delay5 = delay.get("delay_5", "Obsidian Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
+        ConfigurationCategory other = provider.getCategory("other", "Other Settings", null);
+        maxObsidian = other.get("max_obsidian", "Max Obsidian", null, IntRange.class, new IntRange(3, 5, 0, 1));
+        recalculationDelay = other.get("recalculation_delay", "Recalculation Delay", null, IntRange.class, new IntRange(1, 40, 0, 1));
     }
 
     @Override
@@ -89,11 +97,12 @@ public class PistonAuraModule extends BaseModule {
             repeatCounter = 0;
             return;
         }
-        if (attack == null || repeatCounter == 0) {
-            List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer(), 3);
+        if (attack == null || repeatCounter == 0 && recalculationCoolTime-- <= 0) {
+            List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer(), maxObsidian.getValue().getCurrent());
             if (attacks.isEmpty()) return;
             Collections.sort(attacks);
             attack = attacks.get(0);
+            recalculationCoolTime = recalculationDelay.getValue().getCurrent();
         }
         if (attack == null) return;
         if (exploded != null && exploded.isAddedToWorld()) return;
