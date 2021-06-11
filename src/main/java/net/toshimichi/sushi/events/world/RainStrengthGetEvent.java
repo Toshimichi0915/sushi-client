@@ -3,12 +3,12 @@ package net.toshimichi.sushi.events.world;
 import net.toshimichi.sushi.events.BaseEvent;
 import net.toshimichi.sushi.events.EventTiming;
 
-public class GetRainStrengthEvent extends BaseEvent {
+public class RainStrengthGetEvent extends BaseEvent {
 
     private final float delta;
     private float value;
 
-    public GetRainStrengthEvent(EventTiming timing, float delta, float value) {
+    public RainStrengthGetEvent(EventTiming timing, float delta, float value) {
         super(timing);
         this.delta = delta;
         this.value = value;
