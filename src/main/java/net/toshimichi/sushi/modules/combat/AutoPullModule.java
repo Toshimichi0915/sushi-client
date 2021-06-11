@@ -31,6 +31,12 @@ public class AutoPullModule extends BaseModule {
 
     private final WeakHashMap<EntityPlayer, Integer> pulledPlayers = new WeakHashMap<>();
 
+    @Config(id = "anti_hole", name = "Anti Hole")
+    public Boolean antiHole;
+
+    @Config(id = "anti_phase", name = "Anti Phase")
+    public Boolean antiPhase;
+
     @Config(id = "disable_after", name = "Disable After")
     public Boolean disableAfter = true;
 
@@ -59,6 +65,13 @@ public class AutoPullModule extends BaseModule {
         return true;
     }
 
+    private boolean isPhasing(EntityPlayer player) {
+        BlockPos floor = BlockUtils.toBlockPos(player.getPositionVector());
+        Block floorBlock = getWorld().getBlockState(floor).getBlock();
+        Block roofBlock = getWorld().getBlockState(floor.offset(EnumFacing.UP)).getBlock();
+        return floorBlock != Blocks.AIR && roofBlock == Blocks.AIR;
+    }
+
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
         if (disableAfter) setEnabled(false);
@@ -70,9 +83,9 @@ public class AutoPullModule extends BaseModule {
 
         List<EntityPlayer> players = EntityUtils.getNearbyPlayers(4);
         // remove if 1. not in hole 2. pulled last time 3. in the same hole
-        players.removeIf(it -> !isInHole(it)
-                || pulledPlayers.containsKey(it)
-                || BlockUtils.toBlockPos(getPlayer().getPositionVector()).equals(it.getPosition()));
+        players.removeIf(it -> (antiHole && !isInHole(it)) && (antiPhase && !isPhasing(it)) ||
+                pulledPlayers.containsKey(it) ||
+                BlockUtils.toBlockPos(getPlayer().getPositionVector()).equals(it.getPosition()));
         players.sort(Comparator.comparingDouble(p -> getPlayer().getDistanceSq(p)));
         if (players.isEmpty()) return;
         EntityPlayer target = players.get(0);
