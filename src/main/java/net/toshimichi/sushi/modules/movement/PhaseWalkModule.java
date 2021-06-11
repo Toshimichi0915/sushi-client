@@ -57,7 +57,7 @@ public class PhaseWalkModule extends BaseModule {
         player.onGround = true;
 
         double horizontalSpeed = horizontal.getValue().getCurrent() / 10;
-        Vec3d inputs = MovementUtils.getMoveInputs(player);
+        Vec3d inputs = MovementUtils.getMoveInputs(player, true);
         float moveForward = (float) (inputs.x * horizontalSpeed);
         float moveStrafe = (float) (inputs.z * horizontalSpeed);
 
