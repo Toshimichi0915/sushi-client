@@ -32,10 +32,10 @@ public class AutoPullModule extends BaseModule {
     private final WeakHashMap<EntityPlayer, Integer> pulledPlayers = new WeakHashMap<>();
 
     @Config(id = "anti_hole", name = "Anti Hole")
-    public Boolean antiHole;
+    public Boolean antiHole = true;
 
     @Config(id = "anti_phase", name = "Anti Phase")
-    public Boolean antiPhase;
+    public Boolean antiPhase = true;
 
     @Config(id = "disable_after", name = "Disable After")
     public Boolean disableAfter = true;
