@@ -101,7 +101,7 @@ public class AutoPullModule extends BaseModule {
                     || getWorld().getBlockState(air1).getBlock() != Blocks.AIR) continue;
             BlockPos pistonPos = targetPos.offset(facing).offset(EnumFacing.UP);
             double sin = (pistonPos.getY() - getPlayer().posY) /
-                    getPlayer().getPositionVector().distanceTo(BlockUtils.toVec3d(pistonPos).add(0.5, 0, 0.5));
+                    getPlayer().getPositionVector().distanceTo(BlockUtils.toVec3d(pistonPos).add(0.5, 0.5, 0.5));
             if (Math.abs(sin) > 0.5D) continue;
             BlockPlaceInfo pistonCandidate = BlockUtils.findBlockPlaceInfo(getWorld(), pistonPos);
             if (pistonCandidate == null) continue;
