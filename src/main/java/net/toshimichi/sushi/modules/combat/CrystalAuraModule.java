@@ -25,6 +25,7 @@ import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
+import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
@@ -36,6 +37,7 @@ public class CrystalAuraModule extends BaseModule {
 
     private final Configuration<DoubleRange> targetRange;
     private final Configuration<DoubleRange> crystalRange;
+    private final Configuration<DoubleRange> wallRange;
     private final Configuration<ItemSwitchMode> switchMode;
     private final Configuration<IntRange> placeCoolTime;
     private final Configuration<IntRange> breakCoolTime;
@@ -54,7 +56,8 @@ public class CrystalAuraModule extends BaseModule {
     public CrystalAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         targetRange = provider.get("target_range", "Target Range", null, DoubleRange.class, new DoubleRange(6, 18, 1, 1, 1));
-        crystalRange = provider.get("crystal_range", "Crystal Range", null, DoubleRange.class, new DoubleRange(4.5, 10, 1, 0.1, 1));
+        crystalRange = provider.get("crystal_range", "Crystal Range", null, DoubleRange.class, new DoubleRange(6, 10, 1, 0.1, 1));
+        wallRange = provider.get("wall_range", "Wall Range", null, DoubleRange.class, new DoubleRange(3, 6, 1, 0.1, 1));
         switchMode = provider.get("switch", "Switch Mode", null, ItemSwitchMode.class, ItemSwitchMode.INVENTORY);
         placeCoolTime = provider.get("place_cool_time", "Place Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
         breakCoolTime = provider.get("break_cool_time", "Break Cool Time", null, IntRange.class, new IntRange(1, 20, 0, 1));
@@ -158,8 +161,7 @@ public class CrystalAuraModule extends BaseModule {
                     Vec3d vec = BlockUtils.toVec3d(pos).add(0.5, 1, 0.5);
 
                     // check distance
-                    double distanceSq = getPlayer().getPositionVector().squareDistanceTo(vec);
-                    if (distanceSq > crystalRange.getValue().getCurrent() * crystalRange.getValue().getCurrent())
+                    if (!EntityUtils.canInteract(vec, crystalRange.getValue().getCurrent(), wallRange.getValue().getCurrent()))
                         continue;
 
                     // check whether the block is obsidian/bedrock

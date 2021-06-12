@@ -2,6 +2,7 @@ package net.toshimichi.sushi.utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,6 +14,7 @@ import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -20,6 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntityUtils {
+
+    public static boolean canInteract(Vec3d target, double reach, double wall) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        WorldClient world = Minecraft.getMinecraft().world;
+        if (player == null) return false;
+        RayTraceResult result = world.rayTraceBlocks(player.getPositionVector().add(0, player.eyeHeight, 0), target, false, true, false);
+        if (result != null) reach = wall;
+        return player.getPositionVector().squareDistanceTo(target) < reach * reach;
+    }
 
     @SuppressWarnings("unchecked")
     public static <T extends Entity> List<EntityInfo<T>> getNearbyEntities(Vec3d origin, Class<T> entityClass) {
