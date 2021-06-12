@@ -13,12 +13,24 @@ import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntityUtils {
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Entity> List<EntityInfo<T>> getNearbyEntities(Vec3d origin, Class<T> entityClass) {
+        ArrayList<EntityInfo<T>> result = new ArrayList<>();
+        for (Entity entity : Minecraft.getMinecraft().world.loadedEntityList) {
+            if (!entity.getClass().equals(entityClass)) continue;
+            result.add(new EntityInfo<>((T) entity, origin.squareDistanceTo(entity.getPositionVector())));
+        }
+        result.sort(null);
+        return result;
+    }
 
     public static List<EntityPlayer> getNearbyPlayers(double distance) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;

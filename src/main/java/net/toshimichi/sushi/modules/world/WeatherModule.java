@@ -4,8 +4,8 @@ import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.world.GetRainStrengthEvent;
-import net.toshimichi.sushi.events.world.GetThunderStrengthEvent;
+import net.toshimichi.sushi.events.world.RainStrengthGetEvent;
+import net.toshimichi.sushi.events.world.ThunderStrengthGetEvent;
 import net.toshimichi.sushi.modules.*;
 
 public class WeatherModule extends BaseModule {
@@ -25,12 +25,12 @@ public class WeatherModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onGetRainStrength(GetRainStrengthEvent e) {
+    public void onGetRainStrength(RainStrengthGetEvent e) {
         e.setValue(0);
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onGetThunderStrength(GetThunderStrengthEvent e) {
+    public void onGetThunderStrength(ThunderStrengthGetEvent e) {
         e.setValue(0);
     }
 
