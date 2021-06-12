@@ -14,8 +14,8 @@ public class MovementUtils {
         float moveForward = player.movementInput.moveForward;
         float moveStrafe = player.movementInput.moveStrafe;
         if (limit) {
-            moveForward = Math.max(1, moveForward);
-            moveStrafe = Math.max(1, moveStrafe);
+            moveForward = MathHelper.clamp(moveForward, -1, 1);
+            moveStrafe = MathHelper.clamp(moveStrafe, -1, 1);
         }
         return new Vec3d(moveForward, moveUpward, moveStrafe);
     }
