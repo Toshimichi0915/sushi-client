@@ -97,6 +97,7 @@ public class CrystalAuraModule extends BaseModule {
             if (player.getName().equals(getPlayer().getName())) continue;
             damages.add(new AbstractMap.SimpleEntry<>(player, getDamage(pos, player)));
         }
+        if (damages.isEmpty()) return null;
         // sort
         damages.sort(Comparator.comparingDouble(Map.Entry::getValue));
         Collections.reverse(damages);
@@ -111,6 +112,7 @@ public class CrystalAuraModule extends BaseModule {
     }
 
     private boolean filter(CrystalAttack attack, boolean checkCollision) {
+        if (attack == null) return false;
         Vec3d crystalPos = attack.crystalPos;
         AxisAlignedBB crystalBox = attack.crystalBox;
 
