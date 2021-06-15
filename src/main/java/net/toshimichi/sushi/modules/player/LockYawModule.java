@@ -15,11 +15,21 @@ public class LockYawModule extends BaseModule {
 
     private final Configuration<Integer> x;
     private final Configuration<Integer> z;
+    private final Configuration<Runnable> toOverworld;
+    private final Configuration<Runnable> toNether;
 
     public LockYawModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         x = provider.get("x", "X", null, Integer.class, 0);
         z = provider.get("z", "Z", null, Integer.class, 0);
+        toOverworld = provider.temp("to_overworld", "To Overworld", null, Runnable.class, () -> {
+            x.setValue(x.getValue() * 8);
+            z.setValue(z.getValue() * 8);
+        });
+        toNether = provider.temp("to_nether", "To Nether", null, Runnable.class, () -> {
+            x.setValue(x.getValue() / 8);
+            z.setValue(z.getValue() / 8);
+        });
     }
 
     @Override

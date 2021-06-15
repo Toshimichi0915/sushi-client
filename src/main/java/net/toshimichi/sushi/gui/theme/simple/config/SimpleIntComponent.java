@@ -12,13 +12,12 @@ import net.toshimichi.sushi.gui.theme.simple.SimpleTextHeaderComponent;
 
 public class SimpleIntComponent extends BasePanelComponent<Component> implements ConfigComponent<Integer> {
 
+    private final SimpleTextComponent textComponent;
     private final Configuration<Integer> config;
 
     public SimpleIntComponent(ThemeConstants constants, Configuration<Integer> config) {
         this.config = config;
-        setLayout(new FlowLayout(this, FlowDirection.DOWN));
-        add(new SimpleTextHeaderComponent(constants, config.getName()));
-        add(new SimpleTextComponent(constants, Integer.toString(config.getValue())) {
+        textComponent = new SimpleTextComponent(constants, Integer.toString(config.getValue())) {
 
             private String oldValue;
 
@@ -32,7 +31,11 @@ public class SimpleIntComponent extends BasePanelComponent<Component> implements
                     setText(oldValue);
                 }
             }
-        });
+        };
+        add(new SimpleTextHeaderComponent(constants, config.getName()));
+        add(textComponent);
+        config.addHandler(i -> textComponent.setText(Integer.toString(config.getValue())));
+        setLayout(new FlowLayout(this, FlowDirection.DOWN));
     }
 
     @Override
