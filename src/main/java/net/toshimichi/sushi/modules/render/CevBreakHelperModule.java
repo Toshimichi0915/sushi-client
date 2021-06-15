@@ -24,6 +24,8 @@ import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.*;
+
 public class CevBreakHelperModule extends BaseModule {
 
     private CevBreakAttack attack;
@@ -55,7 +57,9 @@ public class CevBreakHelperModule extends BaseModule {
         BlockPos candidate = attack.getObsidianPos();
         AxisAlignedBB box = getWorld().getBlockState(candidate).getBoundingBox(getWorld(), candidate);
         box = box.offset(candidate).grow(0.002, 0.002, 0.002);
+        glDisable(GL_DEPTH_TEST);
         RenderUtils.drawFilled(box, color.getCurrentColor());
+        glEnable(GL_DEPTH_TEST);
     }
 
     @EventHandler(timing = EventTiming.POST)
@@ -64,8 +68,8 @@ public class CevBreakHelperModule extends BaseModule {
         if (!(cevBreak instanceof CevBreakModule)) return;
 
         List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer(), ((CevBreakModule) cevBreak).getBreakingBlock());
-        if (attacks.isEmpty()) return;
         this.attack = null;
+        if (attacks.isEmpty()) return;
         Collections.sort(attacks);
         CevBreakAttack attack = attacks.get(0);
         if (attack.getObsidianPos() == null) return;
