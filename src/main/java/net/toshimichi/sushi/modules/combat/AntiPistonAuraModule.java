@@ -81,7 +81,8 @@ public class AntiPistonAuraModule extends BaseModule {
         if (DamageUtils.getCrystalDamage(getPlayer(), predicted) < 50) return false;
         spam = findBlockPlaceInfo(getWorld(), pos);
         when = System.currentTimeMillis();
-        PositionUtils.desync(DesyncMode.LOOK);
+        PositionUtils.desync(DesyncMode.ALL);
+        PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.2, getPlayer().posZ, 0, 0, true, false, DesyncMode.POSITION);
         PositionUtils.lookAt(crystal.getPositionVector(), DesyncMode.LOOK);
         getConnection().sendPacket(new CPacketUseEntity(crystal));
         PositionUtils.pop();
@@ -93,7 +94,7 @@ public class AntiPistonAuraModule extends BaseModule {
     public void onClientTick(ClientTickEvent e) {
         if (spam != null) {
             Block block = getWorld().getBlockState(spam.getBlockPos()).getBlock();
-            if (block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION ||
+            if (block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION && block != Blocks.AIR ||
                     System.currentTimeMillis() - when > 1000) {
                 spam = null;
             } else {
