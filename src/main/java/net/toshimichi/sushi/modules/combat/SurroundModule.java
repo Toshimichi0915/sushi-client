@@ -63,6 +63,7 @@ public class SurroundModule extends BaseModule {
             if (info == null) continue;
             placeList.addAll(info);
         }
+        if (placeList.isEmpty()) return;
         running = true;
         TaskExecutor.newTaskChain()
                 .supply(() -> Item.getItemById(49))
