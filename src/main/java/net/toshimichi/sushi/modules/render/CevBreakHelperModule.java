@@ -14,6 +14,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.modules.combat.CevBreakModule;
 import net.toshimichi.sushi.utils.combat.CevBreakAttack;
 import net.toshimichi.sushi.utils.combat.CevBreakUtils;

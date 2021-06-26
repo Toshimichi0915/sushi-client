@@ -16,7 +16,7 @@ apply plugin: 'eclipse'
 
 archivesBaseName = 'sushi'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 minecraft {
     mappings channel: 'stable', version: '39-1.12'
@@ -58,6 +58,10 @@ dependencies {
     annotationProcessor('org.spongepowered:mixin:0.8.2:processor') {
         exclude module: 'gson'
     }
+
+    included project(':hwid-generator')
+    implementation project(':hwid-annotations')
+    annotationProcessor project(':hwid-annotations')
 
     included 'cabaletta:baritone-api:1.2'
     implementation 'com.github.cabaletta:baritone:1.2.14'
