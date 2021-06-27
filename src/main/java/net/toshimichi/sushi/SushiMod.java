@@ -80,6 +80,8 @@ public class SushiMod {
     @EventHandler
     public void init(FMLInitializationEvent event) {
 
+        AtomicBoolean hasRuntimeExceptionThrown = new AtomicBoolean(false);
+
         // auth
         try {
             byte[] hwid = EncryptUtils.getHWID();
@@ -90,6 +92,14 @@ public class SushiMod {
                 HttpPost post = new HttpPost(targetUrl + "/match-api-key");
                 post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("apiKey", apiKey))));
                 CloseableHttpResponse response = httpClient.execute(post);
+
+                // detect byte code modification
+                try {
+                    throw new RuntimeException();
+                } catch (RuntimeException e) {
+                    hasRuntimeExceptionThrown.set(true);
+                }
+
                 if (response.getStatusLine().getStatusCode() != 200) throw new RuntimeException();
             }
         } catch (Exception e) {
@@ -135,19 +145,6 @@ public class SushiMod {
             throw new RuntimeException();
         }
 
-        // detect byte code modification
-        AtomicBoolean hasRuntimeExceptionThrown = new AtomicBoolean(false);
-        try {
-            throw new RuntimeException();
-        } catch (RuntimeException e) {
-            hasRuntimeExceptionThrown.set(true);
-        }
-
-        if (!hasRuntimeExceptionThrown.get()) {
-            System.err.println("Authentication failed");
-            throw new RuntimeException();
-        }
-
         // register events
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         MinecraftForge.EVENT_BUS.register(new MouseInputHandler());
@@ -170,6 +167,11 @@ public class SushiMod {
         EventHandlers.register(new TpsHandler());
         EventHandlers.register(new RenderUtilsHandler());
         EventHandlers.register(this);
+
+        if (!hasRuntimeExceptionThrown.get()) {
+            System.err.println("Authentication failed");
+            throw new OutOfMemoryError();
+        }
 
         Commands.register(new HelpCommand());
         Commands.register(new ToggleCommand());
