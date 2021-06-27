@@ -157,7 +157,7 @@ public class HoleMinerModule extends BaseModule {
 
     @Override
     public String getDefaultName() {
-        return "AntiSurround";
+        return "HoleMiner";
     }
 
     @Override

@@ -25,12 +25,12 @@ public class WeatherModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onGetRainStrength(RainStrengthGetEvent e) {
+    public void onRainStrengthGetEvent(RainStrengthGetEvent e) {
         e.setValue(0);
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onGetThunderStrength(ThunderStrengthGetEvent e) {
+    public void onThunderStrengthGetEvent(ThunderStrengthGetEvent e) {
         e.setValue(0);
     }
 
