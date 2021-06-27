@@ -34,7 +34,7 @@ public class HoleMinerModule extends BaseModule {
     private boolean running;
     private BlockPos breakingBlock;
 
-    @Config(id = "hole_mine_mode", name = "Hole Mine Mode")
+    @Config(id = "hole_mine_mode", name = "Mode")
     public HoleMineMode holeMineMode = HoleMineMode.BEST_EFFORT;
 
     @Config(id = "disable_after", name = "Disable After")
