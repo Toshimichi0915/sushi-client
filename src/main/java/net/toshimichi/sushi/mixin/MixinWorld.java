@@ -31,17 +31,17 @@ public class MixinWorld {
         EventHandlers.callEvent(event);
     }
 
-    @Inject(method = "getThunderStrength", at = @At("RETURN"))
+    @Inject(method = "getThunderStrength", at = @At("RETURN"), cancellable = true)
     private void getThunderStrengthHead(float delta, CallbackInfoReturnable<Float> cir) {
         ThunderStrengthGetEvent event = new ThunderStrengthGetEvent(EventTiming.PRE, delta, cir.getReturnValueF());
         EventHandlers.callEvent(event);
-        event.setValue(event.getValue());
+        cir.setReturnValue(event.getValue());
     }
 
-    @Inject(method = "getRainStrength", at = @At("RETURN"))
+    @Inject(method = "getRainStrength", at = @At("RETURN"), cancellable = true)
     private void getRainStrengthHead(float delta, CallbackInfoReturnable<Float> cir) {
         RainStrengthGetEvent event = new RainStrengthGetEvent(EventTiming.PRE, delta, cir.getReturnValueF());
         EventHandlers.callEvent(event);
-        event.setValue(event.getValue());
+        cir.setReturnValue(event.getValue());
     }
 }
