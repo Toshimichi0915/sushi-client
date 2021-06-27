@@ -1,5 +1,8 @@
 package net.toshimichi.sushi.utils.player;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
@@ -8,7 +11,11 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.toshimichi.sushi.mixin.AccessorItemTool;
+
+import javax.annotation.Nonnull;
 
 public class ItemUtils {
 
@@ -34,5 +41,34 @@ public class ItemUtils {
             return compound.getInteger("lvl");
         }
         return 0;
+    }
+
+    public static float getDestroySpeed(IBlockState blockState, ItemStack itemStack) {
+        float destroySpeed = itemStack.getDestroySpeed(blockState);
+        if (destroySpeed > 1) {
+            int level = ItemUtils.getEnchantmentLevel(itemStack, Enchantments.EFFICIENCY);
+            destroySpeed += level * level + 1;
+        }
+        return destroySpeed;
+    }
+
+    public static boolean canToolHarvestBlock(IBlockAccess world, BlockPos pos, @Nonnull ItemStack stack) {
+        IBlockState state = world.getBlockState(pos);
+        state = state.getBlock().getActualState(state, world, pos);
+        String tool = state.getBlock().getHarvestTool(state);
+        if (stack.isEmpty() || tool == null) return false;
+        return stack.getItem().getHarvestLevel(stack, tool, null, null) >= state.getBlock().getHarvestLevel(state);
+    }
+
+    public static int getDestroyTime(BlockPos blockPos, ItemStack itemStack) {
+        WorldClient world = Minecraft.getMinecraft().world;
+        IBlockState blockState = world.getBlockState(blockPos);
+        float hardness = blockState.getBlockHardness(world, blockPos);
+        float speed = getDestroySpeed(blockState, itemStack);
+        if (canToolHarvestBlock(world, blockPos, itemStack)) {
+            return (int) Math.ceil(hardness * 30 / speed);
+        } else {
+            return (int) Math.ceil(hardness * 100);
+        }
     }
 }

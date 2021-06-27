@@ -3,6 +3,8 @@ package net.toshimichi.sushi.task;
 import net.toshimichi.sushi.task.tasks.DelayTask;
 import net.toshimichi.sushi.task.tasks.LastTask;
 
+import java.util.function.IntSupplier;
+
 public interface TaskChain<I> {
 
     <R> TaskChain<R> then(TaskAdapter<? super I, R> task);
@@ -51,7 +53,15 @@ public interface TaskChain<I> {
         return abortIf(new FunctionalPipeTask<>(true, task));
     }
 
+    default  TaskChain<I> abortIf(SupplierTask<Boolean> task) {
+        return abortIf(new FunctionalSupplierTask<>(false, task));
+    }
+
     default TaskChain<I> delay(int delay) {
+        return then(new DelayTask<>(() -> delay));
+    }
+
+    default TaskChain<I> delay(IntSupplier delay) {
         return then(new DelayTask<>(delay));
     }
 }

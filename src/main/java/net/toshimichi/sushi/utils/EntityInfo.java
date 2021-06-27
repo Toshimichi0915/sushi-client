@@ -23,4 +23,12 @@ public class EntityInfo<T extends Entity> implements Comparable<EntityInfo<T>> {
     public int compareTo(EntityInfo<T> o) {
         return Double.compare(distanceSq, o.distanceSq);
     }
+
+    @Override
+    public String toString() {
+        return "EntityInfo{" +
+                "entity=" + entity +
+                ", distanceSq=" + distanceSq +
+                '}';
+    }
 }

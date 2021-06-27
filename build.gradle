@@ -60,7 +60,9 @@ dependencies {
     }
 
     included project(':hwid-generator')
-    implementation project(':hwid-annotations')
+    implementation(project(':hwid-annotations')) {
+        transitive = false
+    }
     annotationProcessor project(':hwid-annotations')
 
     included 'cabaletta:baritone-api:1.2'

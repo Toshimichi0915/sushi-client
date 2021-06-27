@@ -32,7 +32,7 @@ public class CevBreakHelperModule extends BaseModule {
     private CevBreakAttack attack;
 
     @Config(id = "cev_break_id", name = "CevBreak ID")
-    public String pistonAuraId = "cev_break";
+    public String cevBreak = "cev_break";
 
     @Config(id = "color", name = "Color")
     public EspColor color = new EspColor(Color.RED, false, true);
@@ -57,7 +57,7 @@ public class CevBreakHelperModule extends BaseModule {
         if (attack == null) return;
         BlockPos candidate = attack.getObsidianPos();
         AxisAlignedBB box = getWorld().getBlockState(candidate).getBoundingBox(getWorld(), candidate);
-        box = box.offset(candidate).grow(0.002, 0.002, 0.002);
+        box = box.offset(candidate).grow(0.002);
         glDisable(GL_DEPTH_TEST);
         RenderUtils.drawFilled(box, color.getCurrentColor());
         glEnable(GL_DEPTH_TEST);
@@ -65,7 +65,7 @@ public class CevBreakHelperModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        Module cevBreak = Sushi.getProfile().getModules().getModule(pistonAuraId);
+        Module cevBreak = Sushi.getProfile().getModules().getModule(this.cevBreak);
         if (!(cevBreak instanceof CevBreakModule)) return;
 
         List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer(), ((CevBreakModule) cevBreak).getBreakingBlock());

@@ -113,7 +113,7 @@ public class StorageEspModule extends BaseModule {
                 rendered.add(chest.adjacentChestXNeg);
                 rendered.add(chest.adjacentChestZNeg);
             }
-            box = box.grow(0.002, 0.002, 0.002);
+            box = box.grow(0.002);
             if (tracers) {
                 RenderUtils.drawLine(camera, box.getCenter(), color, 1);
             }

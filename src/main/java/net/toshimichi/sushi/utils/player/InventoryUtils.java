@@ -3,7 +3,6 @@ package net.toshimichi.sushi.utils.player;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.ClickType;
@@ -21,9 +20,8 @@ public class InventoryUtils {
 
     public static void moveHotbar(int slot) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        PlayerControllerMP controller = Minecraft.getMinecraft().playerController;
         player.inventory.currentItem = slot;
-        controller.updateController();
+        Minecraft.getMinecraft().playerController.updateController();
     }
 
     public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
@@ -101,11 +99,7 @@ public class InventoryUtils {
         for (int i = 0; i < max; i++) {
             ItemSlot itemSlot = new ItemSlot(i, Minecraft.getMinecraft().player);
             ItemStack itemStack = itemSlot.getItemStack();
-            float destroySpeed = itemStack.getDestroySpeed(blockState);
-            if (destroySpeed > 1) {
-                int level = ItemUtils.getEnchantmentLevel(itemStack, Enchantments.EFFICIENCY);
-                destroySpeed += level * level + 1;
-            }
+            float destroySpeed = ItemUtils.getDestroySpeed(blockState, itemStack);
             if (preferSilkTouch) {
                 if (item != null && ItemUtils.getEnchantmentLevel(item.getItemStack(), Enchantments.SILK_TOUCH) != 0) {
                     if (ItemUtils.getEnchantmentLevel(itemStack, Enchantments.SILK_TOUCH) != 0 && destroySpeed > fastest) {
@@ -129,5 +123,12 @@ public class InventoryUtils {
             }
         }
         return item;
+    }
+
+    public static boolean hasItem(Item item) {
+        for (ItemSlot itemSlot : ItemSlot.values()) {
+            if (itemSlot.getItemStack().getItem().equals(item)) return true;
+        }
+        return false;
     }
 }
