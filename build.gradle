@@ -42,34 +42,26 @@ repositories {
 }
 
 dependencies {
-    included('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
+    // Mixin
+    included('org.spongepowered:mixin:0.8.2') {
         exclude module: 'gson'
         exclude module: 'guava'
         exclude module: 'commons-io'
         exclude module: 'launchwrapper'
         exclude module: 'log4j-core'
     }
+    annotationProcessor('org.spongepowered:mixin:0.8.2:processor') { exclude module: 'gson' }
 
-    included('org.reflections:reflections:0.9.12') {
-        exclude module: 'gson'
-        exclude module: 'guava'
-    }
-
-    annotationProcessor('org.spongepowered:mixin:0.8.2:processor') {
-        exclude module: 'gson'
-    }
-
+    // Protection
     included project(':hwid-generator')
-    implementation(project(':hwid-annotations')) {
-        transitive = false
-    }
+    implementation(project(':hwid-annotations')) { transitive = false }
     annotationProcessor project(':hwid-annotations')
 
+    // Libraries & plugins
     included 'cabaletta:baritone-api:1.2'
-    implementation 'com.github.cabaletta:baritone:1.2.14'
-    included('org.slick2d:slick2d-core:1.0.2') {
-        exclude module: 'lwjgl'
-    }
+    implementation('com.github.cabaletta:baritone:1.2.14') { transitive = false }
+    included('org.slick2d:slick2d-core:1.0.2') { exclude module: 'lwjgl' }
+
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
     implementation configurations.included
 }

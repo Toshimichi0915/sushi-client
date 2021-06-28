@@ -55,7 +55,7 @@ public class CrystalAuraModule extends BaseModule {
     private final Configuration<IntRange> customPower;
     private final Configuration<DoubleRange> damageRatio;
     private final Configuration<DoubleRange> maxSelfDamage;
-    private final Configuration<Boolean> avoidSuicide;
+    private final Configuration<DoubleRange> minSelfHp;
     private final Set<EnderCrystalInfo> enderCrystals = new HashSet<>();
 
     private volatile CrystalAttack crystalAttack;
@@ -82,7 +82,7 @@ public class CrystalAuraModule extends BaseModule {
         customPower = provider.get("power", "Power", null, IntRange.class, new IntRange(6, 10, 1, 1), customDamage::getValue, false, 0);
         damageRatio = provider.get("damage_ratio", "Damage Ratio", null, DoubleRange.class, new DoubleRange(0.5, 1, 0, 0.05, 2));
         maxSelfDamage = provider.get("max_self_damage", "Max Self Damage", null, DoubleRange.class, new DoubleRange(6, 20, 0, 0.2, 1));
-        avoidSuicide = provider.get("avoid_suicide", "Avoid Suicide", null, Boolean.class, true);
+        minSelfHp = provider.get("min_self_hp", "Min Self HP", null, DoubleRange.class, new DoubleRange(6, 20, 1, 0.1, 1));
     }
 
     @Override
@@ -154,8 +154,8 @@ public class CrystalAuraModule extends BaseModule {
             return false;
         }
         if (selfDamage > maxSelfDamage.getValue().getCurrent()) return false;
-        if (ratio > damageRatio.getValue().getCurrent()) return false;
-        if (avoidSuicide.getValue() && selfDamage > getPlayer().getHealth()) return false;
+        if (ratio > damageRatio.getValue().getCurrent() && !checkFacePlace(attack)) return false;
+        if (getPlayer().getHealth() - selfDamage < minSelfHp.getValue().getCurrent()) return false;
         return true;
     }
 
