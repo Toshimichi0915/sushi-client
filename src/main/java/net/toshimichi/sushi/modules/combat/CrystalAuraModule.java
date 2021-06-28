@@ -3,6 +3,7 @@ package net.toshimichi.sushi.modules.combat;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,7 +44,7 @@ import java.util.*;
 
 public class CrystalAuraModule extends BaseModule {
 
-    private static final double WALK_SPEED = 5.5;
+    private static final double WALK_SPEED = 0.0275;
 
     private final Configuration<DoubleRange> targetRange;
     private final Configuration<DoubleRange> crystalRange;
@@ -132,20 +133,21 @@ public class CrystalAuraModule extends BaseModule {
     }
 
     private Vec3d getPingOffset(EntityPlayer player, boolean self) {
-        int selfPing = getConnection().getPlayerInfo(getPlayer().getUniqueID()).getResponseTime();
-        int enemyPing = getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime();
+        NetworkPlayerInfo selfInfo = getConnection().getPlayerInfo(getPlayer().getUniqueID());
+        NetworkPlayerInfo enemyInfo = getConnection().getPlayerInfo(player.getUniqueID());
+        int selfPing = selfInfo == null ? 0 : selfInfo.getResponseTime();
+        int enemyPing = enemyInfo == null ? 0 : enemyInfo.getResponseTime();
         Vec3d offset = player.getPositionVector().subtract(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ));
         Vec3d result;
         if (self && useInputs.getValue()) result = MovementUtils.getMoveInputs(getPlayer(), true);
         else result = offset.normalize();
 
         if (!constantSpeed.getValue()) result = result.scale(offset.distanceTo(Vec3d.ZERO) / WALK_SPEED);
-        Configuration<DoubleRange> multiplier = self ? selfPingMultiplier : enemyPingMultiplier;
         if (self) {
-            return result.scale(selfPing * 1000 / WALK_SPEED * multiplier.getValue().getCurrent());
+            return result.scale(selfPing / 50D * WALK_SPEED * selfPingMultiplier.getValue().getCurrent());
         } else {
-            return result.scale(selfPing * 1000 / WALK_SPEED * multiplier.getValue().getCurrent() +
-                    enemyPing * 1000 / WALK_SPEED * multiplier.getValue().getCurrent());
+            return result.scale(selfPing / 50D * WALK_SPEED * selfPingMultiplier.getValue().getCurrent() +
+                    enemyPing * 50 / WALK_SPEED * enemyPingMultiplier.getValue().getCurrent());
         }
     }
 
