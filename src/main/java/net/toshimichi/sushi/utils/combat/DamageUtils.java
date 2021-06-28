@@ -10,8 +10,10 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 public class DamageUtils {
 
@@ -57,12 +59,17 @@ public class DamageUtils {
         return Math.max(0, damage);
     }
 
-    public static double getExplosionDamage(EntityLivingBase entity, Vec3d crystal, double power) {
-        double distance = entity.getPositionVector().distanceTo(crystal);
+    public static double getExplosionDamage(EntityLivingBase entity, Vec3d offset, Vec3d crystal, double power) {
+        Vec3d pos = entity.getPositionVector().add(offset);
+        double distance = pos.distanceTo(crystal);
         double radius = 2 * power;
         if (distance > radius) return 0;
-        double impact = (1 - (distance / radius)) * entity.world.getBlockDensity(crystal, entity.getEntityBoundingBox());
+        double impact = (1 - (distance / radius)) * entity.world.getBlockDensity(crystal, entity.getEntityBoundingBox().offset(offset));
         return (impact * impact + impact) * 7 * power + 1;
+    }
+
+    public static double getExplosionDamage(EntityLivingBase entity, Vec3d crystal, double power) {
+        return getExplosionDamage(entity, new Vec3d(0, 0, 0), crystal, power);
     }
 
     public static double getCrystalDamage(EntityLivingBase entity, Vec3d crystal) {
