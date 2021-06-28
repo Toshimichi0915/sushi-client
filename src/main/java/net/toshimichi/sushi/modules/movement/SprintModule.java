@@ -21,8 +21,11 @@ public class SprintModule extends BaseModule {
     }
 
     private boolean shouldSprint(MovementInput input) {
-        return (multiDirection.getValue() && input.moveForward != 0 || input.moveStrafe != 0) ||
-                input.moveForward > 0;
+        if (multiDirection.getValue()) {
+            return input.moveForward != 0 || input.moveStrafe != 0;
+        } else {
+            return input.moveForward > 0;
+        }
     }
 
     @Override
