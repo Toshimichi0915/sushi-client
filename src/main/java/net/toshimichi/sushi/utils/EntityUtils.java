@@ -36,7 +36,7 @@ public class EntityUtils {
     public static <T extends Entity> List<EntityInfo<T>> getNearbyEntities(Vec3d origin, Class<T> entityClass) {
         ArrayList<EntityInfo<T>> result = new ArrayList<>();
         for (Entity entity : Minecraft.getMinecraft().world.loadedEntityList) {
-            if(!entityClass.isAssignableFrom(entity.getClass())) continue;
+            if (!entityClass.isAssignableFrom(entity.getClass())) continue;
             result.add(new EntityInfo<>((T) entity, origin.squareDistanceTo(entity.getPositionVector())));
         }
         result.sort(null);

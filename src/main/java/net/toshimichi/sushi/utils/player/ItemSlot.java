@@ -3,12 +3,7 @@ package net.toshimichi.sushi.utils.player;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class ItemSlot implements Comparable<ItemSlot> {
     private final int index;
@@ -49,7 +44,7 @@ public class ItemSlot implements Comparable<ItemSlot> {
     public static ItemSlot[] values() {
         ItemSlot[] result = new ItemSlot[36];
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        for(int i = 0; i < result.length; i++) {
+        for (int i = 0; i < result.length; i++) {
             result[i] = new ItemSlot(i);
         }
         return result;

@@ -2,7 +2,6 @@ package net.toshimichi.sushi.task.tasks;
 
 import net.toshimichi.sushi.task.TaskAdapter;
 
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 public class DelayTask<I> extends TaskAdapter<I, I> {
