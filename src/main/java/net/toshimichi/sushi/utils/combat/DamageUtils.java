@@ -27,7 +27,7 @@ public class DamageUtils {
         // https://minecraft.fandom.com/wiki/Armor#Defense_points
         double defense = entity.getTotalArmorValue();
         double toughness = entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
-        damage = damage * (1 - MathHelper.clamp(20, defense - 4 * damage / (toughness + 8), defense / 5) / 25);
+        damage *= 1 - MathHelper.clamp(defense - 4 * damage / (toughness + 8), defense / 5, 20) / 25;
 
         // potion
         PotionEffect resistance = entity.getActivePotionEffect(MobEffects.RESISTANCE);
@@ -47,7 +47,7 @@ public class DamageUtils {
                 if (enchant != null) modifier += enchant.calcModifierDamage(level, source);
             }
         }
-        damage *= (1 - Math.min(modifier, 0.8) / 25D);
+        damage *= (1 - Math.min(modifier, 20) / 25D);
 
         // difficulty
         if (source.isDifficultyScaled()) {

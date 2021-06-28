@@ -12,7 +12,12 @@ public class ConfigurationHandler {
         if (e.getClient() == null) {
             Sushi.getProfile().getModules().disable();
             Sushi.getProfile().save();
-        } else {
+        }
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void onPostWorldLoad(WorldLoadEvent e) {
+        if (e.getClient() != null) {
             Sushi.getProfile().getModules().enable();
         }
     }
