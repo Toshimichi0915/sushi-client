@@ -65,11 +65,11 @@ public class CevBreakModule extends BaseModule {
             TaskExecutor.newTaskChain()
                     .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
-                    .abortIf(found -> !found)
+                    .abortIfFalse()
                     .then(() -> BlockUtils.place(info))
                     .supply(() -> Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, true))
-                    .abortIf(found -> !found)
+                    .abortIfFalse()
                     .then(() -> placeCrystal(attack))
                     .execute();
             BlockUtils.place(info);
@@ -77,7 +77,7 @@ public class CevBreakModule extends BaseModule {
             TaskExecutor.newTaskChain()
                     .supply(() -> Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, true))
-                    .abortIf(found -> !found)
+                    .abortIfFalse()
                     .then(() -> placeCrystal(attack))
                     .execute();
         } else {

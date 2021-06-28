@@ -68,7 +68,7 @@ public class SurroundModule extends BaseModule {
         TaskExecutor.newTaskChain()
                 .supply(() -> Item.getItemById(49))
                 .then(new ItemSwitchTask(null, true))
-                .abortIf(found -> !found)
+                .abortIfFalse()
                 .supply(() -> placeList)
                 .then(new BlockPlaceTask(true, true))
                 .last(() -> running = false)

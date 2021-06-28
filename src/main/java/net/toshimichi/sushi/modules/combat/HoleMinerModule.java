@@ -69,14 +69,14 @@ public class HoleMinerModule extends BaseModule {
         TaskExecutor.newTaskChain()
                 .supply(() -> Items.DIAMOND_PICKAXE)
                 .then(new ItemSwitchTask(null, true))
-                .abortIf(found -> !found)
+                .abortIfFalse()
                 .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN)))
                 .delay(() -> ItemUtils.getDestroyTime(surroundPos, ItemSlot.getCurrentItemSlot(getPlayer()).getItemStack()))
                 .abortIf(() -> !running)
 
                 .supply(() -> Items.DIAMOND_PICKAXE)
                 .then(new ItemSwitchTask(null, true))
-                .abortIf(found -> !found)
+                .abortIfFalse()
                 .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN)))
                 .last(() -> {
                     running = false;
@@ -105,19 +105,19 @@ public class HoleMinerModule extends BaseModule {
         TaskExecutor.newTaskChain()
                 .supply(() -> Items.DIAMOND_PICKAXE)
                 .then(new ItemSwitchTask(null, true))
-                .abortIf(found -> !found)
+                .abortIfFalse()
                 .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN)))
                 .delay(() -> ItemUtils.getDestroyTime(surroundPos, ItemSlot.getCurrentItemSlot(getPlayer()).getItemStack()))
                 .abortIf(() -> !running)
 
                 .supply(() -> Items.END_CRYSTAL)
                 .then(new ItemSwitchTask(null, true))
-                .abortIf(found -> !found)
+                .abortIfFalse()
                 .then(() -> getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(crystalFloor, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F)))
 
                 .supply(() -> Items.DIAMOND_PICKAXE)
                 .then(new ItemSwitchTask(null, true))
-                .abortIf(found -> !found)
+                .abortIfFalse()
                 .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN)))
                 .last(() -> {
                     running = false;

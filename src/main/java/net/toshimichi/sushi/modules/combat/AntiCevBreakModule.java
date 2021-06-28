@@ -56,7 +56,7 @@ public class AntiCevBreakModule extends BaseModule {
             TaskExecutor.newTaskChain()
                     .supply(() -> obsidian)
                     .then(new ItemSwitchTask(null, false))
-                    .abortIf(found -> !found)
+                    .abortIfFalse()
                     .supply(() -> Collections.singletonList(face))
                     .then(new BlockPlaceTask(true, true))
                     .execute();

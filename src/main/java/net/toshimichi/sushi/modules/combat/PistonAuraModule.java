@@ -118,13 +118,13 @@ public class PistonAuraModule extends BaseModule {
                     .delay(delay1.getValue().getCurrent())
                     .supply(() -> attack.getObsidianPlace() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
-                    .abortIf(found -> !found)
+                    .abortIfFalse()
                     .supply(() -> attack.getObsidianPlace())
                     .then(new BlockPlaceTask(true, true))
                     .delay(attack.getObsidianPlace() == null ? 0 : delay5.getValue().getCurrent())
                     .supply(() -> Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                    .abortIf(found -> !found)
+                    .abortIfFalse()
                     .then(() -> {
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
@@ -151,13 +151,13 @@ public class PistonAuraModule extends BaseModule {
                     .delay(delay3.getValue().getCurrent())
                     .supply(() -> attack.getPistonPlace() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
-                    .abortIf(found -> !found)
+                    .abortIfFalse()
                     .supply(() -> attack.getPistonPlace())
                     .then(new BlockPlaceTask(false, false))
                     .delay(attack.getPistonPlace() == null ? 0 : delay5.getValue().getCurrent())
                     .supply(() -> Item.getItemFromBlock(Blocks.PISTON))
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                    .abortIf(found -> !found)
+                    .abortIfFalse()
                     .then(() -> {
                         BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
                         if (info == null) return;
@@ -176,7 +176,7 @@ public class PistonAuraModule extends BaseModule {
                         .delay(delay4.getValue().getCurrent())
                         .supply(() -> Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
                         .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
-                        .abortIf(found -> !found)
+                        .abortIfFalse()
                         .then(() -> {
                             BlockUtils.place(info);
                             attack.setRedstonePlaced(true);

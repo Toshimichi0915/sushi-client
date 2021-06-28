@@ -101,7 +101,7 @@ public class AntiPistonAuraModule extends BaseModule {
                 TaskExecutor.newTaskChain()
                         .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                         .then(new ItemSwitchTask(null, false))
-                        .abortIf(found -> !found)
+                        .abortIfFalse()
                         .supply(() -> Collections.singletonList(spam))
                         .then(new BlockPlaceTask(true, true))
                         .execute();

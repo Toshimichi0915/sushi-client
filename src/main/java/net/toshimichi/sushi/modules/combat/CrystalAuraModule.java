@@ -213,7 +213,7 @@ public class CrystalAuraModule extends BaseModule {
         TaskExecutor.newTaskChain()
                 .supply(() -> Item.getItemById(426))
                 .then(new ItemSwitchTask(null, switchMode.getValue()))
-                .abortIf(found -> !found)
+                .abortIfFalse()
                 .then(() -> {
                     PositionUtils.desync(DesyncMode.LOOK);
                     PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
