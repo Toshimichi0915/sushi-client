@@ -14,10 +14,7 @@ import net.toshimichi.sushi.modules.combat.*;
 import net.toshimichi.sushi.modules.movement.*;
 import net.toshimichi.sushi.modules.player.*;
 import net.toshimichi.sushi.modules.render.*;
-import net.toshimichi.sushi.modules.world.NoEntityTraceModule;
-import net.toshimichi.sushi.modules.world.ScaffoldModule;
-import net.toshimichi.sushi.modules.world.WeatherModule;
-import net.toshimichi.sushi.modules.world.XrayModule;
+import net.toshimichi.sushi.modules.world.*;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -89,6 +86,7 @@ public class GsonModules implements Modules {
         addModuleFactory("no_slow", NoSlowModule::new, true);
         addModuleFactory("auto_pull", AutoPullModule::new, true);
         addModuleFactory("hole_miner", HoleMinerModule::new, true);
+        addModuleFactory("fake_player", FakePlayerModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
