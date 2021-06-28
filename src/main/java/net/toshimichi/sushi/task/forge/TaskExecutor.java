@@ -19,7 +19,6 @@ public class TaskExecutor {
     private final ArrayList<TaskAdapter<?, ?>> running;
     private final ArrayList<TaskAdapter<?, Boolean>> abortTasks;
     private final ArrayList<TaskAdapter<?, ?>> lastTasks;
-    private static int ticks;
 
     private TaskExecutor(ArrayList<TaskAdapter<?, ?>> running) {
         this.running = running;
@@ -27,9 +26,16 @@ public class TaskExecutor {
         this.lastTasks = new ArrayList<>();
     }
 
+    public static TaskChain<Object> newTaskChain() {
+        NullTask firstTask = new NullTask();
+        ArrayList<TaskAdapter<?, ?>> adapters = new ArrayList<>();
+        adapters.add(firstTask);
+        return new ForgeTaskChain<>(new TaskExecutor(adapters), firstTask);
+    }
+
     private TaskContext getTaskContext(TaskAdapter<?, ?> origin, boolean create) {
         for (TaskContext context : contexts) {
-            if (context.getOrigin().equals(origin)) return context;
+            if (context.origin().equals(origin)) return context;
         }
         TaskContext context = null;
         if (create) {
@@ -39,20 +45,20 @@ public class TaskExecutor {
         return context;
     }
 
-    protected void addTaskAdapter(TaskAdapter<?, ?> origin, TaskAdapter<?, ?> adapter) {
-        getTaskContext(origin, true).addTaskAdapter(adapter);
+    protected void next(TaskAdapter<?, ?> origin, TaskAdapter<?, ?> adapter) {
+        getTaskContext(origin, true).next(adapter);
     }
 
-    protected void addExceptionHandler(TaskAdapter<?, ?> origin, TaskAdapter<? super Exception, ?> handler) {
-        getTaskContext(origin, true).addExceptionHandler(handler);
+    protected void fail(TaskAdapter<?, ?> origin, TaskAdapter<? super Exception, ?> handler) {
+        getTaskContext(origin, true).fail(handler);
     }
 
-    protected void addAbortHandler(TaskAdapter<?, ?> origin, TaskAdapter<?, Boolean> adapter) {
-        addTaskAdapter(origin, adapter);
+    protected void abort(TaskAdapter<?, ?> origin, TaskAdapter<?, Boolean> adapter) {
+        next(origin, adapter);
         abortTasks.add(adapter);
     }
 
-    protected void addLastTaskAdapter(TaskAdapter<?, ?> adapter) {
+    protected void last(TaskAdapter<?, ?> adapter) {
         lastTasks.add(adapter);
     }
 
@@ -69,11 +75,11 @@ public class TaskExecutor {
             exec.tick();
         } catch (Exception e) {
             running.remove(task);
-            if (context == null || context.getExceptionHandlers().isEmpty()) {
+            if (context == null || context.fail() == null) {
                 e.printStackTrace();
                 return;
             }
-            running.addAll(0, context.getExceptionHandlers());
+            if (context.fail() != null) running.add(0, context.fail());
             if (!running.isEmpty()) {
                 TaskAdapter<? super Exception, ?> handler = (TaskAdapter<? super Exception, ?>) running.get(0);
                 executeTask(handler, () -> handler.start(e));
@@ -111,7 +117,7 @@ public class TaskExecutor {
         }
         running.remove(task);
         if (context != null) {
-            running.addAll(0, context.getTaskAdapters());
+            if (context.next() != null) running.add(0, context.next());
             if (!running.isEmpty()) {
                 TaskAdapter<Object, ?> consumer = (TaskAdapter<Object, ?>) running.get(0);
                 executeTask(consumer, () -> consumer.start(task.getResult()));
@@ -138,7 +144,6 @@ public class TaskExecutor {
 
     @EventHandler(timing = EventTiming.PRE, priority = 1000)
     public void onClientTick(ClientTickEvent e) {
-        ticks++;
         updateTask();
     }
 
@@ -147,12 +152,5 @@ public class TaskExecutor {
         if (e.getClient() != null) return;
         // abort all
         EventHandlers.unregister(this);
-    }
-
-    public static TaskChain<Object> newTaskChain() {
-        NullTask firstTask = new NullTask();
-        ArrayList<TaskAdapter<?, ?>> adapters = new ArrayList<>();
-        adapters.add(firstTask);
-        return new ForgeTaskChain<>(new TaskExecutor(adapters), firstTask);
     }
 }

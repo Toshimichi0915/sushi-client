@@ -2,34 +2,32 @@ package net.toshimichi.sushi.task.forge;
 
 import net.toshimichi.sushi.task.TaskAdapter;
 
-import java.util.ArrayList;
-
 class TaskContext {
     private final TaskAdapter<?, ?> origin;
-    private final ArrayList<TaskAdapter<?, ?>> taskAdapters = new ArrayList<>();
-    private final ArrayList<TaskAdapter<? super Exception, ?>> exceptionHandlers = new ArrayList<>();
+    private TaskAdapter<?, ?> next;
+    private TaskAdapter<? super Exception, ?> fail;
 
     public TaskContext(TaskAdapter<?, ?> origin) {
         this.origin = origin;
     }
 
-    public void addTaskAdapter(TaskAdapter<?, ?> taskAdapter) {
-        taskAdapters.add(taskAdapter);
+    public void next(TaskAdapter<?, ?> adapter) {
+        next = adapter;
     }
 
-    public void addExceptionHandler(TaskAdapter<? super Exception, ?> handler) {
-        exceptionHandlers.add(handler);
+    public void fail(TaskAdapter<? super Exception, ?> adapter) {
+        fail = adapter;
     }
 
-    public TaskAdapter<?, ?> getOrigin() {
+    public TaskAdapter<?, ?> origin() {
         return origin;
     }
 
-    public ArrayList<TaskAdapter<?, ?>> getTaskAdapters() {
-        return taskAdapters;
+    public TaskAdapter<?, ?> next() {
+        return next;
     }
 
-    public ArrayList<TaskAdapter<? super Exception, ?>> getExceptionHandlers() {
-        return exceptionHandlers;
+    public TaskAdapter<? super Exception, ?> fail() {
+        return fail;
     }
 }

@@ -15,25 +15,25 @@ class ForgeTaskChain<I> implements TaskChain<I> {
 
     @Override
     public <R> TaskChain<R> then(TaskAdapter<? super I, R> task) {
-        getTaskExecutor().addTaskAdapter(getParent(), task);
+        getTaskExecutor().next(getParent(), task);
         return new ForgeTaskChain<>(getTaskExecutor(), task);
     }
 
     @Override
     public <R> TaskChain<R> fail(TaskAdapter<? super Exception, R> task) {
-        getTaskExecutor().addExceptionHandler(getParent(), task);
+        getTaskExecutor().fail(getParent(), task);
         return new ForgeTaskChain<>(getTaskExecutor(), task);
     }
 
     @Override
     public TaskChain<I> last(TaskAdapter<? super I, I> task) {
-        getTaskExecutor().addLastTaskAdapter(task);
+        getTaskExecutor().last(task);
         return new ForgeTaskChain<>(getTaskExecutor(), task);
     }
 
     @Override
     public TaskChain<I> abortIf(TaskAdapter<? super I, Boolean> task) {
-        getTaskExecutor().addAbortHandler(getParent(), task);
+        getTaskExecutor().abort(getParent(), task);
         return new ForgeTaskChain<>(getTaskExecutor(), task);
     }
 
