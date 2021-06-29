@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -36,6 +37,12 @@ public class HoleMinerModule extends BaseModule {
 
     @Config(id = "hole_mine_mode", name = "Mode")
     public HoleMineMode holeMineMode = HoleMineMode.BEST_EFFORT;
+
+    @Config(id = "enable_crystal_aura", name = "Enable CrystalAura")
+    public Boolean enableCrystalAura = true;
+
+    @Config(id = "crystal_aura_id", name = "CrystalAura ID")
+    public String crystalAuraId = "crystal_aura";
 
     @Config(id = "disable_after", name = "Disable After")
     public Boolean disableAfter = false;
@@ -78,6 +85,12 @@ public class HoleMinerModule extends BaseModule {
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
                 .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN)))
+                .then(() -> {
+                    if (!enableCrystalAura) return;
+                    Module crystalAura = Sushi.getProfile().getModules().getModule(crystalAuraId);
+                    if (crystalAura == null) return;
+                    crystalAura.setEnabled(true);
+                })
                 .last(() -> {
                     running = false;
                     breakingBlock = null;

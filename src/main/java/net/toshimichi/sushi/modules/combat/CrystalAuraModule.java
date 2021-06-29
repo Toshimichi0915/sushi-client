@@ -157,12 +157,6 @@ public class CrystalAuraModule extends BaseModule {
         return DamageUtils.applyModifier(player, damage, DamageUtils.EXPLOSION);
     }
 
-    private double getDamage(Vec3d pos, EntityPlayer player) {
-        double power = customDamage.getValue() ? customPower.getValue().getCurrent() : 6;
-        double damage = DamageUtils.getExplosionDamage(player, pos, power);
-        return DamageUtils.applyModifier(player, damage, DamageUtils.EXPLOSION);
-    }
-
     private CrystalAttack getCrystalAttack(int crystal, Vec3d pos, AxisAlignedBB box) {
         ArrayList<Map.Entry<EntityPlayer, Double>> damages = new ArrayList<>();
         for (Entity entity : getWorld().loadedEntityList) {
