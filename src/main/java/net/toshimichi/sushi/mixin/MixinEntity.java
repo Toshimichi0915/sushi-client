@@ -2,6 +2,7 @@ package net.toshimichi.sushi.mixin;
 
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;

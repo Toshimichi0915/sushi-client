@@ -9,11 +9,13 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerMoveEvent;
 import net.toshimichi.sushi.events.player.PlayerPacketEvent;
+import net.toshimichi.sushi.events.player.PlayerPushOutOfBlocksEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityPlayerSP.class)
 public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
@@ -45,5 +47,15 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     public void onPostUpdateWalkingPlayer(CallbackInfo ci) {
         PlayerPacketEvent event = new PlayerPacketEvent(EventTiming.POST);
         EventHandlers.callEvent(event);
+    }
+
+    @Inject(at = @At("HEAD"), method = "pushOutOfBlocks", cancellable = true)
+    public void onPushOutBlocks(double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {
+        PlayerPushOutOfBlocksEvent e = new PlayerPushOutOfBlocksEvent(x, y, z);
+        EventHandlers.callEvent(e);
+        if(e.isCancelled()) {
+            cir.setReturnValue(false);
+            cir.cancel();
+        }
     }
 }

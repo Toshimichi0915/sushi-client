@@ -4,11 +4,13 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(EntityPlayer.class)
