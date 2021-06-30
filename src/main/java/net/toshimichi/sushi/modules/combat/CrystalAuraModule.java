@@ -68,8 +68,6 @@ public class CrystalAuraModule extends BaseModule {
     private final Configuration<DoubleRange> selfPingMultiplier;
     private final Configuration<Boolean> useInputs;
     private final Configuration<Boolean> constantSpeed;
-    private final Configuration<DoubleRange> enemyPingMultiplier;
-    private final Configuration<IntRange> maxEnemyPing;
 
     private final Set<EnderCrystalInfo> enderCrystals = new HashSet<>();
     private volatile CrystalAttack crystalAttack;
@@ -112,8 +110,6 @@ public class CrystalAuraModule extends BaseModule {
         selfPingMultiplier = predict.get("self_ping_multiplier", "Self Multiplier", null, DoubleRange.class, new DoubleRange(1, 10, 0, 0.1, 1));
         useInputs = predict.get("use_inputs", "Use Inputs", null, Boolean.class, true);
         constantSpeed = predict.get("constant_speed", "Constant Speed", null, Boolean.class, true);
-        enemyPingMultiplier = predict.get("enemy_ping_multiplier", "Enemy Multiplier", null, DoubleRange.class, new DoubleRange(1, 10, 0, 0.1, 1));
-        maxEnemyPing = predict.get("max_enemy_ping", "Max Enemy Ping", null, IntRange.class, new IntRange(100, 1000, 0, 5));
     }
 
     @Override
@@ -134,21 +130,13 @@ public class CrystalAuraModule extends BaseModule {
 
     private Vec3d getPingOffset(EntityPlayer player, boolean self) {
         NetworkPlayerInfo selfInfo = getConnection().getPlayerInfo(getPlayer().getUniqueID());
-        NetworkPlayerInfo enemyInfo = getConnection().getPlayerInfo(player.getUniqueID());
-        int selfPing = selfInfo == null ? 0 : selfInfo.getResponseTime();
-        int enemyPing = enemyInfo == null ? 0 : enemyInfo.getResponseTime();
         Vec3d offset = player.getPositionVector().subtract(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ));
         Vec3d result;
         if (self && useInputs.getValue()) result = MovementUtils.getMoveInputs(getPlayer(), true);
         else result = offset.normalize();
 
         if (!constantSpeed.getValue()) result = result.scale(offset.distanceTo(Vec3d.ZERO) / WALK_SPEED);
-        if (self) {
-            return result.scale(selfPing / 50D * WALK_SPEED * selfPingMultiplier.getValue().getCurrent());
-        } else {
-            return result.scale(selfPing / 50D * WALK_SPEED * selfPingMultiplier.getValue().getCurrent() +
-                    enemyPing * 50 / WALK_SPEED * enemyPingMultiplier.getValue().getCurrent());
-        }
+        return result.scale(selfInfo.getResponseTime() / 50D * WALK_SPEED * selfPingMultiplier.getValue().getCurrent());
     }
 
     private double getDamage(Vec3d pos, EntityPlayer player, Vec3d offset) {
