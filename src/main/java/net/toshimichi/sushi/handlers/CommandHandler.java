@@ -6,6 +6,7 @@ import net.toshimichi.sushi.command.Commands;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
+import net.toshimichi.sushi.hwid.annotations.AsyncAuthentication;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class CommandHandler {
 
+    @AsyncAuthentication
     @EventHandler(timing = EventTiming.PRE)
     public void onChatSend(PacketSendEvent e) {
         if (!(e.getPacket() instanceof CPacketChatMessage)) return;

@@ -3,6 +3,8 @@ package net.toshimichi.sushi;
 import com.google.gson.Gson;
 import net.toshimichi.sushi.command.ChatMessageHandler;
 import net.toshimichi.sushi.command.MessageHandler;
+import net.toshimichi.sushi.hwid.annotations.AsyncAuthentication;
+import net.toshimichi.sushi.hwid.annotations.Authentication;
 import net.toshimichi.sushi.modules.Categories;
 import net.toshimichi.sushi.modules.GsonCategories;
 import net.toshimichi.sushi.modules.GsonModules;
@@ -119,6 +121,7 @@ public class GsonProfiles implements Profiles {
             return new ChatMessageHandler();
         }
 
+        @AsyncAuthentication
         @Override
         public void load() {
             config.load(configFile);
@@ -126,6 +129,7 @@ public class GsonProfiles implements Profiles {
             modules.load();
         }
 
+        @AsyncAuthentication
         @Override
         public void save() {
             config.save(configFile);

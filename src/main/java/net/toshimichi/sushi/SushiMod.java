@@ -22,31 +22,20 @@ import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTheme;
 import net.toshimichi.sushi.handlers.*;
 import net.toshimichi.sushi.handlers.forge.*;
-import net.toshimichi.sushi.hwid.annotations.Value;
-import net.toshimichi.sushi.hwid.gen.EncryptUtils;
+import net.toshimichi.sushi.hwid.annotations.AsyncAuthentication;
+import net.toshimichi.sushi.hwid.annotations.Authentication;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Mod(modid = "sushi", name = "Sushi Client", version = "1")
 public class SushiMod {
-
-    @Value("encryptedApiKey")
-    public static String encryptedApiKey;
-
-    @Value("targetUrl")
-    public static String targetUrl;
 
     private static final Gson gson;
 
@@ -77,35 +66,9 @@ public class SushiMod {
         return func.apply(conf);
     }
 
+    @Authentication
     @EventHandler
     public void init(FMLInitializationEvent event) {
-
-        AtomicBoolean hasRuntimeExceptionThrown = new AtomicBoolean(false);
-
-        // auth
-        try {
-            byte[] hwid = EncryptUtils.getHWID();
-            byte[] apiKeyBytes = EncryptUtils.decrypt(hwid, Base64.getDecoder().decode(encryptedApiKey.getBytes(StandardCharsets.UTF_8)));
-            if (apiKeyBytes == null) throw new RuntimeException();
-            String apiKey = new String(apiKeyBytes, StandardCharsets.UTF_8);
-            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                HttpPost post = new HttpPost(targetUrl + "/match-api-key");
-                post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("apiKey", apiKey))));
-                CloseableHttpResponse response = httpClient.execute(post);
-
-                // detect byte code modification
-                try {
-                    throw new RuntimeException();
-                } catch (RuntimeException e) {
-                    hasRuntimeExceptionThrown.set(true);
-                }
-
-                if (response.getStatusLine().getStatusCode() != 200) throw new RuntimeException();
-            }
-        } catch (Exception e) {
-            System.err.println("Authentication failed");
-            throw new RuntimeException();
-        }
 
         // load config
         try {
@@ -136,15 +99,6 @@ public class SushiMod {
         Sushi.setProfile(profile);
         profile.load();
 
-        // encrypt check
-        try {
-            EncryptUtils.decrypt(EncryptUtils.getHWID(), Base64.getDecoder().decode(encryptedApiKey));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Authentication failed");
-            throw new RuntimeException();
-        }
-
         // register events
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         MinecraftForge.EVENT_BUS.register(new MouseInputHandler());
@@ -167,11 +121,6 @@ public class SushiMod {
         EventHandlers.register(new TpsHandler());
         EventHandlers.register(new RenderUtilsHandler());
         EventHandlers.register(this);
-
-        if (!hasRuntimeExceptionThrown.get()) {
-            System.err.println("Authentication failed");
-            throw new OutOfMemoryError();
-        }
 
         Commands.register(new HelpCommand());
         Commands.register(new ToggleCommand());
