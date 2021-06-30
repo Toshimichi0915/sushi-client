@@ -1,10 +1,10 @@
 package net.toshimichi.sushi;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import net.toshimichi.sushi.command.ChatMessageHandler;
 import net.toshimichi.sushi.command.MessageHandler;
 import net.toshimichi.sushi.hwid.annotations.AsyncAuthentication;
-import net.toshimichi.sushi.hwid.annotations.Authentication;
 import net.toshimichi.sushi.modules.Categories;
 import net.toshimichi.sushi.modules.GsonCategories;
 import net.toshimichi.sushi.modules.GsonModules;
@@ -53,7 +53,10 @@ public class GsonProfiles implements Profiles {
     }
 
     private class ProfileConfig {
+
+        @SerializedName("prefix")
         char prefix = '.';
+        @SerializedName("version")
         int version = Sushi.getVersion();
 
         void load(File file) {
@@ -68,7 +71,7 @@ public class GsonProfiles implements Profiles {
             }
         }
 
-        public void save(File file) {
+        void save(File file) {
             try {
                 FileUtils.writeStringToFile(file, gson.toJson(this), StandardCharsets.UTF_8);
             } catch (IOException e) {
