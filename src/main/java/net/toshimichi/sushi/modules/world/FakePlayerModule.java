@@ -32,7 +32,7 @@ public class FakePlayerModule extends BaseModule {
 
     @Override
     public void onEnable() {
-        fakePlayer = new EntityOtherPlayerMP(getWorld(), new GameProfile(UUID.randomUUID(), "T0shimichi"));
+        fakePlayer = new EntityOtherPlayerMP(getWorld(), new GameProfile(UUID.randomUUID(), "Hiyokomame0144"));
         fakePlayer.copyLocationAndAnglesFrom(getPlayer());
         fakePlayer.rotationYawHead = getPlayer().rotationYawHead;
         fakePlayer.inventory.copyInventory(getPlayer().inventory);
