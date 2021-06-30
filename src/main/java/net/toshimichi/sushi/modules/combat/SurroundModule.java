@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.modules.combat;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -49,10 +50,6 @@ public class SurroundModule extends BaseModule {
     private void surround() {
         if (running) return;
         BlockPos pos = new BlockPos(getPlayer().posX, getPlayer().posY, getPlayer().posZ);
-        if (pull.getValue()) {
-            PositionUtils.move(pos.getX() + 0.5, getPlayer().posY, pos.getZ() + 0.5,
-                    0, 0, true, false, DesyncMode.NONE);
-        }
         if (disableOnJump.getValue() && getPlayer().movementInput.jump || disableAfter.getValue()) {
             setEnabled(false);
         }
@@ -64,9 +61,13 @@ public class SurroundModule extends BaseModule {
             placeList.addAll(info);
         }
         if (placeList.isEmpty()) return;
+        if (pull.getValue()) {
+            PositionUtils.move(pos.getX() + 0.5, getPlayer().posY, pos.getZ() + 0.5,
+                    0, 0, true, false, DesyncMode.NONE);
+        }
         running = true;
         TaskExecutor.newTaskChain()
-                .supply(() -> Item.getItemById(49))
+                .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
                 .supply(() -> placeList)
