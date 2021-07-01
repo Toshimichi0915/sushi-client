@@ -12,7 +12,6 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'eclipse'
 
 archivesBaseName = 'sushi'
 

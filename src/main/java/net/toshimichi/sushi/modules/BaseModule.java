@@ -8,6 +8,7 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.hwid.annotations.Protect;
 
 abstract public class BaseModule implements Module {
 
@@ -56,6 +57,7 @@ abstract public class BaseModule implements Module {
         return isEnabled;
     }
 
+    @Protect
     @Override
     public void setEnabled(boolean enabled) {
         if (!isPaused) {
@@ -72,6 +74,7 @@ abstract public class BaseModule implements Module {
         return isPaused;
     }
 
+    @Protect
     @Override
     public void setPaused(boolean paused) {
         if (!this.isPaused && paused && isEnabled) {

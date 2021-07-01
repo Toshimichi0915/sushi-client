@@ -23,6 +23,7 @@ import net.toshimichi.sushi.gui.theme.simple.SimpleTheme;
 import net.toshimichi.sushi.handlers.*;
 import net.toshimichi.sushi.handlers.forge.*;
 import net.toshimichi.sushi.hwid.annotations.Authentication;
+import net.toshimichi.sushi.hwid.annotations.Protect;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -127,6 +128,7 @@ public class SushiMod {
         Commands.register(this, new SetCommand());
     }
 
+    @Protect
     @net.toshimichi.sushi.events.EventHandler(timing = EventTiming.PRE)
     public void onLoadWorld(WorldLoadEvent e) {
         if (e.getClient() != null) return;

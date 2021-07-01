@@ -1,6 +1,7 @@
 package net.toshimichi.sushi;
 
 import net.toshimichi.sushi.gui.theme.Theme;
+import net.toshimichi.sushi.hwid.annotations.Protect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class Sushi {
         return new ArrayList<>(themes);
     }
 
+    @Protect
     public static void setThemes(List<Theme> themes) {
         Sushi.themes.clear();
         Sushi.themes.addAll(themes);

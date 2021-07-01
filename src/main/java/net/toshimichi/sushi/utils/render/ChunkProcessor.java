@@ -14,6 +14,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.WorldLoadEvent;
 import net.toshimichi.sushi.events.world.ChunkLoadEvent;
 import net.toshimichi.sushi.events.world.ChunkUnloadEvent;
+import net.toshimichi.sushi.hwid.annotations.Protect;
 import net.toshimichi.sushi.mixin.AccessorChunkProviderClient;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.utils.world.WorldEventAdapter;
@@ -69,6 +70,7 @@ abstract public class ChunkProcessor implements Closeable {
         queued.add(e.getChunk());
     }
 
+    @Protect
     @EventHandler(timing = EventTiming.POST)
     public void onWorldLoad(WorldLoadEvent e) {
         if (world != null) world.removeEventListener(listener);

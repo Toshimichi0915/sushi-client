@@ -6,6 +6,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.WorldLoadEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.hwid.annotations.Protect;
 import net.toshimichi.sushi.task.Task;
 import net.toshimichi.sushi.task.TaskAdapter;
 import net.toshimichi.sushi.task.TaskChain;
@@ -147,6 +148,7 @@ public class TaskExecutor {
         updateTask();
     }
 
+    @Protect
     @EventHandler(timing = EventTiming.PRE)
     public void onWorldLoad(WorldLoadEvent e) {
         if (e.getClient() != null) return;

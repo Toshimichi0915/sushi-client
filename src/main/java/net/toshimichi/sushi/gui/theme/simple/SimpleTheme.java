@@ -14,6 +14,7 @@ import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.gui.theme.simple.config.*;
+import net.toshimichi.sushi.hwid.annotations.Protect;
 import net.toshimichi.sushi.modules.Keybind;
 import net.toshimichi.sushi.modules.Module;
 
@@ -51,6 +52,7 @@ public class SimpleTheme implements Theme {
         return "simple";
     }
 
+    @Protect
     @Override
     public BasePanelComponent<?> newClickGui(Module caller) {
         return new SimpleClickGuiComponent(constants, this, configurations, caller);
