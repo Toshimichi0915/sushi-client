@@ -22,7 +22,6 @@ import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTheme;
 import net.toshimichi.sushi.handlers.*;
 import net.toshimichi.sushi.handlers.forge.*;
-import net.toshimichi.sushi.hwid.annotations.AsyncAuthentication;
 import net.toshimichi.sushi.hwid.annotations.Authentication;
 import org.apache.commons.io.FileUtils;
 

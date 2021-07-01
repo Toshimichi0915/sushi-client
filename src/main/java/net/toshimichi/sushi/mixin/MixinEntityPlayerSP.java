@@ -53,7 +53,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     public void onPushOutBlocks(double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {
         PlayerPushOutOfBlocksEvent e = new PlayerPushOutOfBlocksEvent(x, y, z);
         EventHandlers.callEvent(e);
-        if(e.isCancelled()) {
+        if (e.isCancelled()) {
             cir.setReturnValue(false);
             cir.cancel();
         }
