@@ -30,13 +30,14 @@ import net.toshimichi.sushi.utils.world.BlockFace;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class AntiPistonAuraModule extends BaseModule {
 
+    private final ArrayList<BlockPlaceInfo> spam = new ArrayList<>();
     private long when;
-    private BlockPlaceInfo spam;
 
     public AntiPistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -45,7 +46,7 @@ public class AntiPistonAuraModule extends BaseModule {
     @Override
     public void onEnable() {
         EventHandlers.register(this);
-        spam = null;
+        spam.clear();
     }
 
     @Override
@@ -79,7 +80,10 @@ public class AntiPistonAuraModule extends BaseModule {
         if (crystal == null) return false;
         Vec3d predicted = crystal.getPositionVector().add(new Vec3d(enumFacing.getDirectionVec()).scale(0.5));
         if (DamageUtils.getCrystalDamage(getPlayer(), predicted) < 50) return false;
-        spam = findBlockPlaceInfo(getWorld(), pos);
+        spam.add(findBlockPlaceInfo(getWorld(), pos));
+        if (!BlockUtils.isAir(getWorld(), pos.offset(enumFacing).offset(enumFacing))) {
+            spam.add(findBlockPlaceInfo(getWorld(), pos.offset(enumFacing)));
+        }
         when = System.currentTimeMillis();
         PositionUtils.desync(DesyncMode.ALL);
         PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.2, getPlayer().posZ, 0, 0, true, false, DesyncMode.POSITION);
@@ -92,21 +96,22 @@ public class AntiPistonAuraModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        if (spam != null) {
-            Block block = getWorld().getBlockState(spam.getBlockPos()).getBlock();
+        spam.removeIf(it -> {
+            Block block = getWorld().getBlockState(it.getBlockPos()).getBlock();
             if (block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION && block != Blocks.AIR ||
                     System.currentTimeMillis() - when > 1000) {
-                spam = null;
+                return true;
             } else {
                 TaskExecutor.newTaskChain()
                         .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                         .then(new ItemSwitchTask(null, false))
                         .abortIfFalse()
-                        .supply(() -> Collections.singletonList(spam))
+                        .supply(() -> Collections.singletonList(it))
                         .then(new BlockPlaceTask(true, true))
                         .execute();
+                return false;
             }
-        }
+        });
         BlockPos playerPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         for (int x = -3; x < 4; x++) {
             for (int y = 1; y < 4; y++) {
