@@ -26,9 +26,11 @@ public class CevBreakUtils {
         EntityEnderCrystal placed = null;
         Vec3d crystalPos = BlockUtils.toVec3d(pos).add(0.5, 0, 0.5);
         player.world.setBlockState(obsidianPos, Blocks.AIR.getDefaultState());
+        boolean canInteract = EntityUtils.canInteract(crystalPos, 6, 3);
         double damage = DamageUtils.getCrystalDamage(target, crystalPos);
         double selfDamage = DamageUtils.getCrystalDamage(player, crystalPos);
         player.world.setBlockState(obsidianPos, floorState);
+        if (!canInteract) return null;
         if (damage < 40) return null;
         if (selfDamage > 20) return null;
         for (Entity crystal : player.world.loadedEntityList) {
