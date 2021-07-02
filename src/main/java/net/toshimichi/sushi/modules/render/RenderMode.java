@@ -3,7 +3,7 @@ package net.toshimichi.sushi.modules.render;
 import net.toshimichi.sushi.config.data.Named;
 
 public enum RenderMode implements Named {
-    FULL("Full"), SURFACE("Surface"), NONE("None");
+    FULL("Full"), SURFACE("Surface");
 
     private final String name;
 

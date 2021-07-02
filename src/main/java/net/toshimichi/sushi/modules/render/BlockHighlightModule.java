@@ -58,16 +58,14 @@ public class BlockHighlightModule extends BaseModule {
         IBlockState state = getWorld().getBlockState(pos);
         if (state.getMaterial() == Material.AIR) return;
         AxisAlignedBB box = state.getBoundingBox(getWorld(), pos).offset(pos).grow(0.002);
-        if (renderMode.getValue() != RenderMode.NONE) {
-            if (renderMode.getValue() == RenderMode.FULL) GL11.glDisable(GL11.GL_DEPTH_TEST);
-            if (outline.getValue()) {
-                RenderUtils.drawOutline(box, outlineColor.getValue().getCurrentColor(), outlineWidth.getValue().getCurrent());
-            }
-            if (fill.getValue()) {
-                RenderUtils.drawFilled(box, fillColor.getValue().getCurrentColor());
-            }
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
+        if (renderMode.getValue() == RenderMode.FULL) GL11.glDisable(GL11.GL_DEPTH_TEST);
+        if (outline.getValue()) {
+            RenderUtils.drawOutline(box, outlineColor.getValue().getCurrentColor(), outlineWidth.getValue().getCurrent());
         }
+        if (fill.getValue()) {
+            RenderUtils.drawFilled(box, fillColor.getValue().getCurrentColor());
+        }
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
     @Override

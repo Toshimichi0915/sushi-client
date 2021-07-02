@@ -17,24 +17,22 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
-import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.Task;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.EntityUtils;
+import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.player.InventoryUtils;
 import net.toshimichi.sushi.utils.player.ItemSlot;
 import net.toshimichi.sushi.utils.player.ItemUtils;
-import net.toshimichi.sushi.utils.render.RenderUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
-
-import java.awt.Color;
 
 public class HoleMinerModule extends BaseModule {
 
     private boolean running;
     private HoleMineInfo holeMineInfo;
+    private int lastUpdate;
 
     @Config(id = "hole_mine_mode", name = "Mode")
     public HoleMineMode holeMineMode = HoleMineMode.BEST_EFFORT;
@@ -65,19 +63,18 @@ public class HoleMinerModule extends BaseModule {
         holeMineInfo = null;
     }
 
-    private HoleMineInfo processHoleMine(EntityPlayer target, EnumFacing facing) {
+    private HoleMineInfo findNormal(EntityPlayer target, EnumFacing facing) {
         BlockPos playerPos = BlockUtils.toBlockPos(target.getPositionVector());
         BlockPos surroundPos = playerPos.offset(facing);
         BlockPos aboveSurroundPos = surroundPos.offset(EnumFacing.UP);
         BlockPos crystalPos = surroundPos.offset(facing);
         if (getWorld().getBlockState(surroundPos).getBlock() != Blocks.OBSIDIAN) return null;
         if (!BlockUtils.isAir(getWorld(), aboveSurroundPos) && !BlockUtils.isAir(getWorld(), crystalPos)) return null;
-        running = true;
 
         return new HoleMineInfo(surroundPos, crystalPos, false);
     }
 
-    private HoleMineInfo processAntiSurround(EntityPlayer target, EnumFacing facing) {
+    private HoleMineInfo findAntiSurround(EntityPlayer target, EnumFacing facing) {
         BlockPos playerPos = BlockUtils.toBlockPos(target.getPositionVector());
         BlockPos surroundPos = playerPos.offset(facing);
         BlockPos crystalPos = surroundPos.offset(facing);
@@ -92,8 +89,8 @@ public class HoleMinerModule extends BaseModule {
         return new HoleMineInfo(surroundPos, crystalFloor, true);
     }
 
-    private void exec(HoleMineInfo info) {
-        BlockPos surroundPos = info.surroundPos;
+    private void start(HoleMineInfo info) {
+        BlockPos surroundPos = info.getSurroundPos();
         // find diamond pickaxe
         ItemSlot pickaxe = InventoryUtils.findBestTool(true, false, Blocks.OBSIDIAN.getDefaultState());
         if (pickaxe.getItemStack().getItem() != Items.DIAMOND_PICKAXE) return;
@@ -110,14 +107,14 @@ public class HoleMinerModule extends BaseModule {
             crystalAura.setEnabled(true);
         };
 
-        Task lastTask = ()->{
+        Task lastTask = () -> {
             running = false;
             holeMineInfo = null;
             if (disableAfter) setEnabled(false);
         };
 
-        if (info.antiSurround) {
-            BlockPos crystalFloor = info.crystalFloor;
+        if (info.isAntiSurround()) {
+            BlockPos crystalFloor = info.getCrystalFloor();
             TaskExecutor.newTaskChain()
                     .delay(() -> ItemUtils.getDestroyTime(surroundPos, pickaxe.getItemStack()))
                     .abortIf(() -> !running)
@@ -148,40 +145,41 @@ public class HoleMinerModule extends BaseModule {
     }
 
     private HoleMineInfo choose(HoleMineInfo info1, HoleMineInfo info2) {
-        if(info1 == null) return info2;
-        if(info2 == null) return info1;
-        int comp = Boolean.compare(info1.antiSurround, info2.antiSurround);
+        if (info1 == null) return info2;
+        if (info2 == null) return info1;
+        int comp = Boolean.compare(info1.isAntiSurround(), info2.isAntiSurround());
         if (comp == 0) comp = Double.compare(
-                BlockUtils.toVec3d(info1.surroundPos).add(0.5, 0, 0.5).squareDistanceTo(getPlayer().getPositionVector()),
-                BlockUtils.toVec3d(info2.surroundPos).add(0.5, 0, 0.5).squareDistanceTo(getPlayer().getPositionVector()));
+                BlockUtils.toVec3d(info1.getSurroundPos()).add(0.5, 0, 0.5).squareDistanceTo(getPlayer().getPositionVector()),
+                BlockUtils.toVec3d(info2.getSurroundPos()).add(0.5, 0, 0.5).squareDistanceTo(getPlayer().getPositionVector()));
         return comp < 0 ? info1 : info2;
+    }
+
+    public void updateHoleMineInfo() {
+        if (lastUpdate == TickUtils.current()) return;
+        if (running) return;
+        lastUpdate = TickUtils.current();
+        if (!InventoryUtils.hasItem(Items.DIAMOND_PICKAXE)) return;
+        HoleMineInfo chosen = null;
+        for (EntityPlayer player : EntityUtils.getNearbyPlayers(6)) {
+            for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+                if (InventoryUtils.hasItem(Items.END_CRYSTAL) && holeMineMode == HoleMineMode.BEST_EFFORT) {
+                    chosen = choose(chosen, findAntiSurround(player, facing));
+                }
+                chosen = choose(chosen, findNormal(player, facing));
+            }
+        }
+        this.holeMineInfo = chosen;
     }
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
         if (running) return;
-        if (!InventoryUtils.hasItem(Items.DIAMOND_PICKAXE)) return;
-        HoleMineInfo chosen = null;
-        if (InventoryUtils.hasItem(Items.END_CRYSTAL)) {
-            for (EntityPlayer player : EntityUtils.getNearbyPlayers(6)) {
-                for (EnumFacing facing : EnumFacing.HORIZONTALS) {
-                    if (holeMineMode == HoleMineMode.BEST_EFFORT) {
-                        chosen = choose(chosen, processAntiSurround(player, facing));
-                    }
-                    chosen = choose(chosen, processHoleMine(player, facing));
-                }
-            }
-        }
-        if(chosen != null) exec(chosen);
+        updateHoleMineInfo();
+        start(holeMineInfo);
     }
 
-    @EventHandler(timing = EventTiming.POST)
-    public void onWorldRender(WorldRenderEvent e) {
-        if (holeMineInfo == null) return;
-        BlockPos breakingBlock = holeMineInfo.surroundPos;
-        AxisAlignedBB box = getWorld().getBlockState(breakingBlock).getBoundingBox(getWorld(), breakingBlock)
-                .offset(breakingBlock).grow(0.002);
-        RenderUtils.drawFilled(box, new Color(255, 0, 0, 50));
+    public HoleMineInfo getHoleMineInfo() {
+        return holeMineInfo;
     }
 
     @Override
@@ -194,15 +192,4 @@ public class HoleMinerModule extends BaseModule {
         return Category.COMBAT;
     }
 
-    private static class HoleMineInfo {
-        final BlockPos surroundPos;
-        final BlockPos crystalFloor;
-        final boolean antiSurround;
-
-        HoleMineInfo(BlockPos surroundPos, BlockPos crystalFloor, boolean antiSurround) {
-            this.surroundPos = surroundPos;
-            this.antiSurround = antiSurround;
-            this.crystalFloor = crystalFloor;
-        }
-    }
 }

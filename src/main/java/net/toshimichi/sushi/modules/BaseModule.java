@@ -8,7 +8,6 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.RootConfigurations;
-import net.toshimichi.sushi.hwid.annotations.Protect;
 
 abstract public class BaseModule implements Module {
 
