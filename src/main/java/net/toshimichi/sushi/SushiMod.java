@@ -130,7 +130,7 @@ public class SushiMod {
 
     @Protect
     @net.toshimichi.sushi.events.EventHandler(timing = EventTiming.PRE)
-    public void onLoadWorld(WorldLoadEvent e) {
+    public void onWorldLoad(WorldLoadEvent e) {
         if (e.getClient() != null) return;
         try {
             FileUtils.writeStringToFile(modConfigFile, gson.toJson(modConfig), StandardCharsets.UTF_8);

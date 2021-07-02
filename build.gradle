@@ -7,6 +7,7 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath 'net.sf.proguard:proguard-gradle:6.0.3'
     }
 }
 
@@ -42,24 +43,20 @@ repositories {
 
 dependencies {
     // Mixin
-    included('org.spongepowered:mixin:0.8.2') {
+    included('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
         exclude module: 'gson'
         exclude module: 'guava'
         exclude module: 'commons-io'
         exclude module: 'launchwrapper'
         exclude module: 'log4j-core'
     }
+
     annotationProcessor('org.spongepowered:mixin:0.8.2:processor') { exclude module: 'gson' }
 
     // Protection
-    included project(':hwid-generator')
+    included(project(':hwid-generator')) { exclude module: 'commons-io' }
     implementation(project(':hwid-annotations')) { transitive = false }
     annotationProcessor project(':hwid-annotations')
-
-    // Libraries & plugins
-    included 'cabaletta:baritone-api:1.2'
-    implementation('com.github.cabaletta:baritone:1.2.14') { transitive = false }
-    included('org.slick2d:slick2d-core:1.0.2') { exclude module: 'lwjgl' }
 
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
     implementation configurations.included
@@ -68,6 +65,19 @@ dependencies {
 mixin {
     defaultObfuscationEnv 'searge'
     add sourceSets.main, 'mixins.sushi.refmap.json'
+}
+
+compileJava {
+    def generatedSrcDir = "${buildDir}/generatedSrc"
+    sourceSets.main.java { srcDir generatedSrcDir }
+    def generatedFile = project.file(generatedSrcDir)
+    generatedFile.mkdirs()
+    options.annotationProcessorGeneratedSourcesDirectory = generatedFile
+    outputs.dir(generatedFile)
+    doFirst {
+        generatedFile.delete()
+        generatedFile.mkdirs()
+    }
 }
 
 jar {
@@ -85,8 +95,36 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
     }
+    exclude 'META-INF/MUMFREY.RSA'
+    exclude 'META-INF/MUMFREY.SF'
 }
 
 sourceSets {
     sourceSets -> main
 }
+
+task proguard(type: proguard.gradle.ProGuardTask) {
+    outputs.upToDateWhen { false }
+    doFirst {
+        injars jar.archivePath
+        outjars("${jar.destinationDir}/sushi-obf.jar")
+        printmapping("${jar.destinationDir}/sushi-mappings.txt")
+
+        def javaDir = System.properties['java.home']
+        libraryjars files("${javaDir}/lib/rt.jar", "${javaDir}/lib/jce.jar", "${javaDir}/lib/javaws.jar")
+
+        def external = configurations.runtimeClasspath.files
+        external.removeIf { configurations.included.files.contains(it) }
+        libraryjars external
+
+        repackageclasses()
+
+        keep 'public class * implements net.minecraftforge.fml.relauncher.IFMLLoadingPlugin'
+        keep 'public class net.toshimichi.sushi.SushiMod {*;}'
+        keep 'class org.spongepowered.** {*;}'
+        dontwarn 'org.jetbrains.java.**'
+        dontwarn 'cpw.mods.**'
+    }
+}
+
+assemble.dependsOn(proguard)

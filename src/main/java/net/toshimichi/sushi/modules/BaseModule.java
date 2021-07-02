@@ -57,7 +57,6 @@ abstract public class BaseModule implements Module {
         return isEnabled;
     }
 
-    @Protect
     @Override
     public void setEnabled(boolean enabled) {
         if (!isPaused) {
@@ -74,7 +73,6 @@ abstract public class BaseModule implements Module {
         return isPaused;
     }
 
-    @Protect
     @Override
     public void setPaused(boolean paused) {
         if (!this.isPaused && paused && isEnabled) {
