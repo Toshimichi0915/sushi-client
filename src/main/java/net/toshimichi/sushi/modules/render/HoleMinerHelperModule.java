@@ -4,6 +4,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Config;
+import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.events.EventHandler;
@@ -32,6 +33,7 @@ public class HoleMinerHelperModule extends BaseModule {
 
     public HoleMinerHelperModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        new ConfigInjector(provider).inject(this);
     }
 
     @Override
