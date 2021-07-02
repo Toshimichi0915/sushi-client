@@ -121,7 +121,7 @@ public class PistonAuraModule extends BaseModule {
                     .abortIfFalse()
                     .supply(() -> attack.getObsidianPlace())
                     .then(new BlockPlaceTask(true, true))
-                    .delay(attack.getObsidianPlace() == null ? 0 : delay5.getValue().getCurrent())
+                    .delay(() -> attack.getObsidianPlace() == null ? 0 : delay5.getValue().getCurrent())
                     .supply(() -> Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                     .abortIfFalse()

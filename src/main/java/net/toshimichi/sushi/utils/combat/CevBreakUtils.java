@@ -38,7 +38,7 @@ public class CevBreakUtils {
         }
         if (placed == null) {
             AxisAlignedBB box = new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
-            if (BlockUtils.checkCollision(player.world, box)) return null;
+            if (BlockUtils.isColliding(player.world, box)) return null;
         }
         return new CevBreakAttack(pos, obsidianPos, player, target, placed, breakingBlock, damage, placed != null, obsidianPlaced);
     }

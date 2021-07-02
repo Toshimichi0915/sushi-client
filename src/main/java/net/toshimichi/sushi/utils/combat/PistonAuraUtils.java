@@ -51,7 +51,7 @@ public class PistonAuraUtils {
                     p -> p.getY() <= obsidianPos.getY() && (p.getX() != targetPos.getX() || p.getZ() != targetPos.getZ()));
             if (obsidianPlace == null) return null;
         }
-        if (placed == null && BlockUtils.checkCollision(player.world, box))
+        if (placed == null && BlockUtils.isColliding(player.world, box))
             return null;
 
         double originalDamage = DamageUtils.getCrystalDamage(target, BlockUtils.toVec3d(pos).add(0.5, 0, 0.5));
@@ -59,6 +59,7 @@ public class PistonAuraUtils {
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) continue;
             Vec3d crystalPos = BlockUtils.toVec3d(pos).add(0.5, 0, 0.5).add(new Vec3d(facing.getDirectionVec()).scale(0.5));
+            if (!EntityUtils.canInteract(crystalPos, 6, 3)) continue;
             double rawDamage = DamageUtils.getCrystalDamage(target, crystalPos);
             double damage = DamageUtils.applyModifier(target, rawDamage, DamageUtils.EXPLOSION);
             if (rawDamage < 50) continue;

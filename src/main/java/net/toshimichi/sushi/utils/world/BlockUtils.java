@@ -27,7 +27,7 @@ public class BlockUtils {
         return state.getBlock().isAir(state, world, pos);
     }
 
-    public static boolean checkCollision(World world, AxisAlignedBB box) {
+    public static boolean isColliding(World world, AxisAlignedBB box) {
         return world.collidesWithAnyBlock(box) || !world.checkNoEntityCollision(box);
     }
 
@@ -35,7 +35,10 @@ public class BlockUtils {
         BlockPos pos = face.getBlockPos();
         EnumFacing facing = face.getBlockFace() == null ? null : face.getBlockFace().getFacing();
         AxisAlignedBB box = world.getBlockState(pos).getBoundingBox(world, pos).offset(pos);
-        if (checkCollision(world, box)) return false;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (player != null && BlockUtils.toVec3d(pos).add(0.5, 0.5, 0.5).squareDistanceTo(player.getPositionVector()) > 64)
+            return false;
+        if (isColliding(world, box)) return false;
         if (facing == null) return world.getBlockState(pos).getBlock().canPlaceBlockAt(world, pos);
         else if (isAir(world, pos.offset(facing.getOpposite()))) return false;
         else return world.getBlockState(pos).getBlock().canPlaceBlockOnSide(world, pos, facing.getOpposite());

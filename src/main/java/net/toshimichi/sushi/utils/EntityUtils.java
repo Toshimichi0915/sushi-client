@@ -23,13 +23,20 @@ import java.util.List;
 
 public class EntityUtils {
 
-    public static boolean canInteract(Vec3d target, double reach, double wall) {
+    public static boolean canInteract(Vec3d vec, Vec3d target, double reach, double wall) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         WorldClient world = Minecraft.getMinecraft().world;
         if (player == null) return false;
-        RayTraceResult result = world.rayTraceBlocks(player.getPositionVector().add(0, player.eyeHeight, 0), target, false, true, false);
+        Vec3d offset = vec.subtract(player.getPositionVector());
+        RayTraceResult result = world.rayTraceBlocks(offset.add(0, player.eyeHeight, 0), target, false, true, false);
         if (result != null) reach = wall;
         return player.getPositionVector().squareDistanceTo(target) < reach * reach;
+    }
+
+    public static boolean canInteract(Vec3d target, double reach, double wall) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (player == null) return false;
+        return canInteract(player.getPositionVector(), target, reach, wall);
     }
 
     @SuppressWarnings("unchecked")
