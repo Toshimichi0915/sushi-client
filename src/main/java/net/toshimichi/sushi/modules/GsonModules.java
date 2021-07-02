@@ -219,8 +219,8 @@ public class GsonModules implements Modules {
         for (Module module : modules) {
             if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
             JsonObject object = ((GsonRootConfigurations) module.getConfigurations()).save();
-            if (!module.isTemporary())
-                object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
+            if (!module.isTemporary()) object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
+            else object.remove(ENABLED_TAG);
             module.setEnabled(false);
         }
     }
