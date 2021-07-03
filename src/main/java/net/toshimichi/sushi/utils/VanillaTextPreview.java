@@ -8,6 +8,8 @@ import net.toshimichi.sushi.utils.render.TextPreview;
 
 import java.awt.Color;
 
+import static org.lwjgl.opengl.GL11.*;
+
 public class VanillaTextPreview implements TextPreview {
 
     private final FontRenderer renderer;
@@ -26,12 +28,12 @@ public class VanillaTextPreview implements TextPreview {
 
     @Override
     public double getWidth() {
-        return renderer.getStringWidth(text);
+        return renderer.getStringWidth(text) * pts / 9D;
     }
 
     @Override
     public double getHeight() {
-        return renderer.FONT_HEIGHT;
+        return pts;
     }
 
     @Override
@@ -41,6 +43,15 @@ public class VanillaTextPreview implements TextPreview {
             double h = System.currentTimeMillis() / 10000D - System.currentTimeMillis() / 10000;
             color = color.setColor(Color.getHSBColor((float) (y / GuiUtils.getWindowHeight() + h), 1, 1));
         }
-        renderer.drawString(text, (int) x, (int) y, color.getColor().getRGB(), shadow);
+        glPushMatrix();
+        glPushAttrib(GL_COLOR_BUFFER_BIT);
+        glTranslated(x, y, 0);
+        glScaled(pts / 9D, pts / 9D, 0);
+        if (pts % 9 != 0 && pts < 20) {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+        renderer.drawString(text, 0, 0, color.getColor().getRGB(), shadow);
+        glPopMatrix();
+        glPopAttrib();
     }
 }

@@ -30,7 +30,7 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
 
     private void addElement(ElementConstructor constructor, String id, String name) {
         ConfigurationCategory category = conf.getCategory(id, name, null);
-        HudElementComponent component = constructor.newElement(category, new HudConstants(category), id, name);
+        HudElementComponent component = constructor.newElement(category, id, name);
         component.addHandler(new ConfigHandler(component, this, category));
         add(component, true);
     }
@@ -82,6 +82,6 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
 
     @FunctionalInterface
     private interface ElementConstructor {
-        BaseHudElementComponent newElement(Configurations configurations, HudConstants constants, String id, String name);
+        BaseHudElementComponent newElement(Configurations configurations, String id, String name);
     }
 }

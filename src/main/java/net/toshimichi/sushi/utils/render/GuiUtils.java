@@ -123,6 +123,10 @@ public class GuiUtils {
         return new VanillaTextPreview(text, color, pts, shadow);
     }
 
+    public static TextPreview prepareText(String text, TextSettings settings) {
+        return prepareText(text, settings.getFont(), settings.getColor(), settings.getPts(), settings.hasShadow());
+    }
+
     public static TextPreview prepareText(String text, String font, Color color, int pts, boolean shadow) {
         return prepareText(text, font, new EspColor(color, true), pts, shadow);
     }

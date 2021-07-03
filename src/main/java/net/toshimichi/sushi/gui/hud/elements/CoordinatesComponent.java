@@ -5,7 +5,6 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.gui.hud.BaseHudElementComponent;
-import net.toshimichi.sushi.gui.hud.HudConstants;
 import net.toshimichi.sushi.gui.hud.HudElementComponent;
 import net.toshimichi.sushi.utils.render.GuiUtils;
 import net.toshimichi.sushi.utils.render.TextPreview;
@@ -14,12 +13,10 @@ import java.text.DecimalFormat;
 
 public class CoordinatesComponent extends BaseHudElementComponent implements HudElementComponent {
     private static final DecimalFormat FORMATTER = new DecimalFormat("0.0");
-    private final HudConstants constants;
     private final Configuration<String> format;
 
-    public CoordinatesComponent(Configurations configurations, HudConstants constants, String id, String name) {
+    public CoordinatesComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
-        this.constants = constants;
         this.format = configurations.get("element.coordinates.format", "Coordinates Format", "Coordinates format", String.class, "{x} {y} {z}");
     }
 
@@ -30,7 +27,7 @@ public class CoordinatesComponent extends BaseHudElementComponent implements Hud
         String text = format.getValue().replace("{x}", FORMATTER.format(player.posX))
                 .replace("{y}", FORMATTER.format(player.posY))
                 .replace("{z}", FORMATTER.format(player.posZ));
-        TextPreview preview = GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, true);
+        TextPreview preview = GuiUtils.prepareText(text, getTextSettings("text").getValue());
         preview.draw(getWindowX() + 1, getWindowY() + 1);
         setWidth(preview.getWidth() + 3);
         setHeight(preview.getHeight() + 4);

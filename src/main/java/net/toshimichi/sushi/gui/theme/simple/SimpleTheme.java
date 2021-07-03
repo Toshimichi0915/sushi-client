@@ -17,6 +17,7 @@ import net.toshimichi.sushi.gui.theme.simple.config.*;
 import net.toshimichi.sushi.hwid.annotations.Protect;
 import net.toshimichi.sushi.modules.Keybind;
 import net.toshimichi.sushi.modules.Module;
+import net.toshimichi.sushi.utils.render.TextSettings;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class SimpleTheme implements Theme {
         newFactory(Named.class, c -> new SimpleNamedComponent<>(constants, c));
         newFactory(Color.class, c -> new SimpleColorComponent(constants, c));
         newFactory(EspColor.class, c -> new SimpleEspColorComponent(constants, c));
+        newFactory(TextSettings.class, c -> new SimpleTextSettingsComponent(constants, c));
     }
 
     public <T> void newFactory(Class<T> c, ConfigComponentFactory<T> factory) {

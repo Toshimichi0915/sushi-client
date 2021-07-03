@@ -65,4 +65,24 @@ public class EspColor {
     public EspColor setAlpha(int alpha) {
         return new EspColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha), alphaEnabled);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EspColor espColor = (EspColor) o;
+
+        if (rainbow != espColor.rainbow) return false;
+        if (alphaEnabled != espColor.alphaEnabled) return false;
+        return color != null ? color.equals(espColor.color) : espColor.color == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = color != null ? color.hashCode() : 0;
+        result = 31 * result + (rainbow ? 1 : 0);
+        result = 31 * result + (alphaEnabled ? 1 : 0);
+        return result;
+    }
 }
