@@ -13,6 +13,12 @@ public class EspColor {
         this.alphaEnabled = alphaEnabled;
     }
 
+    public EspColor(Color color, boolean rainbow, boolean alphaEnabled) {
+        this.color = color;
+        this.rainbow = rainbow;
+        this.alphaEnabled = alphaEnabled;
+    }
+
     public Color getColor() {
         return color;
     }
@@ -49,7 +55,7 @@ public class EspColor {
     }
 
     public EspColor setRainbow(boolean rainbow) {
-        return new EspColor(color, alphaEnabled);
+        return new EspColor(color, rainbow, alphaEnabled);
     }
 
     public EspColor setAlphaEnabled(boolean alphaEnabled) {
