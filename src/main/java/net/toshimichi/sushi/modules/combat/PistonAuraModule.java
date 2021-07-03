@@ -54,7 +54,7 @@ public class PistonAuraModule extends BaseModule {
         delay1 = delay.get("delay_1", "Crystal Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
         delay2 = delay.get("delay_2", "Crystal Break Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
         delay3 = delay.get("delay_3", "Piston Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
-        delay4 = delay.get("delay_4", "Redstone Place delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
+        delay4 = delay.get("delay_4", "Redstone Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
         delay5 = delay.get("delay_5", "Obsidian Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
         ConfigurationCategory other = provider.getCategory("other", "Other Settings", null);
         maxObsidian = other.get("max_obsidian", "Max Obsidian", null, IntRange.class, new IntRange(3, 5, 0, 1));
