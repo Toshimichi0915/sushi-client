@@ -21,7 +21,6 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
     private final Configuration<EspColor> configuration;
     private final Configuration<Color> color;
     private final Configuration<Boolean> rainbow;
-    private final Configuration<Boolean> alphaEnabled;
     private final Configuration<IntRange> alpha;
     private final SimpleColorComponent colorComponent;
     private final SimpleBooleanComponent rainbowComponent;
@@ -37,7 +36,6 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
         EspColor espColor = c.getValue();
         this.color = new FakeConfiguration<>("color", c.getName(), null, Color.class, espColor.getColor());
         this.rainbow = new FakeConfiguration<>("rainbow", "Rainbow", null, Boolean.class, espColor.isRainbow());
-        this.alphaEnabled = new FakeConfiguration<>("alpha_enabled", "Alpha Enabled", null, Boolean.class, espColor.isAlphaEnabled());
         this.alpha = new FakeConfiguration<>("alpha", "Alpha", null, IntRange.class, new IntRange(espColor.getColor().getAlpha(), 255, 0, 1));
 
         this.colorComponent = new SimpleColorComponent(constants, color);
@@ -48,13 +46,11 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
             if (esp.getColor().getRGB() != color.getValue().getRGB())
                 color.setValue(combine(esp.getColor(), alpha.getValue().getCurrent()));
             if (esp.isRainbow() != rainbow.getValue()) rainbow.setValue(esp.isRainbow());
-            if (esp.isAlphaEnabled() != alphaEnabled.getValue()) alphaEnabled.setValue(esp.isAlphaEnabled());
             if (esp.getColor().getAlpha() != color.getValue().getAlpha())
                 alpha.setValue(alpha.getValue().setCurrent(esp.getColor().getAlpha()));
         });
         color.addHandler(it -> c.setValue(c.getValue().setColor(it)));
         rainbow.addHandler(it -> c.setValue(c.getValue().setRainbow(it)));
-        alphaEnabled.addHandler(it -> c.setValue(c.getValue().setAlphaEnabled(it)));
         alpha.addHandler(it -> c.setValue(c.getValue().setAlpha(it.getCurrent())));
 
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
@@ -73,13 +69,6 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
     public void onRender() {
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
         super.onRender();
-    }
-
-    @Override
-    public void onRelocate() {
-        if (!alphaEnabled.getValue()) remove(alphaComponent);
-        else if (alphaEnabled.getValue() && !contains(alphaComponent)) add(alphaComponent);
-        super.onRelocate();
     }
 
     @Override
