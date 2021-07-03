@@ -25,8 +25,11 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
     private final Configuration<IntRange> alpha;
     private final SimpleColorComponent colorComponent;
     private final SimpleBooleanComponent rainbowComponent;
-    private final SimpleBooleanComponent alphaEnabledComponent;
     private final SimpleIntRangeComponent alphaComponent;
+
+    private Color combine(Color c, int alpha) {
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+    }
 
     public SimpleEspColorComponent(ThemeConstants constants, Configuration<EspColor> c) {
         this.constants = constants;
@@ -39,11 +42,11 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
 
         this.colorComponent = new SimpleColorComponent(constants, color);
         this.rainbowComponent = new SimpleBooleanComponent(constants, rainbow);
-        this.alphaEnabledComponent = new SimpleBooleanComponent(constants, alphaEnabled);
         this.alphaComponent = new SimpleIntRangeComponent(constants, alpha);
 
         c.addHandler(esp -> {
-            if (esp.getColor().getRGB() != color.getValue().getRGB()) color.setValue(esp.getColor());
+            if (esp.getColor().getRGB() != color.getValue().getRGB())
+                color.setValue(combine(esp.getColor(), alpha.getValue().getCurrent()));
             if (esp.isRainbow() != rainbow.getValue()) rainbow.setValue(esp.isRainbow());
             if (esp.isAlphaEnabled() != alphaEnabled.getValue()) alphaEnabled.setValue(esp.isAlphaEnabled());
             if (esp.getColor().getAlpha() != color.getValue().getAlpha())
@@ -60,11 +63,9 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
         double marginRight = colorComponent.getMarginRight();
         colorComponent.setMargin(new Insets(0, 0, 0, 0));
         rainbowComponent.setMargin(new Insets(0, marginLeft, 0, marginRight));
-        alphaEnabledComponent.setMargin(new Insets(0, marginLeft, 0, marginRight));
         alphaComponent.setMargin(new Insets(0, marginLeft, 2, marginRight));
         add(colorComponent);
         add(rainbowComponent);
-        add(alphaEnabledComponent);
         add(alphaComponent);
     }
 
