@@ -29,7 +29,7 @@ public class HoleMinerHelperModule extends BaseModule {
     public RenderMode renderMode = RenderMode.FULL;
 
     @Config(id = "color", name = "Color")
-    public EspColor color = new EspColor(new Color(255, 0, 0, 50), false, true);
+    public EspColor color = new EspColor(new Color(255, 0, 0, 50), true);
 
     public HoleMinerHelperModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

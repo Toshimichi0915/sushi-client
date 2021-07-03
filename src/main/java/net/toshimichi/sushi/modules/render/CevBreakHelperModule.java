@@ -34,7 +34,7 @@ public class CevBreakHelperModule extends BaseModule {
     public String cevBreak = "cev_break";
 
     @Config(id = "color", name = "Color")
-    public EspColor color = new EspColor(Color.RED, false, true);
+    public EspColor color = new EspColor(Color.RED, true);
 
     public CevBreakHelperModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

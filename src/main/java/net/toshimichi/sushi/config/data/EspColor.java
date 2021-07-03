@@ -7,9 +7,9 @@ public class EspColor {
     private final boolean rainbow;
     private final boolean alphaEnabled;
 
-    public EspColor(Color color, boolean rainbow, boolean alphaEnabled) {
+    public EspColor(Color color, boolean alphaEnabled) {
         this.color = color;
-        this.rainbow = rainbow;
+        this.rainbow = false;
         this.alphaEnabled = alphaEnabled;
     }
 
@@ -45,18 +45,18 @@ public class EspColor {
     }
 
     public EspColor setColor(Color color) {
-        return new EspColor(color, rainbow, alphaEnabled);
+        return new EspColor(color, alphaEnabled);
     }
 
     public EspColor setRainbow(boolean rainbow) {
-        return new EspColor(color, rainbow, alphaEnabled);
+        return new EspColor(color, alphaEnabled);
     }
 
     public EspColor setAlphaEnabled(boolean alphaEnabled) {
-        return new EspColor(color, rainbow, alphaEnabled);
+        return new EspColor(color, alphaEnabled);
     }
 
     public EspColor setAlpha(int alpha) {
-        return new EspColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha), rainbow, alphaEnabled);
+        return new EspColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha), alphaEnabled);
     }
 }
