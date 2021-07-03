@@ -54,14 +54,18 @@ public class ModuleListComponent extends BaseHudElementComponent {
         double height = 0;
 
         // draw background
+        int index = 0;
         for (Map.Entry<Module, TextPreview> entry : list) {
             TextPreview preview = entry.getValue();
             double offset = getOrigin().isFromRight() ? getWidth() - preview.getWidth() - paddingLeft.getValue().getCurrent() - paddingRight.getValue().getCurrent() : 0;
-            GuiUtils.drawRect(getWindowX() + offset, getWindowY() + height,
+            GuiUtils.drawRect(getWindowX() + offset, getWindowY() + height + (index != 0 ? paddingTop.getValue().getCurrent() : 0),
                     preview.getWidth() + paddingLeft.getValue().getCurrent() + paddingRight.getValue().getCurrent(),
-                    preview.getHeight() + margin.getValue().getCurrent() + paddingTop.getValue().getCurrent() + paddingBottom.getValue().getCurrent(),
+                    preview.getHeight() + margin.getValue().getCurrent() +
+                            (index == 0 ? paddingTop.getValue().getCurrent() : 0) +
+                            (index == list.size() - 1 ? paddingBottom.getValue().getCurrent() : 0),
                     backgroundColor.getValue().getCurrentColor());
             height += preview.getHeight() + margin.getValue().getCurrent();
+            index++;
         }
 
         height = 0;
