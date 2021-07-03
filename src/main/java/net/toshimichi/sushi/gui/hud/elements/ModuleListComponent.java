@@ -55,8 +55,8 @@ public class ModuleListComponent extends BaseHudElementComponent {
         // draw background
         for (Map.Entry<Module, TextPreview> entry : list) {
             TextPreview preview = entry.getValue();
-            double width = getOrigin().isFromRight() ? getWidth() - preview.getWidth() : 0;
-            GuiUtils.drawRect(getWindowX() + width, getWindowY() + height,
+            double offset = getOrigin().isFromRight() ? getWidth() - preview.getWidth() - paddingLeft.getValue().getCurrent() - paddingRight.getValue().getCurrent() : 0;
+            GuiUtils.drawRect(getWindowX() + offset, getWindowY() + height,
                     preview.getWidth() + paddingLeft.getValue().getCurrent() + paddingRight.getValue().getCurrent(),
                     preview.getHeight() + margin.getValue().getCurrent() + paddingTop.getValue().getCurrent() + paddingBottom.getValue().getCurrent(),
                     backgroundColor.getValue().getCurrentColor());
@@ -67,8 +67,8 @@ public class ModuleListComponent extends BaseHudElementComponent {
         // draw text
         for (Map.Entry<Module, TextPreview> entry : list) {
             TextPreview preview = entry.getValue();
-            double width = getOrigin().isFromRight() ? getWidth() - preview.getWidth() : 0;
-            preview.draw(getWindowX() + width + paddingLeft.getValue().getCurrent(), getWindowY() + height + paddingTop.getValue().getCurrent());
+            double offset = getOrigin().isFromRight() ? getWidth() - preview.getWidth() - paddingLeft.getValue().getCurrent() - paddingRight.getValue().getCurrent() : 0;
+            preview.draw(getWindowX() + offset + paddingLeft.getValue().getCurrent(), getWindowY() + height + paddingTop.getValue().getCurrent());
             height += preview.getHeight() + margin.getValue().getCurrent();
         }
     }
