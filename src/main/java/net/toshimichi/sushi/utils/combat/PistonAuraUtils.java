@@ -120,7 +120,7 @@ public class PistonAuraUtils {
         BlockPos origin = BlockUtils.toBlockPos(target.getPositionVector());
         ArrayList<PistonAuraAttack> list = new ArrayList<>();
         for (int x = -1; x <= 1; x++) {
-            for (int y = 1; y <= 3; y++) {
+            for (int y = 0; y <= 3; y++) {
                 for (int z = -1; z <= 1; z++) {
                     BlockPos pos = origin.add(x, y, z);
                     List<PistonAuraAttack> attacks = find(player, target, pos, distance);
