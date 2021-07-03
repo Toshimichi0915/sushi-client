@@ -117,11 +117,13 @@ task proguard(type: proguard.gradle.ProGuardTask) {
         external.removeIf { configurations.included.files.contains(it) }
         libraryjars external
 
-        repackageclasses()
+        repackageclasses 'net.toshimichi.sushi'
 
         keep 'public class * implements net.minecraftforge.fml.relauncher.IFMLLoadingPlugin'
         keep 'public class net.toshimichi.sushi.SushiMod {*;}'
+        keep 'public class net.toshimichi.sushi.mixin.** {*;}'
         keep 'class org.spongepowered.** {*;}'
+        keepattributes '*Annotation*'
         dontwarn 'org.jetbrains.java.**'
         dontwarn 'cpw.mods.**'
     }
