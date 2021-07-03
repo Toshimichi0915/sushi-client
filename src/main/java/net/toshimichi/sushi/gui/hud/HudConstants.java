@@ -11,7 +11,7 @@ public class HudConstants {
     public final Configuration<String> font;
 
     public HudConstants(ConfigurationCategory c) {
-        textColor = c.get("element. " + c.getId() + ".text_color", "Text Color", null, EspColor.class, new EspColor(Color.WHITE, false, false));
+        textColor = c.get("element. " + c.getId() + ".text_color", "Text Color", null, EspColor.class, new EspColor(Color.WHITE, false, true));
         font = c.get("element." + c.getId() + ".font", "Font", null, String.class, "Calibri");
     }
 }
