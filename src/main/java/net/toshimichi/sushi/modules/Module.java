@@ -10,6 +10,8 @@ public interface Module {
 
     boolean isTemporary();
 
+    boolean isVisible();
+
     boolean isEnabled();
 
     void setEnabled(boolean enabled);

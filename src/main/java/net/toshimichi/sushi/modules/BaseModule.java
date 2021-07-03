@@ -18,7 +18,8 @@ abstract public class BaseModule implements Module {
     private final Configuration<String> name;
     private final Configuration<String> category;
     private final Configuration<Keybind> keybind;
-    private final Configuration<Boolean> isTemporary;
+    private final Configuration<Boolean> temporary;
+    private final Configuration<Boolean> visible;
     private final ModuleFactory factory;
     private boolean isEnabled;
     private boolean isPaused;
@@ -33,7 +34,8 @@ abstract public class BaseModule implements Module {
         this.name = commonCategory.get("name", "Module Name", "Module name", String.class, getDefaultName(), () -> true, false, 80000);
         this.category = commonCategory.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName(), () -> true, false, 81000);
         this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, false, 82000);
-        this.isTemporary = commonCategory.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, false, 83000);
+        this.temporary = commonCategory.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, false, 83000);
+        this.visible = commonCategory.get("visible", "Visible", null, Boolean.class, isVisibleByDefault(), () -> true, false, 84000);
     }
 
     @Override
@@ -48,7 +50,12 @@ abstract public class BaseModule implements Module {
 
     @Override
     public boolean isTemporary() {
-        return isTemporary.getValue();
+        return temporary.getValue();
+    }
+
+    @Override
+    public boolean isVisible() {
+        return visible.getValue();
     }
 
     @Override
@@ -135,6 +142,10 @@ abstract public class BaseModule implements Module {
 
     protected boolean isTemporaryByDefault() {
         return false;
+    }
+
+    protected boolean isVisibleByDefault() {
+        return true;
     }
 
     protected Minecraft getClient() {
