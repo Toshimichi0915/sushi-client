@@ -113,13 +113,14 @@ public class PistonAuraModule extends BaseModule {
         }
         Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
         PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
+        final PistonAuraAttack attack = this.attack;
         if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
                     .delay(delay1.getValue().getCurrent())
                     .supply(() -> attack.getObsidianPlace() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
-                    .supply(() -> attack.getObsidianPlace())
+                    .supply(attack::getObsidianPlace)
                     .then(new BlockPlaceTask(true, true))
                     .delay(() -> attack.getObsidianPlace() == null ? 0 : delay5.getValue().getCurrent())
                     .supply(() -> Items.END_CRYSTAL)
@@ -141,7 +142,7 @@ public class PistonAuraModule extends BaseModule {
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                         exploded = attack.getCrystal();
-                        attack = null;
+                        this.attack = null;
                         update(delay2);
                     })
                     .last(this::stop)
@@ -152,7 +153,7 @@ public class PistonAuraModule extends BaseModule {
                     .supply(() -> attack.getPistonPlace() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
-                    .supply(() -> attack.getPistonPlace())
+                    .supply(attack::getPistonPlace)
                     .then(new BlockPlaceTask(false, false))
                     .delay(attack.getPistonPlace() == null ? 0 : delay5.getValue().getCurrent())
                     .supply(() -> Item.getItemFromBlock(Blocks.PISTON))
@@ -188,7 +189,7 @@ public class PistonAuraModule extends BaseModule {
             }
         } else {
             stop();
-            attack = null;
+            this.attack = null;
             repeatCounter = 0;
         }
     }
