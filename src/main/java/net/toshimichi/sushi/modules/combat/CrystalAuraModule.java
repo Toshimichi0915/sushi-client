@@ -22,12 +22,14 @@ import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
+import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
@@ -37,14 +39,19 @@ import net.toshimichi.sushi.utils.combat.DamageUtils;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.MovementUtils;
 import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.render.RenderUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
+import org.lwjgl.opengl.GL11;
 
+import java.awt.Color;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class CrystalAuraModule extends BaseModule {
 
     private static final double WALK_SPEED = 0.0275;
+    private static final DecimalFormat FORMATTER = new DecimalFormat("0.0");
 
     private final Configuration<DoubleRange> targetRange;
     private final Configuration<DoubleRange> crystalRange;
@@ -68,6 +75,11 @@ public class CrystalAuraModule extends BaseModule {
     private final Configuration<DoubleRange> selfPingMultiplier;
     private final Configuration<Boolean> useInputs;
     private final Configuration<Boolean> constantSpeed;
+
+    private final Configuration<Boolean> outline;
+    private final Configuration<EspColor> outlineColor;
+    private final Configuration<Boolean> fill;
+    private final Configuration<EspColor> fillColor;
 
     private final Set<EnderCrystalInfo> enderCrystals = new HashSet<>();
     private volatile CrystalAttack crystalAttack;
@@ -110,6 +122,13 @@ public class CrystalAuraModule extends BaseModule {
         selfPingMultiplier = predict.get("self_ping_multiplier", "Self Multiplier", null, DoubleRange.class, new DoubleRange(1, 10, 0, 0.1, 1));
         useInputs = predict.get("use_inputs", "Use Inputs", null, Boolean.class, true);
         constantSpeed = predict.get("constant_speed", "Constant Speed", null, Boolean.class, true);
+
+        // Render
+        ConfigurationCategory render = provider.getCategory("render", "Render Settings", null);
+        outline = render.get("outline", "Outline", null, Boolean.class, true);
+        outlineColor = render.get("outline_color", "Outline Color", null, EspColor.class, new EspColor(Color.WHITE, true), outline::isValid, false, 0);
+        fill = render.get("fill", "Fill", null, Boolean.class, true);
+        fillColor = render.get("fill_color", "Fill Color", null, EspColor.class, new EspColor(Color.PINK, true), fill::isValid, false, 0);
     }
 
     @Override
@@ -321,6 +340,10 @@ public class CrystalAuraModule extends BaseModule {
 
     private synchronized void executeAttack() {
 
+        // copy
+        CrystalAttack crystalAttack = this.crystalAttack;
+        CrystalAttack nearbyCrystalAttack = this.nearbyCrystalAttack;
+
         // break
         if (nearbyCrystalAttack != null && updateBreakCounter()) breakEnderCrystal(nearbyCrystalAttack.info);
 
@@ -342,7 +365,7 @@ public class CrystalAuraModule extends BaseModule {
             }
         }
 
-        nearbyCrystalAttack = null;
+        this.nearbyCrystalAttack = null;
     }
 
     @EventHandler(timing = EventTiming.POST)
@@ -357,6 +380,20 @@ public class CrystalAuraModule extends BaseModule {
                 .execute();
 
         executeAttack();
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void onWorldRender(WorldRenderEvent e) {
+
+        // copy
+        CrystalAttack crystalAttack = this.crystalAttack;
+        if (crystalAttack == null) return;
+        BlockPos pos = BlockUtils.toBlockPos(crystalAttack.info.pos.subtract(0, 1, 0));
+        AxisAlignedBB box = getWorld().getBlockState(pos).getBoundingBox(getWorld(), pos).offset(pos).grow(0.002);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        if (outline.getValue()) RenderUtils.drawOutline(box, outlineColor.getValue().getCurrentColor(), 1);
+        if (fill.getValue()) RenderUtils.drawFilled(box, fillColor.getValue().getCurrentColor());
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
     @EventHandler(timing = EventTiming.PRE, priority = 1000)
@@ -383,8 +420,8 @@ public class CrystalAuraModule extends BaseModule {
     }
 
     private static class CrystalAttack {
-        EnderCrystalInfo info;
-        LinkedHashMap<EntityPlayer, Double> damages;
+        final EnderCrystalInfo info;
+        final LinkedHashMap<EntityPlayer, Double> damages;
         double cachedTotalDamage = -1;
 
         CrystalAttack(int entity, Vec3d crystalPos, AxisAlignedBB box, LinkedHashMap<EntityPlayer, Double> damages) {
