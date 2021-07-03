@@ -32,7 +32,7 @@ public class CevBreakUtils {
         player.world.setBlockState(obsidianPos, floorState);
         if (!canInteract) return null;
         if (damage < 40) return null;
-        if (selfDamage > 20) return null;
+        if (selfDamage > 30) return null;
         for (Entity crystal : player.world.loadedEntityList) {
             if (!(crystal instanceof EntityEnderCrystal)) continue;
             if (crystal.getPositionVector().squareDistanceTo(crystalPos) > 0.3) continue;
