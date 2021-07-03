@@ -37,7 +37,7 @@ public class PhaseFlyModule extends BaseModule {
         super(id, modules, categories, provider, factory);
         horizontal = provider.get("horizontal_speed", "Horizontal Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
         vertical = provider.get("vertical_speed", "Vertical Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
-        auto = provider.get("auto", "Auto", null, Boolean.class, false);
+        auto = provider.get("auto", "Auto Phase", null, Boolean.class, true);
         tpsSync = provider.get("tps_sync", "TPS Sync", null, Boolean.class, false);
         capAt20 = provider.get("cap_at_20", "Cap At 20", null, Boolean.class, false, tpsSync::getValue, false, 0);
     }
