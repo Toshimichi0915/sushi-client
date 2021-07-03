@@ -97,6 +97,7 @@ public class AntiPistonAuraModule extends BaseModule {
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
         spam.removeIf(it -> {
+            if (it == null) return true;
             Block block = getWorld().getBlockState(it.getBlockPos()).getBlock();
             if (block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION && block != Blocks.AIR ||
                     System.currentTimeMillis() - when > 1000) {
