@@ -101,6 +101,7 @@ public class AntiPistonAuraModule extends BaseModule {
             return block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION && block != Blocks.AIR ||
                     System.currentTimeMillis() - when > 1000;
         });
+        if(spam.isEmpty()) return;
         TaskExecutor.newTaskChain()
                 .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                 .then(new ItemSwitchTask(null, false))
