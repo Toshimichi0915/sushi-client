@@ -31,7 +31,6 @@ import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class AntiPistonAuraModule extends BaseModule {
@@ -99,20 +98,16 @@ public class AntiPistonAuraModule extends BaseModule {
         spam.removeIf(it -> {
             if (it == null) return true;
             Block block = getWorld().getBlockState(it.getBlockPos()).getBlock();
-            if (block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION && block != Blocks.AIR ||
-                    System.currentTimeMillis() - when > 1000) {
-                return true;
-            } else {
-                TaskExecutor.newTaskChain()
-                        .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
-                        .then(new ItemSwitchTask(null, false))
-                        .abortIfFalse()
-                        .supply(() -> Collections.singletonList(it))
-                        .then(new BlockPlaceTask(true, true))
-                        .execute();
-                return false;
-            }
+            return block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION && block != Blocks.AIR ||
+                    System.currentTimeMillis() - when > 1000;
         });
+        TaskExecutor.newTaskChain()
+                .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
+                .then(new ItemSwitchTask(null, false))
+                .abortIfFalse()
+                .supply(() -> spam)
+                .then(new BlockPlaceTask(true, true))
+                .execute();
         BlockPos playerPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         for (int x = -3; x < 4; x++) {
             for (int y = 1; y < 4; y++) {
