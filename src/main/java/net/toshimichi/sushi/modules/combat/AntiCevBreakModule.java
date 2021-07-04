@@ -8,6 +8,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.math.BlockPos;
+import net.toshimichi.sushi.config.Config;
+import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -27,8 +29,12 @@ import java.util.Collections;
 
 public class AntiCevBreakModule extends BaseModule {
 
+    @Config(id = "extra_safe", name = "Extra Safe")
+    public Boolean extraSafe = false;
+
     public AntiCevBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        new ConfigInjector(provider).inject(this);
     }
 
     @Override
@@ -41,7 +47,7 @@ public class AntiCevBreakModule extends BaseModule {
         EventHandlers.unregister(this);
     }
 
-    @EventHandler(timing = EventTiming.PRE)
+    @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
         for (Entity entity : getWorld().loadedEntityList) {
             if (!(entity instanceof EntityEnderCrystal)) continue;
@@ -70,6 +76,23 @@ public class AntiCevBreakModule extends BaseModule {
                     .then(new BlockPlaceTask(true, true))
                     .execute();
         }
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void onClientTick2(ClientTickEvent e) {
+        if (!extraSafe) return;
+        BlockPos headPos = BlockUtils.toBlockPos(getPlayer().getPositionVector()).add(0, 2, 0);
+        if (getWorld().getBlockState(headPos).getBlock() != Blocks.OBSIDIAN) return;
+        BlockPos targetPos = headPos.add(0, 1, 0);
+        BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), targetPos);
+        if (info == null) return;
+        TaskExecutor.newTaskChain()
+                .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
+                .then(new ItemSwitchTask(null, true))
+                .abortIfFalse()
+                .supply(() -> Collections.singletonList(info))
+                .then(new BlockPlaceTask(true, true))
+                .execute();
     }
 
     @Override
