@@ -18,7 +18,7 @@ public class MixinGuiChat {
 
     private static final int SHADOW_COLOR = new Color(200, 200, 200).getRGB();
 
-    @Shadow
+    @Shadow(aliases = "inputField")
     protected GuiTextField inputField;
 
     @Inject(at = @At("HEAD"), method = "drawScreen")
