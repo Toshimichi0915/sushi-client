@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -148,7 +149,9 @@ public class SushiMod {
     }
 
     private static class ModConfig {
+        @SerializedName("name")
         String name = "default";
+        @SerializedName("theme")
         String theme = "simple";
     }
 }

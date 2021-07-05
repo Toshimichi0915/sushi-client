@@ -1,10 +1,16 @@
 package net.toshimichi.sushi.modules;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.awt.Image;
 
 public class GsonCategory implements Category {
 
-    private final String name;
+    @SerializedName("name")
+    private String name;
+
+    public GsonCategory() {
+    }
 
     public GsonCategory(String name) {
         this.name = name;
