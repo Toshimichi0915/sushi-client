@@ -7,7 +7,6 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-        classpath 'net.sf.proguard:proguard-gradle:6.0.3'
     }
 }
 
@@ -102,31 +101,3 @@ jar {
 sourceSets {
     sourceSets -> main
 }
-
-task proguard(type: proguard.gradle.ProGuardTask) {
-    outputs.upToDateWhen { false }
-    doFirst {
-        injars jar.archivePath
-        outjars("${jar.destinationDir}/sushi-obf.jar")
-        printmapping("${jar.destinationDir}/sushi-mappings.txt")
-
-        def javaDir = System.properties['java.home']
-        libraryjars files("${javaDir}/lib/rt.jar", "${javaDir}/lib/jce.jar", "${javaDir}/lib/javaws.jar")
-
-        def external = configurations.runtimeClasspath.files
-        external.removeIf { configurations.included.files.contains(it) }
-        libraryjars external
-
-        repackageclasses 'net.toshimichi.sushi'
-
-        keep 'public class * implements net.minecraftforge.fml.relauncher.IFMLLoadingPlugin'
-        keep 'public class net.toshimichi.sushi.SushiMod {*;}'
-        keep 'public class net.toshimichi.sushi.mixin.** {*;}'
-        keep 'class org.spongepowered.** {*;}'
-        keepattributes '*Annotation*'
-        dontwarn 'org.jetbrains.java.**'
-        dontwarn 'cpw.mods.**'
-    }
-}
-
-assemble.dependsOn(proguard)
