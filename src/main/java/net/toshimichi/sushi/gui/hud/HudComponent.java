@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.gui.hud;
 
+import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.ConfigurationCategory;
-import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.hud.elements.CoordinatesComponent;
@@ -11,10 +11,13 @@ import net.toshimichi.sushi.gui.hud.elements.TpsComponent;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.render.GuiUtils;
 
+import java.util.HashSet;
+
 public class HudComponent extends BasePanelComponent<HudElementComponent> {
 
     private final RootConfigurations conf;
     private final Module module;
+    private final HashSet<HudElementComponent> moduleComponents = new HashSet<>();
 
     public HudComponent(RootConfigurations conf, Module module) {
         this.conf = conf;
@@ -43,6 +46,22 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
                 return component;
         }
         return null;
+    }
+
+    @Override
+    public void onShow() {
+        moduleComponents.clear();
+        for (Module m : Sushi.getProfile().getModules().getAll()) {
+            for (ElementFactory factory : m.getElementFactories()) {
+                String id = factory.getId();
+                String name = factory.getName();
+                ConfigurationCategory category = conf.getCategory(id, name, null);
+                HudElementComponent component = factory.getElementConstructor().newElement(category, id, name);
+                component.addHandler(new ConfigHandler(component, this, category));
+                moduleComponents.add(component);
+                add(component, true);
+            }
+        }
     }
 
     @Override
@@ -80,10 +99,7 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
     @Override
     public void onClose() {
         module.setEnabled(false);
+        removeAll(moduleComponents);
     }
 
-    @FunctionalInterface
-    private interface ElementConstructor {
-        BaseHudElementComponent newElement(Configurations configurations, String id, String name);
-    }
 }

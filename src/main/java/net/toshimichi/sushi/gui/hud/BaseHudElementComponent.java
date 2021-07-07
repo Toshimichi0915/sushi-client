@@ -26,11 +26,15 @@ abstract public class BaseHudElementComponent extends BaseComponent implements H
         this.name = name;
     }
 
+    protected <T> Configuration<T> getConfiguration(String id, String name, String description, Class<T> tClass, T def) {
+        return configurations.get("element." + this.id + "." + id, name, description, tClass, def);
+    }
+
     protected Configuration<TextSettings> getTextSettings(String id) {
         for (Configuration<TextSettings> conf : textSettings) {
             if (conf.getId().equals(id)) return conf;
         }
-        Configuration<TextSettings> newConf = configurations.get(this.id + "." + id, "", null, TextSettings.class, DEFAULT_TEXT_SETTINGS);
+        Configuration<TextSettings> newConf = getConfiguration(id, "", null, TextSettings.class, DEFAULT_TEXT_SETTINGS);
         textSettings.add(newConf);
         return newConf;
     }

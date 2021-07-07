@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.modules;
 
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.gui.hud.ElementFactory;
 
 public interface Module {
 
@@ -33,4 +34,6 @@ public interface Module {
     RootConfigurations getConfigurations();
 
     ModuleFactory getModuleFactory();
+
+    ElementFactory[] getElementFactories();
 }

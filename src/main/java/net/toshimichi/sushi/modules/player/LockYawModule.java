@@ -2,11 +2,13 @@ package net.toshimichi.sushi.modules.player;
 
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
+import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.gui.hud.TextElementComponent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
@@ -30,6 +32,7 @@ public class LockYawModule extends BaseModule {
             x.setValue(x.getValue() / 8);
             z.setValue(z.getValue() / 8);
         });
+        addElementFactory(TargetComponent::new, id + ".target", "Target Coordinates");
     }
 
     @Override
@@ -57,5 +60,22 @@ public class LockYawModule extends BaseModule {
     @Override
     public Category getDefaultCategory() {
         return Category.PLAYER;
+    }
+
+    private class TargetComponent extends TextElementComponent {
+
+        private final Configuration<String> format;
+
+        public TargetComponent(Configurations configurations, String id, String name) {
+            super(configurations, id, name);
+            format = getConfiguration("format", "Format", null, String.class, "Target: {x} {z}");
+        }
+
+        @Override
+        protected String getText() {
+            return format.getValue()
+                    .replace("{x}", Integer.toString(x.getValue()))
+                    .replace("{z}", Integer.toString(z.getValue()));
+        }
     }
 }

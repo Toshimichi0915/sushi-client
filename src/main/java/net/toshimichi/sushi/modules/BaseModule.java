@@ -8,6 +8,10 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.gui.hud.ElementConstructor;
+import net.toshimichi.sushi.gui.hud.ElementFactory;
+
+import java.util.ArrayList;
 
 abstract public class BaseModule implements Module {
 
@@ -21,6 +25,7 @@ abstract public class BaseModule implements Module {
     private final Configuration<Boolean> temporary;
     private final Configuration<Boolean> visible;
     private final ModuleFactory factory;
+    private final ArrayList<ElementFactory> hudElementFactories;
     private boolean isEnabled;
     private boolean isPaused;
 
@@ -36,6 +41,8 @@ abstract public class BaseModule implements Module {
         this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, false, 82000);
         this.temporary = commonCategory.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, false, 83000);
         this.visible = commonCategory.get("visible", "Visible", null, Boolean.class, isVisibleByDefault(), () -> true, false, 84000);
+
+        hudElementFactories = new ArrayList<>();
     }
 
     @Override
@@ -132,7 +139,32 @@ abstract public class BaseModule implements Module {
         return factory;
     }
 
+    @Override
+    public ElementFactory[] getElementFactories() {
+        return hudElementFactories.toArray(new ElementFactory[0]);
+    }
+
     abstract public String getDefaultName();
+
+    protected void addElementFactory(ElementConstructor constructor, String id, String name) {
+        hudElementFactories.add(new ElementFactory() {
+
+            @Override
+            public ElementConstructor getElementConstructor() {
+                return constructor;
+            }
+
+            @Override
+            public String getId() {
+                return id;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+        });
+    }
 
     public Keybind getDefaultKeybind() {
         return new Keybind(ActivationType.TOGGLE);

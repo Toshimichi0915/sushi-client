@@ -24,12 +24,12 @@ public class ModuleListComponent extends BaseHudElementComponent {
 
     public ModuleListComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
-        backgroundColor = configurations.get(id + ".background_color", "Background Color", null, EspColor.class, new EspColor(Color.GRAY, true));
-        margin = configurations.get(id + ".margin", "Margin", null, IntRange.class, new IntRange(1, 10, 0, 1));
-        paddingTop = configurations.get(id + ".padding_top", "Padding Top", null, IntRange.class, new IntRange(1, 10, 0, 1));
-        paddingBottom = configurations.get(id + ".padding_bottom", "Padding Bottom", null, IntRange.class, new IntRange(1, 10, 0, 1));
-        paddingLeft = configurations.get(id + ".padding_left", "Padding Left", null, IntRange.class, new IntRange(1, 10, 0, 1));
-        paddingRight = configurations.get(id + ".padding_right", "Padding Right", null, IntRange.class, new IntRange(1, 10, 0, 1));
+        backgroundColor = configurations.get("background_color", "Background Color", null, EspColor.class, new EspColor(Color.BLACK, true));
+        margin = configurations.get("margin", "Margin", null, IntRange.class, new IntRange(1, 10, 0, 1));
+        paddingTop = configurations.get("padding_top", "Padding Top", null, IntRange.class, new IntRange(1, 10, 0, 1));
+        paddingBottom = configurations.get("padding_bottom", "Padding Bottom", null, IntRange.class, new IntRange(1, 10, 0, 1));
+        paddingLeft = configurations.get("padding_left", "Padding Left", null, IntRange.class, new IntRange(1, 10, 0, 1));
+        paddingRight = configurations.get("padding_right", "Padding Right", null, IntRange.class, new IntRange(1, 10, 0, 1));
     }
 
     @Override
