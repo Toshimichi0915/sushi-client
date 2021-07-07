@@ -5,7 +5,6 @@ import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.IntRange;
-import net.toshimichi.sushi.config.data.Named;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -130,24 +129,4 @@ public class AnchorModule extends BaseModule {
         return Category.MOVEMENT;
     }
 
-    public enum HoleSelector implements Named {
-        BOTH("Both", HoleType.SAFE, HoleType.UNSAFE), BEDROCK("Bedrock", HoleType.SAFE);
-
-        private final String name;
-        private final HoleType[] allowed;
-
-        HoleSelector(String name, HoleType... allowed) {
-            this.name = name;
-            this.allowed = allowed;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        public HoleType[] getAllowedTypes() {
-            return allowed;
-        }
-    }
 }

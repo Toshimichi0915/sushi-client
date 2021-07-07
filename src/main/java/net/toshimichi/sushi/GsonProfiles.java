@@ -1,7 +1,6 @@
 package net.toshimichi.sushi;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import net.toshimichi.sushi.command.ChatMessageHandler;
 import net.toshimichi.sushi.command.MessageHandler;
 import net.toshimichi.sushi.hwid.annotations.AsyncAuthentication;
@@ -9,11 +8,8 @@ import net.toshimichi.sushi.modules.Categories;
 import net.toshimichi.sushi.modules.GsonCategories;
 import net.toshimichi.sushi.modules.GsonModules;
 import net.toshimichi.sushi.modules.Modules;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,48 +42,22 @@ public class GsonProfiles implements Profiles {
         File dir = getFile(name);
         File configFile = new File(getFile(name), "profile.json");
         ProfileConfig profileConfig = new ProfileConfig();
-        profileConfig.load(configFile);
+        profileConfig.load(gson, configFile);
         GsonCategories categories = new GsonCategories(new File(dir, "categories.json"), gson);
-        GsonModules modules = new GsonModules(profileConfig.version, new File(dir, "modules.json"), categories, gson);
-        return new GsonProfile(configFile, profileConfig, modules, categories);
-    }
-
-    private class ProfileConfig {
-
-        @SerializedName("prefix")
-        char prefix = '.';
-        @SerializedName("version")
-        int version = Sushi.getVersion();
-
-        void load(File file) {
-            try {
-                if (!file.exists()) return;
-                String contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-                ProfileConfig config = gson.fromJson(contents, ProfileConfig.class);
-                this.prefix = config.prefix;
-                this.version = config.version;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        void save(File file) {
-            try {
-                FileUtils.writeStringToFile(file, gson.toJson(this), StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        GsonModules modules = new GsonModules(profileConfig.getVersion(), new File(dir, "modules.json"), categories, gson);
+        return new GsonProfile(gson, configFile, profileConfig, modules, categories);
     }
 
     private static class GsonProfile implements Profile {
 
+        private final Gson gson;
         private final File configFile;
         private final ProfileConfig config;
         private final Modules modules;
         private final GsonCategories categories;
 
-        GsonProfile(File configFile, ProfileConfig config, GsonModules modules, GsonCategories categories) {
+        GsonProfile(Gson gson, File configFile, ProfileConfig config, GsonModules modules, GsonCategories categories) {
+            this.gson = gson;
             this.configFile = configFile;
             this.config = config;
             this.modules = modules;
@@ -96,7 +66,7 @@ public class GsonProfiles implements Profiles {
 
         @Override
         public int getVersion() {
-            return config.version;
+            return config.getVersion();
         }
 
         @Override
@@ -111,12 +81,12 @@ public class GsonProfiles implements Profiles {
 
         @Override
         public char getPrefix() {
-            return config.prefix;
+            return config.getPrefix();
         }
 
         @Override
         public void setPrefix(char prefix) {
-            config.prefix = prefix;
+            config.setPrefix(prefix);
         }
 
         @Override
@@ -127,7 +97,7 @@ public class GsonProfiles implements Profiles {
         @AsyncAuthentication
         @Override
         public void load() {
-            config.load(configFile);
+            config.load(gson, configFile);
             categories.load();
             modules.load();
         }
@@ -135,7 +105,7 @@ public class GsonProfiles implements Profiles {
         @AsyncAuthentication
         @Override
         public void save() {
-            config.save(configFile);
+            config.save(gson, configFile);
             categories.save();
             modules.save();
         }

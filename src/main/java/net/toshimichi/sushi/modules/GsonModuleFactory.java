@@ -1,6 +1,6 @@
 package net.toshimichi.sushi.modules;
 
-class GsonModuleFactory implements ModuleFactory {
+public class GsonModuleFactory implements ModuleFactory {
 
     private final String id;
     private final ModuleConstructor constructor;

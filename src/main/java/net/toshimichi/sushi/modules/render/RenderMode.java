@@ -1,9 +1,13 @@
 package net.toshimichi.sushi.modules.render;
 
+import com.google.gson.annotations.SerializedName;
 import net.toshimichi.sushi.config.data.Named;
 
 public enum RenderMode implements Named {
-    FULL("Full"), SURFACE("Surface");
+    @SerializedName("FULL")
+    FULL("Full"),
+    @SerializedName("SURFACE")
+    SURFACE("Surface");
 
     private final String name;
 

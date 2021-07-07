@@ -1,21 +1,24 @@
 package net.toshimichi.sushi.utils.render;
 
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glVertex2d;
 
 public class SystemFont {
 
     private final float imgSize = 1024;
+    protected final Font font;
+    protected final boolean antiAlias;
+    protected final boolean fractionalMetrics;
     protected CharData[] charData = new CharData[256];
-    protected Font font;
-    protected boolean antiAlias;
-    protected boolean fractionalMetrics;
     protected int fontHeight = -1;
     protected int charOffset = 0;
     protected DynamicTexture tex;
@@ -24,7 +27,7 @@ public class SystemFont {
         this.font = font;
         this.antiAlias = antiAlias;
         this.fractionalMetrics = fractionalMetrics;
-        tex = setupTexture(font, antiAlias, fractionalMetrics, this.charData);
+        this.tex = setupTexture(font, antiAlias, fractionalMetrics, this.charData);
     }
 
     protected DynamicTexture setupTexture(Font font, boolean antiAlias, boolean fractionalMetrics, CharData[] chars) {
@@ -32,10 +35,10 @@ public class SystemFont {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             ImageIO.write(img, "png", out);
             return new DynamicTexture(img);
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     protected BufferedImage generateFontImage(Font font, boolean antiAlias, boolean fractionalMetrics, CharData[] chars) {
@@ -79,12 +82,8 @@ public class SystemFont {
         return bufferedImage;
     }
 
-    public void drawChar(CharData[] chars, char c, float x, float y) throws ArrayIndexOutOfBoundsException {
-        try {
-            drawQuad(x, y, chars[c].width, chars[c].height, chars[c].storedX, chars[c].storedY, chars[c].width, chars[c].height);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void drawChar(CharData[] chars, char c, float x, float y) {
+        drawQuad(x, y, chars[c].width, chars[c].height, chars[c].storedX, chars[c].storedY, chars[c].width, chars[c].height);
     }
 
     protected void drawQuad(float x, float y, float width, float height, float srcX, float srcY, float srcWidth, float srcHeight) {
@@ -92,18 +91,18 @@ public class SystemFont {
         float renderSRCY = srcY / imgSize;
         float renderSRCWidth = srcWidth / imgSize;
         float renderSRCHeight = srcHeight / imgSize;
-        GL11.glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY);
-        GL11.glVertex2d(x + width, y);
-        GL11.glTexCoord2f(renderSRCX, renderSRCY);
-        GL11.glVertex2d(x, y);
-        GL11.glTexCoord2f(renderSRCX, renderSRCY + renderSRCHeight);
-        GL11.glVertex2d(x, y + height);
-        GL11.glTexCoord2f(renderSRCX, renderSRCY + renderSRCHeight);
-        GL11.glVertex2d(x, y + height);
-        GL11.glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY + renderSRCHeight);
-        GL11.glVertex2d(x + width, y + height);
-        GL11.glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY);
-        GL11.glVertex2d(x + width, y);
+        glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY);
+        glVertex2d(x + width, y);
+        glTexCoord2f(renderSRCX, renderSRCY);
+        glVertex2d(x, y);
+        glTexCoord2f(renderSRCX, renderSRCY + renderSRCHeight);
+        glVertex2d(x, y + height);
+        glTexCoord2f(renderSRCX, renderSRCY + renderSRCHeight);
+        glVertex2d(x, y + height);
+        glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY + renderSRCHeight);
+        glVertex2d(x + width, y + height);
+        glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY);
+        glVertex2d(x + width, y);
     }
 
     public int getHeight() {

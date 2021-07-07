@@ -12,13 +12,16 @@ public class SystemFontRenderer extends SystemFont {
     protected final CharData[] boldChars = new CharData[256];
     protected final CharData[] italicChars = new CharData[256];
     protected final CharData[] boldItalicChars = new CharData[256];
+    protected DynamicTexture texBold;
+    protected DynamicTexture texItalic;
+    protected DynamicTexture texItalicBold;
 
-    private final int[] colorCode = new int[32];
+    private final int[] colorCodes = new int[32];
 
     public SystemFontRenderer(Font font, boolean antiAlias, boolean fractionalMetrics) {
         super(font, antiAlias, fractionalMetrics);
-        setupMinecraftColorcodes();
-        setupBoldItalicIDs();
+        setUpColorCodes();
+        setUpDecoratedChars();
     }
 
     public void drawString(String text, double x, double y, Color color, boolean shadow) {
@@ -27,7 +30,8 @@ public class SystemFontRenderer extends SystemFont {
         if (text == null) return;
         if (color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255 && color.getAlpha() == 32)
             color = new Color(255, 255, 255);
-        if (color.getAlpha() < 4) color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
+        if (color.getAlpha() < 4)
+            color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
         if (shadow)
             color = new Color(color.getRed() / 4, color.getGreen() / 4, color.getBlue() / 4, color.getAlpha());
 
@@ -44,12 +48,11 @@ public class SystemFontRenderer extends SystemFont {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
-        int size = text.length();
         GlStateManager.enableTexture2D();
         GlStateManager.bindTexture(tex.getGlTextureId());
-        for (int i = 0; i < size; i++) {
-            char character = text.charAt(i);
-            if (character == '\u00A7') {
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\u00A7') {
                 int colorIndex = 21;
                 try {
                     colorIndex = "0123456789abcdefklmnor".indexOf(text.charAt(i + 1));
@@ -66,11 +69,11 @@ public class SystemFontRenderer extends SystemFont {
                     currentData = this.charData;
                     if (colorIndex < 0) colorIndex = 15;
                     if (shadow) colorIndex += 16;
-                    int colorcode = this.colorCode[colorIndex];
-                    GlStateManager.color((colorcode >> 16 & 0xFF) / 255.0F, (colorcode >> 8 & 0xFF) / 255.0F, (colorcode & 0xFF) / 255.0F, color.getAlpha());
+                    int colorCode = this.colorCodes[colorIndex];
+                    GlStateManager.color((colorCode >> 16 & 0xFF) / 255.0F, (colorCode >> 8 & 0xFF) / 255.0F, (colorCode & 0xFF) / 255.0F, color.getAlpha());
                 } else if (colorIndex == 16) {
                     randomCase = true;
-                    // unimplemented
+                    // not implemented
                 } else if (colorIndex == 17) {
                     bold = true;
                     if (italic) {
@@ -101,20 +104,18 @@ public class SystemFontRenderer extends SystemFont {
                     strikethrough = false;
                     GlStateManager.color(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
                     GlStateManager.bindTexture(tex.getGlTextureId());
-                    // GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                    // tex.getGlTextureId());
                     currentData = this.charData;
                 }
                 i++;
-            } else if (character < currentData.length) {
+            } else if (c < currentData.length) {
                 GlStateManager.glBegin(GL11.GL_TRIANGLES);
-                drawChar(currentData, character, (float) x, (float) y);
+                drawChar(currentData, c, (float) x, (float) y);
                 GlStateManager.glEnd();
                 if (strikethrough)
-                    drawLine(x, y + currentData[character].height / 2, x + currentData[character].width - 8.0D, y + currentData[character].height / 2, 1.0F);
+                    drawLine(x, y + (double) currentData[c].height / 2, x + currentData[c].width - 8.0D, y + (double) currentData[c].height / 2, 1.0F);
                 if (underline)
-                    drawLine(x, y + currentData[character].height - 2.0D, x + currentData[character].width - 8.0D, y + currentData[character].height - 2.0D, 1.0F);
-                x += currentData[character].width - 8 + this.charOffset;
+                    drawLine(x, y + currentData[c].height - 2.0D, x + currentData[c].width - 8.0D, y + currentData[c].height - 2.0D, 1.0F);
+                x += currentData[c].width - 8 + this.charOffset;
             }
         }
         GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_DONT_CARE);
@@ -171,15 +172,6 @@ public class SystemFontRenderer extends SystemFont {
         return width / 2;
     }
 
-    protected DynamicTexture texBold;
-    protected DynamicTexture texItalic;
-    protected DynamicTexture texItalicBold;
-
-    private void setupBoldItalicIDs() {
-        this.texBold = setupTexture(this.font.deriveFont(Font.BOLD), this.antiAlias, this.fractionalMetrics, this.boldChars);
-        this.texItalic = setupTexture(this.font.deriveFont(Font.ITALIC), this.antiAlias, this.fractionalMetrics, this.italicChars);
-        this.texItalicBold = setupTexture(this.font.deriveFont(Font.BOLD | Font.ITALIC), this.antiAlias, this.fractionalMetrics, this.boldItalicChars);
-    }
 
     private void drawLine(double x, double y, double x1, double y1, float width) {
         GlStateManager.disableTexture2D();
@@ -191,7 +183,13 @@ public class SystemFontRenderer extends SystemFont {
         GlStateManager.enableTexture2D();
     }
 
-    private void setupMinecraftColorcodes() {
+    private void setUpDecoratedChars() {
+        this.texBold = setupTexture(this.font.deriveFont(Font.BOLD), this.antiAlias, this.fractionalMetrics, this.boldChars);
+        this.texItalic = setupTexture(this.font.deriveFont(Font.ITALIC), this.antiAlias, this.fractionalMetrics, this.italicChars);
+        this.texItalicBold = setupTexture(this.font.deriveFont(Font.BOLD | Font.ITALIC), this.antiAlias, this.fractionalMetrics, this.boldItalicChars);
+    }
+
+    private void setUpColorCodes() {
         for (int index = 0; index < 32; index++) {
             int noClue = (index >> 3 & 0x1) * 85;
             int red = (index >> 2 & 0x1) * 170 + noClue;
@@ -206,7 +204,7 @@ public class SystemFontRenderer extends SystemFont {
                 green /= 4;
                 blue /= 4;
             }
-            this.colorCode[index] = ((red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF);
+            this.colorCodes[index] = ((red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF);
         }
     }
 }

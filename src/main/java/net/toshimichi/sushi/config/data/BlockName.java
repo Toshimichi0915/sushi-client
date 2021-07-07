@@ -1,11 +1,13 @@
 package net.toshimichi.sushi.config.data;
 
+import com.google.gson.annotations.SerializedName;
 import net.minecraft.block.Block;
 
 import java.util.ArrayList;
 
 public class BlockName {
     private static final BlockName[] VALUES;
+    @SerializedName("name")
     private final String name;
 
     static {

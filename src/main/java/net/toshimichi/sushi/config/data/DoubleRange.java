@@ -1,10 +1,17 @@
 package net.toshimichi.sushi.config.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public class DoubleRange {
+    @SerializedName("current")
     private double current;
+    @SerializedName("top")
     private double top;
+    @SerializedName("bottom")
     private double bottom;
+    @SerializedName("step")
     private double step;
+    @SerializedName("digits")
     private int digits;
 
     public DoubleRange() {

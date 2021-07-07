@@ -1,9 +1,13 @@
 package net.toshimichi.sushi.modules.combat;
 
+import com.google.gson.annotations.SerializedName;
 import net.toshimichi.sushi.config.data.Named;
 
 public enum HoleMineMode implements Named {
-    BEST_EFFORT("Best Effort"), MINE_ONLY("Mine Only");
+    @SerializedName("BEST_EFFORT")
+    BEST_EFFORT("Best Effort"),
+    @SerializedName("MINE_ONLY")
+    MINE_ONLY("Mine Only");
 
     private final String name;
 

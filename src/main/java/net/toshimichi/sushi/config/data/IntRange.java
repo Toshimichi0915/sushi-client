@@ -1,9 +1,15 @@
 package net.toshimichi.sushi.config.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public class IntRange {
+    @SerializedName("current")
     private int current;
+    @SerializedName("top")
     private int top;
+    @SerializedName("bottom")
     private int bottom;
+    @SerializedName("step")
     private int step;
 
     public IntRange() {

@@ -4,7 +4,6 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.annotations.SerializedName;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -25,8 +24,11 @@ import net.toshimichi.sushi.handlers.*;
 import net.toshimichi.sushi.handlers.forge.*;
 import net.toshimichi.sushi.hwid.annotations.Authentication;
 import net.toshimichi.sushi.hwid.annotations.Protect;
+import net.toshimichi.sushi.utils.gson.ColorTypeAdapter;
+import net.toshimichi.sushi.utils.gson.EnumFactory;
 import org.apache.commons.io.FileUtils;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +43,12 @@ public class SushiMod {
     private static final Gson gson;
 
     static {
-        gson = new GsonBuilder().setPrettyPrinting().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+        gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapterFactory(new EnumFactory())
+                .registerTypeAdapter(Color.class, new ColorTypeAdapter())
+                .create();
     }
 
     private final File baseDir = new File("./sushi");
@@ -85,7 +92,7 @@ public class SushiMod {
         themes.add(fallbackTheme);
 
         for (Theme theme : Sushi.getThemes()) {
-            if (theme.getId().equals(modConfig.theme)) {
+            if (theme.getId().equals(modConfig.getTheme())) {
                 fallbackTheme = theme;
                 break;
             }
@@ -95,7 +102,7 @@ public class SushiMod {
 
         // load profile
         GsonProfiles profiles = new GsonProfiles(new File(baseDir, "profiles"), gson);
-        Profile profile = profiles.load(modConfig.name);
+        Profile profile = profiles.load(modConfig.getName());
         Sushi.setProfiles(profiles);
         Sushi.setProfile(profile);
         profile.load();
@@ -148,10 +155,4 @@ public class SushiMod {
         }
     }
 
-    private static class ModConfig {
-        @SerializedName("name")
-        String name = "default";
-        @SerializedName("theme")
-        String theme = "simple";
-    }
 }

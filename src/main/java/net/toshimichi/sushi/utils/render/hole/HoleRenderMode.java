@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.utils.render.hole;
 
+import com.google.gson.annotations.SerializedName;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -12,6 +13,7 @@ import java.awt.Color;
 import static org.lwjgl.opengl.GL11.*;
 
 public enum HoleRenderMode implements Named, HoleRenderer {
+    @SerializedName("FILL")
     FILL("Fill") {
         @Override
         public void render(World world, HoleInfo info, EspColor obsidian, EspColor bedrock) {

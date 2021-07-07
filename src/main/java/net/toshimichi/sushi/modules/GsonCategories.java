@@ -1,12 +1,12 @@
 package net.toshimichi.sushi.modules;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,9 +55,10 @@ public class GsonCategories implements Categories {
         try {
             if (!conf.exists()) return;
             String contents = FileUtils.readFileToString(conf, StandardCharsets.UTF_8);
-            Type type = new TypeToken<ArrayList<GsonCategory>>() {
-            }.getType();
-            categories.addAll(gson.fromJson(contents, type));
+            JsonArray array = gson.fromJson(contents, JsonArray.class);
+            for (JsonElement element : array) {
+                categories.add(gson.fromJson(element, GsonCategory.class));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

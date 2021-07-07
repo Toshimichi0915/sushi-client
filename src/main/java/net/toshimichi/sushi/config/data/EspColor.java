@@ -1,10 +1,15 @@
 package net.toshimichi.sushi.config.data;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.awt.Color;
 
 public class EspColor {
+    @SerializedName("color")
     private final Color color;
+    @SerializedName("rainbow")
     private final boolean rainbow;
+    @SerializedName("alpha_enabled")
     private final boolean alphaEnabled;
 
     public EspColor(Color color, boolean alphaEnabled) {
