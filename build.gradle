@@ -49,7 +49,6 @@ dependencies {
         exclude module: 'launchwrapper'
         exclude module: 'log4j-core'
     }
-
     annotationProcessor('org.spongepowered:mixin:0.8.2:processor') { exclude module: 'gson' }
 
     // Protection
