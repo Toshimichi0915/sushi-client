@@ -96,6 +96,7 @@ jar {
     }
     exclude 'META-INF/MUMFREY.RSA'
     exclude 'META-INF/MUMFREY.SF'
+    exclude 'LICENSE.txt'
 }
 
 sourceSets {
