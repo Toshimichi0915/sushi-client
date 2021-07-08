@@ -147,23 +147,7 @@ abstract public class BaseModule implements Module {
     abstract public String getDefaultName();
 
     protected void addElementFactory(ElementConstructor constructor, String id, String name) {
-        hudElementFactories.add(new ElementFactory() {
-
-            @Override
-            public ElementConstructor getElementConstructor() {
-                return constructor;
-            }
-
-            @Override
-            public String getId() {
-                return id;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-        });
+        hudElementFactories.add(new BaseElementFactory(constructor, id, name));
     }
 
     public Keybind getDefaultKeybind() {
@@ -198,5 +182,33 @@ abstract public class BaseModule implements Module {
 
     protected NetHandlerPlayClient getConnection() {
         return getPlayer().connection;
+    }
+
+    private static class BaseElementFactory implements ElementFactory {
+
+        private final ElementConstructor constructor;
+        private final String id;
+        private final String name;
+
+        public BaseElementFactory(ElementConstructor constructor, String id, String name) {
+            this.constructor = constructor;
+            this.id = id;
+            this.name = name;
+        }
+
+        @Override
+        public ElementConstructor getElementConstructor() {
+            return constructor;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
     }
 }

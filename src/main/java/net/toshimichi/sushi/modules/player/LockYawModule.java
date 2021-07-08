@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.modules.player;
 
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
@@ -12,6 +13,7 @@ import net.toshimichi.sushi.gui.hud.TextElementComponent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.player.SpeedUtils;
 
 public class LockYawModule extends BaseModule {
 
@@ -33,6 +35,7 @@ public class LockYawModule extends BaseModule {
             z.setValue(z.getValue() / 8);
         });
         addElementFactory(TargetComponent::new, id + ".target", "Target Coordinates");
+        addElementFactory(EtaComponent::new, id + ".eta", "Estimated Time Arrival");
     }
 
     @Override
@@ -68,7 +71,7 @@ public class LockYawModule extends BaseModule {
 
         public TargetComponent(Configurations configurations, String id, String name) {
             super(configurations, id, name);
-            format = getConfiguration("format", "Format", null, String.class, "Target: {x} {z}");
+            format = getConfiguration("target", "Target", null, String.class, "Target: {x} {z}");
         }
 
         @Override
@@ -76,6 +79,36 @@ public class LockYawModule extends BaseModule {
             return format.getValue()
                     .replace("{x}", Integer.toString(x.getValue()))
                     .replace("{z}", Integer.toString(z.getValue()));
+        }
+    }
+
+    private class EtaComponent extends TextElementComponent {
+        private final Configuration<String> format;
+
+        public EtaComponent(Configurations configurations, String id, String name) {
+            super(configurations, id, name);
+            this.format = configurations.get("eta", "ETA", null, String.class, "{m} min {s} sec");
+        }
+
+        @Override
+        protected String getText() {
+            float vec = MathHelper.sqrt(Math.pow(x.getValue() - getPlayer().posX, 2) + Math.pow(z.getValue() - getPlayer().posZ, 2));
+            double mps = SpeedUtils.getMps(getPlayer());
+            double seconds = mps == 0 ? 0 : vec / mps;
+            String h, m, s;
+            if (mps < 0.1) {
+                h = "Inf";
+                m = "Inf";
+                s = "Inf";
+            } else {
+                h = Integer.toString((int) seconds / 60 / 60);
+                m = Integer.toString((int) seconds / 60);
+                s = Integer.toString((int) seconds);
+            }
+            return format.getValue()
+                    .replace("{h}", h)
+                    .replace("{m}", m)
+                    .replace("{s}", s);
         }
     }
 }
