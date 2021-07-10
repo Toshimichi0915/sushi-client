@@ -63,6 +63,10 @@ public class PositionUtils {
         mode = stack.pop();
     }
 
+    public static void move(Vec3d pos, float yaw, float pitch, boolean position, boolean rotation, DesyncMode mode) {
+        move(pos.x, pos.y, pos.z, yaw, pitch, position, rotation, mode);
+    }
+
     public static void move(double x, double y, double z, float yaw, float pitch, boolean position, boolean rotation, DesyncMode mode) {
         if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z) ||
                 !Float.isFinite(yaw) || !Float.isFinite(pitch)) {

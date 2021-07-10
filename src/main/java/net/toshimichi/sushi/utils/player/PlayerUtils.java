@@ -5,6 +5,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.network.play.client.CPacketPlayer;
 
 public class PlayerUtils {
+
     public static CPacketPlayer newCPacketPlayer(CPacketPlayer cp, double x, double y, double z,
                                                  float yaw, float pitch, boolean onGround, boolean position, boolean rotation, boolean flying) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
