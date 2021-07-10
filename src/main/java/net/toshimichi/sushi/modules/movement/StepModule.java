@@ -5,6 +5,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -18,12 +19,14 @@ import net.toshimichi.sushi.utils.world.BlockUtils;
 public class StepModule extends BaseModule {
 
     private final Configuration<IntRange> height;
+    private final Configuration<DoubleRange> delta;
     private double motionX;
     private double motionZ;
 
     public StepModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         height = provider.get("height", "Height", null, IntRange.class, new IntRange(2, 8, 1, 1));
+        delta = provider.get("delta", "Delta", null, DoubleRange.class, new DoubleRange(0.1, 1, 0, 0.1, 1));
     }
 
     @Override
@@ -61,12 +64,15 @@ public class StepModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onPostPlayerMove(PlayerMoveEvent e) {
-        for (int delta = 0; delta <= height.getValue().getCurrent(); delta++) {
-            Vec3d posDelta = new Vec3d(motionX, 0, motionZ).normalize().scale(0.01).add(0, delta, 0);
-            AxisAlignedBB box = getPlayer().getEntityBoundingBox().offset(posDelta);
-            if (getWorld().collidesWithAnyBlock(box)) continue;
-            if (delta == 0) return;
-            Vec3d resultPos = getPlayer().getPositionVector().add(posDelta);
+        Vec3d direction = new Vec3d(motionX, 0, motionZ).normalize();
+        for (int y = 0; y <= height.getValue().getCurrent(); y++) {
+            Vec3d pos = direction.scale(0.01).add(0, y, 0);
+            Vec3d scaled = direction.scale(delta.getValue().getCurrent());
+            AxisAlignedBB box = getPlayer().getEntityBoundingBox().offset(pos);
+            AxisAlignedBB box2 = getPlayer().getEntityBoundingBox().offset(scaled).offset(pos);
+            if (!getWorld().collidesWithAnyBlock(box) && y == 0) return;
+            if (getWorld().collidesWithAnyBlock(box2)) continue;
+            Vec3d resultPos = getPlayer().getPositionVector().add(scaled).add(pos);
             PositionUtils.move(resultPos.x, getMaxHeight(box), resultPos.z, 0, 0, true, false, DesyncMode.NONE);
             getPlayer().motionX = motionX;
             getPlayer().motionY = 0;
