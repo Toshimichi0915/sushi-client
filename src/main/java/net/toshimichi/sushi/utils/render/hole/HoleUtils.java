@@ -5,16 +5,20 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.function.Consumer;
 
 public class HoleUtils {
 
     private static HoleInfo getSingleHole(World world, BlockPos origin) {
-        if (world.getBlockState(origin).getBlock() != Blocks.AIR) return null;
+        Block originBlock = world.getBlockState(origin).getBlock();
+        if (originBlock != Blocks.OBSIDIAN && originBlock != Blocks.BEDROCK) return null;
+        origin = origin.add(0, 1, 0);
+        if (!BlockUtils.isAir(world, origin) || !BlockUtils.isAir(world, origin.add(0, 1, 0))) return null;
         boolean isObsidian = false;
         for (EnumFacing facing : EnumFacing.values()) {
-            if (facing == EnumFacing.UP) continue;
+            if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) continue;
             Block block = world.getBlockState(origin.offset(facing)).getBlock();
             if (block == Blocks.OBSIDIAN) {
                 isObsidian = true;
@@ -30,7 +34,10 @@ public class HoleUtils {
     }
 
     private static HoleInfo getDoubleHole(World world, BlockPos origin) {
-        if (world.getBlockState(origin).getBlock() != Blocks.AIR) return null;
+        Block originBlock = world.getBlockState(origin).getBlock();
+        if (originBlock != Blocks.OBSIDIAN && originBlock != Blocks.BEDROCK) return null;
+        origin = origin.add(0, 1, 0);
+        if (!BlockUtils.isAir(world, origin) || !BlockUtils.isAir(world, origin.add(0, 1, 0))) return null;
         root:
         for (EnumFacing facing : new EnumFacing[]{EnumFacing.SOUTH, EnumFacing.EAST}) {
             boolean isObsidian = false;

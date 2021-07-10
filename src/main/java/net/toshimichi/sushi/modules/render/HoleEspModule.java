@@ -9,7 +9,7 @@ import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.render.hole.HoleInfo;
@@ -21,17 +21,16 @@ import java.util.HashSet;
 
 public class HoleEspModule extends BaseModule {
 
-    private final HashSet<HoleInfo> holes = new HashSet<>();
-    private BlockPos prev;
+    private volatile HashSet<HoleInfo> holes = new HashSet<>();
 
-    @Config(id = "mode", name = "Mode")
+    //    @Config(id = "mode", name = "Mode")
     public HoleRenderMode mode = HoleRenderMode.FILL;
 
     @Config(id = "vertical", name = "Vertical")
-    public IntRange vertical = new IntRange(10, 50, 5, 1);
+    public IntRange vertical = new IntRange(10, 20, 5, 1);
 
     @Config(id = "horizontal", name = "Horizontal")
-    public IntRange horizontal = new IntRange(10, 50, 5, 1);
+    public IntRange horizontal = new IntRange(10, 20, 5, 1);
 
     @Config(id = "obsidian_color", name = "Obsidian Color")
     public EspColor obsidianColor = new EspColor(new Color(255, 0, 0, 100), true);
@@ -55,14 +54,13 @@ public class HoleEspModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onClientTick(ClientTickEvent e) {
+    public void onPlayerUpdate(PlayerUpdateEvent e) {
         BlockPos pos = getPlayer().getPosition();
-        if (pos.equals(prev)) return;
-        prev = pos;
-        holes.clear();
+        HashSet<HoleInfo> copy = new HashSet<>();
         BlockPos from = new BlockPos(pos.getX() - horizontal.getCurrent(), pos.getY() - vertical.getCurrent(), pos.getZ() - horizontal.getCurrent());
         BlockPos to = new BlockPos(pos.getX() + horizontal.getCurrent(), pos.getY() + vertical.getCurrent(), pos.getZ() + horizontal.getCurrent());
-        HoleUtils.findHoles(getWorld(), from, to, holes::add);
+        HoleUtils.findHoles(getWorld(), from, to, copy::add);
+        holes = copy;
     }
 
     @EventHandler(timing = EventTiming.POST)
