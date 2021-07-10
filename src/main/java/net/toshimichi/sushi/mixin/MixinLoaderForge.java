@@ -30,7 +30,7 @@ public class MixinLoaderForge implements IFMLLoadingPlugin {
             byte[] bytes;
             try (InputStream in = getClass().getClassLoader().getResourceAsStream(CLASSPATH)) {
                 if (in == null) return;
-                bytes = EncryptUtils.decrypt(EncryptUtils.getHWID(), IOUtils.readFully(in, in.available()));
+                bytes = EncryptUtils.decrypt(EncryptUtils.getHWID(), IOUtils.toByteArray(in));
             }
             try (FileOutputStream out = new FileOutputStream(temp)) {
                 IOUtils.write(bytes, out);
