@@ -36,11 +36,12 @@ abstract public class BaseModule implements Module {
         this.categories = categories;
         this.factory = factory;
         ConfigurationCategory commonCategory = provider.getCategory("common", "Common Settings", "Common settings for most modules");
-        this.name = commonCategory.get("name", "Module Name", "Module name", String.class, getDefaultName(), () -> true, false, 80000);
-        this.category = commonCategory.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName(), () -> true, false, 81000);
-        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, false, 82000);
-        this.temporary = commonCategory.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, false, 83000);
-        this.visible = commonCategory.get("visible", "Visible", null, Boolean.class, isVisibleByDefault(), () -> true, false, 84000);
+        commonCategory.get("id", "Module ID", "Module ID", String.class, id, () -> true, true, 80000);
+        this.name = commonCategory.get("name", "Module Name", "Module name", String.class, getDefaultName(), () -> true, false, 81000);
+        this.category = commonCategory.get("category", "Module Category", "Module category", String.class, getDefaultCategory().getName(), () -> true, false, 82000);
+        this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, false, 83000);
+        this.temporary = commonCategory.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, false, 84000);
+        this.visible = commonCategory.get("visible", "Visible", null, Boolean.class, isVisibleByDefault(), () -> true, false, 85000);
 
         hudElementFactories = new ArrayList<>();
     }

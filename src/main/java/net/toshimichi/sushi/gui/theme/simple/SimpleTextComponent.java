@@ -5,6 +5,7 @@ import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.render.GuiUtils;
 import org.lwjgl.input.Keyboard;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 abstract public class SimpleTextComponent extends BaseComponent {
@@ -12,6 +13,7 @@ abstract public class SimpleTextComponent extends BaseComponent {
     private static final int START_HOLD_DELAY = 500;
     private static final int HOLD_DELAY = 50;
     private final ThemeConstants constants;
+    private final boolean canEdit;
 
     private StringBuilder text;
     private long pressMillis;
@@ -19,9 +21,10 @@ abstract public class SimpleTextComponent extends BaseComponent {
     private int holdKeyCode;
     private char holdKey;
 
-    public SimpleTextComponent(ThemeConstants constants, String text) {
+    public SimpleTextComponent(ThemeConstants constants, String text, boolean canEdit) {
         this.constants = constants;
         this.text = new StringBuilder(text);
+        this.canEdit = canEdit;
         setHeight(14);
     }
 
@@ -51,14 +54,18 @@ abstract public class SimpleTextComponent extends BaseComponent {
             append(holdKeyCode, holdKey);
             holdMillis = System.currentTimeMillis();
         }
+        Color background;
+        if (canEdit) background = constants.textBoxBackgroundColor.getValue();
+        else background = constants.outlineColor.getValue();
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
-        GuiUtils.drawRect(getWindowX() + 1, getWindowY() + 1, getWidth() - 2, getHeight() - 2, constants.textBoxBackgroundColor.getValue());
+        GuiUtils.drawRect(getWindowX() + 1, getWindowY() + 1, getWidth() - 2, getHeight() - 2, background);
         GuiUtils.prepareText(text.toString(), constants.font.getValue(), constants.textColor.getValue(), 9, true)
                 .draw(getWindowX() + 2, getWindowY() + 2);
     }
 
     @Override
     public boolean onKeyPressed(int keyCode, char key) {
+        if (!canEdit) return false;
         holdKeyCode = keyCode;
         holdKey = key;
         pressMillis = System.currentTimeMillis();
@@ -68,6 +75,7 @@ abstract public class SimpleTextComponent extends BaseComponent {
 
     @Override
     public boolean onKeyReleased(int keyCode) {
+        if (!canEdit) return false;
         holdKey = 0;
         if (keyCode == Keyboard.KEY_ESCAPE) {
             getContext().close();

@@ -17,7 +17,7 @@ public class SimpleIntComponent extends BasePanelComponent<Component> implements
 
     public SimpleIntComponent(ThemeConstants constants, Configuration<Integer> config) {
         this.config = config;
-        textComponent = new SimpleTextComponent(constants, Integer.toString(config.getValue())) {
+        textComponent = new SimpleTextComponent(constants, Integer.toString(config.getValue()), true) {
 
             private String oldValue;
 

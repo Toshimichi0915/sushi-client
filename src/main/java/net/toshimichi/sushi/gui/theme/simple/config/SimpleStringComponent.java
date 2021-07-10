@@ -18,7 +18,7 @@ public class SimpleStringComponent extends BasePanelComponent<Component> impleme
         this.config = config;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
         add(new SimpleTextHeaderComponent(constants, config.getName()));
-        add(new SimpleTextComponent(constants, config.getValue()) {
+        add(new SimpleTextComponent(constants, config.getValue(), !config.isTemporary()) {
             @Override
             protected void onChange(String text) {
                 config.setValue(text);

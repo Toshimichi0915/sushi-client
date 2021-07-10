@@ -1,20 +1,11 @@
 package net.toshimichi.sushi;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-import net.toshimichi.sushi.hwid.gen.EncryptUtils;
 import net.toshimichi.sushi.utils.MixinGenerator;
-import org.apache.commons.io.IOUtils;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Files;
 import java.util.Map;
 
 @IFMLLoadingPlugin.Name("SushiMixinLoader")
