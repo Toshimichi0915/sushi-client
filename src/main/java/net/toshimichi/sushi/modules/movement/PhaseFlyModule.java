@@ -92,6 +92,10 @@ public class PhaseFlyModule extends BaseModule {
         collidedVertically = getPlayer().collidedVertically;
     }
 
+    private boolean isHittingRoof() {
+        return getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, 0.01, 0));
+    }
+
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerPacket(PlayerPacketEvent e) {
         if (!auto.getValue()) return;
