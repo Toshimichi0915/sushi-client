@@ -3,7 +3,7 @@
   "compatibilityLevel": "JAVA_8",
   "package": "net.toshimichi.sushi.mixin",
   "refmap": "mixins.sushi.refmap.json",
-  "mixins": [
+  "client": [
     "AccessorChunkProviderClient",
     "AccessorEntityRenderer",
     "AccessorItemTool",
