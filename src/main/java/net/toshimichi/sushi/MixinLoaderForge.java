@@ -1,4 +1,4 @@
-package net.toshimichi.sushi.mixin;
+package net.toshimichi.sushi;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.toshimichi.sushi.hwid.gen.EncryptUtils;
