@@ -2,6 +2,7 @@ package net.toshimichi.sushi.modules.movement;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
@@ -11,9 +12,7 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerPacketEvent;
-import net.toshimichi.sushi.events.player.PlayerPushEvent;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
-import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.TpsUtils;
 import net.toshimichi.sushi.utils.player.DesyncMode;
@@ -24,19 +23,19 @@ public class PhaseFlyModule extends BaseModule {
 
     private final Configuration<DoubleRange> horizontal;
     private final Configuration<DoubleRange> vertical;
+    private final Configuration<DoubleRange> elytraHorizontal;
+    private final Configuration<DoubleRange> elytraVertical;
     private final Configuration<Boolean> auto;
     private final Configuration<Boolean> tpsSync;
     private final Configuration<Boolean> capAt20;
     private int stage;
 
-    // for compatibility issue
-    private boolean noClip;
-    private boolean collidedVertically;
-
     public PhaseFlyModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        horizontal = provider.get("horizontal_speed", "Horizontal Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
-        vertical = provider.get("vertical_speed", "Vertical Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
+        horizontal = provider.get("horizontal_speed", "Horizontal Speed", null, DoubleRange.class, new DoubleRange(1, 1, 0, 0.05, 2));
+        vertical = provider.get("vertical_speed", "Vertical Speed", null, DoubleRange.class, new DoubleRange(1, 1, 0, 0.05, 2));
+        elytraHorizontal = provider.get("elytra_horizontal_speed", "Horizontal Speed(Elytra)", null, DoubleRange.class, new DoubleRange(1, 1, 0, 0.05, 2));
+        elytraVertical = provider.get("elytra_vertical_speed", "Vertical Speed(Elytra)", null, DoubleRange.class, new DoubleRange(1, 1, 0, 0.05, 2));
         auto = provider.get("auto", "Auto Phase", null, Boolean.class, true);
         tpsSync = provider.get("tps_sync", "TPS Sync", null, Boolean.class, false);
         capAt20 = provider.get("cap_at_20", "Cap At 20", null, Boolean.class, false, tpsSync::getValue, false, 0);
@@ -55,18 +54,25 @@ public class PhaseFlyModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerTravel(PlayerTravelEvent e) {
         EntityPlayerSP player = getPlayer();
-        if (stage != 0) {
-            player.motionX = 0;
-            player.motionY = 0;
-            player.motionZ = 0;
-            return;
-        }
-        player.noClip = !player.world.getCollisionBoxes(null, player.getEntityBoundingBox()).isEmpty();
+        player.motionX = 0;
+        player.motionY = 0;
+        player.motionZ = 0;
+        if (stage != 0) return;
+        player.noClip = isInsideBlock();
         player.fallDistance = 0;
         player.onGround = false;
 
-        double horizontalSpeed = horizontal.getValue().getCurrent() / 10;
-        double verticalSpeed = vertical.getValue().getCurrent() / 10;
+        double horizontalSpeed;
+        double verticalSpeed;
+        if (player.isElytraFlying()) {
+            horizontalSpeed = elytraHorizontal.getValue().getCurrent();
+            verticalSpeed = elytraVertical.getValue().getCurrent();
+        } else {
+            horizontalSpeed = horizontal.getValue().getCurrent();
+            verticalSpeed = vertical.getValue().getCurrent();
+        }
+        horizontalSpeed *= 5;
+        verticalSpeed *= 5;
         Vec3d inputs = MovementUtils.getMoveInputs(player, true).normalize();
         float moveForward = (float) (inputs.x * horizontalSpeed);
         float moveUpward = (float) (inputs.y * verticalSpeed);
@@ -84,23 +90,30 @@ public class PhaseFlyModule extends BaseModule {
         player.motionX = vec.x;
         player.motionY = moveUpward;
         player.motionZ = vec.y;
-    }
-
-    @EventHandler(timing = EventTiming.POST)
-    public void onPlayerUpdate(PlayerUpdateEvent e) {
-        noClip = getPlayer().noClip;
-        collidedVertically = getPlayer().collidedVertically;
+        // Anti Glide
+        if (player.isElytraFlying()) {
+            float f = player.rotationPitch * 0.017453292F;
+            double d1 = player.getLookVec().length();
+            float f4 = MathHelper.cos(f);
+            f4 = (float) ((double) f4 * (double) f4 * Math.min(1.0D, d1 / 0.4D));
+            player.motionY -= -0.08D + (double) f4 * 0.06D;
+        }
     }
 
     private boolean isHittingRoof() {
         return getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, 0.01, 0));
     }
 
+    private boolean isInsideBlock() {
+        return getPlayer().world.collidesWithAnyBlock(getPlayer().getEntityBoundingBox());
+    }
+
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerPacket(PlayerPacketEvent e) {
         if (!auto.getValue()) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (stage == 0 && (getPlayer().movementInput.sneak || noClip || !collidedVertically)) return;
+        if (stage == 0 &&
+                (getPlayer().movementInput.sneak || isInsideBlock() || !isInsideBlock() && !isHittingRoof())) return;
         if (stage == 0 || stage == 1) {
             player.movementInput.sneak = true;
             stage++;
@@ -111,11 +124,6 @@ public class PhaseFlyModule extends BaseModule {
         } else if (stage == 3) {
             stage = 0;
         }
-    }
-
-    @EventHandler(timing = EventTiming.PRE)
-    public void onPush(PlayerPushEvent e) {
-        e.setCancelled(true);
     }
 
     @Override
