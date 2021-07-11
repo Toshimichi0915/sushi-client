@@ -42,6 +42,7 @@ abstract public class BaseModule implements Module {
         this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, false, 83000);
         this.temporary = commonCategory.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, false, 84000);
         this.visible = commonCategory.get("visible", "Visible", null, Boolean.class, isVisibleByDefault(), () -> true, false, 85000);
+        commonCategory.get("reset", "Reset Settings", null, Runnable.class, provider::reset, () -> true, true, 86000);
 
         hudElementFactories = new ArrayList<>();
     }

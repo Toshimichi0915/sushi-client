@@ -15,4 +15,10 @@ public interface Configurations {
     }
 
     List<Configuration<?>> getAll();
+
+    default void reset() {
+        for (Configuration<?> conf : getAll()) {
+            conf.reset();
+        }
+    }
 }

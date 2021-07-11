@@ -32,4 +32,8 @@ public interface Configuration<T> {
     void addHandler(Consumer<T> handler);
 
     void removeHandler(Consumer<T> handler);
+
+    default void reset() {
+        setValue(getDefaultValue());
+    }
 }
