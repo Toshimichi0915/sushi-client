@@ -70,7 +70,7 @@ public class StepModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onPostPlayerMove(PlayerMoveEvent e) {
-        BlockPos floorPos = BlockUtils.toBlockPos(getPlayer().getPositionVector().add(0, -1, 0));
+        BlockPos floorPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         if (pauseInHole.getValue() && HoleUtils.getHoleInfo(getWorld(), floorPos) != null ||
                 pauseOnSneak.getValue() && getPlayer().isSneaking()) {
             return;

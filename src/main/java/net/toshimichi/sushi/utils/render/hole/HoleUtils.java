@@ -12,13 +12,10 @@ import java.util.function.Consumer;
 public class HoleUtils {
 
     private static HoleInfo getSingleHole(World world, BlockPos origin) {
-        Block originBlock = world.getBlockState(origin).getBlock();
-        if (originBlock != Blocks.OBSIDIAN && originBlock != Blocks.BEDROCK) return null;
-        origin = origin.add(0, 1, 0);
         if (!BlockUtils.isAir(world, origin) || !BlockUtils.isAir(world, origin.add(0, 1, 0))) return null;
         boolean isObsidian = false;
         for (EnumFacing facing : EnumFacing.values()) {
-            if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) continue;
+            if (facing == EnumFacing.UP) continue;
             Block block = world.getBlockState(origin.offset(facing)).getBlock();
             if (block == Blocks.OBSIDIAN) {
                 isObsidian = true;
@@ -34,9 +31,6 @@ public class HoleUtils {
     }
 
     private static HoleInfo getDoubleHole(World world, BlockPos origin) {
-        Block originBlock = world.getBlockState(origin).getBlock();
-        if (originBlock != Blocks.OBSIDIAN && originBlock != Blocks.BEDROCK) return null;
-        origin = origin.add(0, 1, 0);
         if (!BlockUtils.isAir(world, origin) || !BlockUtils.isAir(world, origin.add(0, 1, 0))) return null;
         root:
         for (EnumFacing facing : new EnumFacing[]{EnumFacing.SOUTH, EnumFacing.EAST}) {
