@@ -14,12 +14,15 @@ import net.toshimichi.sushi.events.player.PlayerMoveEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.render.hole.HoleUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
 public class StepModule extends BaseModule {
 
     private final Configuration<IntRange> height;
     private final Configuration<DoubleRange> delta;
+    private final Configuration<Boolean> pauseInHole;
+    private final Configuration<Boolean> pauseOnSneak;
     private double motionX;
     private double motionZ;
 
@@ -27,6 +30,8 @@ public class StepModule extends BaseModule {
         super(id, modules, categories, provider, factory);
         height = provider.get("height", "Height", null, IntRange.class, new IntRange(2, 8, 1, 1));
         delta = provider.get("delta", "Delta", null, DoubleRange.class, new DoubleRange(0.1, 1, 0, 0.1, 1));
+        pauseInHole = provider.get("pause_in_hole", "Pause In Hole", null, Boolean.class, true);
+        pauseOnSneak = provider.get("pause_on_sneak", "Pause On Sneak", null, Boolean.class, true);
     }
 
     @Override
@@ -37,12 +42,6 @@ public class StepModule extends BaseModule {
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
-    }
-
-    @EventHandler(timing = EventTiming.PRE)
-    public void onPrePlayerMove(PlayerMoveEvent e) {
-        motionX = getPlayer().motionX;
-        motionZ = getPlayer().motionZ;
     }
 
     private double getMaxHeight(AxisAlignedBB box) {
@@ -62,8 +61,19 @@ public class StepModule extends BaseModule {
         return max;
     }
 
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onPrePlayerMove(PlayerMoveEvent e) {
+        motionX = getPlayer().motionX;
+        motionZ = getPlayer().motionZ;
+    }
+
     @EventHandler(timing = EventTiming.POST)
     public void onPostPlayerMove(PlayerMoveEvent e) {
+        if (pauseInHole.getValue() && HoleUtils.getHoleInfo(getWorld(), BlockUtils.toBlockPos(getPlayer().getPositionVector())) != null ||
+                pauseOnSneak.getValue() && getPlayer().isSneaking()) {
+            return;
+        }
         Vec3d direction = new Vec3d(motionX, 0, motionZ).normalize();
         for (int y = 0; y <= height.getValue().getCurrent(); y++) {
             Vec3d pos = direction.scale(0.01).add(0, y, 0);

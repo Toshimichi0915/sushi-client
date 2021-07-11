@@ -58,7 +58,7 @@ public class HoleUtils {
         return null;
     }
 
-    private static HoleInfo getHoleInfo(World world, BlockPos origin) {
+    public static HoleInfo getHoleInfo(World world, BlockPos origin) {
         HoleInfo info = getSingleHole(world, origin);
         if (info == null) info = getDoubleHole(world, origin);
         return info;
