@@ -126,9 +126,9 @@ public class CrystalAuraModule extends BaseModule {
         // Render
         ConfigurationCategory render = provider.getCategory("render", "Render Settings", null);
         outline = render.get("outline", "Outline", null, Boolean.class, true);
-        outlineColor = render.get("outline_color", "Outline Color", null, EspColor.class, new EspColor(Color.WHITE, true), outline::isValid, false, 0);
+        outlineColor = render.get("outline_color", "Outline Color", null, EspColor.class, new EspColor(Color.WHITE, false, true), outline::isValid, false, 0);
         fill = render.get("fill", "Fill", null, Boolean.class, true);
-        fillColor = render.get("fill_color", "Fill Color", null, EspColor.class, new EspColor(Color.PINK, true), fill::isValid, false, 0);
+        fillColor = render.get("fill_color", "Fill Color", null, EspColor.class, new EspColor(Color.PINK, false, true), fill::isValid, false, 0);
     }
 
     @Override

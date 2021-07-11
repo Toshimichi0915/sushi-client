@@ -73,8 +73,10 @@ public class ConfigInjector {
                 @Override
                 public void getValue(Object original) {
                     try {
+                        Object fieldValue = field.get(obj);
+                        if (fieldValue.equals(original)) return;
                         ignoreUpdate = true;
-                        conf.setValue(field.get(obj));
+                        conf.setValue(fieldValue);
                         ignoreUpdate = false;
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();

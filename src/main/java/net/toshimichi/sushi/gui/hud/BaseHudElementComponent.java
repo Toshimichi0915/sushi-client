@@ -13,7 +13,7 @@ import java.util.HashSet;
 abstract public class BaseHudElementComponent extends BaseComponent implements HudElementComponent {
 
     private static final TextSettings DEFAULT_TEXT_SETTINGS
-            = new TextSettings("", new EspColor(Color.WHITE, true), 9, true);
+            = new TextSettings("", new EspColor(Color.WHITE, false, true), 9, true);
     private final HashSet<Configuration<TextSettings>> textSettings = new HashSet<>();
     private final Configurations configurations;
     private final String id;

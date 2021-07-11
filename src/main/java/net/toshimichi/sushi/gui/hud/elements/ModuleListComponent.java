@@ -24,7 +24,7 @@ public class ModuleListComponent extends BaseHudElementComponent {
 
     public ModuleListComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
-        backgroundColor = configurations.get("background_color", "Background Color", null, EspColor.class, new EspColor(Color.BLACK, true));
+        backgroundColor = configurations.get("background_color", "Background Color", null, EspColor.class, new EspColor(Color.BLACK, false, true));
         margin = configurations.get("margin", "Margin", null, IntRange.class, new IntRange(1, 10, 0, 1));
         paddingTop = configurations.get("padding_top", "Padding Top", null, IntRange.class, new IntRange(1, 10, 0, 1));
         paddingBottom = configurations.get("padding_bottom", "Padding Bottom", null, IntRange.class, new IntRange(1, 10, 0, 1));

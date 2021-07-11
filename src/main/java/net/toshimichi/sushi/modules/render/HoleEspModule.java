@@ -33,10 +33,10 @@ public class HoleEspModule extends BaseModule {
     public IntRange horizontal = new IntRange(10, 20, 5, 1);
 
     @Config(id = "obsidian_color", name = "Obsidian Color")
-    public EspColor obsidianColor = new EspColor(new Color(255, 0, 0, 100), true);
+    public EspColor obsidianColor = new EspColor(new Color(255, 0, 0, 100), false, true);
 
     @Config(id = "bedrock_color", name = "Bedrock Color")
-    public EspColor bedrockColor = new EspColor(new Color(0, 255, 0, 100), true);
+    public EspColor bedrockColor = new EspColor(new Color(0, 255, 0, 100), false, true);
 
     public HoleEspModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

@@ -26,8 +26,8 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
     private final SimpleBooleanComponent rainbowComponent;
     private final SimpleIntRangeComponent alphaComponent;
 
-    private Color combine(Color c, int alpha) {
-        return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+    private Color applyAlpha(Color c) {
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha.getValue().getCurrent());
     }
 
     public SimpleEspColorComponent(ThemeConstants constants, Configuration<EspColor> c) {
@@ -43,13 +43,15 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
         this.alphaComponent = new SimpleIntRangeComponent(constants, alpha);
 
         c.addHandler(esp -> {
-            if (esp.getColor().getRGB() != color.getValue().getRGB())
-                color.setValue(combine(esp.getColor(), alpha.getValue().getCurrent()));
-            if (esp.isRainbow() != rainbow.getValue()) rainbow.setValue(esp.isRainbow());
-            if (esp.getColor().getAlpha() != color.getValue().getAlpha())
-                alpha.setValue(alpha.getValue().setCurrent(esp.getColor().getAlpha()));
+            new RuntimeException().printStackTrace();
+            if (!applyAlpha(esp.getColor()).equals(applyAlpha(color.getValue()))) {
+                color.setValue(applyAlpha(esp.getColor()));
+            }
+            if (esp.isRainbow() != rainbow.getValue()) {
+                rainbow.setValue(esp.isRainbow());
+            }
         });
-        color.addHandler(it -> c.setValue(c.getValue().setColor(it)));
+        color.addHandler(it -> c.setValue(c.getValue().setColor(applyAlpha(it))));
         rainbow.addHandler(it -> c.setValue(c.getValue().setRainbow(it)));
         alpha.addHandler(it -> c.setValue(c.getValue().setAlpha(it.getCurrent())));
 

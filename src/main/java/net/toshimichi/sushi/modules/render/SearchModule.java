@@ -36,19 +36,19 @@ public class SearchModule extends BaseModule {
     public Boolean outline = true;
 
     @Config(id = "outline_color", name = "Outline Color", when = "outline")
-    public EspColor outlineColor = new EspColor(new Color(255, 0, 0), true);
+    public EspColor outlineColor = new EspColor(new Color(255, 0, 0), false, true);
 
     @Config(id = "fill", name = "Fill")
     public Boolean fill = true;
 
     @Config(id = "fill_color", name = "Fill Color", when = "fill")
-    public EspColor fillColor = new EspColor(new Color(255, 0, 0), true);
+    public EspColor fillColor = new EspColor(new Color(255, 0, 0), false, true);
 
     @Config(id = "tracers", name = "Tracers")
     public Boolean tracers = true;
 
     @Config(id = "tracers_color", name = "Tracers Color", when = "tracers")
-    public EspColor tracerColor = new EspColor(new Color(255, 0, 0), true);
+    public EspColor tracerColor = new EspColor(new Color(255, 0, 0), false, true);
 
     public SearchModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

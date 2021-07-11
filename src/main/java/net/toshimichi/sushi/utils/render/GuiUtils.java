@@ -128,7 +128,7 @@ public class GuiUtils {
     }
 
     public static TextPreview prepareText(String text, String font, Color color, int pts, boolean shadow) {
-        return prepareText(text, font, new EspColor(color, true), pts, shadow);
+        return prepareText(text, font, new EspColor(color, false, true), pts, shadow);
     }
 
     public static void drawLine(double x1, double y1, double x2, double y2, Color color, double width) {

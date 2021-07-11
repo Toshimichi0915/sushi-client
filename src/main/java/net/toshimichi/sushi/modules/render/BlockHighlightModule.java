@@ -30,7 +30,7 @@ public class BlockHighlightModule extends BaseModule {
 
     public BlockHighlightModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        EspColor defaultColor = new EspColor(new Color(255, 0, 0), true);
+        EspColor defaultColor = new EspColor(new Color(255, 0, 0), false, true);
         renderMode = provider.get("render_mode", "Render Mode", null, RenderMode.class, RenderMode.SURFACE);
         outline = provider.get("outline", "Outline", null, Boolean.class, true);
         outlineColor = provider.get("outline_color", "Outline Color", null, EspColor.class, defaultColor, outline::getValue, false, 0);

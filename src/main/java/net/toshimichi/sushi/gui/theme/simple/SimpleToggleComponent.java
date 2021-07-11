@@ -24,6 +24,7 @@ abstract public class SimpleToggleComponent<T> extends BaseSettingComponent<T> {
     }
 
     public void setToggled(boolean current) {
+        if (this.current == current) return;
         onChange(current);
         this.current = current;
     }
