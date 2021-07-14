@@ -15,6 +15,6 @@ public class ColorTypeAdapter extends TypeAdapter<Color> {
 
     @Override
     public Color read(JsonReader in) throws IOException {
-        return new Color((int) Long.parseLong(in.nextString().replaceFirst("#", ""), 16));
+        return new Color((int) Long.parseLong(in.nextString().replaceFirst("#", ""), 16), true);
     }
 }
