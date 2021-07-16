@@ -10,6 +10,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerMoveEvent;
 import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import net.toshimichi.sushi.events.player.PlayerPushOutOfBlocksEvent;
+import net.toshimichi.sushi.events.player.UserCheckEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -57,5 +58,13 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             cir.setReturnValue(false);
             cir.cancel();
         }
+    }
+
+    @Inject(at = @At("HEAD"), method = "isUser", cancellable = true)
+    public void onIsUser(CallbackInfoReturnable<Boolean> cir) {
+        UserCheckEvent event = new UserCheckEvent(EventTiming.PRE, true);
+        EventHandlers.callEvent(event);
+        cir.setReturnValue(event.isUser());
+        cir.cancel();
     }
 }

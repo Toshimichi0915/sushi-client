@@ -12,8 +12,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.lang.reflect.Proxy;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class AutoVote extends BaseModule {
@@ -33,7 +31,7 @@ public class AutoVote extends BaseModule {
             Document document = Jsoup.parse(getRes);
             String csrf = document.select("input[name=csrf]").val();
             String siteKey = document.select(".h-captcha").attr("data-sitekey");
-            if(csrf.isEmpty() || siteKey.isEmpty()) {
+            if (csrf.isEmpty() || siteKey.isEmpty()) {
                 messageHandler.send(ALREADY_VOTED, LogLevel.INFO);
                 return;
             }

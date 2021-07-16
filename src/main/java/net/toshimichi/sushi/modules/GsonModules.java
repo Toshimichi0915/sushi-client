@@ -89,6 +89,7 @@ public class GsonModules implements Modules {
         addModuleFactory("fake_player", FakePlayerModule::new, true);
         addModuleFactory("hole_miner_helper", HoleMinerHelperModule::new, true);
         addModuleFactory("step", StepModule::new, true);
+        addModuleFactory("freecam", FreecamModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

@@ -7,6 +7,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 
 public class WorldRenderHandler {
+
     @SubscribeEvent
     public void onRenderWorldLast(RenderWorldLastEvent e) {
         WorldRenderEvent event = new WorldRenderEvent(EventTiming.POST, e.getContext(), e.getPartialTicks());
