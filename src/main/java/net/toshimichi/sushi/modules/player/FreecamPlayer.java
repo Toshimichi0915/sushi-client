@@ -46,6 +46,8 @@ public class FreecamPlayer extends EntityOtherPlayerMP {
         original.rotationYaw = initYaw;
         original.rotationPitch = initPitch;
 
+        setHealth(original.getHealth());
+        setAbsorptionAmount(original.getAbsorptionAmount());
         inventory.copyInventory(original.inventory);
         updateEntityActionState();
         GameSettings settings = Minecraft.getMinecraft().gameSettings;

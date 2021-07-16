@@ -21,6 +21,8 @@ public class PhaseWalkPlayer extends EntityOtherPlayerMP {
 
     @Override
     public void onLivingUpdate() {
+        setHealth(original.getHealth());
+        setAbsorptionAmount(original.getAbsorptionAmount());
         inventory.copyInventory(original.inventory);
         updateEntityActionState();
         posX = original.posX;
