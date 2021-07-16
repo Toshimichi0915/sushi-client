@@ -5,6 +5,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -25,6 +26,7 @@ public class RenderUtils {
     private static final Matrix4f projection = new Matrix4f();
     private static Vec3d interpolated;
     private static Vec3d cameraPos;
+    private static Vec3d viewerPos;
 
     public static void tick() {
         // matrix
@@ -39,6 +41,8 @@ public class RenderUtils {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         interpolated = getInterpolatedPos(player);
         cameraPos = getInterpolatedPos().add(ActiveRenderInfo.getCameraPosition());
+        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        viewerPos = new Vec3d(renderManager.viewerPosX, renderManager.viewerPosY, renderManager.viewerPosZ);
     }
 
     private static Vector4f toVec4f(Vec3d vec) {
@@ -94,6 +98,10 @@ public class RenderUtils {
         return interpolated;
     }
 
+    public static Vec3d getViewerPos() {
+        return viewerPos;
+    }
+
     public static Vec3d getCameraPos() {
         return cameraPos;
     }
@@ -102,7 +110,7 @@ public class RenderUtils {
         glLineWidth((float) width);
         GuiUtils.setColor(color);
         prepare3D();
-        Vec3d d = getInterpolatedPos();
+        Vec3d d = getViewerPos();
         glBegin(GL_LINES);
         glVertex3d(from.x - d.x, from.y - d.y, from.z - d.z);
         glVertex3d(to.x - d.x, to.y - d.y, to.z - d.z);
@@ -115,7 +123,7 @@ public class RenderUtils {
         GuiUtils.setColor(color);
         prepare3D();
         glBegin(GL_LINE_STRIP);
-        Vec3d d = getInterpolatedPos();
+        Vec3d d = getViewerPos();
         glVertex3d(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
         glVertex3d(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
         glVertex3d(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
@@ -139,7 +147,7 @@ public class RenderUtils {
     public static void drawFilled(AxisAlignedBB box, Color color) {
         GuiUtils.setColor(color);
         prepare3D();
-        Vec3d d = getInterpolatedPos();
+        Vec3d d = getViewerPos();
         glBegin(GL_QUAD_STRIP);
         glVertex3d(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
         glVertex3d(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
