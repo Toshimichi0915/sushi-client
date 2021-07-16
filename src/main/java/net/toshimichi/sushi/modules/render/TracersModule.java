@@ -53,7 +53,8 @@ public class TracersModule extends BaseModule {
             if (entity.getName().equals(getPlayer().getName())) continue;
             glDisable(GL_DEPTH_TEST);
             Color color = getColor(MathHelper.sqrt(entity.getDistanceSq(getPlayer())));
-            Vec3d cameraCenter = relative.getValue() ? RenderUtils.getViewerPos() : RenderUtils.getCameraPos();
+            Vec3d cameraCenter = relative.getValue() ?
+                    RenderUtils.getViewerPos().add(RenderUtils.getCameraPos()).subtract(RenderUtils.getInterpolatedPos()) : RenderUtils.getCameraPos();
             RenderUtils.drawLine(cameraCenter, RenderUtils.getInterpolatedPos(entity), color, 1);
             glEnable(GL_DEPTH_TEST);
         }
