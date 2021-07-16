@@ -23,6 +23,7 @@ import net.toshimichi.sushi.utils.combat.DamageUtils;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
+import net.toshimichi.sushi.utils.world.BlockPlaceOption;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.Collections;
@@ -66,14 +67,16 @@ public class AntiCevBreakModule extends BaseModule {
             PositionUtils.move(posX, getPlayer().posY + 0.2, posZ, 0, 0, true, false, DesyncMode.POSITION);
             PositionUtils.pop();
             getConnection().sendPacket(new CPacketUseEntity(entity));
-            BlockPlaceInfo face = BlockUtils.findBlockPlaceInfo(getWorld(), BlockUtils.toBlockPos(entity.getPositionVector()));
+            BlockPlaceInfo face = BlockUtils.findBlockPlaceInfo(getWorld(), BlockUtils.toBlockPos(entity.getPositionVector()),
+                    new BlockPlaceOption(true, false));
             if (face == null) continue;
             TaskExecutor.newTaskChain()
+                    .delay(1)
                     .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, false))
                     .abortIfFalse()
                     .supply(() -> Collections.singletonList(face))
-                    .then(new BlockPlaceTask(true, true))
+                    .then(new BlockPlaceTask(true, true, new BlockPlaceOption(true, false)))
                     .execute();
         }
     }

@@ -51,6 +51,9 @@ dependencies {
     }
     annotationProcessor('org.spongepowered:mixin:0.8.2:processor') { exclude module: 'gson' }
 
+    // Libraries
+    implementation 'org.jsoup:jsoup:1.14.1'
+
     // Protection
     included(project(':hwid-generator')) { exclude module: 'commons-io' }
     implementation(project(':hwid-annotations')) { transitive = false }

@@ -31,16 +31,17 @@ public class BlockUtils {
         return world.collidesWithAnyBlock(box) || !world.checkNoEntityCollision(box);
     }
 
-    public static boolean canPlace(World world, BlockPlaceInfo face) {
+    public static boolean canPlace(World world, BlockPlaceInfo face, BlockPlaceOption option) {
         BlockPos pos = face.getBlockPos();
         EnumFacing facing = face.getBlockFace() == null ? null : face.getBlockFace().getFacing();
         AxisAlignedBB box = world.getBlockState(pos).getBoundingBox(world, pos).offset(pos);
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player != null && BlockUtils.toVec3d(pos).add(0.5, 0.5, 0.5).squareDistanceTo(player.getPositionVector()) > 64)
             return false;
-        if (isColliding(world, box)) return false;
+        if (world.collidesWithAnyBlock(box) ||
+                !world.checkNoEntityCollision(box) && !option.isEntityCollisionIgnored()) return false;
         if (facing == null) return world.getBlockState(pos).getBlock().canPlaceBlockAt(world, pos);
-        else if (isAir(world, pos.offset(facing.getOpposite()))) return false;
+        else if (isAir(world, pos.offset(facing.getOpposite())) && !option.isAirPlaceIgnored()) return false;
         else return world.getBlockState(pos).getBlock().canPlaceBlockOnSide(world, pos, facing.getOpposite());
     }
 
@@ -56,12 +57,20 @@ public class BlockUtils {
         controller.processRightClickBlock(player, world, pos.offset(face.getFacing().getOpposite()), face.getFacing(), face.getPos().add(vec), EnumHand.MAIN_HAND);
     }
 
-    public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input) {
+    public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input, BlockPlaceOption option) {
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPlaceInfo info = new BlockFace(input.offset(facing), facing.getOpposite()).toBlockPlaceInfo(world);
-            if (!canPlace(world, info)) continue;
+            if (!canPlace(world, info, option)) continue;
             return info;
         }
         return null;
+    }
+
+    public static boolean canPlace(World world, BlockPlaceInfo face) {
+        return canPlace(world, face, new BlockPlaceOption());
+    }
+
+    public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input) {
+        return findBlockPlaceInfo(world, input, new BlockPlaceOption());
     }
 }
