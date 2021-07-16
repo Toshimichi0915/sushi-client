@@ -15,6 +15,8 @@ import net.toshimichi.sushi.utils.player.MovementUtils;
 public class FreecamPlayer extends EntityOtherPlayerMP {
 
     private final EntityPlayerSP original;
+    private float initYaw;
+    private float initPitch;
 
     public FreecamPlayer(World worldIn) {
         super(worldIn, Minecraft.getMinecraft().getSession().getProfile());
@@ -23,6 +25,8 @@ public class FreecamPlayer extends EntityOtherPlayerMP {
         copyLocationAndAnglesFrom(original);
         capabilities.allowFlying = true;
         capabilities.isFlying = true;
+        initYaw = original.rotationYaw;
+        initPitch = original.rotationPitch;
     }
 
     private int toInt(KeyBinding plus, KeyBinding minus) {
@@ -34,15 +38,21 @@ public class FreecamPlayer extends EntityOtherPlayerMP {
 
     @Override
     public void onLivingUpdate() {
+        // rotation
+        float deltaYaw = original.rotationYaw - initYaw;
+        float deltaPitch = original.rotationPitch - initPitch;
+        rotationYaw += deltaYaw;
+        rotationPitch += deltaPitch;
+        original.rotationYaw = initYaw;
+        original.rotationPitch = initPitch;
+
         inventory.copyInventory(original.inventory);
         updateEntityActionState();
         GameSettings settings = Minecraft.getMinecraft().gameSettings;
-        rotationYaw = original.rotationYaw;
-        rotationPitch = original.rotationPitch;
         moveForward = toInt(settings.keyBindForward, settings.keyBindBack);
         moveVertical = toInt(settings.keyBindJump, settings.keyBindSneak);
         moveStrafing = toInt(settings.keyBindLeft, settings.keyBindRight);
-        Vec2f motionXZ = MovementUtils.toWorld(new Vec2f(moveForward, moveStrafing), original.rotationYaw);
+        Vec2f motionXZ = MovementUtils.toWorld(new Vec2f(moveForward, moveStrafing), rotationYaw);
         Vec3d motionXYZ = new Vec3d(motionXZ.x, moveVertical, motionXZ.y);
         motionX = motionXYZ.x;
         motionY = motionXYZ.y;

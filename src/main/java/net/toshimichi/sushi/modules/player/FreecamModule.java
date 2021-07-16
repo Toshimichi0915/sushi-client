@@ -10,8 +10,6 @@ import net.toshimichi.sushi.events.input.InputUpdateEvent;
 import net.toshimichi.sushi.events.player.PlayerAttackEvent;
 import net.toshimichi.sushi.events.player.UserCheckEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.player.DesyncMode;
-import net.toshimichi.sushi.utils.player.PositionUtils;
 import org.apache.commons.lang3.RandomUtils;
 
 public class FreecamModule extends BaseModule {
@@ -29,7 +27,6 @@ public class FreecamModule extends BaseModule {
         int entityId = RandomUtils.nextInt(0, Integer.MAX_VALUE) + Integer.MIN_VALUE;
         getWorld().addEntityToWorld(entityId, freecamPlayer);
         Minecraft.getMinecraft().setRenderViewEntity(freecamPlayer);
-        PositionUtils.desync(DesyncMode.LOOK);
     }
 
     @Override
@@ -49,7 +46,6 @@ public class FreecamModule extends BaseModule {
         input.rightKeyDown = false;
         input.jump = false;
         input.sneak = false;
-        PositionUtils.pop();
     }
 
     @EventHandler(timing = EventTiming.PRE)
