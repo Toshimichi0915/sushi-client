@@ -24,6 +24,7 @@ import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.EntityInfo;
 import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
+import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockFace;
@@ -84,11 +85,11 @@ public class AntiPistonAuraModule extends BaseModule {
             spam.add(findBlockPlaceInfo(getWorld(), pos.offset(enumFacing)));
         }
         when = System.currentTimeMillis();
-        PositionUtils.desync(DesyncMode.ALL);
-        PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.2, getPlayer().posZ, 0, 0, true, false, DesyncMode.POSITION);
-        PositionUtils.lookAt(crystal.getPositionVector(), DesyncMode.LOOK);
-        getConnection().sendPacket(new CPacketUseEntity(crystal));
-        PositionUtils.pop();
+        try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.ALL)) {
+            PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.2, getPlayer().posZ, 0, 0, true, false, DesyncMode.POSITION);
+            PositionUtils.lookAt(crystal.getPositionVector(), DesyncMode.LOOK);
+            getConnection().sendPacket(new CPacketUseEntity(crystal));
+        }
 
         return true;
     }

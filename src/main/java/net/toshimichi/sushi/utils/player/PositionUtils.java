@@ -9,12 +9,13 @@ import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.utils.MathUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 
-import java.util.Stack;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PositionUtils {
 
     private static final float EPSILON = 0.00001F;
-    private static final Stack<DesyncMode> stack = new Stack<>();
+    private static final Map<DesyncCloseable, DesyncMode> desync = new HashMap<>();
     private static DesyncMode mode = DesyncMode.NONE;
     private static double x;
     private static double y;
@@ -51,16 +52,28 @@ public class PositionUtils {
         return onGround;
     }
 
-    public static void desync(DesyncMode newMode) {
-        boolean position = mode.isPositionDesync() || newMode.isPositionDesync();
-        boolean rotation = mode.isRotationDesync() || newMode.isRotationDesync();
-        boolean onGround = mode.isOnGroundDesync() || newMode.isOnGroundDesync();
-        stack.push(mode);
+    private static void updateDesyncMode() {
+        boolean position = false;
+        boolean rotation = false;
+        boolean onGround = false;
+        for (DesyncMode mode : desync.values()) {
+            position = position || mode.isPositionDesync();
+            rotation = rotation || mode.isRotationDesync();
+            onGround = onGround || mode.isOnGroundDesync();
+        }
         mode = new DesyncMode(position, rotation, onGround);
     }
 
-    public static void pop() {
-        mode = stack.pop();
+    public static DesyncCloseable desync(DesyncMode newMode) {
+        DesyncCloseable closeable = new DesyncCloseable();
+        desync.put(closeable, newMode);
+        updateDesyncMode();
+        return closeable;
+    }
+
+    protected static void pop(DesyncCloseable closeable) {
+        desync.remove(closeable);
+        updateDesyncMode();
     }
 
     public static void move(Vec3d pos, float yaw, float pitch, boolean position, boolean rotation, DesyncMode mode) {

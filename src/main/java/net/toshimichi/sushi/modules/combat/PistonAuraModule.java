@@ -24,6 +24,7 @@ import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.combat.PistonAuraAttack;
 import net.toshimichi.sushi.utils.combat.PistonAuraUtils;
+import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
@@ -43,7 +44,7 @@ public class PistonAuraModule extends BaseModule {
 
     private PistonAuraAttack attack;
     private EntityEnderCrystal exploded;
-    private boolean desync;
+    private DesyncCloseable closeable;
     private boolean running;
     private int repeatCounter;
     private int recalculationCoolTime;
@@ -85,9 +86,9 @@ public class PistonAuraModule extends BaseModule {
 
     private void stop() {
         running = false;
-        if (desync) {
-            desync = false;
-            PositionUtils.pop();
+        if (closeable != null) {
+            closeable.close();
+            closeable = null;
         }
     }
 
@@ -107,9 +108,8 @@ public class PistonAuraModule extends BaseModule {
         if (attack == null) return;
         if (exploded != null && exploded.isAddedToWorld()) return;
         running = true;
-        if (!desync) {
-            desync = true;
-            PositionUtils.desync(DesyncMode.LOOK);
+        if (closeable == null) {
+            closeable = PositionUtils.desync(DesyncMode.LOOK);
         }
         Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
         PositionUtils.lookAt(lookAt, DesyncMode.LOOK);

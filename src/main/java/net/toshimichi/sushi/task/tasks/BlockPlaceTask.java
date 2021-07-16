@@ -3,6 +3,7 @@ package net.toshimichi.sushi.task.tasks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.toshimichi.sushi.task.TaskAdapter;
+import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
@@ -48,9 +49,9 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
             return;
         }
         if (rotate) {
-            PositionUtils.desync(DesyncMode.LOOK);
-            PositionUtils.lookAt(info, desync ? DesyncMode.LOOK : DesyncMode.NONE);
-            PositionUtils.pop();
+            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
+                PositionUtils.lookAt(info, desync ? DesyncMode.LOOK : DesyncMode.NONE);
+            }
         }
         BlockUtils.place(info);
         if (index >= getInput().size()) stop(null);

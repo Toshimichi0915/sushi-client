@@ -15,6 +15,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.MovementUtils;
 import net.toshimichi.sushi.utils.player.PositionUtils;
@@ -27,6 +28,7 @@ public class PhaseWalkModule extends BaseModule {
     private final Configuration<DoubleRange> delta;
     private final Configuration<IntRange> range;
     private boolean clipping;
+    private DesyncCloseable closeable;
 
     public PhaseWalkModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -38,13 +40,13 @@ public class PhaseWalkModule extends BaseModule {
     @Override
     public void onEnable() {
         EventHandlers.register(this);
-        PositionUtils.desync(DesyncMode.POSITION);
+        closeable = PositionUtils.desync(DesyncMode.POSITION);
     }
 
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
-        PositionUtils.pop();
+        if (closeable != null) closeable.close();
         if (clipping) {
             PositionUtils.move(PositionUtils.getX(), PositionUtils.getY(), PositionUtils.getZ(), 0, 0, true, false, DesyncMode.NONE);
         }

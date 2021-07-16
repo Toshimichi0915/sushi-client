@@ -20,6 +20,7 @@ import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
+import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
@@ -63,9 +64,9 @@ public class AntiCevBreakModule extends BaseModule {
             double damage = DamageUtils.getCrystalDamage(getPlayer(), entity.getPositionVector());
             getWorld().setBlockState(floorPos, floorState);
             if (damage <= 30) return;
-            PositionUtils.desync(DesyncMode.POSITION);
-            PositionUtils.move(posX, getPlayer().posY + 0.2, posZ, 0, 0, true, false, DesyncMode.POSITION);
-            PositionUtils.pop();
+            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.POSITION)) {
+                PositionUtils.move(posX, getPlayer().posY + 0.2, posZ, 0, 0, true, false, DesyncMode.POSITION);
+            }
             getConnection().sendPacket(new CPacketUseEntity(entity));
             BlockPlaceInfo face = BlockUtils.findBlockPlaceInfo(getWorld(), BlockUtils.toBlockPos(entity.getPositionVector()),
                     new BlockPlaceOption(true, false));

@@ -36,6 +36,7 @@ import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
+import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.MovementUtils;
 import net.toshimichi.sushi.utils.player.PositionUtils;
@@ -323,19 +324,19 @@ public class CrystalAuraModule extends BaseModule {
     }
 
     private void breakEnderCrystal(EnderCrystalInfo enderCrystal) {
-        PositionUtils.desync(DesyncMode.LOOK);
-        PositionUtils.lookAt(enderCrystal.pos, DesyncMode.LOOK);
-        CPacketUseEntity packet = new CPacketUseEntity();
-        PacketBuffer write = new PacketBuffer(Unpooled.buffer());
-        write.writeVarInt(enderCrystal.entityId);
-        write.writeEnumValue(CPacketUseEntity.Action.ATTACK);
-        try {
-            packet.readPacketData(write);
-        } catch (IOException e) {
-            e.printStackTrace();
+        try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
+            PositionUtils.lookAt(enderCrystal.pos, DesyncMode.LOOK);
+            CPacketUseEntity packet = new CPacketUseEntity();
+            PacketBuffer write = new PacketBuffer(Unpooled.buffer());
+            write.writeVarInt(enderCrystal.entityId);
+            write.writeEnumValue(CPacketUseEntity.Action.ATTACK);
+            try {
+                packet.readPacketData(write);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            getConnection().sendPacket(packet);
         }
-        getConnection().sendPacket(packet);
-        PositionUtils.pop();
     }
 
     private synchronized void executeAttack() {
@@ -353,9 +354,9 @@ public class CrystalAuraModule extends BaseModule {
             EnderCrystalInfo colliding = getCollidingEnderCrystal(crystalAttack.info.box);
             if (colliding != null && updateBreakCounter()) breakEnderCrystal(colliding);
             lastPlaceTick = counter;
-            PositionUtils.desync(DesyncMode.LOOK);
-            PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
-            PositionUtils.pop();
+            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
+                PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
+            }
             if (y255Attack.getValue()) {
                 getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
                         EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
