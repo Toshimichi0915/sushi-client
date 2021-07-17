@@ -2,6 +2,7 @@ package net.toshimichi.sushi.modules.movement;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.network.play.server.SPacketEntityTeleport;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
@@ -12,6 +13,7 @@ import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
+import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.events.player.PlayerAttackEvent;
 import net.toshimichi.sushi.events.player.PlayerPushEvent;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
@@ -29,7 +31,7 @@ public class PhaseWalkModule extends BaseModule {
     private final Configuration<DoubleRange> horizontal;
     private final Configuration<DoubleRange> delta;
     private final Configuration<IntRange> range;
-    private final Configuration<Boolean> safe;
+    private final Configuration<Boolean> autoDisable;
     private PhaseWalkPlayer phaseWalkPlayer;
 
     public PhaseWalkModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
@@ -37,7 +39,7 @@ public class PhaseWalkModule extends BaseModule {
         horizontal = provider.get("horizontal_speed", "Horizontal Speed", null, DoubleRange.class, new DoubleRange(1, 20, 0, 0.1, 1));
         delta = provider.get("delta", "Delta", null, DoubleRange.class, new DoubleRange(0.5, 2, 0.1, 0.1, 1));
         range = provider.get("range", "Range", null, IntRange.class, new IntRange(3, 8, 0, 1));
-        safe = provider.get("safe", "Safe", null, Boolean.class, true);
+        autoDisable = provider.get("auto_disable", "Auto Disable", null, Boolean.class, true);
     }
 
     @Override
@@ -73,6 +75,17 @@ public class PhaseWalkModule extends BaseModule {
         player.motionX = vec.x;
         player.motionY = 0;
         player.motionZ = vec.y;
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onPacketReceive(PacketReceiveEvent e) {
+        getClient().addScheduledTask(() -> {
+            if (!autoDisable.getValue()) return;
+            if (!(e.getPacket() instanceof SPacketEntityTeleport)) return;
+            int targetEntityId = ((SPacketEntityTeleport) e.getPacket()).getEntityId();
+            if (getPlayer().getEntityId() != targetEntityId) return;
+            setEnabled(false);
+        });
     }
 
     @EventHandler(timing = EventTiming.POST)
