@@ -152,7 +152,7 @@ public class CrystalAuraModule extends BaseModule {
         NetworkPlayerInfo selfInfo = getConnection().getPlayerInfo(getPlayer().getUniqueID());
         Vec3d offset = player.getPositionVector().subtract(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ));
         Vec3d result;
-        if (self && useInputs.getValue()) result = MovementUtils.getMoveInputs(getPlayer(), true);
+        if (self && useInputs.getValue()) result = MovementUtils.getMoveInputs(getPlayer());
         else result = offset.normalize();
 
         if (!constantSpeed.getValue()) result = result.scale(offset.distanceTo(Vec3d.ZERO) / WALK_SPEED);

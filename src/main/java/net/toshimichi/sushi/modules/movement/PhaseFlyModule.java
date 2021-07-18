@@ -73,7 +73,7 @@ public class PhaseFlyModule extends BaseModule {
         }
         horizontalSpeed *= 5;
         verticalSpeed *= 5;
-        Vec3d inputs = MovementUtils.getMoveInputs(player, true).normalize();
+        Vec3d inputs = MovementUtils.getMoveInputs(player).normalize();
         float moveForward = (float) (inputs.x * horizontalSpeed);
         float moveUpward = (float) (inputs.y * verticalSpeed);
         float moveStrafe = (float) (inputs.z * horizontalSpeed);

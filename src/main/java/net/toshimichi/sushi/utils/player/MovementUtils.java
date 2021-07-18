@@ -7,16 +7,16 @@ import net.minecraft.util.math.Vec3d;
 
 public class MovementUtils {
 
-    public static Vec3d getMoveInputs(EntityPlayerSP player, boolean limit) {
+    public static Vec3d getMoveInputs(EntityPlayerSP player) {
         float moveUpward = 0;
         if (player.movementInput.jump) moveUpward++;
         if (player.movementInput.sneak) moveUpward--;
-        float moveForward = player.movementInput.moveForward;
-        float moveStrafe = player.movementInput.moveStrafe;
-        if (limit) {
-            moveForward = MathHelper.clamp(moveForward, -1, 1);
-            moveStrafe = MathHelper.clamp(moveStrafe, -1, 1);
-        }
+        float moveForward = 0;
+        float moveStrafe = 0;
+        moveForward += player.movementInput.forwardKeyDown ? 1 : 0;
+        moveForward -= player.movementInput.backKeyDown ? 1 : 0;
+        moveStrafe += player.movementInput.leftKeyDown ? 1 : 0;
+        moveStrafe -= player.movementInput.rightKeyDown ? 1 : 0;
         return new Vec3d(moveForward, moveUpward, moveStrafe);
     }
 
