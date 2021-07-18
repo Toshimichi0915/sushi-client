@@ -1,16 +1,14 @@
 package net.toshimichi.sushi.mixin;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.MoverType;
 import net.minecraft.world.World;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.player.PlayerMoveEvent;
-import net.toshimichi.sushi.events.player.PlayerPacketEvent;
-import net.toshimichi.sushi.events.player.PlayerPushOutOfBlocksEvent;
-import net.toshimichi.sushi.events.player.UserCheckEvent;
+import net.toshimichi.sushi.events.player.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -58,6 +56,15 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             cir.setReturnValue(false);
             cir.cancel();
         }
+    }
+
+    @Inject(at = @At("HEAD"), method = "isCurrentViewEntity", cancellable = true)
+    public void onIsCurrentViewEntity(CallbackInfoReturnable<Boolean> cir) {
+        boolean currentViewEntity = Minecraft.getMinecraft().getRenderViewEntity() == this;
+        CurrentViewEntityCheckEvent event = new CurrentViewEntityCheckEvent(EventTiming.PRE, currentViewEntity);
+        EventHandlers.callEvent(event);
+        cir.setReturnValue(event.isCurrentViewEntity());
+        cir.cancel();
     }
 
     @Inject(at = @At("HEAD"), method = "isUser", cancellable = true)

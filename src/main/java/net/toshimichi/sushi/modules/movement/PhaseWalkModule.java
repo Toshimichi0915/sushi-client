@@ -14,10 +14,7 @@ import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
-import net.toshimichi.sushi.events.player.PlayerAttackEvent;
-import net.toshimichi.sushi.events.player.PlayerPushEvent;
-import net.toshimichi.sushi.events.player.PlayerTravelEvent;
-import net.toshimichi.sushi.events.player.UserCheckEvent;
+import net.toshimichi.sushi.events.player.*;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.MovementUtils;
@@ -120,6 +117,11 @@ public class PhaseWalkModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerAttack(PlayerAttackEvent e) {
         if (e.getTarget() == getPlayer()) e.setCancelled(true);
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onCurrentViewEntityCheck(CurrentViewEntityCheckEvent e) {
+        e.setCurrentViewEntity(true);
     }
 
     @EventHandler(timing = EventTiming.PRE)
