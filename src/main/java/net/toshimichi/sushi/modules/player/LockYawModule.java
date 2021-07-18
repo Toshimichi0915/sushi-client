@@ -87,7 +87,7 @@ public class LockYawModule extends BaseModule {
 
         public EtaComponent(Configurations configurations, String id, String name) {
             super(configurations, id, name);
-            this.format = configurations.get("eta", "ETA", null, String.class, "{m} min {s} sec");
+            this.format = configurations.get("eta", "ETA", null, String.class, "{h} hours {m} min {s} sec (total: {tm} min");
         }
 
         @Override
@@ -95,17 +95,21 @@ public class LockYawModule extends BaseModule {
             float vec = MathHelper.sqrt(Math.pow(x.getValue() - getPlayer().posX, 2) + Math.pow(z.getValue() - getPlayer().posZ, 2));
             double mps = SpeedUtils.getMps(getPlayer());
             double seconds = mps == 0 ? 0 : vec / mps;
-            String h, m, s;
+            String th, tm, ts, h, m, s;
             if (mps < 0.1) {
-                h = "Inf";
-                m = "Inf";
-                s = "Inf";
+                th = tm = ts = h = m = s = "Inf";
             } else {
-                h = Integer.toString((int) seconds / 60 / 60);
-                m = Integer.toString((int) seconds / 60);
-                s = Integer.toString((int) seconds);
+                th = Integer.toString((int) seconds / 60 / 60);
+                tm = Integer.toString((int) seconds / 60);
+                ts = Integer.toString((int) seconds);
+                h = Integer.toString((int) seconds / 60 / 60 % 60);
+                m = Integer.toString((int) seconds / 60 % 60);
+                s = Integer.toString((int) seconds % 60);
             }
             return format.getValue()
+                    .replace("{th}", th)
+                    .replace("{tm}", tm)
+                    .replace("{ts}", ts)
                     .replace("{h}", h)
                     .replace("{m}", m)
                     .replace("{s}", s);
