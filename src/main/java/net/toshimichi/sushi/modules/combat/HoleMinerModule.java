@@ -175,7 +175,7 @@ public class HoleMinerModule extends BaseModule {
     public void onClientTick(ClientTickEvent e) {
         if (running) return;
         updateHoleMineInfo();
-        start(holeMineInfo);
+        if (holeMineInfo != null) start(holeMineInfo);
     }
 
     public HoleMineInfo getHoleMineInfo() {
