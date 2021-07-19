@@ -11,22 +11,19 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.task.forge.TaskExecutor;
-import net.toshimichi.sushi.task.tasks.TransactionWaitTask;
+import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.player.InventoryType;
 import net.toshimichi.sushi.utils.player.InventoryUtils;
 import net.toshimichi.sushi.utils.player.ItemSlot;
 
 public class AutoTotemModule extends BaseModule {
 
-    private final Configuration<Boolean> confirm;
     private final Configuration<IntRange> delay;
-    private boolean running;
+    private int lastUpdate;
 
     public AutoTotemModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        confirm = provider.get("confirm", "Confirm", null, Boolean.class, true);
-        delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(1, 10, 0, 1), () -> !confirm.getValue(), false, 0);
+        delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(1, 10, 0, 1));
     }
 
     @Override
@@ -36,35 +33,21 @@ public class AutoTotemModule extends BaseModule {
 
     @Override
     public void onDisable() {
-        running = false;
         EventHandlers.unregister(this);
     }
 
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
-        if (running) return;
+        if (lastUpdate > TickUtils.current() + delay.getValue().getCurrent()) return;
         int offhandSlot = InventoryType.OFFHAND.getIndex();
         ItemStack offhand = getPlayer().inventory.getStackInSlot(offhandSlot);
         Item totem = Item.getItemById(449);
         if (offhand.getItem().equals(totem)) return;
         ItemSlot itemSlot = InventoryUtils.findItemSlot(totem, getPlayer(), InventoryType.values());
         if (itemSlot == null) return;
-        running = true;
-        if (confirm.getValue()) {
-            TaskExecutor.newTaskChain()
-                    .supply(() -> InventoryUtils.clickItemSlot(itemSlot, ClickType.PICKUP, 0))
-                    .then(new TransactionWaitTask())
-                    .then(() -> InventoryUtils.clickItemSlot(new ItemSlot(offhandSlot, getPlayer()), ClickType.PICKUP, 0))
-                    .last(() -> running = false)
-                    .execute();
-        } else {
-            TaskExecutor.newTaskChain()
-                    .then(() -> InventoryUtils.clickItemSlot(itemSlot, ClickType.PICKUP, 0))
-                    .delay(delay.getValue().getCurrent())
-                    .then(() -> InventoryUtils.clickItemSlot(new ItemSlot(offhandSlot, getPlayer()), ClickType.PICKUP, 0))
-                    .last(() -> running = false)
-                    .execute();
-        }
+        lastUpdate = TickUtils.current();
+        InventoryUtils.clickItemSlot(itemSlot, ClickType.PICKUP, 0);
+        InventoryUtils.clickItemSlot(new ItemSlot(offhandSlot, getPlayer()), ClickType.PICKUP, 0);
     }
 
     @Override
