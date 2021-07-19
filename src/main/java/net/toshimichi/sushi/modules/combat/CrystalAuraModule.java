@@ -95,7 +95,7 @@ public class CrystalAuraModule extends BaseModule {
         super(id, modules, categories, provider, factory);
         // Range
         ConfigurationCategory range = provider.getCategory("range", "Range Settings", null);
-        targetRange = range.get("target_range", "Target Range", null, DoubleRange.class, new DoubleRange(6, 18, 1, 1, 1));
+        targetRange = range.get("target_range", "Target Range", null, DoubleRange.class, new DoubleRange(12, 18, 1, 1, 1));
         crystalRange = range.get("crystal_range", "Crystal Range", null, DoubleRange.class, new DoubleRange(6, 10, 1, 0.1, 1));
         wallRange = range.get("wall_range", "Wall Range", null, DoubleRange.class, new DoubleRange(3, 6, 1, 0.1, 1));
 
