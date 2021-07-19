@@ -3,6 +3,8 @@ package net.toshimichi.sushi.utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,11 +19,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.toshimichi.sushi.utils.player.MovementUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntityUtils {
+
+    private static final double WALK_SPEED = 0.0275;
 
     public static boolean canInteract(Vec3d vec, Vec3d target, double reach, double wall) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -37,6 +42,22 @@ public class EntityUtils {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) return false;
         return canInteract(player.getPositionVector(), target, reach, wall);
+    }
+
+    public static Vec3d getPingOffset(EntityPlayer player, boolean useInputs, boolean constantSpeed, double selfPingMultiplier) {
+        EntityPlayerSP selfPlayer = Minecraft.getMinecraft().player;
+        NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
+        if (selfPlayer == null || connection == null) return player.getPositionVector();
+
+        boolean self = selfPlayer.equals(player);
+        NetworkPlayerInfo selfInfo = connection.getPlayerInfo(selfPlayer.getUniqueID());
+        Vec3d offset = player.getPositionVector().subtract(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ));
+        Vec3d result;
+        if (self && useInputs) result = MovementUtils.getMoveInputs(selfPlayer);
+        else result = offset.normalize();
+
+        if (!constantSpeed) result = result.scale(offset.distanceTo(Vec3d.ZERO) / WALK_SPEED);
+        return result.scale(selfInfo.getResponseTime() / 50D * WALK_SPEED * selfPingMultiplier);
     }
 
     @SuppressWarnings("unchecked")

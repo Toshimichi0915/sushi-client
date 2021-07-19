@@ -3,7 +3,6 @@ package net.toshimichi.sushi.modules.combat;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,7 +37,6 @@ import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
 import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
-import net.toshimichi.sushi.utils.player.MovementUtils;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.render.RenderUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
@@ -46,13 +44,9 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.*;
 
 public class CrystalAuraModule extends BaseModule {
-
-    private static final double WALK_SPEED = 0.0275;
-    private static final DecimalFormat FORMATTER = new DecimalFormat("0.0");
 
     private final Configuration<DoubleRange> targetRange;
     private final Configuration<DoubleRange> crystalRange;
@@ -148,17 +142,6 @@ public class CrystalAuraModule extends BaseModule {
         counter = 100;
     }
 
-    private Vec3d getPingOffset(EntityPlayer player, boolean self) {
-        NetworkPlayerInfo selfInfo = getConnection().getPlayerInfo(getPlayer().getUniqueID());
-        Vec3d offset = player.getPositionVector().subtract(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ));
-        Vec3d result;
-        if (self && useInputs.getValue()) result = MovementUtils.getMoveInputs(getPlayer());
-        else result = offset.normalize();
-
-        if (!constantSpeed.getValue()) result = result.scale(offset.distanceTo(Vec3d.ZERO) / WALK_SPEED);
-        return result.scale(selfInfo.getResponseTime() / 50D * WALK_SPEED * selfPingMultiplier.getValue().getCurrent());
-    }
-
     private double getDamage(Vec3d pos, EntityPlayer player, Vec3d offset) {
         double power = customDamage.getValue() ? customPower.getValue().getCurrent() : 6;
         double damage = DamageUtils.getExplosionDamage(player, offset, pos, power);
@@ -173,7 +156,9 @@ public class CrystalAuraModule extends BaseModule {
             if (getPlayer().getDistanceSq(entity) > range * range) continue;
             EntityPlayer player = (EntityPlayer) entity;
             if (player.getName().equals(getPlayer().getName())) continue;
-            damages.add(new AbstractMap.SimpleEntry<>(player, getDamage(pos, player, getPingOffset(player, false))));
+            Vec3d offset = EntityUtils.getPingOffset(player, useInputs.getValue(), constantSpeed.getValue(),
+                    selfPingMultiplier.getValue().getCurrent());
+            damages.add(new AbstractMap.SimpleEntry<>(player, getDamage(pos, player, offset)));
         }
         if (damages.isEmpty()) return null;
         // sort
@@ -205,7 +190,8 @@ public class CrystalAuraModule extends BaseModule {
         entities.removeIf(p -> p instanceof EntityEnderCrystal);
         if (checkCollision && !entities.isEmpty()) return false;
 
-        double selfDamage = getDamage(crystalPos, getPlayer(), getPingOffset(getPlayer(), true));
+        Vec3d offset = EntityUtils.getPingOffset(getPlayer(), useInputs.getValue(), constantSpeed.getValue(), selfPingMultiplier.getValue().getCurrent());
+        double selfDamage = getDamage(crystalPos, getPlayer(), offset);
         double ratio = selfDamage / attack.getTotalDamage();
         if (attack.getTotalDamage() < minDamage.getValue().getCurrent() &&
                 (attack.damages.isEmpty() || attack.getTotalDamage() <= 2 || !checkFacePlace(attack))) {
