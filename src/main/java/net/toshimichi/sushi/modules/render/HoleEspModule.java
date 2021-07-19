@@ -17,11 +17,13 @@ import net.toshimichi.sushi.utils.render.hole.HoleRenderMode;
 import net.toshimichi.sushi.utils.render.hole.HoleUtils;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 public class HoleEspModule extends BaseModule {
 
-    private volatile HashSet<HoleInfo> holes = new HashSet<>();
+    private volatile ArrayList<HoleInfo> holes = new ArrayList<>();
 
     //    @Config(id = "mode", name = "Mode")
     public HoleRenderMode mode = HoleRenderMode.FILL;
@@ -56,10 +58,11 @@ public class HoleEspModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerUpdate(PlayerUpdateEvent e) {
         BlockPos pos = getPlayer().getPosition();
-        HashSet<HoleInfo> copy = new HashSet<>();
+        ArrayList<HoleInfo> copy = new ArrayList<>();
         BlockPos from = new BlockPos(pos.getX() - horizontal.getCurrent(), pos.getY() - vertical.getCurrent(), pos.getZ() - horizontal.getCurrent());
         BlockPos to = new BlockPos(pos.getX() + horizontal.getCurrent(), pos.getY() + vertical.getCurrent(), pos.getZ() + horizontal.getCurrent());
         HoleUtils.findHoles(getWorld(), from, to, copy::add);
+        Collections.sort(copy);
         holes = copy;
     }
 

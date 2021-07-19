@@ -1,8 +1,6 @@
 package net.toshimichi.sushi.utils.render.hole;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.config.data.Named;
@@ -17,12 +15,9 @@ public enum HoleRenderMode implements Named, HoleRenderer {
     FILL("Fill") {
         @Override
         public void render(World world, HoleInfo info, EspColor obsidian, EspColor bedrock) {
-            for (BlockPos pos : info.getBlockPos()) {
-                AxisAlignedBB box = world.getBlockState(pos).getBoundingBox(world, pos).offset(pos);
-                glDisable(GL_DEPTH_TEST);
-                RenderUtils.drawFilled(box, HoleRenderMode.getColor(info, obsidian, bedrock));
-                glEnable(GL_DEPTH_TEST);
-            }
+            glDisable(GL_DEPTH_TEST);
+            RenderUtils.drawFilled(info.getBox(), HoleRenderMode.getColor(info, obsidian, bedrock));
+            glEnable(GL_DEPTH_TEST);
         }
     };
 
