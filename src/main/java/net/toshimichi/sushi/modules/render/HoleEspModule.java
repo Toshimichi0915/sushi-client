@@ -12,6 +12,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.render.hole.HoleInfo;
 import net.toshimichi.sushi.utils.render.hole.HoleRenderMode;
 import net.toshimichi.sushi.utils.render.hole.HoleUtils;
@@ -57,6 +58,7 @@ public class HoleEspModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerUpdate(PlayerUpdateEvent e) {
+        if(TickUtils.current() % 5 != 0) return;
         BlockPos pos = getPlayer().getPosition();
         ArrayList<HoleInfo> copy = new ArrayList<>();
         BlockPos from = new BlockPos(pos.getX() - horizontal.getCurrent(), pos.getY() - vertical.getCurrent(), pos.getZ() - horizontal.getCurrent());
