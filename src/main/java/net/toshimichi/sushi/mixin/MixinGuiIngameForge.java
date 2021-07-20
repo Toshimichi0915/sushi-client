@@ -3,7 +3,7 @@ package net.toshimichi.sushi.mixin;
 import net.minecraftforge.client.GuiIngameForge;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.tick.OverlayRenderEvent;
+import net.toshimichi.sushi.events.render.OverlayRenderEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

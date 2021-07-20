@@ -2,8 +2,8 @@ package net.toshimichi.sushi.handlers;
 
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.tick.GuiRenderEvent;
-import net.toshimichi.sushi.events.tick.OverlayRenderEvent;
+import net.toshimichi.sushi.events.render.GuiRenderEvent;
+import net.toshimichi.sushi.events.render.OverlayRenderEvent;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ComponentContext;
 import net.toshimichi.sushi.gui.Components;

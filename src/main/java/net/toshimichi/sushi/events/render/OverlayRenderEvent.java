@@ -1,4 +1,4 @@
-package net.toshimichi.sushi.events.tick;
+package net.toshimichi.sushi.events.render;
 
 import net.toshimichi.sushi.events.BaseEvent;
 import net.toshimichi.sushi.events.EventTiming;

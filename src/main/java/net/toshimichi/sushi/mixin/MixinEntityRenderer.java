@@ -6,10 +6,13 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.toshimichi.sushi.events.EventHandlers;
+import net.toshimichi.sushi.events.render.HurtCameraEffectEvent;
 import net.toshimichi.sushi.events.world.EntityTraceEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
@@ -21,5 +24,12 @@ public class MixinEntityRenderer {
         EntityTraceEvent event = new EntityTraceEvent(worldClient, original);
         EventHandlers.callEvent(event);
         return event.getEntities();
+    }
+
+    @Inject(at = @At("HEAD"), method = "hurtCameraEffect", cancellable = true)
+    public void onHurtCameraEffect(float partialTicks, CallbackInfo ci) {
+        HurtCameraEffectEvent event = new HurtCameraEffectEvent();
+        EventHandlers.callEvent(event);
+        if (event.isCancelled()) ci.cancel();
     }
 }

@@ -26,6 +26,7 @@
     "MixinMovementInputFromOptions",
     "MixinNetworkManager",
     "MixinPlayerControllerMP",
+    "MixinRenderManager",
     "MixinStateImplementation",
     "MixinTileEntityRendererDispatcher",
     "MixinWorld"

@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.tick.GuiRenderEvent;
+import net.toshimichi.sushi.events.render.GuiRenderEvent;
 import net.toshimichi.sushi.utils.player.InputUtils;
 
 class LockGuiScreen extends GuiScreen {

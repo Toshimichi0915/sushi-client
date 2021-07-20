@@ -11,7 +11,7 @@ import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.tick.OverlayRenderEvent;
+import net.toshimichi.sushi.events.render.OverlayRenderEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.EntityState;
 import net.toshimichi.sushi.utils.EntityUtils;
