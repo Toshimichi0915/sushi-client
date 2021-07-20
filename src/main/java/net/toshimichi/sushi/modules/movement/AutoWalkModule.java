@@ -24,6 +24,7 @@ public class AutoWalkModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onInputUpdate(InputUpdateEvent e) {
+        getPlayer().movementInput.forwardKeyDown = true;
         getPlayer().movementInput.moveForward = 1.0F;
     }
 
