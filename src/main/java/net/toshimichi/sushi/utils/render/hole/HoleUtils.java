@@ -52,18 +52,18 @@ public class HoleUtils {
         return null;
     }
 
-    public static HoleInfo getHoleInfo(World world, BlockPos origin) {
+    public static HoleInfo getHoleInfo(World world, BlockPos origin, boolean doubleHole) {
         HoleInfo info = getSingleHole(world, origin);
-//        if (info == null) info = getDoubleHole(world, origin);
+        if (info == null && doubleHole) info = getDoubleHole(world, origin);
         return info;
     }
 
-    public static void findHoles(World world, BlockPos from, BlockPos to, Consumer<HoleInfo> onFound) {
+    public static void findHoles(World world, BlockPos from, BlockPos to, boolean doubleHole, Consumer<HoleInfo> onFound) {
         for (int x = from.getX(); x <= to.getX(); x++) {
             for (int y = from.getY(); y <= to.getY(); y++) {
                 for (int z = from.getZ(); z <= to.getZ(); z++) {
                     BlockPos origin = new BlockPos(x, y, z);
-                    HoleInfo info = getHoleInfo(world, origin);
+                    HoleInfo info = getHoleInfo(world, origin, doubleHole);
                     if (info != null) onFound.accept(info);
                 }
             }

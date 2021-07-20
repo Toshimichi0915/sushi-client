@@ -6,6 +6,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
+import java.util.Arrays;
+
 public class HoleInfo implements Comparable<HoleInfo> {
     private final BlockPos[] blockPos;
     private final AxisAlignedBB box;
@@ -29,17 +31,47 @@ public class HoleInfo implements Comparable<HoleInfo> {
         return holeType;
     }
 
-    private int distance() {
+    private double distance() {
         Vec3d playerPos = Minecraft.getMinecraft().player.getPositionVector();
-        int total = 0;
+        double total = 0;
         for (BlockPos pos : blockPos) {
             total += playerPos.squareDistanceTo(BlockUtils.toVec3d(pos));
         }
         return total / blockPos.length;
     }
 
+    private boolean compareBlockPos(BlockPos[] arr1, BlockPos[] arr2) {
+        if (arr1.length != arr2.length) return false;
+        for (int i = 0; i < arr1.length; i++) {
+            BlockPos pos1 = arr1[i];
+            BlockPos pos2 = arr2[i];
+            if (pos1.getX() != pos2.getX() || pos1.getY() != pos2.getY() || pos1.getZ() != pos2.getZ()) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HoleInfo holeInfo = (HoleInfo) o;
+
+        if (!compareBlockPos(blockPos, holeInfo.blockPos)) return false;
+        if (box != null ? !box.equals(holeInfo.box) : holeInfo.box != null) return false;
+        return holeType == holeInfo.holeType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(blockPos);
+        result = 31 * result + (box != null ? box.hashCode() : 0);
+        result = 31 * result + (holeType != null ? holeType.hashCode() : 0);
+        return result;
+    }
+
     @Override
     public int compareTo(HoleInfo o) {
-        return Integer.compare(distance(), o.distance());
+        return Double.compare(distance(), o.distance());
     }
 }

@@ -110,7 +110,7 @@ public class AnchorModule extends BaseModule {
         BlockPos from = BlockUtils.toBlockPos(getPlayer().getPositionVector().subtract(0, range, 0));
         BlockPos to = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         AtomicReference<HoleInfo> result = new AtomicReference<>();
-        HoleUtils.findHoles(getWorld(), from, to, info -> {
+        HoleUtils.findHoles(getWorld(), from, to, false, info -> {
             if (!canAccess(info)) return;
             if (Arrays.asList(allowed).contains(info.getHoleType())) {
                 result.set(info);

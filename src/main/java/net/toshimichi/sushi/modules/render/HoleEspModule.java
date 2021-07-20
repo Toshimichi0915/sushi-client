@@ -16,23 +16,33 @@ import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.render.hole.HoleInfo;
 import net.toshimichi.sushi.utils.render.hole.HoleRenderMode;
 import net.toshimichi.sushi.utils.render.hole.HoleUtils;
+import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 public class HoleEspModule extends BaseModule {
 
-    private volatile ArrayList<HoleInfo> holes = new ArrayList<>();
+    private ArrayList<HoleInfo> holes1 = new ArrayList<>();
+    private ArrayList<HoleInfo> holes2 = new ArrayList<>();
+    private ArrayList<HoleInfo> holes3 = new ArrayList<>();
+    private ArrayList<HoleInfo> holes4 = new ArrayList<>();
+    private volatile List<HoleInfo> holes = new ArrayList<>();
 
     @Config(id = "mode", name = "Mode")
     public HoleRenderMode mode = HoleRenderMode.FILL;
 
+    @Config(id = "double", name = "Double")
+    public Boolean doubleHole = false;
+
     @Config(id = "vertical", name = "Vertical")
-    public IntRange vertical = new IntRange(10, 20, 5, 1);
+    public IntRange vertical = new IntRange(5, 10, 1, 1);
 
     @Config(id = "horizontal", name = "Horizontal")
-    public IntRange horizontal = new IntRange(10, 20, 5, 1);
+    public IntRange horizontal = new IntRange(5, 20, 1, 1);
 
     @Config(id = "obsidian_color", name = "Obsidian Color")
     public EspColor obsidianColor = new EspColor(new Color(255, 0, 0, 100), false, true);
@@ -58,13 +68,44 @@ public class HoleEspModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerUpdate(PlayerUpdateEvent e) {
         if (TickUtils.current() % 5 != 0) return;
-        BlockPos pos = getPlayer().getPosition();
-        ArrayList<HoleInfo> copy = new ArrayList<>();
-        BlockPos from = new BlockPos(pos.getX() - horizontal.getCurrent(), pos.getY() - vertical.getCurrent(), pos.getZ() - horizontal.getCurrent());
-        BlockPos to = new BlockPos(pos.getX() + horizontal.getCurrent(), pos.getY() + vertical.getCurrent(), pos.getZ() + horizontal.getCurrent());
-        HoleUtils.findHoles(getWorld(), from, to, copy::add);
-        Collections.sort(copy);
-        holes = copy;
+        int minX, minZ, maxX, maxZ;
+        ArrayList<HoleInfo> target;
+        switch (TickUtils.current() % 4) {
+            case 0:
+                minX = minZ = -1;
+                maxX = maxZ = 0;
+                target = holes1;
+                break;
+            case 1:
+                minX = -1;
+                maxX = minZ = 0;
+                maxZ = 1;
+                target = holes2;
+                break;
+            case 2:
+                minZ = -1;
+                minX = maxZ = 0;
+                maxX = 1;
+                target = holes3;
+                break;
+            default: // case 3:
+                minX = minZ = 0;
+                maxX = maxZ = 1;
+                target = holes4;
+        }
+        target.clear();
+        BlockPos pos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
+        BlockPos from = new BlockPos(pos.getX() + horizontal.getCurrent() * minX, pos.getY() - vertical.getCurrent(), pos.getZ() + horizontal.getCurrent() * minZ);
+        BlockPos to = new BlockPos(pos.getX() + horizontal.getCurrent() * maxX, pos.getY() + vertical.getCurrent(), pos.getZ() + horizontal.getCurrent() * maxZ);
+        HoleUtils.findHoles(getWorld(), from, to, doubleHole, target::add);
+        HashSet<HoleInfo> distinctHoles = new HashSet<>();
+        distinctHoles.addAll(holes1);
+        distinctHoles.addAll(holes2);
+        distinctHoles.addAll(holes3);
+        distinctHoles.addAll(holes4);
+        ArrayList<HoleInfo> holes = new ArrayList<>(distinctHoles);
+        Collections.sort(holes);
+        this.holes = holes;
     }
 
     @EventHandler(timing = EventTiming.POST)
