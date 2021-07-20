@@ -26,10 +26,10 @@ import java.util.List;
 
 public class HoleEspModule extends BaseModule {
 
-    private ArrayList<HoleInfo> holes1 = new ArrayList<>();
-    private ArrayList<HoleInfo> holes2 = new ArrayList<>();
-    private ArrayList<HoleInfo> holes3 = new ArrayList<>();
-    private ArrayList<HoleInfo> holes4 = new ArrayList<>();
+    private final ArrayList<HoleInfo> holes1 = new ArrayList<>();
+    private final ArrayList<HoleInfo> holes2 = new ArrayList<>();
+    private final ArrayList<HoleInfo> holes3 = new ArrayList<>();
+    private final ArrayList<HoleInfo> holes4 = new ArrayList<>();
     private volatile List<HoleInfo> holes = new ArrayList<>();
 
     @Config(id = "mode", name = "Mode")
@@ -93,12 +93,15 @@ public class HoleEspModule extends BaseModule {
                 maxX = maxZ = 1;
                 target = holes4;
         }
+        HashSet<HoleInfo> distinctHoles = new HashSet<>(target);
+
+        // search for holes
         target.clear();
         BlockPos pos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         BlockPos from = new BlockPos(pos.getX() + horizontal.getCurrent() * minX, pos.getY() - vertical.getCurrent(), pos.getZ() + horizontal.getCurrent() * minZ);
         BlockPos to = new BlockPos(pos.getX() + horizontal.getCurrent() * maxX, pos.getY() + vertical.getCurrent(), pos.getZ() + horizontal.getCurrent() * maxZ);
         HoleUtils.findHoles(getWorld(), from, to, doubleHole, target::add);
-        HashSet<HoleInfo> distinctHoles = new HashSet<>();
+
         distinctHoles.addAll(holes1);
         distinctHoles.addAll(holes2);
         distinctHoles.addAll(holes3);
