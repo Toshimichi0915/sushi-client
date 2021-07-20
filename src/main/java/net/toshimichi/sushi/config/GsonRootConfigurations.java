@@ -74,7 +74,7 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
         if (rawValue != null) return rawValue;
 
         Object result = defaults.get(id);
-        if (result != null && result.getClass().isAssignableFrom(tClass)) return (T) result;
+        if (result != null && tClass.isAssignableFrom(result.getClass())) return (T) result;
         else return null;
     }
 
