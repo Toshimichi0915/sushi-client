@@ -91,6 +91,7 @@ public class GsonModules implements Modules {
         addModuleFactory("step", StepModule::new, true);
         addModuleFactory("freecam", FreecamModule::new, true);
         addModuleFactory("kill_aura", KillAuraModule::new, true);
+        addModuleFactory("speed", SpeedModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
