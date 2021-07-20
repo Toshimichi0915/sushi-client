@@ -1,7 +1,6 @@
 package net.toshimichi.sushi.modules.render;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.init.MobEffects;
@@ -25,7 +24,6 @@ import net.toshimichi.sushi.events.render.EntityRenderEvent;
 import net.toshimichi.sushi.events.render.GameOverlayRenderEvent;
 import net.toshimichi.sushi.events.render.HurtCameraEffectEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
-import net.toshimichi.sushi.events.tick.RenderTickEvent;
 import net.toshimichi.sushi.modules.*;
 
 import java.io.IOException;
