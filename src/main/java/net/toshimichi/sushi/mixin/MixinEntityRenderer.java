@@ -4,9 +4,11 @@ import com.google.common.base.Predicate;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.render.HurtCameraEffectEvent;
+import net.toshimichi.sushi.events.render.ItemActivationRenderEvent;
 import net.toshimichi.sushi.events.world.EntityTraceEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,5 +33,12 @@ public class MixinEntityRenderer {
         HurtCameraEffectEvent event = new HurtCameraEffectEvent();
         EventHandlers.callEvent(event);
         if (event.isCancelled()) ci.cancel();
+    }
+
+    @Inject(at = @At("HEAD"), method = "displayItemActivation", cancellable = true)
+    public void renderItemActivation(ItemStack stack, CallbackInfo ci) {
+        ItemActivationRenderEvent event = new ItemActivationRenderEvent(stack);
+        EventHandlers.callEvent(event);
+        if (event.isCancelled()) event.setCancelled(true);
     }
 }

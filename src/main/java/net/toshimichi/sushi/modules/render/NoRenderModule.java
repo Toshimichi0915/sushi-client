@@ -19,10 +19,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.LightUpdateEvent;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
-import net.toshimichi.sushi.events.render.BlockOverlayRenderEvent;
-import net.toshimichi.sushi.events.render.EntityRenderEvent;
-import net.toshimichi.sushi.events.render.GameOverlayRenderEvent;
-import net.toshimichi.sushi.events.render.HurtCameraEffectEvent;
+import net.toshimichi.sushi.events.render.*;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 
@@ -35,6 +32,7 @@ public class NoRenderModule extends BaseModule {
     private final Configuration<Boolean> mapIcons;
 
     private final Configuration<Boolean> hurtCam;
+    private final Configuration<Boolean> totem;
     private final Configuration<Boolean> portal;
     private final Configuration<Boolean> tutorial;
     private final Configuration<Boolean> potionIcons;
@@ -58,6 +56,7 @@ public class NoRenderModule extends BaseModule {
 
         ConfigurationCategory overlay = provider.getCategory("overlay", "Overlay", null);
         hurtCam = overlay.get("hurt_cam", "Hurt Cam", null, Boolean.class, false);
+        totem = overlay.get("totem", "Totem", null, Boolean.class, false);
         portal = overlay.get("portal", "Portal", null, Boolean.class, false);
         tutorial = overlay.get("tutorial", "Tutorial", null, Boolean.class, false);
         potionIcons = overlay.get("potion_icons", "Potion Icons", null, Boolean.class, false);
@@ -110,6 +109,11 @@ public class NoRenderModule extends BaseModule {
 
             e.setCancelled(true);
         }
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onItemActivationRender(ItemActivationRenderEvent e) {
+        if (totem.getValue()) e.setCancelled(true);
     }
 
     @EventHandler(timing = EventTiming.PRE)
