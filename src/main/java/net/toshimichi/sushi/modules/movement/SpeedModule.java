@@ -52,7 +52,7 @@ public class SpeedModule extends BaseModule {
         }
         lastActive = true;
         float value = (float) multiplier.getValue().getCurrent();
-        Vec3d moveInputs = MovementUtils.getMoveInputs(getPlayer());
+        Vec3d moveInputs = MovementUtils.getMoveInputs(getPlayer()).normalize();
         Vec2f motion = MovementUtils.toWorld(new Vec2f((float) moveInputs.x, (float) moveInputs.z), getPlayer().rotationYaw);
         getPlayer().motionX = motion.x * value;
         getPlayer().motionZ = motion.y * value;
