@@ -19,6 +19,18 @@ public enum HoleRenderMode implements Named, HoleRenderer {
             RenderUtils.drawFilled(info.getBox(), HoleRenderMode.getColor(info, obsidian, bedrock));
             glEnable(GL_DEPTH_TEST);
         }
+    },
+
+    @SerializedName("BOTTOM")
+    BOTTOM("Bottom") {
+        @Override
+        public void render(World world, HoleInfo info, EspColor obsidian, EspColor bedrock) {
+            glDisable(GL_DEPTH_TEST);
+            double height = info.getBox().maxY - info.getBox().minY;
+            RenderUtils.drawFilled(info.getBox().grow(0, -height / 2, 0).offset(0, -height / 2, 0),
+                    HoleRenderMode.getColor(info, obsidian, bedrock));
+            glEnable(GL_DEPTH_TEST);
+        }
     };
 
     private final String name;
