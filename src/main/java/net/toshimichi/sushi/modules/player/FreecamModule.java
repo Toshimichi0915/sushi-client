@@ -1,12 +1,14 @@
 package net.toshimichi.sushi.modules.player;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.MovementInput;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.input.InputUpdateEvent;
+import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import net.toshimichi.sushi.events.player.PlayerAttackEvent;
 import net.toshimichi.sushi.events.player.UserCheckEvent;
 import net.toshimichi.sushi.modules.*;
@@ -46,6 +48,15 @@ public class FreecamModule extends BaseModule {
         input.rightKeyDown = false;
         input.jump = false;
         input.sneak = false;
+    }
+
+    @EventHandler(timing = EventTiming.PRE, priority = 5000)
+    public void onPacketSend(PacketSendEvent e) {
+        if (!(e.getPacket() instanceof CPacketUseEntity)) return;
+        CPacketUseEntity packet = (CPacketUseEntity) e.getPacket();
+        if (getPlayer().equals(packet.getEntityFromWorld(getWorld()))) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler(timing = EventTiming.PRE)
