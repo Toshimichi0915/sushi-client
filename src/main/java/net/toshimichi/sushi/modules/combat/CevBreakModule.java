@@ -53,7 +53,7 @@ public class CevBreakModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer(), breakingBlock);
+        List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer());
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
         CevBreakAttack attack = attacks.get(0);
@@ -85,7 +85,7 @@ public class CevBreakModule extends BaseModule {
                 breakingBlock = attack.getObsidianPos();
                 hasStarted = false;
             }
-            if (!hasStarted) {
+            if (breakingBlock != BlockUtils.getBreakingBlockPos()) {
                 hasStarted = true;
                 TaskExecutor.newTaskChain()
                         .supply(() -> Items.DIAMOND_PICKAXE)

@@ -3,6 +3,7 @@ package net.toshimichi.sushi.utils.combat;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.toshimichi.sushi.utils.world.BlockUtils;
 
 public class CevBreakAttack implements Comparable<CevBreakAttack> {
     private BlockPos crystalPos;
@@ -10,18 +11,16 @@ public class CevBreakAttack implements Comparable<CevBreakAttack> {
     private EntityPlayer player;
     private EntityPlayer target;
     private EntityEnderCrystal crystal;
-    private BlockPos breakingBlock;
     private double damage;
     private boolean crystalPlaced;
     private boolean obsidianPlaced;
 
-    public CevBreakAttack(BlockPos crystalPos, BlockPos obsidianPos, EntityPlayer player, EntityPlayer target, EntityEnderCrystal crystal, BlockPos breakingBlock, double damage, boolean crystalPlaced, boolean obsidianPlaced) {
+    public CevBreakAttack(BlockPos crystalPos, BlockPos obsidianPos, EntityPlayer player, EntityPlayer target, EntityEnderCrystal crystal, double damage, boolean crystalPlaced, boolean obsidianPlaced) {
         this.crystalPos = crystalPos;
         this.obsidianPos = obsidianPos;
         this.player = player;
         this.target = target;
         this.crystal = crystal;
-        this.breakingBlock = breakingBlock;
         this.damage = damage;
         this.crystalPlaced = crystalPlaced;
         this.obsidianPlaced = obsidianPlaced;
@@ -57,7 +56,7 @@ public class CevBreakAttack implements Comparable<CevBreakAttack> {
 
     @Override
     public int compareTo(CevBreakAttack o) {
-        int result = Boolean.compare(o.obsidianPos.equals(o.breakingBlock), obsidianPos.equals(breakingBlock));
+        int result = Boolean.compare(o.obsidianPos.equals(BlockUtils.getBreakingBlockPos()), obsidianPos.equals(BlockUtils.getBreakingBlockPos()));
         if (result == 0) result = Double.compare(player.getDistanceSq(target), player.getDistanceSq(o.target));
         return result;
     }
@@ -70,7 +69,6 @@ public class CevBreakAttack implements Comparable<CevBreakAttack> {
                 ", player=" + player +
                 ", target=" + target +
                 ", crystal=" + crystal +
-                ", breakingBlock=" + breakingBlock +
                 ", damage=" + damage +
                 ", crystalPlaced=" + crystalPlaced +
                 ", obsidianPlaced=" + obsidianPlaced +

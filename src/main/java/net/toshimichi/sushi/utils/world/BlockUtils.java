@@ -14,6 +14,16 @@ import net.minecraft.world.World;
 
 public class BlockUtils {
 
+    private static BlockPos breakingBlockPos;
+
+    public static BlockPos getBreakingBlockPos() {
+        return breakingBlockPos;
+    }
+
+    public static void setBreakingBlockPos(BlockPos pos) {
+        breakingBlockPos = pos;
+    }
+
     public static BlockPos toBlockPos(Vec3d vec) {
         return new BlockPos(vec.x, vec.y, vec.z);
     }
