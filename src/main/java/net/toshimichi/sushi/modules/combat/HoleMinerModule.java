@@ -34,6 +34,7 @@ public class HoleMinerModule extends BaseModule {
     private boolean running;
     private HoleMineInfo holeMineInfo;
     private int lastUpdate;
+    private int miningTick;
 
     @Config(id = "hole_mine_mode", name = "Mode")
     public HoleMineMode holeMineMode = HoleMineMode.BEST_EFFORT;
@@ -49,8 +50,6 @@ public class HoleMinerModule extends BaseModule {
 
     @Config(id = "disable_after", name = "Disable After")
     public Boolean disableAfter = false;
-
-    private int lastTick;
 
     public HoleMinerModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -96,8 +95,6 @@ public class HoleMinerModule extends BaseModule {
     }
 
     private void start(HoleMineInfo info) {
-        if (running) return;
-        if (lastTick + pauseTick.getCurrent() > TickUtils.current()) return;
         BlockPos surroundPos = info.getSurroundPos();
         // find diamond pickaxe
         ItemSlot pickaxe = InventoryUtils.findBestTool(true, false, Blocks.OBSIDIAN.getDefaultState());
@@ -123,7 +120,7 @@ public class HoleMinerModule extends BaseModule {
 
         Task lastTask = () -> {
             running = false;
-            lastTick = TickUtils.current();
+            miningTick = TickUtils.current();
             holeMineInfo = null;
             if (disableAfter) setEnabled(false);
         };
@@ -163,6 +160,8 @@ public class HoleMinerModule extends BaseModule {
     private HoleMineInfo choose(HoleMineInfo info1, HoleMineInfo info2) {
         if (info1 == null) return info2;
         if (info2 == null) return info1;
+        if (info1.getSurroundPos().equals(BlockUtils.getBreakingBlockPos())) return info1;
+        if (info2.getSurroundPos().equals(BlockUtils.getBreakingBlockPos())) return info2;
         int comp = Boolean.compare(info1.isAntiSurround(), info2.isAntiSurround());
         if (comp == 0) comp = Double.compare(
                 BlockUtils.toVec3d(info1.getSurroundPos()).add(0.5, 0, 0.5).squareDistanceTo(getPlayer().getPositionVector()),
@@ -173,6 +172,9 @@ public class HoleMinerModule extends BaseModule {
     public void updateHoleMineInfo() {
         if (lastUpdate == TickUtils.current()) return;
         if (running) return;
+        if (miningTick + pauseTick.getCurrent() > TickUtils.current() &&
+                BlockUtils.getBreakingBlockPos() != null &&
+                BlockUtils.isAir(getWorld(), BlockUtils.getBreakingBlockPos())) return;
         lastUpdate = TickUtils.current();
         if (!InventoryUtils.hasItem(Items.DIAMOND_PICKAXE)) return;
         HoleMineInfo chosen = null;
