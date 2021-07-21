@@ -93,6 +93,7 @@ public class GsonModules implements Modules {
         addModuleFactory("kill_aura", KillAuraModule::new, true);
         addModuleFactory("speed", SpeedModule::new, true);
         addModuleFactory("world_time", WorldTimeModule::new, true);
+        addModuleFactory("criticals", CriticalsModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
