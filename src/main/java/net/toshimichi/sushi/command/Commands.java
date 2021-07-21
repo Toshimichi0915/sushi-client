@@ -24,6 +24,7 @@ public class Commands {
         addTypeParser(new MessageHandlerParser());
         addTypeParser(new ModuleParser());
         addTypeParser(new BlockArrayParser());
+        addTypeParser(new StringArrayParser());
     }
 
     public static List<Command> getCommands() {

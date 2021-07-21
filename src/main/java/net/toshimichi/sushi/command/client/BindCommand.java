@@ -16,7 +16,7 @@ public class BindCommand {
     public void onDefault(MessageHandler out, Module module, String... keys) {
         int[] keyCode = new int[keys.length];
         for (int i = 0; i < keys.length; i++) {
-            keyCode[i] = Keyboard.getKeyIndex(keys[i]);
+            keyCode[i] = Keyboard.getKeyIndex(keys[i].toUpperCase());
             if (keyCode[i] == Keyboard.KEY_NONE) {
                 out.send("Key name " + keys[i] + " is not recognized", LogLevel.ERROR);
                 return;
