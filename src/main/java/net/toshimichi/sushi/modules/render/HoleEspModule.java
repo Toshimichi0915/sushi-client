@@ -12,7 +12,6 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerUpdateEvent;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.render.hole.HoleInfo;
 import net.toshimichi.sushi.utils.render.hole.HoleRenderMode;
 import net.toshimichi.sushi.utils.render.hole.HoleUtils;
@@ -26,10 +25,10 @@ import java.util.List;
 
 public class HoleEspModule extends BaseModule {
 
-    private final ArrayList<HoleInfo> holes1 = new ArrayList<>();
-    private final ArrayList<HoleInfo> holes2 = new ArrayList<>();
-    private final ArrayList<HoleInfo> holes3 = new ArrayList<>();
-    private final ArrayList<HoleInfo> holes4 = new ArrayList<>();
+    // use dirty way for performance
+    @SuppressWarnings("unchecked")
+    private final List<HoleInfo>[] partialHoles = new List[8];
+
     private volatile List<HoleInfo> holes = new ArrayList<>();
 
     @Config(id = "mode", name = "Mode")
@@ -50,9 +49,14 @@ public class HoleEspModule extends BaseModule {
     @Config(id = "bedrock_color", name = "Bedrock Color")
     public EspColor bedrockColor = new EspColor(new Color(0, 255, 0, 100), false, true);
 
+    private int counter;
+
     public HoleEspModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         new ConfigInjector(provider).inject(this);
+        for (int i = 0; i < partialHoles.length; i++) {
+            partialHoles[i] = Collections.synchronizedList(new ArrayList<>());
+        }
     }
 
     @Override
@@ -67,45 +71,28 @@ public class HoleEspModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerUpdate(PlayerUpdateEvent e) {
-        if (TickUtils.current() % 5 != 0) return;
-        int minX, minZ, maxX, maxZ;
-        ArrayList<HoleInfo> target;
-        switch (TickUtils.current() % 4) {
-            case 0:
-                minX = minZ = -1;
-                maxX = maxZ = 0;
-                target = holes1;
-                break;
-            case 1:
-                minX = -1;
-                maxX = minZ = 0;
-                maxZ = 1;
-                target = holes2;
-                break;
-            case 2:
-                minZ = -1;
-                minX = maxZ = 0;
-                maxX = 1;
-                target = holes3;
-                break;
-            default: // case 3:
-                minX = minZ = 0;
-                maxX = maxZ = 1;
-                target = holes4;
-        }
+        int minX, minY, minZ, maxX, maxY, maxZ;
+        int index = counter++ % 8;
+        List<HoleInfo> target = partialHoles[index];
+        minX = counter / 4 % 2 - 1;
+        minY = counter / 2 % 2 - 1;
+        minZ = counter % 2 - 1;
+        maxX = minX + 1;
+        maxY = minY + 1;
+        maxZ = minZ + 1;
+
         HashSet<HoleInfo> distinctHoles = new HashSet<>(target);
 
         // search for holes
         target.clear();
         BlockPos pos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
-        BlockPos from = new BlockPos(pos.getX() + horizontal.getCurrent() * minX, pos.getY() - vertical.getCurrent(), pos.getZ() + horizontal.getCurrent() * minZ);
-        BlockPos to = new BlockPos(pos.getX() + horizontal.getCurrent() * maxX, pos.getY() + vertical.getCurrent(), pos.getZ() + horizontal.getCurrent() * maxZ);
+        BlockPos from = new BlockPos(pos.getX() + horizontal.getCurrent() * minX, pos.getY() + vertical.getCurrent() * minY, pos.getZ() + horizontal.getCurrent() * minZ);
+        BlockPos to = new BlockPos(pos.getX() + horizontal.getCurrent() * maxX, pos.getY() + vertical.getCurrent() * maxY, pos.getZ() + horizontal.getCurrent() * maxZ);
         HoleUtils.findHoles(getWorld(), from, to, doubleHole, target::add);
 
-        distinctHoles.addAll(holes1);
-        distinctHoles.addAll(holes2);
-        distinctHoles.addAll(holes3);
-        distinctHoles.addAll(holes4);
+        for (List<HoleInfo> hole : partialHoles) {
+            distinctHoles.addAll(hole);
+        }
         ArrayList<HoleInfo> holes = new ArrayList<>(distinctHoles);
         Collections.sort(holes);
         this.holes = holes;
