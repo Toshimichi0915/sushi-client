@@ -14,10 +14,10 @@ import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
-import net.toshimichi.sushi.utils.player.DesyncMode;
-import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.player.*;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockPlaceUtils;
+import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class SurroundModule extends BaseModule {
 
     private void surround() {
         if (running) return;
-        BlockPos pos = new BlockPos(getPlayer().posX, getPlayer().posY, getPlayer().posZ);
+        BlockPos pos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         if (disableOnJump.getValue() && getPlayer().movementInput.jump || disableAfter.getValue()) {
             setEnabled(false);
         }
@@ -61,6 +61,8 @@ public class SurroundModule extends BaseModule {
             placeList.addAll(info);
         }
         if (placeList.isEmpty()) return;
+        ItemSlot obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), getPlayer(), InventoryType.values());
+        if (obsidianSlot == null) return;
         if (pull.getValue()) {
             PositionUtils.move(pos.getX() + 0.5, getPlayer().posY, pos.getZ() + 0.5,
                     0, 0, true, false, DesyncMode.NONE);
