@@ -15,13 +15,19 @@ import net.minecraft.world.World;
 public class BlockUtils {
 
     private static BlockPos breakingBlockPos;
+    private static int breakingTime;
 
     public static BlockPos getBreakingBlockPos() {
         return breakingBlockPos;
     }
 
-    public static void setBreakingBlockPos(BlockPos pos) {
+    public static int getBreakingTime() {
+        return breakingTime;
+    }
+
+    public static void setBreakingBlockPos(BlockPos pos, int time) {
         breakingBlockPos = pos;
+        breakingTime = time;
     }
 
     public static BlockPos toBlockPos(Vec3d vec) {

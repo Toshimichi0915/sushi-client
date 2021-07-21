@@ -13,6 +13,7 @@ import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -43,8 +44,13 @@ public class HoleMinerModule extends BaseModule {
     @Config(id = "crystal_aura_id", name = "CrystalAura ID")
     public String crystalAuraId = "crystal_aura";
 
+    @Config(id = "pause_ticks", name = "Pause Ticks")
+    public IntRange pauseTick = new IntRange(1, 20, 1, 1);
+
     @Config(id = "disable_after", name = "Disable After")
     public Boolean disableAfter = false;
+
+    private int lastTick;
 
     public HoleMinerModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -90,6 +96,8 @@ public class HoleMinerModule extends BaseModule {
     }
 
     private void start(HoleMineInfo info) {
+        if (running) return;
+        if (lastTick + pauseTick.getCurrent() > TickUtils.current()) return;
         BlockPos surroundPos = info.getSurroundPos();
         // find diamond pickaxe
         ItemSlot pickaxe = InventoryUtils.findBestTool(true, false, Blocks.OBSIDIAN.getDefaultState());
@@ -97,7 +105,13 @@ public class HoleMinerModule extends BaseModule {
 
         running = true;
         holeMineInfo = info;
-        getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN));
+        int waitTime = ItemUtils.getDestroyTime(surroundPos, pickaxe.getItemStack());
+        if (!surroundPos.equals(BlockUtils.getBreakingBlockPos())) {
+            getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN));
+            waitTime -= TickUtils.current() - BlockUtils.getBreakingTime();
+        } else {
+            waitTime = 0;
+        }
 
         Task finishTask = () -> {
             getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN));
@@ -109,14 +123,16 @@ public class HoleMinerModule extends BaseModule {
 
         Task lastTask = () -> {
             running = false;
+            lastTick = TickUtils.current();
             holeMineInfo = null;
             if (disableAfter) setEnabled(false);
         };
 
+        int finalWaitTime = waitTime;
         if (info.isAntiSurround()) {
             BlockPos crystalFloor = info.getCrystalFloor();
             TaskExecutor.newTaskChain()
-                    .delay(() -> ItemUtils.getDestroyTime(surroundPos, pickaxe.getItemStack()))
+                    .delay(finalWaitTime)
                     .abortIf(() -> !running)
 
                     .supply(() -> Items.END_CRYSTAL)
@@ -132,7 +148,7 @@ public class HoleMinerModule extends BaseModule {
                     .execute();
         } else {
             TaskExecutor.newTaskChain()
-                    .delay(() -> ItemUtils.getDestroyTime(surroundPos, pickaxe.getItemStack()))
+                    .delay(finalWaitTime)
                     .abortIf(() -> !running)
 
                     .supply(() -> Items.DIAMOND_PICKAXE)

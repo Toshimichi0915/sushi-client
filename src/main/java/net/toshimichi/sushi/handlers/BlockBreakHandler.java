@@ -4,6 +4,7 @@ import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
+import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
 public class BlockBreakHandler {
@@ -12,9 +13,9 @@ public class BlockBreakHandler {
         if (!(e.getPacket() instanceof CPacketPlayerDigging)) return;
         CPacketPlayerDigging packet = (CPacketPlayerDigging) e.getPacket();
         if (packet.getAction() == CPacketPlayerDigging.Action.START_DESTROY_BLOCK) {
-            BlockUtils.setBreakingBlockPos(packet.getPosition());
+            BlockUtils.setBreakingBlockPos(packet.getPosition(), TickUtils.current());
         } else if (packet.getAction() == CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK) {
-            BlockUtils.setBreakingBlockPos(null);
+            BlockUtils.setBreakingBlockPos(null, TickUtils.current());
         }
     }
 }
