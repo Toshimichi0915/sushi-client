@@ -7,7 +7,6 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketExplosion;
 import net.minecraft.network.play.server.SPacketMaps;
-import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -171,9 +170,6 @@ public class NoRenderModule extends BaseModule {
             packet.readPacketData(write);
         } else if (e.getPacket() instanceof SPacketExplosion) {
             if (explosion.getValue()) e.setCancelled(true);
-        } else if (e.getPacket() instanceof SPacketSpawnObject) {
-            SPacketSpawnObject packet = (SPacketSpawnObject) e.getPacket();
-            if (packet.getType() == 76) e.setCancelled(true);
         }
     }
 }
