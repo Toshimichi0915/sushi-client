@@ -56,7 +56,7 @@ public class GsonModules implements Modules {
         addModuleFactory("phase_walk", PhaseWalkModule::new, true);
         addModuleFactory("anti_stuck", AntiStuckModule::new, true);
         addModuleFactory("timer", TimerModule::new, true);
-        addModuleFactory("anti_cev_break", AntiCevBreakModule::new, true);
+        addModuleFactory("anti_civ_break", AntiCivBreakModule::new, true);
         addModuleFactory("no_swing", NoSwingModule::new, true);
         addModuleFactory("lock_yaw", LockYawModule::new, true);
         addModuleFactory("no_fall", NoFallModule::new, true);
@@ -75,8 +75,8 @@ public class GsonModules implements Modules {
         addModuleFactory("xray", XrayModule::new, true);
         addModuleFactory("search", SearchModule::new, true);
         addModuleFactory("anti_piston_aura", AntiPistonAuraModule::new, true);
-        addModuleFactory("cev_break", CevBreakModule::new, true);
-        addModuleFactory("cev_break_helper", CevBreakHelperModule::new, true);
+        addModuleFactory("civ_break", CivBreakModule::new, true);
+        addModuleFactory("civ_break_helper", CivBreakHelperModule::new, true);
         addModuleFactory("name_tags", NameTagsModule::new, true);
         addModuleFactory("tracers", TracersModule::new, true);
         addModuleFactory("auto_tool", AutoToolModule::new, true);

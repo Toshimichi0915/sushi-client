@@ -29,12 +29,12 @@ import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.Collections;
 
-public class AntiCevBreakModule extends BaseModule {
+public class AntiCivBreakModule extends BaseModule {
 
     @Config(id = "extra_safe", name = "Extra Safe")
     public Boolean extraSafe = false;
 
-    public AntiCevBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
+    public AntiCivBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         new ConfigInjector(provider).inject(this);
     }
@@ -101,7 +101,7 @@ public class AntiCevBreakModule extends BaseModule {
 
     @Override
     public String getDefaultName() {
-        return "AntiCevBreak";
+        return "AntiCivBreak";
     }
 
     @Override

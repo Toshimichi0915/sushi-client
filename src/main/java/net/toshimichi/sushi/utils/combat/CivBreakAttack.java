@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
-public class CevBreakAttack implements Comparable<CevBreakAttack> {
+public class CivBreakAttack implements Comparable<CivBreakAttack> {
     private BlockPos crystalPos;
     private BlockPos obsidianPos;
     private EntityPlayer player;
@@ -15,7 +15,7 @@ public class CevBreakAttack implements Comparable<CevBreakAttack> {
     private boolean crystalPlaced;
     private boolean obsidianPlaced;
 
-    public CevBreakAttack(BlockPos crystalPos, BlockPos obsidianPos, EntityPlayer player, EntityPlayer target, EntityEnderCrystal crystal, double damage, boolean crystalPlaced, boolean obsidianPlaced) {
+    public CivBreakAttack(BlockPos crystalPos, BlockPos obsidianPos, EntityPlayer player, EntityPlayer target, EntityEnderCrystal crystal, double damage, boolean crystalPlaced, boolean obsidianPlaced) {
         this.crystalPos = crystalPos;
         this.obsidianPos = obsidianPos;
         this.player = player;
@@ -55,7 +55,7 @@ public class CevBreakAttack implements Comparable<CevBreakAttack> {
     }
 
     @Override
-    public int compareTo(CevBreakAttack o) {
+    public int compareTo(CivBreakAttack o) {
         int result = Boolean.compare(o.obsidianPos.equals(BlockUtils.getBreakingBlockPos()), obsidianPos.equals(BlockUtils.getBreakingBlockPos()));
         if (result == 0) result = Double.compare(player.getDistanceSq(target), player.getDistanceSq(o.target));
         return result;

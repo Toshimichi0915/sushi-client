@@ -17,46 +17,43 @@ import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
-import net.toshimichi.sushi.utils.combat.CevBreakAttack;
-import net.toshimichi.sushi.utils.combat.CevBreakUtils;
+import net.toshimichi.sushi.utils.combat.CivBreakAttack;
+import net.toshimichi.sushi.utils.combat.CivBreakUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.Collections;
 import java.util.List;
 
-public class CevBreakModule extends BaseModule {
+public class CivBreakModule extends BaseModule {
 
     private BlockPos breakingBlock;
-    private boolean hasStarted;
 
-    public CevBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
+    public CivBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
     }
 
     @Override
     public void onEnable() {
         EventHandlers.register(this);
-        hasStarted = false;
     }
 
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
-        hasStarted = false;
     }
 
-    private void placeCrystal(CevBreakAttack attack) {
+    private void placeCrystal(CivBreakAttack attack) {
         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getObsidianPos(), EnumFacing.DOWN, EnumHand.MAIN_HAND,
                 0.5F, 0, 0.5F));
     }
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer());
+        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer());
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
-        CevBreakAttack attack = attacks.get(0);
+        CivBreakAttack attack = attacks.get(0);
         if (attack.isCrystalPlaced() && !attack.isObsidianPlaced()) {
             getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal()));
         } else if (!attack.isObsidianPlaced()) {
@@ -83,10 +80,8 @@ public class CevBreakModule extends BaseModule {
         } else {
             if (!attack.getObsidianPos().equals(breakingBlock)) {
                 breakingBlock = attack.getObsidianPos();
-                hasStarted = false;
             }
             if (breakingBlock != BlockUtils.getBreakingBlockPos()) {
-                hasStarted = true;
                 TaskExecutor.newTaskChain()
                         .supply(() -> Items.DIAMOND_PICKAXE)
                         .then(new ItemSwitchTask(null, true))
@@ -108,7 +103,7 @@ public class CevBreakModule extends BaseModule {
 
     @Override
     public String getDefaultName() {
-        return "CevBreak";
+        return "CivBreak";
     }
 
     @Override

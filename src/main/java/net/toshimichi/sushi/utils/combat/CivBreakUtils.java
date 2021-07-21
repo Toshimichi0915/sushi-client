@@ -15,9 +15,9 @@ import net.toshimichi.sushi.utils.world.BlockUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CevBreakUtils {
+public class CivBreakUtils {
 
-    private static CevBreakAttack find(EntityPlayer player, EntityPlayer target, BlockPos pos) {
+    private static CivBreakAttack find(EntityPlayer player, EntityPlayer target, BlockPos pos) {
         BlockPos obsidianPos = pos.add(0, -1, 0);
         IBlockState floorState = player.world.getBlockState(obsidianPos);
         Block floorBlock = floorState.getBlock();
@@ -42,16 +42,16 @@ public class CevBreakUtils {
             AxisAlignedBB box = new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
             if (BlockUtils.isColliding(player.world, box)) return null;
         }
-        return new CevBreakAttack(pos, obsidianPos, player, target, placed, damage, placed != null, obsidianPlaced);
+        return new CivBreakAttack(pos, obsidianPos, player, target, placed, damage, placed != null, obsidianPlaced);
     }
 
-    public static List<CevBreakAttack> find(EntityPlayer player, EntityPlayer target) {
+    public static List<CivBreakAttack> find(EntityPlayer player, EntityPlayer target) {
         BlockPos origin = BlockUtils.toBlockPos(target.getPositionVector());
-        ArrayList<CevBreakAttack> result = new ArrayList<>();
+        ArrayList<CivBreakAttack> result = new ArrayList<>();
         for (int x = -1; x <= 1; x++) {
             for (int y = 2; y <= 4; y++) {
                 for (int z = -1; z <= 1; z++) {
-                    CevBreakAttack attack = find(player, target, new BlockPos(origin.getX() + x, origin.getY() + y, origin.getZ() + z));
+                    CivBreakAttack attack = find(player, target, new BlockPos(origin.getX() + x, origin.getY() + y, origin.getZ() + z));
                     if (attack != null) result.add(attack);
                 }
             }
@@ -59,8 +59,8 @@ public class CevBreakUtils {
         return result;
     }
 
-    public static List<CevBreakAttack> find(EntityPlayer player) {
-        ArrayList<CevBreakAttack> result = new ArrayList<>();
+    public static List<CivBreakAttack> find(EntityPlayer player) {
+        ArrayList<CivBreakAttack> result = new ArrayList<>();
         for (EntityPlayer entity : EntityUtils.getNearbyPlayers(4)) {
             result.addAll(find(player, entity));
         }

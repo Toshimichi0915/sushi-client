@@ -13,8 +13,8 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.combat.CevBreakAttack;
-import net.toshimichi.sushi.utils.combat.CevBreakUtils;
+import net.toshimichi.sushi.utils.combat.CivBreakAttack;
+import net.toshimichi.sushi.utils.combat.CivBreakUtils;
 import net.toshimichi.sushi.utils.render.RenderUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
@@ -24,14 +24,14 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class CevBreakHelperModule extends BaseModule {
+public class CivBreakHelperModule extends BaseModule {
 
-    private CevBreakAttack attack;
+    private CivBreakAttack attack;
 
     @Config(id = "color", name = "Color")
     public EspColor color = new EspColor(Color.RED, false, true);
 
-    public CevBreakHelperModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
+    public CivBreakHelperModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         new ConfigInjector(provider).inject(this);
     }
@@ -59,11 +59,11 @@ public class CevBreakHelperModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        List<CevBreakAttack> attacks = CevBreakUtils.find(getPlayer());
+        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer());
         this.attack = null;
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
-        CevBreakAttack attack = attacks.get(0);
+        CivBreakAttack attack = attacks.get(0);
         if (attack.getObsidianPos() == null) return;
         if (getWorld().getBlockState(attack.getObsidianPos()).getBlock() != Blocks.OBSIDIAN &&
                 BlockUtils.findBlockPlaceInfo(getWorld(), attack.getObsidianPos()) == null) return;
@@ -72,7 +72,7 @@ public class CevBreakHelperModule extends BaseModule {
 
     @Override
     public String getDefaultName() {
-        return "CevBreakHelper";
+        return "CivBreakHelper";
     }
 
     @Override
