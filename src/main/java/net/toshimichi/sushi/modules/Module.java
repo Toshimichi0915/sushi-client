@@ -13,6 +13,8 @@ public interface Module {
 
     boolean isVisible();
 
+    void setVisible(boolean visible);
+
     boolean isEnabled();
 
     void setEnabled(boolean enabled);

@@ -135,6 +135,7 @@ public class SushiMod {
         Commands.register(new ToggleCommand());
         Commands.register(new PrefixCommand());
         Commands.register(new BindCommand());
+        Commands.register(new DrawCommand());
         Commands.register(this, new SetCommand());
     }
 

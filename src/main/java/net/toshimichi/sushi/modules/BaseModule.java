@@ -68,6 +68,11 @@ abstract public class BaseModule implements Module {
     }
 
     @Override
+    public void setVisible(boolean v) {
+        visible.setValue(v);
+    }
+
+    @Override
     public boolean isEnabled() {
         return isEnabled;
     }

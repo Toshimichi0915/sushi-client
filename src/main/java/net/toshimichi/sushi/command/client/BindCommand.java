@@ -9,7 +9,7 @@ import net.toshimichi.sushi.modules.Keybind;
 import net.toshimichi.sushi.modules.Module;
 import org.lwjgl.input.Keyboard;
 
-@CommandAlias(value = "bind", description = "Set keybinding for a module")
+@CommandAlias(value = "bind", description = "Sets keybinding for a module")
 public class BindCommand {
 
     @Default
