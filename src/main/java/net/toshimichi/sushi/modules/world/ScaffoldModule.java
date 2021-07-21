@@ -35,6 +35,9 @@ public class ScaffoldModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerTravel(PlayerTravelEvent e) {
+        BlockPos floor = BlockUtils.toBlockPos(getPlayer().getPositionVector()).add(0, -1, 0);
+        if (BlockUtils.isAir(getWorld(), floor)) return;
+
         if (getPlayer().movementInput.jump) {
             getPlayer().motionY = 0.42;
         }
