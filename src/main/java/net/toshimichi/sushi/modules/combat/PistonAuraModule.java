@@ -4,10 +4,12 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
@@ -22,14 +24,17 @@ import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
 import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
+import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.combat.PistonAuraAttack;
 import net.toshimichi.sushi.utils.combat.PistonAuraUtils;
 import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
+import net.toshimichi.sushi.utils.player.ItemSlot;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,13 +46,17 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> delay5;
     private final Configuration<IntRange> maxObsidian;
     private final Configuration<IntRange> recalculationDelay;
+    private final Configuration<Boolean> antiGhostBlock;
+    private final Configuration<IntRange> ghostBlockCheckDelay;
 
+    private final ArrayList<BlockPos> ghostBlocks = new ArrayList<>();
     private PistonAuraAttack attack;
     private EntityEnderCrystal exploded;
     private DesyncCloseable closeable;
     private boolean running;
     private int repeatCounter;
-    private int recalculationCoolTime;
+    private int lastRecalculationTick;
+    private int lastGhostBlockCheckTick;
 
     public PistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -60,6 +69,8 @@ public class PistonAuraModule extends BaseModule {
         ConfigurationCategory other = provider.getCategory("other", "Other Settings", null);
         maxObsidian = other.get("max_obsidian", "Max Obsidian", null, IntRange.class, new IntRange(3, 5, 0, 1));
         recalculationDelay = other.get("recalculation_delay", "Recalculation Delay", null, IntRange.class, new IntRange(1, 40, 0, 1));
+        antiGhostBlock = other.get("anti_ghost_block", "Anti Ghost Block", null, Boolean.class, true);
+        ghostBlockCheckDelay = other.get("ghost_block_check_delay", "Ghost Block Check Delay", null, IntRange.class, new IntRange(1, 20, 0, 1), antiGhostBlock::getValue, false, 0);
     }
 
     @Override
@@ -98,12 +109,12 @@ public class PistonAuraModule extends BaseModule {
             repeatCounter = 0;
             return;
         }
-        if (attack == null || repeatCounter == 0 && recalculationCoolTime-- <= 0) {
+        if (attack == null || repeatCounter == 0 && lastRecalculationTick-- <= 0) {
             List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer(), maxObsidian.getValue().getCurrent());
             if (attacks.isEmpty()) return;
             Collections.sort(attacks);
             attack = attacks.get(0);
-            recalculationCoolTime = recalculationDelay.getValue().getCurrent();
+            lastRecalculationTick = recalculationDelay.getValue().getCurrent();
         }
         if (attack == null) return;
         if (exploded != null && exploded.isAddedToWorld()) return;
@@ -127,6 +138,13 @@ public class PistonAuraModule extends BaseModule {
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                     .abortIfFalse()
                     .then(() -> {
+                        ghostBlocks.add(attack.getPistonPos());
+                        for (EnumFacing facing : EnumFacing.values()) {
+                            BlockPos redstone = attack.getPistonPos().offset(facing);
+                            if (getWorld().getBlockState(redstone).getBlock() == Blocks.REDSTONE_BLOCK) {
+                                ghostBlocks.add(redstone);
+                            }
+                        }
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                         attack.setCrystalPlaced(true);
@@ -198,6 +216,16 @@ public class PistonAuraModule extends BaseModule {
     public void onPostClientTick(ClientTickEvent e) {
         repeatCounter = 0;
         update();
+        if (ItemSlot.getCurrentItemSlot(getPlayer()).getItemStack().getItem() instanceof ItemBlock) return;
+        if (TickUtils.current() - lastGhostBlockCheckTick > ghostBlockCheckDelay.getValue().getCurrent()) return;
+        lastGhostBlockCheckTick = TickUtils.current();
+        if (!ghostBlocks.isEmpty()) {
+            BlockPos checkPos = ghostBlocks.get(0);
+            ghostBlocks.remove(0);
+            ghostBlocks.removeIf(it -> BlockUtils.equals(checkPos, it));
+            if (!BlockUtils.canInteract(checkPos)) return;
+            getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(checkPos, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+        }
     }
 
     @Override

@@ -47,6 +47,13 @@ public class BlockUtils {
         return world.collidesWithAnyBlock(box) || !world.checkNoEntityCollision(box);
     }
 
+    public static boolean canInteract(BlockPos pos) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if(player == null) return false;
+        Vec3d checkPos = BlockUtils.toVec3d(pos).add(0.5, 0.5, 0.5);
+        return player.getDistanceSq(checkPos.x, checkPos.y, checkPos.z) < 64;
+    }
+
     public static boolean canPlace(World world, BlockPlaceInfo face, BlockPlaceOption option) {
         BlockPos pos = face.getBlockPos();
         EnumFacing facing = face.getBlockFace() == null ? null : face.getBlockFace().getFacing();
@@ -88,5 +95,9 @@ public class BlockUtils {
 
     public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input) {
         return findBlockPlaceInfo(world, input, new BlockPlaceOption());
+    }
+
+    public static boolean equals(BlockPos pos1, BlockPos pos2) {
+        return pos1.getX() == pos2.getX() && pos1.getY() == pos2.getY() && pos1.getZ() == pos2.getZ();
     }
 }
