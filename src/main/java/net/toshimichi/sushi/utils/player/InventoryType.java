@@ -1,8 +1,10 @@
 package net.toshimichi.sushi.utils.player;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.function.Function;
 
-public enum InventoryType {
+public enum InventoryType implements Iterable<ItemSlot> {
     HOTBAR(0, 9, i -> i + 36, i -> i - 36),
     MAIN(9, 27, i -> i, i -> i),
     ARMOR(36, 4, i -> 44 - i, i -> 44 - i),
@@ -41,5 +43,14 @@ public enum InventoryType {
             if (type.min <= slot && slot < type.min + type.size) return type;
         }
         return null;
+    }
+
+    @Override
+    public Iterator<ItemSlot> iterator() {
+        ArrayList<ItemSlot> result = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            result.add(new ItemSlot(i + min));
+        }
+        return result.iterator();
     }
 }
