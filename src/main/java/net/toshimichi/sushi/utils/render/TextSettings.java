@@ -1,12 +1,20 @@
 package net.toshimichi.sushi.utils.render;
 
+import com.google.gson.annotations.SerializedName;
 import net.toshimichi.sushi.config.data.EspColor;
 
 public class TextSettings {
-    private final String font;
-    private final EspColor color;
-    private final int pts;
-    private final boolean shadow;
+    @SerializedName("font")
+    private String font;
+    @SerializedName("color")
+    private EspColor color;
+    @SerializedName("pts")
+    private int pts;
+    @SerializedName("shadow")
+    private boolean shadow;
+
+    public TextSettings() {
+    }
 
     public TextSettings(String font, EspColor color, int pts, boolean shadow) {
         this.font = font;
