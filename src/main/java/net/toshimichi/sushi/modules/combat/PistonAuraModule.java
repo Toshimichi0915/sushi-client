@@ -27,10 +27,7 @@ import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.combat.PistonAuraAttack;
 import net.toshimichi.sushi.utils.combat.PistonAuraUtils;
-import net.toshimichi.sushi.utils.player.DesyncCloseable;
-import net.toshimichi.sushi.utils.player.DesyncMode;
-import net.toshimichi.sushi.utils.player.ItemSlot;
-import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.player.*;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
@@ -216,7 +213,15 @@ public class PistonAuraModule extends BaseModule {
     public void onPostClientTick(ClientTickEvent e) {
         repeatCounter = 0;
         update();
-        if (ItemSlot.getCurrentItemSlot(getPlayer()).getItemStack().getItem() instanceof ItemBlock) return;
+        ItemSlot current = ItemSlot.getCurrentItemSlot(getPlayer());
+        boolean swap = false;
+        if (current.getItemStack().getItem() instanceof ItemBlock) {
+            swap = true;
+            for (ItemSlot itemSlot : InventoryType.HOTBAR) {
+                if (itemSlot.getItemStack().getItem() instanceof ItemBlock) continue;
+                InventoryUtils.moveHotbar(itemSlot.getIndex());
+            }
+        }
         if (TickUtils.current() - lastGhostBlockCheckTick > ghostBlockCheckDelay.getValue().getCurrent()) return;
         lastGhostBlockCheckTick = TickUtils.current();
         if (!ghostBlocks.isEmpty()) {
@@ -226,6 +231,7 @@ public class PistonAuraModule extends BaseModule {
             if (!BlockUtils.canInteract(checkPos)) return;
             getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(checkPos, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
         }
+        if (swap) InventoryUtils.moveHotbar(current.getIndex());
     }
 
     @Override
