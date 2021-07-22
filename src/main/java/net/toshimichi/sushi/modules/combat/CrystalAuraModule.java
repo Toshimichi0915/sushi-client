@@ -83,7 +83,7 @@ public class CrystalAuraModule extends BaseModule {
     private volatile long lastBreakTick;
     private volatile long lastRecalculationTick;
 
-    private long counter;
+    private int asyncCounter;
 
     public CrystalAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -95,9 +95,9 @@ public class CrystalAuraModule extends BaseModule {
 
         // Cool Time
         ConfigurationCategory coolTime = provider.getCategory("cool_time", "Cool Time Settings", null);
-        placeCoolTime = coolTime.get("place_cool_time", "Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
-        breakCoolTime = coolTime.get("break_cool_time", "Break Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
-        recalculationCoolTime = coolTime.get("recalculation_cool_time", "Recalculation Delay", null, IntRange.class, new IntRange(5, 20, 1, 1));
+        placeCoolTime = coolTime.get("place_cool_time", "Place Delay", null, IntRange.class, new IntRange(20, 1000, 10, 10));
+        breakCoolTime = coolTime.get("break_cool_time", "Break Delay", null, IntRange.class, new IntRange(0, 1000, 0, 10));
+        recalculationCoolTime = coolTime.get("recalculation_cool_time", "Recalculation Delay", null, IntRange.class, new IntRange(0, 1000, 0, 10));
 
         // Damage
         ConfigurationCategory damage = provider.getCategory("damage", "Damage Settings", null);
@@ -129,6 +129,19 @@ public class CrystalAuraModule extends BaseModule {
     @Override
     public void onEnable() {
         EventHandlers.register(this);
+        new Thread(() -> {
+            while (true) {
+                asyncCounter++;
+                if (!isEnabled()) return;
+                try {
+                    placeCrystal();
+                    long sleep = placeCoolTime.getValue().getCurrent() - (System.currentTimeMillis() - lastPlaceTick);
+                    if (sleep > 0) Thread.sleep(sleep);
+                } catch (InterruptedException e) {
+                    // shut down the thread
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -139,7 +152,6 @@ public class CrystalAuraModule extends BaseModule {
         lastBreakTick = 0;
         lastPlaceTick = 0;
         lastRecalculationTick = 0;
-        counter = 100;
     }
 
     private double getDamage(Vec3d pos, EntityPlayer player, Vec3d offset) {
@@ -286,24 +298,24 @@ public class CrystalAuraModule extends BaseModule {
     }
 
     private boolean updateBreakCounter() {
-        if (counter - lastBreakTick >= breakCoolTime.getValue().getCurrent()) {
-            lastBreakTick = counter;
+        if (System.currentTimeMillis() - lastBreakTick >= breakCoolTime.getValue().getCurrent()) {
+            lastBreakTick = System.currentTimeMillis();
             return true;
         }
         return false;
     }
 
     private boolean updatePlaceCounter() {
-        if (counter - lastPlaceTick >= placeCoolTime.getValue().getCurrent()) {
-            lastPlaceTick = counter;
+        if (System.currentTimeMillis() - lastPlaceTick >= placeCoolTime.getValue().getCurrent()) {
+            lastPlaceTick = System.currentTimeMillis();
             return true;
         }
         return false;
     }
 
     private boolean updateRecalculationCounter() {
-        if (counter - lastRecalculationTick >= recalculationCoolTime.getValue().getCurrent()) {
-            lastRecalculationTick = counter;
+        if (System.currentTimeMillis() - lastRecalculationTick >= recalculationCoolTime.getValue().getCurrent()) {
+            lastRecalculationTick = System.currentTimeMillis();
             return true;
         }
         return false;
@@ -325,39 +337,39 @@ public class CrystalAuraModule extends BaseModule {
         }
     }
 
-    private synchronized void executeAttack() {
-
+    private synchronized void breakCrystal() {
         // copy
-        CrystalAttack crystalAttack = this.crystalAttack;
         CrystalAttack nearbyCrystalAttack = this.nearbyCrystalAttack;
 
         // break
         if (nearbyCrystalAttack != null && updateBreakCounter()) breakEnderCrystal(nearbyCrystalAttack.info);
-
-        if (crystalAttack == null) return;
-        Vec3d crystalPos = crystalAttack.info.pos;
-        if (updatePlaceCounter()) {
-            EnderCrystalInfo colliding = getCollidingEnderCrystal(crystalAttack.info.box);
-            if (colliding != null && updateBreakCounter()) breakEnderCrystal(colliding);
-            lastPlaceTick = counter;
-            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-                PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
-            }
-            if (y255Attack.getValue()) {
-                getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
-                        EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
-            } else {
-                getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
-                        EnumFacing.UP, EnumHand.MAIN_HAND, 0.5F, 1, 0.5F));
-            }
-        }
-
         this.nearbyCrystalAttack = null;
+    }
+
+    private synchronized void placeCrystal() {
+        // copy
+        CrystalAttack crystalAttack = this.crystalAttack;
+
+        // place
+        if (crystalAttack == null) return;
+        if (!updatePlaceCounter()) return;
+        Vec3d crystalPos = crystalAttack.info.pos;
+        EnderCrystalInfo colliding = getCollidingEnderCrystal(crystalAttack.info.box);
+        if (colliding != null && updateBreakCounter()) breakEnderCrystal(colliding);
+        try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
+            PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
+        }
+        if (y255Attack.getValue()) {
+            getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
+                    EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+        } else {
+            getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
+                    EnumFacing.UP, EnumHand.MAIN_HAND, 0.5F, 1, 0.5F));
+        }
     }
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        counter++;
         refreshEnderCrystals();
         if (updateRecalculationCounter()) refreshCrystalAttack();
         if (crystalAttack == null && nearbyCrystalAttack == null) return;
@@ -365,8 +377,6 @@ public class CrystalAuraModule extends BaseModule {
                 .supply(() -> Items.END_CRYSTAL)
                 .then(new ItemSwitchTask(null, switchMode.getValue()))
                 .execute();
-
-        executeAttack();
     }
 
     @EventHandler(timing = EventTiming.POST)
@@ -393,7 +403,7 @@ public class CrystalAuraModule extends BaseModule {
             AxisAlignedBB box = new AxisAlignedBB(pos.x - 0.75, pos.y, pos.z - 0.75, pos.x + 0.75, pos.y + 1.5, pos.z + 0.75);
             enderCrystals.add(new EnderCrystalInfo(packet.getEntityID(), pos, box));
         }
-        executeAttack();
+        breakCrystal();
     }
 
     @Override
