@@ -152,7 +152,9 @@ public class NoRenderModule extends BaseModule {
             PacketBuffer write = new PacketBuffer(Unpooled.buffer());
             packet.writePacketData(read);
             // map-id, mapScale, trackingPosition, iconsLength, icons, columns
-            write.writeVarInt(read.readVarInt());
+            int mapId = read.readVarInt();
+            write.writeVarInt(mapId);
+            if(mapId < 0) return;
             write.writeByte(read.readByte());
             write.writeBoolean(read.readBoolean());
             int iconsLength = read.readVarInt();
@@ -161,7 +163,7 @@ public class NoRenderModule extends BaseModule {
             byte columns = read.readByte();
             write.writeByte(columns);
             if (columns > 0) {
-                // rows, minX, minZ, mapDataBytes
+                // rows, minX, minZ, length
                 write.writeByte(read.readByte());
                 write.writeByte(read.readByte());
                 write.writeByte(read.readByte());
