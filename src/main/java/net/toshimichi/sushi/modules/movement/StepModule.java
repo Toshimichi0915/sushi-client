@@ -21,8 +21,13 @@ import java.util.List;
 
 public class StepModule extends BaseModule {
 
+    private final Configuration<Boolean> normal;
     private final Configuration<IntRange> height;
     private final Configuration<DoubleRange> delta;
+
+    private final Configuration<Boolean> reverse;
+    private final Configuration<IntRange> reverseHeight;
+
     private final Configuration<Boolean> pauseInHole;
     private final Configuration<Boolean> pauseOnSneak;
     private double motionX;
@@ -30,8 +35,13 @@ public class StepModule extends BaseModule {
 
     public StepModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        height = provider.get("height", "Height", null, IntRange.class, new IntRange(2, 8, 1, 1));
-        delta = provider.get("delta", "Delta", null, DoubleRange.class, new DoubleRange(0.1, 1, 0, 0.1, 1));
+        normal = provider.get("normal", "Normal", null, Boolean.class, true);
+        height = provider.get("height", "Height", null, IntRange.class, new IntRange(2, 8, 1, 1), normal::getValue, false, 0);
+        delta = provider.get("delta", "Delta", null, DoubleRange.class, new DoubleRange(0.1, 1, 0, 0.1, 1), normal::getValue, false, 0);
+
+        reverse = provider.get("reverse", "Reverse", null, Boolean.class, true);
+        reverseHeight = provider.get("reverse_height", "Reverse Height", null, IntRange.class, new IntRange(2, 8, 1, 1), reverse::getValue, false, 0);
+
         pauseInHole = provider.get("pause_in_hole", "Pause In Hole", null, Boolean.class, true);
         pauseOnSneak = provider.get("pause_on_sneak", "Pause On Sneak", null, Boolean.class, true);
     }
@@ -48,11 +58,16 @@ public class StepModule extends BaseModule {
 
     private double getMaxHeight(AxisAlignedBB box) {
         List<AxisAlignedBB> collisions = getWorld().getCollisionBoxes(null, box.offset(0, -1, 0));
+        boolean updated = false;
         double maxY = 0;
         for (AxisAlignedBB collision : collisions) {
-            if (collision.maxY > maxY) maxY = collision.maxY;
+            if (collision.maxY > maxY) {
+                updated = true;
+                maxY = collision.maxY;
+            }
+
         }
-        return maxY;
+        return updated ? maxY : Double.NaN;
     }
 
     @EventHandler(timing = EventTiming.PRE)
@@ -69,19 +84,38 @@ public class StepModule extends BaseModule {
             return;
         }
         Vec3d direction = new Vec3d(motionX, 0, motionZ).normalize();
-        for (int y = 0; y <= height.getValue().getCurrent(); y++) {
-            Vec3d pos = direction.scale(0.01).add(0, y, 0);
-            Vec3d scaled = direction.scale(delta.getValue().getCurrent());
-            AxisAlignedBB box = getPlayer().getEntityBoundingBox().offset(pos);
-            AxisAlignedBB box2 = getPlayer().getEntityBoundingBox().offset(scaled).offset(pos);
-            if (!getWorld().collidesWithAnyBlock(box) && y == 0) return;
-            if (getWorld().collidesWithAnyBlock(box2)) continue;
-            Vec3d resultPos = getPlayer().getPositionVector().add(scaled).add(pos);
-            PositionUtils.move(resultPos.x, getMaxHeight(box), resultPos.z, 0, 0, true, false, DesyncMode.NONE);
-            getPlayer().motionX = motionX;
-            getPlayer().motionY = 0;
-            getPlayer().motionZ = motionZ;
-            return;
+        Vec3d scaled = direction.scale(delta.getValue().getCurrent());
+        if (reverse.getValue()) {
+            for (int y = -reverseHeight.getValue().getCurrent(); y <= 0; y++) {
+                Vec3d pos = direction.scale(0.01).add(0, y, 0);
+                AxisAlignedBB box = getPlayer().getEntityBoundingBox().offset(pos);
+                if (getWorld().collidesWithAnyBlock(box)) continue;
+                Vec3d resultPos = getPlayer().getPositionVector().add(pos);
+                double height = getMaxHeight(box);
+                if (Double.isNaN(height)) continue;
+                if (getPlayer().movementInput.jump) continue;
+                PositionUtils.move(resultPos.x, height, resultPos.z, 0, 0, true, false, DesyncMode.NONE);
+                getPlayer().motionX = motionX;
+                getPlayer().motionY = 0;
+                getPlayer().motionZ = motionZ;
+                return;
+            }
+        }
+        if (!getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(direction.scale(0.01)))) return;
+        if (normal.getValue()) {
+            for (int y = 0; y <= height.getValue().getCurrent(); y++) {
+                Vec3d pos = direction.scale(0.01).add(0, y, 0);
+                AxisAlignedBB box = getPlayer().getEntityBoundingBox().offset(pos);
+                AxisAlignedBB box2 = getPlayer().getEntityBoundingBox().offset(scaled).offset(pos);
+                if (getWorld().collidesWithAnyBlock(box2)) continue;
+                Vec3d resultPos = getPlayer().getPositionVector().add(scaled).add(pos);
+                double height = getMaxHeight(box);
+                PositionUtils.move(resultPos.x, height, resultPos.z, 0, 0, true, false, DesyncMode.NONE);
+                getPlayer().motionX = motionX;
+                getPlayer().motionY = 0;
+                getPlayer().motionZ = motionZ;
+                return;
+            }
         }
     }
 
