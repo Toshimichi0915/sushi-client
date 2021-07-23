@@ -4,7 +4,6 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.EnumFacing;
@@ -27,7 +26,9 @@ import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.combat.PistonAuraAttack;
 import net.toshimichi.sushi.utils.combat.PistonAuraUtils;
-import net.toshimichi.sushi.utils.player.*;
+import net.toshimichi.sushi.utils.player.DesyncCloseable;
+import net.toshimichi.sushi.utils.player.DesyncMode;
+import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
@@ -213,16 +214,6 @@ public class PistonAuraModule extends BaseModule {
     public void onPostClientTick(ClientTickEvent e) {
         repeatCounter = 0;
         update();
-        ItemSlot current = ItemSlot.getCurrentItemSlot(getPlayer());
-        boolean swap = false;
-        if (current.getItemStack().getItem() instanceof ItemBlock) {
-            swap = true;
-            for (ItemSlot itemSlot : InventoryType.HOTBAR) {
-                if (itemSlot.getItemStack().getItem() instanceof ItemBlock) continue;
-                InventoryUtils.moveHotbar(itemSlot.getIndex());
-                break;
-            }
-        }
         if (TickUtils.current() - lastGhostBlockCheckTick > ghostBlockCheckDelay.getValue().getCurrent()) return;
         lastGhostBlockCheckTick = TickUtils.current();
         while (true) {
@@ -230,11 +221,10 @@ public class PistonAuraModule extends BaseModule {
             BlockPos checkPos = ghostBlocks.get(0);
             ghostBlocks.removeIf(it -> BlockUtils.equals(checkPos, it));
             if (BlockUtils.canInteract(checkPos)) {
-                getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(checkPos, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+                BlockUtils.checkGhostBlock(checkPos);
                 break;
             }
         }
-        if (swap) InventoryUtils.moveHotbar(current.getIndex());
     }
 
     @Override

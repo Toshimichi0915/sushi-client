@@ -118,6 +118,11 @@ public class AntiPistonAuraModule extends BaseModule {
                 .abortIfFalse()
                 .supply(() -> spam)
                 .then(new BlockPlaceTask(true, true))
+                .delay(20)
+                .then(() -> {
+                    BlockPos[] pos = spam.stream().map(BlockPlaceInfo::getBlockPos).toArray(BlockPos[]::new);
+                    BlockUtils.checkGhostBlock(pos);
+                })
                 .execute();
     }
 
