@@ -46,15 +46,14 @@ public class StepModule extends BaseModule {
         EventHandlers.unregister(this);
     }
 
-    private double getMaxHeight(AxisAlignedBB box, double minY) {
-        List<AxisAlignedBB> collisions = getWorld().getCollisionBoxes(null, box);
-        double maxY = minY;
+    private double getMaxHeight(AxisAlignedBB box) {
+        List<AxisAlignedBB> collisions = getWorld().getCollisionBoxes(null, box.offset(0, -1, 0));
+        double maxY = 0;
         for (AxisAlignedBB collision : collisions) {
             if (collision.maxY > maxY) maxY = collision.maxY;
         }
         return maxY;
     }
-
 
     @EventHandler(timing = EventTiming.PRE)
     public void onPrePlayerMove(PlayerMoveEvent e) {
@@ -78,7 +77,7 @@ public class StepModule extends BaseModule {
             if (!getWorld().collidesWithAnyBlock(box) && y == 0) return;
             if (getWorld().collidesWithAnyBlock(box2)) continue;
             Vec3d resultPos = getPlayer().getPositionVector().add(scaled).add(pos);
-            PositionUtils.move(resultPos.x, getMaxHeight(box, box.minY), resultPos.z, 0, 0, true, false, DesyncMode.NONE);
+            PositionUtils.move(resultPos.x, getMaxHeight(box), resultPos.z, 0, 0, true, false, DesyncMode.NONE);
             getPlayer().motionX = motionX;
             getPlayer().motionY = 0;
             getPlayer().motionZ = motionZ;
