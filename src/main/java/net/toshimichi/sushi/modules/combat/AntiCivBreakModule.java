@@ -96,7 +96,7 @@ public class AntiCivBreakModule extends BaseModule {
                 .abortIfFalse()
                 .supply(() -> Collections.singletonList(info))
                 .then(new BlockPlaceTask(true, true))
-                .delay(20)
+                .delay(5)
                 .then(() -> BlockUtils.checkGhostBlock(targetPos))
                 .execute();
     }
