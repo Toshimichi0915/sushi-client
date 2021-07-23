@@ -220,16 +220,19 @@ public class PistonAuraModule extends BaseModule {
             for (ItemSlot itemSlot : InventoryType.HOTBAR) {
                 if (itemSlot.getItemStack().getItem() instanceof ItemBlock) continue;
                 InventoryUtils.moveHotbar(itemSlot.getIndex());
+                break;
             }
         }
         if (TickUtils.current() - lastGhostBlockCheckTick > ghostBlockCheckDelay.getValue().getCurrent()) return;
         lastGhostBlockCheckTick = TickUtils.current();
-        if (!ghostBlocks.isEmpty()) {
+        while (true) {
+            if (ghostBlocks.isEmpty()) break;
             BlockPos checkPos = ghostBlocks.get(0);
-            ghostBlocks.remove(0);
             ghostBlocks.removeIf(it -> BlockUtils.equals(checkPos, it));
-            if (!BlockUtils.canInteract(checkPos)) return;
-            getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(checkPos, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+            if (BlockUtils.canInteract(checkPos)) {
+                getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(checkPos, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+                break;
+            }
         }
         if (swap) InventoryUtils.moveHotbar(current.getIndex());
     }
