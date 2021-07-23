@@ -97,9 +97,9 @@ public class AntiPistonAuraModule extends BaseModule {
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
         BlockPos playerPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
-        for (int x = -3; x < 4; x++) {
-            for (int y = 1; y < 4; y++) {
-                for (int z = -3; z < 4; z++) {
+        for (int x = -4; x < 5; x++) {
+            for (int y = 1; y < 5; y++) {
+                for (int z = -4; z < 5; z++) {
                     BlockPos pos = new BlockPos(playerPos.getX() + x, playerPos.getY() + y, playerPos.getZ() + z);
                     if (processPosition(pos)) break;
                 }
