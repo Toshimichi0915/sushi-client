@@ -94,6 +94,7 @@ public class GsonModules implements Modules {
         addModuleFactory("speed", SpeedModule::new, true);
         addModuleFactory("world_time", WorldTimeModule::new, true);
         addModuleFactory("criticals", CriticalsModule::new, true);
+        addModuleFactory("packet_fly", PacketFlyModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
