@@ -14,7 +14,9 @@ import java.util.function.Consumer;
 public class HoleUtils {
 
     private static HoleInfo getSingleHole(World world, BlockPos origin) {
-        if (!BlockUtils.isAir(world, origin) || !BlockUtils.isAir(world, origin.add(0, 1, 0))) return null;
+        if (!BlockUtils.isAir(world, origin) ||
+                !BlockUtils.isAir(world, origin.add(0, 1, 0)) ||
+                !BlockUtils.isAir(world, origin.add(0, 2, 0))) return null;
         boolean isObsidian = false;
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing == EnumFacing.UP) continue;
@@ -28,11 +30,13 @@ public class HoleUtils {
 
     private static HoleInfo getDoubleHole(World world, BlockPos origin) {
         if (!BlockUtils.isAir(world, origin) || !BlockUtils.isAir(world, origin.add(0, 1, 0))) return null;
+        boolean canAccess = BlockUtils.isAir(world, origin.add(0, 2, 0));
         root:
         for (EnumFacing facing : new EnumFacing[]{EnumFacing.SOUTH, EnumFacing.EAST}) {
+            if (!BlockUtils.isAir(world, origin.offset(facing)) ||
+                    !BlockUtils.isAir(world, origin.offset(facing).add(0, 1, 0))) continue;
+            if (!canAccess && !BlockUtils.isAir(world, origin.offset(facing).add(0, 2, 0))) continue;
             boolean isObsidian = false;
-            Block b = world.getBlockState(origin.offset(facing)).getBlock();
-            if (b != Blocks.AIR) continue;
             for (EnumFacing i : EnumFacing.values()) {
                 if (i == facing || i == EnumFacing.UP) continue;
                 Block b1 = world.getBlockState(origin.offset(i)).getBlock();
