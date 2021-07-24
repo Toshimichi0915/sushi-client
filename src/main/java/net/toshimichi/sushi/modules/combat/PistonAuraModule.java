@@ -214,7 +214,7 @@ public class PistonAuraModule extends BaseModule {
     public void onPostClientTick(ClientTickEvent e) {
         repeatCounter = 0;
         update();
-        if (TickUtils.current() - lastGhostBlockCheckTick > ghostBlockCheckDelay.getValue().getCurrent()) return;
+        if (TickUtils.current() - lastGhostBlockCheckTick < ghostBlockCheckDelay.getValue().getCurrent()) return;
         lastGhostBlockCheckTick = TickUtils.current();
         while (true) {
             if (ghostBlocks.isEmpty()) break;
