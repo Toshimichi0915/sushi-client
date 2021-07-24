@@ -140,7 +140,7 @@ public class PistonAuraUtils {
 
     public static List<PistonAuraAttack> find(EntityPlayer player, int distance) {
         ArrayList<PistonAuraAttack> result = new ArrayList<>();
-        for (EntityPlayer entity : EntityUtils.getNearbyPlayers(3.5)) {
+        for (EntityPlayer entity : EntityUtils.getNearbyPlayers(6)) {
             result.addAll(find(player, entity, distance));
         }
         return result;
