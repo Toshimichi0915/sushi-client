@@ -22,12 +22,12 @@ import java.util.List;
 
 public class PistonAuraUtils {
 
-    public static BlockState getBlockState(EntityPlayer player, BlockPos pos, Block... blocks) {
+    public static PlaceState getPlaceState(EntityPlayer player, BlockPos pos, Block... blocks) {
         Block block = player.world.getBlockState(pos).getBlock();
-        if (Arrays.asList(blocks).contains(block)) return BlockState.PLACED;
-        else if (BlockUtils.canPlace(player.world, new BlockPlaceInfo(pos, null))) return BlockState.AIR;
-        else if (block == Blocks.BEDROCK || block == Blocks.OBSIDIAN) return BlockState.UNREACHABLE;
-        else return BlockState.BLOCKED;
+        if (Arrays.asList(blocks).contains(block)) return PlaceState.PLACED;
+        else if (BlockUtils.canPlace(player.world, new BlockPlaceInfo(pos, null))) return PlaceState.AIR;
+        else if (block == Blocks.BEDROCK || block == Blocks.OBSIDIAN) return PlaceState.UNREACHABLE;
+        else return PlaceState.BLOCKED;
     }
 
     private static List<PistonAuraAttack> find(EntityPlayer player, EntityPlayer target, BlockPos obsidianPos, int distance) {
@@ -76,30 +76,30 @@ public class PistonAuraUtils {
                 double sin = (pistonPos.getY() - player.posY) /
                         player.getPositionVector().distanceTo(BlockUtils.toVec3d(pistonPos).add(0.5, 0.5, 0.5));
                 if (Math.abs(sin) > 0.5D) return null;
-                BlockState state1 = getBlockState(player, airPos, Blocks.PISTON_HEAD, Blocks.PISTON_EXTENSION);
-                BlockState state2 = getBlockState(player, pistonPos, Blocks.PISTON, Blocks.STICKY_PISTON);
-                BlockState state3 = BlockState.UNREACHABLE;
+                PlaceState state1 = getPlaceState(player, airPos, Blocks.PISTON_HEAD, Blocks.PISTON_EXTENSION);
+                PlaceState state2 = getPlaceState(player, pistonPos, Blocks.PISTON, Blocks.STICKY_PISTON);
+                PlaceState state3 = PlaceState.UNREACHABLE;
                 for (EnumFacing facing1 : EnumFacing.values()) {
                     if (facing1 == facing.getOpposite()) continue;
                     BlockPos redstonePos = pistonPos.offset(facing1);
-                    BlockState blockState = getBlockState(player, redstonePos, Blocks.REDSTONE_BLOCK);
-                    if (state3 == BlockState.UNREACHABLE) {
-                        if (blockState != BlockState.UNREACHABLE) state3 = blockState;
-                    } else if (state3 == BlockState.BLOCKED) {
-                        if (blockState != BlockState.BLOCKED) state3 = blockState;
-                    } else if (state3 == BlockState.AIR) {
-                        if (blockState != BlockState.AIR) state3 = blockState;
+                    PlaceState placeState = getPlaceState(player, redstonePos, Blocks.REDSTONE_BLOCK);
+                    if (state3 == PlaceState.UNREACHABLE) {
+                        if (placeState != PlaceState.UNREACHABLE) state3 = placeState;
+                    } else if (state3 == PlaceState.BLOCKED) {
+                        if (placeState != PlaceState.BLOCKED) state3 = placeState;
+                    } else if (state3 == PlaceState.AIR) {
+                        if (placeState != PlaceState.AIR) state3 = placeState;
                     }
                 }
 
-                if (state1 == BlockState.UNREACHABLE || state2 == BlockState.UNREACHABLE || state3 == BlockState.UNREACHABLE) {
+                if (state1 == PlaceState.UNREACHABLE || state2 == PlaceState.UNREACHABLE || state3 == PlaceState.UNREACHABLE) {
                     continue;
                 }
-                boolean blocked = state1 == BlockState.BLOCKED || state2 == BlockState.BLOCKED || state3 == BlockState.BLOCKED;
+                boolean blocked = state1 == PlaceState.BLOCKED || state2 == PlaceState.BLOCKED || state3 == PlaceState.BLOCKED;
 
                 List<BlockPlaceInfo> pistonPlace = null;
                 BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(player.world, pistonPos);
-                if (state2 != BlockState.PLACED && info == null) {
+                if (state2 != PlaceState.PLACED && info == null) {
                     for (EnumFacing value : EnumFacing.values()) {
                         HashSet<BlockPos> closed = new HashSet<>();
                         closed.add(pistonPos);
@@ -115,7 +115,7 @@ public class PistonAuraUtils {
                 }
 
                 result.add(new PistonAuraAttack(pos, pistonPos, facing, player, target, damage, placed, blocked, placed != null,
-                        state2 == BlockState.PLACED, state3 == BlockState.PLACED, state1 == BlockState.PLACED,
+                        state2 == PlaceState.PLACED, state3 == PlaceState.PLACED, state1 == PlaceState.PLACED,
                         obsidianPlace, pistonPlace));
             }
 
@@ -146,7 +146,7 @@ public class PistonAuraUtils {
         return result;
     }
 
-    private enum BlockState {
+    private enum PlaceState {
         PLACED, UNREACHABLE, BLOCKED, AIR
     }
 }
