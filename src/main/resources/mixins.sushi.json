@@ -8,6 +8,7 @@
     "AccessorEntityRenderer",
     "AccessorItemTool",
     "AccessorMinecraft",
+    "AccessorPlayerControllerMP",
     "AccessorTimer",
     "MixinBlock",
     "MixinBlockFluidRenderer",
