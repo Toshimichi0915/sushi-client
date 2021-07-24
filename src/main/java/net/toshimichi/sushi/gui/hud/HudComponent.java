@@ -4,10 +4,7 @@ import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
-import net.toshimichi.sushi.gui.hud.elements.CoordinatesComponent;
-import net.toshimichi.sushi.gui.hud.elements.ModuleListComponent;
-import net.toshimichi.sushi.gui.hud.elements.SpeedComponent;
-import net.toshimichi.sushi.gui.hud.elements.TpsComponent;
+import net.toshimichi.sushi.gui.hud.elements.*;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.render.GuiUtils;
 
@@ -27,6 +24,8 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
         addElement(TpsComponent::new, "tps", "TPS");
         addElement(ModuleListComponent::new, "modules", "Modules");
         addElement(SpeedComponent::new, "speed", "Speed");
+        addElement(OverworldComponent::new, "overworld", "Overworld");
+        addElement(NetherComponent::new, "nether", "Nether");
     }
 
     private void addVirtual(VirtualHudElementComponent component) {
