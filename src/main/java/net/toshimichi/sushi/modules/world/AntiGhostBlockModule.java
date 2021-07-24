@@ -2,21 +2,44 @@ package net.toshimichi.sushi.modules.world;
 
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.network.play.client.CPacketPlayerDigging;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
+import net.toshimichi.sushi.config.Config;
+import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
+import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.EntityInfo;
 import net.toshimichi.sushi.utils.EntityUtils;
+import net.toshimichi.sushi.utils.player.ItemSlot;
 import net.toshimichi.sushi.utils.world.BlockUtils;
+
+import java.util.HashSet;
 
 public class AntiGhostBlockModule extends BaseModule {
 
+    @Config(id = "crystal_detection", name = "Crystal Detection")
+    public Boolean crystalDetection = true;
+
+    @Config(id = "place", name = "Place")
+    public Boolean placeCheck = true;
+
+    @Config(id = "break", name = "Break")
+    public Boolean breakCheck = true;
+
+    private final HashSet<Vec3i> toBeChecked = new HashSet<>();
+
     public AntiGhostBlockModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        new ConfigInjector(provider).inject(this);
     }
 
     @Override
@@ -31,13 +54,38 @@ public class AntiGhostBlockModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        for (EntityInfo<EntityEnderCrystal> crystal : EntityUtils.getNearbyEntities(getPlayer().getPositionVector(), EntityEnderCrystal.class)) {
-            BlockPos pos = BlockUtils.toBlockPos(crystal.getEntity().getPositionVector());
-            if (BlockUtils.isAir(getWorld(), pos)) continue;
-            if (!EntityUtils.canInteract(getPlayer().getPositionVector(), crystal.getEntity().getPositionVector(), 6, 3))
-                return;
-            getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
-            BlockUtils.checkGhostBlock(pos);
+        // place check
+        if (!toBeChecked.isEmpty()) {
+            BlockPos[] arr = toBeChecked.stream().map(BlockUtils::toBlockPos).toArray(BlockPos[]::new);
+            BlockUtils.checkGhostBlock(arr);
+        }
+        toBeChecked.clear();
+
+        // crystal detection
+        if (crystalDetection) {
+            Vec3d p = getPlayer().getPositionVector();
+            for (EntityInfo<EntityEnderCrystal> crystal : EntityUtils.getNearbyEntities(p, EntityEnderCrystal.class)) {
+                BlockPos pos = BlockUtils.toBlockPos(crystal.getEntity().getPositionVector());
+                if (BlockUtils.isAir(getWorld(), pos)) continue;
+                if (!EntityUtils.canInteract(p, crystal.getEntity().getPositionVector(), 6, 3))
+                    return;
+                getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
+                BlockUtils.checkGhostBlock(pos);
+            }
+        }
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onPacketSend(PacketSendEvent e) {
+        if (placeCheck && e.getPacket() instanceof CPacketPlayerTryUseItemOnBlock
+                && ItemSlot.current().getItemStack().getItem() instanceof ItemBlock) {
+            CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) e.getPacket();
+            BlockPos blockPos = packet.getPos().add(packet.getFacingX(), packet.getFacingY(), packet.getFacingZ());
+            BlockUtils.checkGhostBlock(blockPos);
+        }
+        if (breakCheck && e.getPacket() instanceof CPacketPlayerDigging) {
+            CPacketPlayerDigging packet = (CPacketPlayerDigging) e.getPacket();
+            toBeChecked.add(BlockUtils.toVec3i(packet.getPosition()));
         }
     }
 
