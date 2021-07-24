@@ -98,6 +98,7 @@ public class GsonModules implements Modules {
         addModuleFactory("auto_vote", AutoVoteModule::new, true);
         addModuleFactory("packet_fly", PacketFlyModule::new, true);
         addModuleFactory("safe_walk", SafeWalkModule::new, true);
+        addModuleFactory("player_esp", PlayerEspModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
