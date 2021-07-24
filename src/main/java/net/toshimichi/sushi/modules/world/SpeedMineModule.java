@@ -6,7 +6,6 @@ import net.minecraft.util.math.BlockPos;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
-import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -21,9 +20,6 @@ public class SpeedMineModule extends BaseModule {
 
     @Config(id = "delay", name = "Delay")
     public IntRange delay = new IntRange(0, 5, 0, 1);
-
-    @Config(id = "speed_multiplier", name = "Speed Multiplier")
-    public DoubleRange speed = new DoubleRange(1.2, 2, 0, 0.05, 2);
 
     @Config(id = "packet_mine", name = "Packet Mine")
     public Boolean packetMine = true;
@@ -50,13 +46,6 @@ public class SpeedMineModule extends BaseModule {
     public void onClientTick(ClientTickEvent e) {
         BlockPos breakingBlock = BlockUtils.getBreakingBlockPos();
         AccessorPlayerControllerMP controller = (AccessorPlayerControllerMP) getController();
-
-        // speed mine
-        if (breakingBlock != null && !BlockUtils.isAir(getWorld(), breakingBlock)) {
-            float hardness = getWorld().getBlockState(breakingBlock).getBlockHardness(getWorld(), breakingBlock);
-            float damage = controller.getCurBlockDamageMP() + hardness * ((float) speed.getCurrent() - 1);
-            controller.setCurBlockDamageMP(damage);
-        }
 
         // packet mine
         if (packetMine && breakingBlock != null && !BlockUtils.isAir(getWorld(), breakingBlock)) {

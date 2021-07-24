@@ -117,7 +117,7 @@ public class BlockUtils {
         NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
         if (player == null || connection == null) return;
         boolean swap = false;
-        ItemSlot current = ItemSlot.getCurrentItemSlot(player);
+        ItemSlot current = ItemSlot.current();
         if (current.getItemStack().getItem() instanceof ItemBlock) {
             swap = true;
             for (ItemSlot itemSlot : InventoryType.HOTBAR) {

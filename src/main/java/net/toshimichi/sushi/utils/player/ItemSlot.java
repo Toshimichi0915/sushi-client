@@ -37,13 +37,13 @@ public class ItemSlot implements Comparable<ItemSlot> {
         return Integer.compare(getIndex(), o.getIndex());
     }
 
-    public static ItemSlot getCurrentItemSlot(EntityPlayer player) {
+    public static ItemSlot current() {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
         return new ItemSlot(player.inventory.currentItem, player);
     }
 
     public static ItemSlot[] values() {
         ItemSlot[] result = new ItemSlot[36];
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
         for (int i = 0; i < result.length; i++) {
             result[i] = new ItemSlot(i);
         }
