@@ -8,6 +8,7 @@ import net.toshimichi.sushi.config.GsonConfigurations;
 import net.toshimichi.sushi.config.GsonRootConfigurations;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.modules.client.AntiErrorKickModule;
+import net.toshimichi.sushi.modules.client.AutoVoteModule;
 import net.toshimichi.sushi.modules.client.ClickGuiModule;
 import net.toshimichi.sushi.modules.client.HudModule;
 import net.toshimichi.sushi.modules.combat.*;
@@ -94,6 +95,7 @@ public class GsonModules implements Modules {
         addModuleFactory("speed", SpeedModule::new, true);
         addModuleFactory("world_time", WorldTimeModule::new, true);
         addModuleFactory("criticals", CriticalsModule::new, true);
+        addModuleFactory("auto_vote", AutoVoteModule::new, true);
         addModuleFactory("packet_fly", PacketFlyModule::new, true);
         addModuleFactory("safe_walk", SafeWalkModule::new, true);
     }
