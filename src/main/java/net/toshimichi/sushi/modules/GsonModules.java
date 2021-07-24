@@ -100,6 +100,7 @@ public class GsonModules implements Modules {
         addModuleFactory("safe_walk", SafeWalkModule::new, true);
         addModuleFactory("player_esp", PlayerEspModule::new, true);
         addModuleFactory("speed_mine", SpeedMineModule::new, true);
+        addModuleFactory("anti_ghost_block", AntiGhostBlockModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
