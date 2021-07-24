@@ -4,6 +4,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
@@ -19,14 +20,15 @@ import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockPlaceUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SurroundModule extends BaseModule {
 
     private final Configuration<Boolean> pull;
     private final Configuration<Boolean> disableAfter;
     private final Configuration<Boolean> disableOnJump;
+    private final Configuration<Boolean> antiGhostBlock;
+    private final Collection<Vec3i> checked = Collections.newSetFromMap(new WeakHashMap<>());
     private boolean running;
 
     public SurroundModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
@@ -34,6 +36,7 @@ public class SurroundModule extends BaseModule {
         pull = provider.get("pull", "Pull", null, Boolean.class, true);
         disableAfter = provider.get("disable_after", "Disable After", null, Boolean.class, false);
         disableOnJump = provider.get("disable_on_jump", "Disable On Jump", null, Boolean.class, false);
+        antiGhostBlock = provider.get("anti_ghost_block", "Anti Ghost Block", null, Boolean.class, true);
     }
 
     @Override
@@ -54,12 +57,19 @@ public class SurroundModule extends BaseModule {
             setEnabled(false);
         }
         ArrayList<BlockPlaceInfo> placeList = new ArrayList<>();
+        ArrayList<BlockPos> toBeChecked = new ArrayList<>(4);
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing == EnumFacing.UP) continue;
-            List<BlockPlaceInfo> info = BlockPlaceUtils.search(getWorld(), pos.offset(facing), 3);
+            BlockPos offset = pos.offset(facing);
+            if (antiGhostBlock.getValue() && !checked.contains(BlockUtils.toVec3i(offset))) {
+                toBeChecked.add(offset);
+                checked.add(BlockUtils.toVec3i(offset));
+            }
+            List<BlockPlaceInfo> info = BlockPlaceUtils.search(getWorld(), offset, 3);
             if (info == null) continue;
             placeList.addAll(info);
         }
+        BlockUtils.checkGhostBlock(toBeChecked.toArray(new BlockPos[0]));
         if (placeList.isEmpty()) return;
         ItemSlot obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), getPlayer(), InventoryType.values());
         if (obsidianSlot == null) return;
