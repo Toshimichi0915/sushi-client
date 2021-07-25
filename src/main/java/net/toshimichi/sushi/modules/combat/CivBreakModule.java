@@ -9,6 +9,7 @@ import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -19,6 +20,7 @@ import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.combat.CivBreakAttack;
 import net.toshimichi.sushi.utils.combat.CivBreakUtils;
+import net.toshimichi.sushi.utils.player.InventoryUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
@@ -27,10 +29,12 @@ import java.util.List;
 
 public class CivBreakModule extends BaseModule {
 
+    private Configuration<Boolean> antiWeakness;
     private BlockPos breakingBlock;
 
     public CivBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        antiWeakness = provider.get("anti_weakness", "Anti Weakness", null, Boolean.class, true);
     }
 
     @Override
@@ -55,7 +59,7 @@ public class CivBreakModule extends BaseModule {
         Collections.sort(attacks);
         CivBreakAttack attack = attacks.get(0);
         if (attack.isCrystalPlaced() && !attack.isObsidianPlaced()) {
-            getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal()));
+            InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal())));
         } else if (!attack.isObsidianPlaced()) {
             BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getObsidianPos());
             if (info == null) return;

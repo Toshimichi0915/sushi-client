@@ -82,7 +82,6 @@ public class CrystalAuraModule extends BaseModule {
     private volatile CrystalAttack crystalAttack;
     private volatile CrystalAttack nearbyCrystalAttack;
 
-    private volatile ItemSlot swordSlot;
     private volatile ItemSlot crystalSlot;
     private volatile ItemSlot currentSlot;
 
@@ -331,29 +330,21 @@ public class CrystalAuraModule extends BaseModule {
     }
 
     private void breakEnderCrystal(EnderCrystalInfo enderCrystal) {
-        boolean switchBack = false;
-        if (antiWeakness.getValue() && swordSlot != null) {
-            InventoryUtils.moveHotbar(swordSlot.getIndex());
-            switchBack = true;
-        }
-
-        try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-            PositionUtils.lookAt(enderCrystal.pos, DesyncMode.LOOK);
-            CPacketUseEntity packet = new CPacketUseEntity();
-            PacketBuffer write = new PacketBuffer(Unpooled.buffer());
-            write.writeVarInt(enderCrystal.entityId);
-            write.writeEnumValue(CPacketUseEntity.Action.ATTACK);
-            try {
-                packet.readPacketData(write);
-            } catch (IOException e) {
-                e.printStackTrace();
+        InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> {
+            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
+                PositionUtils.lookAt(enderCrystal.pos, DesyncMode.LOOK);
+                CPacketUseEntity packet = new CPacketUseEntity();
+                PacketBuffer write = new PacketBuffer(Unpooled.buffer());
+                write.writeVarInt(enderCrystal.entityId);
+                write.writeEnumValue(CPacketUseEntity.Action.ATTACK);
+                try {
+                    packet.readPacketData(write);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                getConnection().sendPacket(packet);
             }
-            getConnection().sendPacket(packet);
-        }
-
-        if (switchBack) {
-            InventoryUtils.moveHotbar(currentSlot.getIndex());
-        }
+        });
     }
 
     private synchronized void breakCrystal() {
@@ -404,7 +395,6 @@ public class CrystalAuraModule extends BaseModule {
         refreshEnderCrystals();
         if (updateRecalculationCounter()) refreshCrystalAttack();
         if (crystalAttack == null && nearbyCrystalAttack == null) return;
-        swordSlot = InventoryUtils.findItemSlot(Items.DIAMOND_SWORD, getPlayer(), InventoryType.HOTBAR);
         crystalSlot = InventoryUtils.findItemSlot(Items.END_CRYSTAL, getPlayer(), InventoryType.HOTBAR, InventoryType.OFFHAND);
         currentSlot = ItemSlot.current();
         if (crystalSlot == null || !silentSwitch.getValue()) {

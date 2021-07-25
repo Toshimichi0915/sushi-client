@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
@@ -22,6 +23,32 @@ public class InventoryUtils {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         player.inventory.currentItem = slot;
         Minecraft.getMinecraft().playerController.updateController();
+    }
+
+    public static ItemSlot findAnyTool(EntityPlayerSP player) {
+        for(ItemSlot itemSlot : InventoryType.HOTBAR) {
+            if(itemSlot.getItemStack().getItem() instanceof ItemTool) return itemSlot;
+        }
+        return null;
+    }
+
+    public static void antiWeakness(boolean b, Runnable r) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if(!b || player == null) {
+            r.run();
+            return;
+        }
+        ItemSlot currentSlot = ItemSlot.current();
+        ItemSlot swordSlot = InventoryUtils.findAnyTool(player);
+        boolean switchBack = false;
+        if(swordSlot != null && player.getActivePotionEffect(MobEffects.WEAKNESS) != null) {
+            InventoryUtils.moveHotbar(swordSlot.getIndex());
+            switchBack = true;
+        }
+        r.run();
+        if (switchBack) {
+            InventoryUtils.moveHotbar(currentSlot.getIndex());
+        }
     }
 
     public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {

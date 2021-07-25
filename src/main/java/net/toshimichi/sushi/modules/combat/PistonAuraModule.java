@@ -28,6 +28,7 @@ import net.toshimichi.sushi.utils.combat.PistonAuraAttack;
 import net.toshimichi.sushi.utils.combat.PistonAuraUtils;
 import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
+import net.toshimichi.sushi.utils.player.InventoryUtils;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
@@ -44,6 +45,7 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> delay5;
     private final Configuration<IntRange> maxObsidian;
     private final Configuration<IntRange> recalculationDelay;
+    private final Configuration<Boolean> antiWeakness;
     private final Configuration<Boolean> antiGhostBlock;
     private final Configuration<IntRange> ghostBlockCheckDelay;
 
@@ -67,6 +69,7 @@ public class PistonAuraModule extends BaseModule {
         ConfigurationCategory other = provider.getCategory("other", "Other Settings", null);
         maxObsidian = other.get("max_obsidian", "Max Obsidian", null, IntRange.class, new IntRange(3, 5, 0, 1));
         recalculationDelay = other.get("recalculation_delay", "Recalculation Delay", null, IntRange.class, new IntRange(1, 40, 0, 1));
+        antiWeakness = other.get("anti_weakness", "Anti Weakness", null, Boolean.class, true);
         antiGhostBlock = other.get("anti_ghost_block", "Anti Ghost Block", null, Boolean.class, true);
         ghostBlockCheckDelay = other.get("ghost_block_check_delay", "Ghost Block Check Delay", null, IntRange.class, new IntRange(1, 20, 0, 1), antiGhostBlock::getValue, false, 0);
     }
@@ -154,9 +157,8 @@ public class PistonAuraModule extends BaseModule {
             TaskExecutor.newTaskChain()
                     .delay(delay2.getValue().getCurrent())
                     .then(() -> {
-                        getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal()));
-                        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
-                                EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+                        InventoryUtils.antiWeakness(antiWeakness.getValue(), () ->
+                                getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal())));
                         exploded = attack.getCrystal();
                         this.attack = null;
                         update(delay2);
