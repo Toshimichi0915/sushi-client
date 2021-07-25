@@ -32,11 +32,6 @@ public class ItemSlot implements Comparable<ItemSlot> {
         return inventoryType;
     }
 
-    @Override
-    public int compareTo(ItemSlot o) {
-        return Integer.compare(getIndex(), o.getIndex());
-    }
-
     public static ItemSlot current() {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         return new ItemSlot(player.inventory.currentItem, player);
@@ -48,5 +43,30 @@ public class ItemSlot implements Comparable<ItemSlot> {
             result[i] = new ItemSlot(i);
         }
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ItemSlot itemSlot = (ItemSlot) o;
+
+        if (index != itemSlot.index) return false;
+        if (inventoryType != itemSlot.inventoryType) return false;
+        return player != null ? player.equals(itemSlot.player) : itemSlot.player == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = index;
+        result = 31 * result + (inventoryType != null ? inventoryType.hashCode() : 0);
+        result = 31 * result + (player != null ? player.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public int compareTo(ItemSlot o) {
+        return Integer.compare(getIndex(), o.getIndex());
     }
 }

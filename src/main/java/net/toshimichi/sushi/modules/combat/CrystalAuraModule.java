@@ -11,6 +11,7 @@ import net.minecraft.init.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.network.play.server.SPacketHeldItemChange;
 import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -35,9 +36,7 @@ import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
-import net.toshimichi.sushi.utils.player.DesyncCloseable;
-import net.toshimichi.sushi.utils.player.DesyncMode;
-import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.player.*;
 import net.toshimichi.sushi.utils.render.RenderUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 import org.lwjgl.opengl.GL11;
@@ -64,8 +63,11 @@ public class CrystalAuraModule extends BaseModule {
     private final Configuration<DoubleRange> damageRatio;
     private final Configuration<DoubleRange> maxSelfDamage;
     private final Configuration<DoubleRange> minSelfHp;
-    private final Configuration<ItemSwitchMode> switchMode;
     private final Configuration<Boolean> y255Attack;
+
+    private final Configuration<ItemSwitchMode> switchMode;
+    private final Configuration<Boolean> antiWeakness;
+    private final Configuration<Boolean> silentSwitch;
 
     private final Configuration<DoubleRange> selfPingMultiplier;
     private final Configuration<Boolean> useInputs;
@@ -79,11 +81,14 @@ public class CrystalAuraModule extends BaseModule {
     private final Set<EnderCrystalInfo> enderCrystals = new HashSet<>();
     private volatile CrystalAttack crystalAttack;
     private volatile CrystalAttack nearbyCrystalAttack;
+
+    private volatile ItemSlot swordSlot;
+    private volatile ItemSlot crystalSlot;
+    private volatile ItemSlot currentSlot;
+
     private volatile long lastPlaceTick;
     private volatile long lastBreakTick;
     private volatile long lastRecalculationTick;
-
-    private int asyncCounter;
 
     public CrystalAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -109,8 +114,13 @@ public class CrystalAuraModule extends BaseModule {
         damageRatio = damage.get("damage_ratio", "Damage Ratio", null, DoubleRange.class, new DoubleRange(0.5, 1, 0, 0.05, 2));
         maxSelfDamage = damage.get("max_self_damage", "Max Self Damage", null, DoubleRange.class, new DoubleRange(6, 20, 0, 0.2, 1));
         minSelfHp = damage.get("min_self_hp", "Min Self HP", null, DoubleRange.class, new DoubleRange(6, 20, 1, 0.1, 1));
-        switchMode = damage.get("switch", "Switch Mode", null, ItemSwitchMode.class, ItemSwitchMode.INVENTORY);
         y255Attack = damage.get("y_255_attack", "Y 255 Attack", null, Boolean.class, true);
+
+        // Switch
+        ConfigurationCategory switchCategory = provider.getCategory("switch", "Switch", null);
+        switchMode = switchCategory.get("switch", "Switch Mode", null, ItemSwitchMode.class, ItemSwitchMode.INVENTORY);
+        antiWeakness = switchCategory.get("anti_weakness", "Anti Weakness", null, Boolean.class, false);
+        silentSwitch = switchCategory.get("silent_switch", "Silent Switch", null, Boolean.class, true);
 
         // Predict
         ConfigurationCategory predict = provider.getCategory("predict", "Predict Settings", null);
@@ -131,7 +141,6 @@ public class CrystalAuraModule extends BaseModule {
         EventHandlers.register(this);
         new Thread(() -> {
             while (true) {
-                asyncCounter++;
                 if (!isEnabled()) return;
                 try {
                     placeCrystal();
@@ -322,6 +331,12 @@ public class CrystalAuraModule extends BaseModule {
     }
 
     private void breakEnderCrystal(EnderCrystalInfo enderCrystal) {
+        boolean switchBack = false;
+        if (antiWeakness.getValue() && swordSlot != null) {
+            InventoryUtils.moveHotbar(swordSlot.getIndex());
+            switchBack = true;
+        }
+
         try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
             PositionUtils.lookAt(enderCrystal.pos, DesyncMode.LOOK);
             CPacketUseEntity packet = new CPacketUseEntity();
@@ -334,6 +349,10 @@ public class CrystalAuraModule extends BaseModule {
                 e.printStackTrace();
             }
             getConnection().sendPacket(packet);
+        }
+
+        if (switchBack) {
+            InventoryUtils.moveHotbar(currentSlot.getIndex());
         }
     }
 
@@ -352,6 +371,7 @@ public class CrystalAuraModule extends BaseModule {
 
         // place
         if (crystalAttack == null) return;
+        if (crystalSlot == null) return;
         if (!updatePlaceCounter()) return;
         Vec3d crystalPos = crystalAttack.info.pos;
         EnderCrystalInfo colliding = getCollidingEnderCrystal(crystalAttack.info.box);
@@ -359,12 +379,23 @@ public class CrystalAuraModule extends BaseModule {
         try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
             PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
         }
+        boolean switchBack = false;
+        if (silentSwitch.getValue()) {
+            InventoryUtils.moveHotbar(crystalSlot.getIndex());
+//            getConnection().sendPacket(new CPacketHeldItemChange(crystalSlot.getIndex()));
+            switchBack = true;
+        }
+        boolean offhand = crystalSlot.getInventoryType() == InventoryType.OFFHAND;
         if (y255Attack.getValue()) {
             getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
-                    EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+                    EnumFacing.DOWN, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
         } else {
             getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
-                    EnumFacing.UP, EnumHand.MAIN_HAND, 0.5F, 1, 0.5F));
+                    EnumFacing.UP, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 1, 0.5F));
+        }
+
+        if (switchBack) {
+            InventoryUtils.moveHotbar(currentSlot.getIndex());
         }
     }
 
@@ -373,15 +404,19 @@ public class CrystalAuraModule extends BaseModule {
         refreshEnderCrystals();
         if (updateRecalculationCounter()) refreshCrystalAttack();
         if (crystalAttack == null && nearbyCrystalAttack == null) return;
-        TaskExecutor.newTaskChain()
-                .supply(() -> Items.END_CRYSTAL)
-                .then(new ItemSwitchTask(null, switchMode.getValue()))
-                .execute();
+        swordSlot = InventoryUtils.findItemSlot(Items.DIAMOND_SWORD, getPlayer(), InventoryType.HOTBAR);
+        crystalSlot = InventoryUtils.findItemSlot(Items.END_CRYSTAL, getPlayer(), InventoryType.HOTBAR, InventoryType.OFFHAND);
+        currentSlot = ItemSlot.current();
+        if (crystalSlot == null || !silentSwitch.getValue()) {
+            TaskExecutor.newTaskChain()
+                    .supply(() -> Items.END_CRYSTAL)
+                    .then(new ItemSwitchTask(null, switchMode.getValue()))
+                    .execute();
+        }
     }
 
     @EventHandler(timing = EventTiming.POST)
     public void onWorldRender(WorldRenderEvent e) {
-
         // copy
         CrystalAttack crystalAttack = this.crystalAttack;
         if (crystalAttack == null) return;
@@ -393,6 +428,7 @@ public class CrystalAuraModule extends BaseModule {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
+    // break crystal
     @EventHandler(timing = EventTiming.PRE, priority = 1000)
     public void onPacketReceive(PacketReceiveEvent e) {
         if (!(e.getPacket() instanceof SPacketSpawnObject)) return;
@@ -404,6 +440,13 @@ public class CrystalAuraModule extends BaseModule {
             enderCrystals.add(new EnderCrystalInfo(packet.getEntityID(), pos, box));
         }
         breakCrystal();
+    }
+
+    // swap suppress
+    @EventHandler(timing = EventTiming.PRE, priority = 1000)
+    public void onPacketReceive2(PacketReceiveEvent e) {
+        if (!(e.getPacket() instanceof SPacketHeldItemChange)) return;
+        e.setCancelled(true);
     }
 
     @Override
