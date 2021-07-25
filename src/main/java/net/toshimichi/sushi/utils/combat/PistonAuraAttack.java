@@ -21,13 +21,13 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
     private boolean pistonPlaced;
     private boolean redstonePlaced;
     private boolean pistonActivated;
-    private List<BlockPlaceInfo> obsidianPlace;
-    private List<BlockPlaceInfo> pistonPlace;
+    private List<BlockPlaceInfo> crystalObsidian;
+    private List<BlockPlaceInfo> pistonObsidian;
     private int placeCost;
 
     public PistonAuraAttack(BlockPos crystalPos, BlockPos pistonPos, EnumFacing facing, EntityPlayer player, EntityPlayer target,
                             double damage, EntityEnderCrystal crystal, boolean blocked, boolean crystalPlaced, boolean pistonPlaced, boolean redstonePlaced, boolean pistonActivated,
-                            List<BlockPlaceInfo> obsidianPlace, List<BlockPlaceInfo> pistonPlace) {
+                            List<BlockPlaceInfo> crystalObsidian, List<BlockPlaceInfo> pistonObsidian) {
         this.crystalPos = crystalPos;
         this.pistonPos = pistonPos;
         this.facing = facing;
@@ -40,9 +40,9 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
         this.pistonPlaced = pistonPlaced;
         this.redstonePlaced = redstonePlaced;
         this.pistonActivated = pistonActivated;
-        this.obsidianPlace = obsidianPlace;
-        this.pistonPlace = pistonPlace;
-        this.placeCost = (obsidianPlace == null ? 0 : obsidianPlace.size()) + (pistonPlace == null ? 0 : pistonPlace.size());
+        this.crystalObsidian = crystalObsidian;
+        this.pistonObsidian = pistonObsidian;
+        this.placeCost = (crystalObsidian == null ? 0 : crystalObsidian.size()) + (pistonObsidian == null ? 0 : pistonObsidian.size());
     }
 
     public BlockPos getCrystalPos() {
@@ -141,20 +141,20 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
         this.pistonActivated = pistonActivated;
     }
 
-    public List<BlockPlaceInfo> getObsidianPlace() {
-        return obsidianPlace;
+    public List<BlockPlaceInfo> getCrystalObsidian() {
+        return crystalObsidian;
     }
 
-    public void setObsidianPlace(List<BlockPlaceInfo> obsidianPlace) {
-        this.obsidianPlace = obsidianPlace;
+    public void setCrystalObsidian(List<BlockPlaceInfo> crystalObsidian) {
+        this.crystalObsidian = crystalObsidian;
     }
 
-    public List<BlockPlaceInfo> getPistonPlace() {
-        return pistonPlace;
+    public List<BlockPlaceInfo> getPistonObsidian() {
+        return pistonObsidian;
     }
 
-    public void setPistonPlace(List<BlockPlaceInfo> pistonPlace) {
-        this.pistonPlace = pistonPlace;
+    public void setPistonObsidian(List<BlockPlaceInfo> pistonObsidian) {
+        this.pistonObsidian = pistonObsidian;
     }
 
     public int getPlaceCost() {
@@ -175,26 +175,5 @@ public class PistonAuraAttack implements Comparable<PistonAuraAttack> {
         if (temp == 0) temp = Integer.compare(placeCost, o.placeCost);
         if (temp == 0) temp = Double.compare(o.damage, damage);
         return temp;
-    }
-
-    @Override
-    public String toString() {
-        return "PistonAuraAttack{" +
-                "crystalPos=" + crystalPos +
-                ", pistonPos=" + pistonPos +
-                ", facing=" + facing +
-                ", player=" + player +
-                ", target=" + target +
-                ", damage=" + damage +
-                ", crystal=" + crystal +
-                ", blocked=" + blocked +
-                ", crystalPlaced=" + crystalPlaced +
-                ", pistonPlaced=" + pistonPlaced +
-                ", redstonePlaced=" + redstonePlaced +
-                ", pistonActivated=" + pistonActivated +
-                ", obsidianPlace=" + obsidianPlace +
-                ", pistonPlace=" + pistonPlace +
-                ", placeCost=" + placeCost +
-                '}';
     }
 }
