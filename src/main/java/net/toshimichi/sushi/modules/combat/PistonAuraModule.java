@@ -139,11 +139,13 @@ public class PistonAuraModule extends BaseModule {
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                     .abortIfFalse()
                     .then(() -> {
-                        ghostBlocks.add(attack.getPistonPos());
-                        for (EnumFacing facing : EnumFacing.values()) {
-                            BlockPos redstone = attack.getPistonPos().offset(facing);
-                            if (getWorld().getBlockState(redstone).getBlock() == Blocks.REDSTONE_BLOCK) {
-                                ghostBlocks.add(redstone);
+                        if (antiGhostBlock.getValue()) {
+                            ghostBlocks.add(attack.getPistonPos());
+                            for (EnumFacing facing : EnumFacing.values()) {
+                                BlockPos redstone = attack.getPistonPos().offset(facing);
+                                if (getWorld().getBlockState(redstone).getBlock() == Blocks.REDSTONE_BLOCK) {
+                                    ghostBlocks.add(redstone);
+                                }
                             }
                         }
                         getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
