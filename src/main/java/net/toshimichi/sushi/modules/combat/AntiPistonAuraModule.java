@@ -58,7 +58,7 @@ public class AntiPistonAuraModule extends BaseModule {
         List<EntityInfo<EntityEnderCrystal>> crystals = EntityUtils.getNearbyEntities(vec, EntityEnderCrystal.class);
         if (crystals.isEmpty()) return null;
         EntityInfo<EntityEnderCrystal> candidate = crystals.get(0);
-        if (candidate.getDistanceSq() > 3) return null;
+        if (candidate.getDistanceSq() >= 4) return null;
         else return candidate.getEntity();
     }
 
@@ -79,7 +79,7 @@ public class AntiPistonAuraModule extends BaseModule {
         EntityEnderCrystal crystal = getNearbyCrystal(BlockUtils.toVec3d(pos.offset(enumFacing)).add(0.5, 0, 0.5));
         if (crystal == null) return false;
         Vec3d predicted = crystal.getPositionVector().add(new Vec3d(enumFacing.getDirectionVec()).scale(0.5));
-        if (DamageUtils.getCrystalDamage(getPlayer(), predicted) < 50) return false;
+        if (DamageUtils.getCrystalDamage(getPlayer(), predicted) < 30) return false;
         spam.add(findBlockPlaceInfo(getWorld(), pos));
         if (!BlockUtils.isAir(getWorld(), pos.offset(enumFacing).offset(enumFacing))) {
             spam.add(findBlockPlaceInfo(getWorld(), pos.offset(enumFacing)));
