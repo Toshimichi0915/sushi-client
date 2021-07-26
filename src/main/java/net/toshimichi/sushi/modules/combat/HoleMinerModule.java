@@ -89,7 +89,7 @@ public class HoleMinerModule extends BaseModule {
         AxisAlignedBB crystalBox = new AxisAlignedBB(crystalPos.getX(), crystalPos.getY(), crystalPos.getZ(),
                 crystalPos.getX() + 1, crystalPos.getY() + 2, crystalPos.getZ() + 1);
         if (BlockUtils.isColliding(getWorld(), crystalBox)) return null;
-        if (!EntityUtils.canInteract(BlockUtils.toVec3d(crystalPos).add(0.5, 0, 0.5), 6, 3)) return null;
+        if (!EntityUtils.canInteract(BlockUtils.toVec3d(crystalPos).add(0.5, 1.7, 0.5), 6, 3)) return null;
 
         return new HoleMineInfo(surroundPos, crystalFloor, true);
     }

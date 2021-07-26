@@ -72,7 +72,7 @@ public class KillAuraModule extends BaseModule {
             Vec3d offset = EntityUtils.getPingOffset(player, useInputs.getValue(), constantSpeed.getValue(), selfPingMultiplier.getValue().getCurrent());
             Vec3d self = getPlayer().getPositionVector().add(selfOffset);
             Vec3d predicted = player.getPositionVector().add(offset);
-            if (EntityUtils.canInteract(self, predicted, range.getValue().getCurrent(), wallRange.getValue().getCurrent())) {
+            if (EntityUtils.canInteract(self.add(0, 1.62, 0), predicted.add(0, 1.62, 0), range.getValue().getCurrent(), wallRange.getValue().getCurrent())) {
                 players.add(player);
                 if (player.getHealth() < enemyHp.getValue().getCurrent()) {
                     dying = player;

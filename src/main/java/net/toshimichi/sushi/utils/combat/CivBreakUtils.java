@@ -26,7 +26,7 @@ public class CivBreakUtils {
         EntityEnderCrystal placed = null;
         Vec3d crystalPos = BlockUtils.toVec3d(pos).add(0.5, 0, 0.5);
         player.world.setBlockState(obsidianPos, Blocks.AIR.getDefaultState());
-        boolean canInteract = EntityUtils.canInteract(crystalPos, 6, 3);
+        boolean canInteract = EntityUtils.canInteract(crystalPos.add(0, 1.7, 0), 6, 3);
         double damage = DamageUtils.getCrystalDamage(target, crystalPos);
         double selfDamage = DamageUtils.getCrystalDamage(player, crystalPos);
         player.world.setBlockState(obsidianPos, floorState);

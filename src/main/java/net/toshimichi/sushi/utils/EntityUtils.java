@@ -38,10 +38,15 @@ public class EntityUtils {
         return player.getPositionVector().squareDistanceTo(target) < reach * reach;
     }
 
+
+    public static boolean canInteract(Entity entity, double reach, double wall) {
+        return canInteract(entity.getPositionVector().add(0, entity.getEyeHeight(), 0), reach, wall);
+    }
+
     public static boolean canInteract(Vec3d target, double reach, double wall) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) return false;
-        return canInteract(player.getPositionVector(), target, reach, wall);
+        return canInteract(player.getPositionVector().add(0, player.getEyeHeight(), 0), target, reach, wall);
     }
 
     public static Vec3d getPingOffset(EntityPlayer player, boolean useInputs, boolean constantSpeed, double selfPingMultiplier) {
