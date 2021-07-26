@@ -95,7 +95,7 @@ public class GsonModules implements Modules {
         addModuleFactory("speed", SpeedModule::new, true);
         addModuleFactory("world_time", WorldTimeModule::new, true);
         addModuleFactory("criticals", CriticalsModule::new, true);
-        addModuleFactory("auto_vote", AutoVoteModule::new, true);
+        addModuleFactory("auto_vote", AutoVoteModule::new, false);
         addModuleFactory("packet_fly", PacketFlyModule::new, true);
         addModuleFactory("safe_walk", SafeWalkModule::new, true);
         addModuleFactory("player_esp", PlayerEspModule::new, true);

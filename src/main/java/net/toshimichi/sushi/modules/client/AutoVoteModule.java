@@ -96,7 +96,7 @@ public class AutoVoteModule extends BaseModule {
             HttpPost post3 = new HttpPost(URL);
             post3.setEntity(new UrlEncodedFormEntity(pairs3, StandardCharsets.UTF_8));
             try (CloseableHttpResponse res = httpClient.execute(post3)) {
-                EntityUtils.consume(res.getEntity());
+                System.out.println(IOUtils.toString(res.getEntity().getContent(), UTF_8));
             }
             messageHandler.send(SUCCESS, LogLevel.INFO);
         } catch (Exception e) {
