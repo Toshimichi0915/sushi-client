@@ -2,7 +2,7 @@ package net.toshimichi.sushi.command;
 
 import net.toshimichi.sushi.command.annotation.AnnotationCommand;
 import net.toshimichi.sushi.command.parser.*;
-import net.toshimichi.sushi.hwid.annotations.AsyncAuthentication;
+import net.toshimichi.sushi.hwid.annotations.Protect;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -118,7 +118,7 @@ public class Commands {
         return builder.toString();
     }
 
-    @AsyncAuthentication
+    @Protect
     public static boolean execute(MessageHandler out, String name, List<String> args) {
         CommandMap map = getCommandMap(name);
         if (map != null) {
