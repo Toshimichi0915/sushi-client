@@ -67,10 +67,11 @@ public class PistonAuraUtils {
             if (obsidianPlace == null && rawDamage - originalDamage < 30) continue;
 
             EnumFacing opposite = facing.getOpposite();
-            for (int i = -1; i < 2; i++) {
+            for (int i = 0; i < 6; i++) {
                 EnumFacing horizontal = EnumFacing.byHorizontalIndex(opposite.getHorizontalIndex() + 1);
                 Vec3i hVec = horizontal.getDirectionVec();
-                BlockPos pos2 = pos.add(hVec.getX() * i, hVec.getY() * i, hVec.getZ() * i);
+                BlockPos pos2 = pos.add(hVec.getX() * (i % 3 - 1), hVec.getY() * (i % 3 - 1) + i % 2, hVec.getZ() * (i % 3 - 1));
+
                 BlockPos airPos = pos2.offset(opposite);
                 BlockPos pistonPos = airPos.offset(opposite);
                 double sin = (pistonPos.getY() - player.posY) /
