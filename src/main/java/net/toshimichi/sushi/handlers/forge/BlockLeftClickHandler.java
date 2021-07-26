@@ -10,16 +10,14 @@ public class BlockLeftClickHandler {
 
     @SubscribeEvent
     public void onBlockLeftClick(PlayerInteractEvent.LeftClickBlock e) {
-        BlockLeftClickEvent event = new BlockLeftClickEvent(EventTiming.PRE, e.getEntityPlayer(), e.getPos(), e.getFace(), e.getHitVec());
-        event.setUseBlock(e.getUseBlock());
-        event.setUseItem(e.getUseItem());
-        event.setCancellationResult(e.getCancellationResult());
-        event.setCancelled(e.isCanceled());
+        BlockLeftClickEvent event = new BlockLeftClickEvent(EventTiming.PRE, e);
 
         EventHandlers.callEvent(event);
         e.setUseBlock(event.getUseBlock());
         e.setUseItem(event.getUseItem());
-        e.setCancellationResult(e.getCancellationResult());
+        e.setCancellationResult(event.getCancellationResult());
         e.setCanceled(event.isCancelled());
     }
+
+
 }
