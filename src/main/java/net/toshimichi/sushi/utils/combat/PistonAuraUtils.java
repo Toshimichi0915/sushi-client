@@ -76,7 +76,7 @@ public class PistonAuraUtils {
                 BlockPos pistonPos = airPos.offset(opposite);
                 double sin = (pistonPos.getY() - player.posY) /
                         player.getPositionVector().distanceTo(BlockUtils.toVec3d(pistonPos).add(0.5, 0.5, 0.5));
-                if (Math.abs(sin) > 0.5D) return null;
+                if (Math.abs(sin) > 0.5D) continue;
                 PlaceState state1 = getPlaceState(player, airPos, Blocks.PISTON_HEAD, Blocks.PISTON_EXTENSION);
                 PlaceState state2 = getPlaceState(player, pistonPos, Blocks.PISTON, Blocks.STICKY_PISTON);
                 PlaceState state3 = PlaceState.UNREACHABLE;
@@ -112,7 +112,7 @@ public class PistonAuraUtils {
                         if (candidate == null) continue;
                         if (pistonPlace == null || candidate.size() < pistonPlace.size()) pistonPlace = candidate;
                     }
-                    if (pistonPlace == null) return null;
+                    if (pistonPlace == null) continue;
                 }
 
                 result.add(new PistonAuraAttack(pos, pistonPos, facing, player, target, damage, placed, blocked, placed != null,
