@@ -32,8 +32,7 @@ public class EntityUtils {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         WorldClient world = Minecraft.getMinecraft().world;
         if (player == null) return false;
-        Vec3d offset = vec.subtract(player.getPositionVector());
-        RayTraceResult result = world.rayTraceBlocks(offset.add(0, player.eyeHeight, 0), target, false, true, false);
+        RayTraceResult result = world.rayTraceBlocks(vec, target, false, true, false);
         if (result != null) reach = wall;
         return player.getPositionVector().squareDistanceTo(target) < reach * reach;
     }
