@@ -169,6 +169,7 @@ public class AntiPistonAuraModule extends BaseModule {
                 getConnection().sendPacket(crystal.newAttackPacket());
             }
         });
+        placeObsidian();
     }
 
     private void forEachNearby(Consumer<BlockPos> consumer) {
@@ -186,7 +187,6 @@ public class AntiPistonAuraModule extends BaseModule {
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
         updateAll();
-        preventPistonAura();
         spam.removeIf(it -> {
             if (it == null) return true;
             Block block = getWorld().getBlockState(it.getBlockPos()).getBlock();
@@ -199,7 +199,7 @@ public class AntiPistonAuraModule extends BaseModule {
             obsidianSlot = InventoryUtils.moveToHotbar(finalObsidianSlot);
         }
         currentSlot = ItemSlot.current();
-        placeObsidian();
+        preventPistonAura();
     }
 
     @EventHandler(timing = EventTiming.PRE)
