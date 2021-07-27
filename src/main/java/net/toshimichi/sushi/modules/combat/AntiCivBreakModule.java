@@ -24,7 +24,6 @@ import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
-import net.toshimichi.sushi.utils.world.BlockPlaceOption;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 import net.toshimichi.sushi.utils.world.PlaceOptions;
 
@@ -60,15 +59,15 @@ public class AntiCivBreakModule extends BaseModule {
             BlockPos floorPos = BlockUtils.toBlockPos(entity.getPositionVector()).add(0, -1, 0);
             IBlockState floorState = getWorld().getBlockState(floorPos);
             Block floor = floorState.getBlock();
-            if (floor != Blocks.OBSIDIAN) return;
+            if (floor != Blocks.OBSIDIAN) continue;
             getWorld().setBlockState(floorPos, Blocks.AIR.getDefaultState());
             double damage = DamageUtils.getCrystalDamage(getPlayer(), entity.getPositionVector());
             getWorld().setBlockState(floorPos, floorState);
-            if (damage <= 30) return;
+            if (damage <= 30) continue;
             try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.POSITION)) {
                 PositionUtils.move(posX, getPlayer().posY + 0.2, posZ, 0, 0, true, false, DesyncMode.POSITION);
+                getConnection().sendPacket(new CPacketUseEntity(entity));
             }
-            getConnection().sendPacket(new CPacketUseEntity(entity));
             BlockPlaceInfo face = BlockUtils.findBlockPlaceInfo(getWorld(), BlockUtils.toBlockPos(entity.getPositionVector()),
                     PlaceOptions.IGNORE_ENTITY);
             if (face == null) continue;
