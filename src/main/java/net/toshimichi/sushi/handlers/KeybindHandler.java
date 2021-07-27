@@ -13,8 +13,6 @@ import net.toshimichi.sushi.modules.ActivationType;
 import net.toshimichi.sushi.modules.Module;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class KeybindHandler {
 
@@ -38,22 +36,26 @@ public class KeybindHandler {
         heldKeys.add(e.getKeyCode());
         if (!Minecraft.getMinecraft().inGameHasFocus) return;
         ArrayList<Module> candidates = new ArrayList<>();
+        int maxKeys = 0;
         for (Module module : Sushi.getProfile().getModules().getAll()) {
             if (checkKeybind(module)) {
                 candidates.add(module);
+                int keys = module.getKeybind().getKeys().length;
+                if (keys > maxKeys) maxKeys = keys;
             }
         }
         if (candidates.isEmpty()) return;
-        candidates.sort(Comparator.comparingInt(module -> module.getKeybind().getKeys().length));
-        Collections.reverse(candidates);
-        Module module = candidates.get(0);
-        if (heldModules.contains(module) && module.isEnabled()) return;
-        heldModules.add(module);
-        ActivationType type = module.getKeybind().getActivationType();
-        if (type == ActivationType.HOLD)
-            module.setEnabled(true);
-        else if (type == ActivationType.TOGGLE)
-            module.setEnabled(!module.isEnabled());
+        int finalMaxKeys = maxKeys;
+        candidates.removeIf(it -> it.getKeybind().getKeys().length < finalMaxKeys);
+        for (Module module : candidates) {
+            if (heldModules.contains(module) && module.isEnabled()) return;
+            heldModules.add(module);
+            ActivationType type = module.getKeybind().getActivationType();
+            if (type == ActivationType.HOLD)
+                module.setEnabled(true);
+            else if (type == ActivationType.TOGGLE)
+                module.setEnabled(!module.isEnabled());
+        }
         e.setCancelled(true);
     }
 
