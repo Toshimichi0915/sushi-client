@@ -51,6 +51,7 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<Boolean> packetPlace;
     private final Configuration<Boolean> antiGhostBlock;
     private final Configuration<IntRange> ghostBlockCheckDelay;
+    private final Configuration<Boolean> disableOnDeath;
 
     private final ArrayList<BlockPos> ghostBlocks = new ArrayList<>();
     private PistonAuraAttack attack;
@@ -77,6 +78,7 @@ public class PistonAuraModule extends BaseModule {
         packetPlace = other.get("packet_place", "Packet Place", null, Boolean.class, true);
         antiGhostBlock = other.get("anti_ghost_block", "Anti Ghost Block", null, Boolean.class, true, () -> !packetPlace.getValue(), false, 0);
         ghostBlockCheckDelay = other.get("ghost_block_check_delay", "Ghost Block Check Delay", null, IntRange.class, new IntRange(1, 20, 0, 1), antiGhostBlock::getValue, false, 0);
+        disableOnDeath = other.get("disable_on_death", "Disable On Death", null, Boolean.class, true);
     }
 
     @Override
@@ -234,6 +236,10 @@ public class PistonAuraModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onPostClientTick(ClientTickEvent e) {
+        if (disableOnDeath.getValue() && !getPlayer().isEntityAlive()) {
+            setEnabled(false);
+            return;
+        }
         repeatCounter = 0;
         update();
         if (TickUtils.current() - lastGhostBlockCheckTick < ghostBlockCheckDelay.getValue().getCurrent()) return;
