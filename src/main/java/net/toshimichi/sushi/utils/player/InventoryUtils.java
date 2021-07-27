@@ -81,14 +81,16 @@ public class InventoryUtils {
         return transactionId;
     }
 
-    public static void moveToHotbar(ItemSlot itemSlot) {
+    public static ItemSlot moveToHotbar(ItemSlot itemSlot) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         ItemSlot emptyHotbar = InventoryUtils.findItemSlot(null, player, InventoryType.HOTBAR);
         if (emptyHotbar == null) {
             InventoryUtils.clickItemSlot(itemSlot, ClickType.SWAP, player.inventory.currentItem);
+            return new ItemSlot(player.inventory.currentItem);
         } else {
             InventoryUtils.clickItemSlot(itemSlot, ClickType.QUICK_MOVE, 0);
             InventoryUtils.moveHotbar(emptyHotbar.getIndex());
+            return new ItemSlot(emptyHotbar.getIndex());
         }
     }
 

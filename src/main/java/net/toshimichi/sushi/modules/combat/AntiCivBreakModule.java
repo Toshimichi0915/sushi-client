@@ -26,6 +26,7 @@ import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockPlaceOption;
 import net.toshimichi.sushi.utils.world.BlockUtils;
+import net.toshimichi.sushi.utils.world.PlaceOptions;
 
 import java.util.Collections;
 
@@ -69,7 +70,7 @@ public class AntiCivBreakModule extends BaseModule {
             }
             getConnection().sendPacket(new CPacketUseEntity(entity));
             BlockPlaceInfo face = BlockUtils.findBlockPlaceInfo(getWorld(), BlockUtils.toBlockPos(entity.getPositionVector()),
-                    new BlockPlaceOption(true, false));
+                    PlaceOptions.IGNORE_ENTITY);
             if (face == null) continue;
             TaskExecutor.newTaskChain()
                     .delay(1)
@@ -77,7 +78,7 @@ public class AntiCivBreakModule extends BaseModule {
                     .then(new ItemSwitchTask(null, false))
                     .abortIfFalse()
                     .supply(() -> Collections.singletonList(face))
-                    .then(new BlockPlaceTask(true, true, new BlockPlaceOption(true, false)))
+                    .then(new BlockPlaceTask(true, true, PlaceOptions.IGNORE_ENTITY))
                     .execute();
         }
     }

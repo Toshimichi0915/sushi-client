@@ -8,27 +8,25 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.network.play.server.SPacketHeldItemChange;
 import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.task.forge.TaskExecutor;
-import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
-import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.EntityInfo;
 import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
-import net.toshimichi.sushi.utils.player.DesyncCloseable;
-import net.toshimichi.sushi.utils.player.DesyncMode;
-import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.player.*;
 import net.toshimichi.sushi.utils.world.BlockFace;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
@@ -44,10 +42,28 @@ public class AntiPistonAuraModule extends BaseModule {
     private final List<BlockPlaceInfo> spam = Collections.synchronizedList(new ArrayList<>());
     private final HashSet<PistonInfo> pistons = new HashSet<>();
     private final HashSet<EnderCrystalInfo> crystals = new HashSet<>();
-    private long when;
+    private final Configuration<IntRange> placeCoolTime;
+    private long lastPlaceTick;
+    private volatile ItemSlot obsidianSlot;
+    private volatile ItemSlot currentSlot;
+    private volatile long when;
+    private volatile boolean switching;
 
     public AntiPistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        placeCoolTime = provider.get("place_cool_time", "Place Cool Time", null, IntRange.class, new IntRange(20, 1000, 10, 10));
+        new Thread(() -> {
+            while (true) {
+                if (!isEnabled()) return;
+                try {
+                    placeObsidian();
+                    long sleep = placeCoolTime.getValue().getCurrent() - (System.currentTimeMillis() - lastPlaceTick);
+                    if (sleep > 0) Thread.sleep(sleep);
+                } catch (InterruptedException e) {
+                    // shut down the thread
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -108,6 +124,22 @@ public class AntiPistonAuraModule extends BaseModule {
         }
     }
 
+    private void placeObsidian() {
+        if (spam.isEmpty()) return;
+        ItemSlot finalObsidianSlot = obsidianSlot;
+        if (finalObsidianSlot == null) return;
+        switching = true;
+        InventoryUtils.moveHotbar(finalObsidianSlot.getIndex());
+        for (BlockPlaceInfo info : new ArrayList<>(spam)) {
+            if (info == null) continue;
+            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
+                BlockUtils.place(info, true);
+            }
+        }
+        InventoryUtils.moveHotbar(currentSlot.getIndex());
+        switching = false;
+    }
+
     private void preventPistonAura() {
         forEachNearby(pos -> {
             PistonInfo pistonInfo = getPistonInfo(pos);
@@ -152,19 +184,12 @@ public class AntiPistonAuraModule extends BaseModule {
             return block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION && block != Blocks.AIR ||
                     System.currentTimeMillis() - when > 1000;
         });
-        if (spam.isEmpty()) return;
-        TaskExecutor.newTaskChain()
-                .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
-                .then(new ItemSwitchTask(null, false))
-                .abortIfFalse()
-                .supply(() -> spam)
-                .then(new BlockPlaceTask(true, true))
-                .delay(5)
-                .then(() -> {
-                    BlockPos[] pos = spam.stream().map(BlockPlaceInfo::getBlockPos).toArray(BlockPos[]::new);
-                    BlockUtils.checkGhostBlock(pos);
-                })
-                .execute();
+        obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), getPlayer(), InventoryType.values());
+        ItemSlot finalObsidianSlot = obsidianSlot;
+        if (finalObsidianSlot != null && !switching && obsidianSlot.getInventoryType() != InventoryType.HOTBAR) {
+            obsidianSlot = InventoryUtils.moveToHotbar(finalObsidianSlot);
+        }
+        currentSlot = ItemSlot.current();
     }
 
     @EventHandler(timing = EventTiming.PRE)
@@ -191,6 +216,13 @@ public class AntiPistonAuraModule extends BaseModule {
             pistons.add(new PistonInfo(packet.getBlockPosition(), enumFacing));
         }
         preventPistonAura();
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onPacketReceive3(PacketReceiveEvent e) {
+        if (!switching) return;
+        if (!(e.getPacket() instanceof SPacketHeldItemChange)) return;
+        e.setCancelled(true);
     }
 
     @Override

@@ -9,6 +9,7 @@ import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockPlaceOption;
 import net.toshimichi.sushi.utils.world.BlockUtils;
+import net.toshimichi.sushi.utils.world.PlaceOptions;
 
 import java.util.List;
 
@@ -18,14 +19,10 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
 
     private final boolean rotate;
     private final boolean desync;
-    private final BlockPlaceOption option;
+    private final PlaceOptions[] option;
     private final WorldClient world;
 
-    public BlockPlaceTask(boolean rotate, boolean desync) {
-        this(rotate, desync, new BlockPlaceOption());
-    }
-
-    public BlockPlaceTask(boolean rotate, boolean desync, BlockPlaceOption option) {
+    public BlockPlaceTask(boolean rotate, boolean desync, PlaceOptions... option) {
         this.rotate = rotate;
         this.desync = desync;
         this.option = option;

@@ -360,7 +360,6 @@ public class CrystalAuraModule extends BaseModule {
         boolean switchBack = false;
         if (silentSwitch.getValue() && crystalSlot.getInventoryType() != InventoryType.OFFHAND) {
             InventoryUtils.moveHotbar(crystalSlot.getIndex());
-//            getConnection().sendPacket(new CPacketHeldItemChange(crystalSlot.getIndex()));
             switchBack = true;
         }
         boolean offhand = crystalSlot.getInventoryType() == InventoryType.OFFHAND;

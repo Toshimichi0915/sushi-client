@@ -60,14 +60,15 @@ public class BlockUtils {
         return player.getDistanceSq(checkPos.x, checkPos.y, checkPos.z) < 64;
     }
 
-    public static boolean canPlace(World world, BlockPlaceInfo face, BlockPlaceOption option) {
+    public static boolean canPlace(World world, BlockPlaceInfo face, PlaceOptions... options) {
+        BlockPlaceOption option = new BlockPlaceOption(options);
         BlockPos pos = face.getBlockPos();
         EnumFacing facing = face.getBlockFace() == null ? null : face.getBlockFace().getFacing();
         AxisAlignedBB box = world.getBlockState(pos).getBoundingBox(world, pos).offset(pos);
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player != null && BlockUtils.toVec3d(pos).add(0.5, 0.5, 0.5).squareDistanceTo(player.getPositionVector()) > 36)
             return false;
-        if (world.collidesWithAnyBlock(box) ||
+        if (world.collidesWithAnyBlock(box) && !option.isBlockCollisionIgnored() ||
                 !world.checkNoEntityCollision(box) && !option.isEntityCollisionIgnored()) return false;
         if (facing == null) return world.getBlockState(pos).getBlock().canPlaceBlockAt(world, pos);
         else if (isAir(world, pos.offset(facing.getOpposite())) && !option.isAirPlaceIgnored()) return false;
@@ -96,21 +97,13 @@ public class BlockUtils {
         }
     }
 
-    public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input, BlockPlaceOption option) {
+    public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input, PlaceOptions... options) {
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPlaceInfo info = new BlockFace(input.offset(facing), facing.getOpposite()).toBlockPlaceInfo(world);
-            if (!canPlace(world, info, option)) continue;
+            if (!canPlace(world, info, options)) continue;
             return info;
         }
         return null;
-    }
-
-    public static boolean canPlace(World world, BlockPlaceInfo face) {
-        return canPlace(world, face, new BlockPlaceOption());
-    }
-
-    public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input) {
-        return findBlockPlaceInfo(world, input, new BlockPlaceOption());
     }
 
     public static void checkGhostBlock(BlockPos... arr) {
