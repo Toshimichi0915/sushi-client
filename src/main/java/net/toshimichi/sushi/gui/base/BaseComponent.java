@@ -188,8 +188,8 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public void onScroll(int deltaX, int deltaY, ClickType type) {
-        handlers.forEach(c -> c.onScroll(deltaX, deltaY, type));
+    public void onScroll(int deltaX, int deltaY) {
+        handlers.forEach(c -> c.onScroll(deltaX, deltaY));
     }
 
     @Override

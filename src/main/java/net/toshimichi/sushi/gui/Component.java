@@ -90,7 +90,7 @@ public interface Component {
 
     void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status);
 
-    void onScroll(int deltaX, int deltaY, ClickType type);
+    void onScroll(int deltaX, int deltaY);
 
     boolean onKeyPressed(int keyCode, char key);
 

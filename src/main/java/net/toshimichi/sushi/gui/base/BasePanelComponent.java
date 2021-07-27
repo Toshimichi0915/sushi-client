@@ -109,8 +109,8 @@ public class BasePanelComponent<T extends Component> extends BaseListComponent<T
     }
 
     @Override
-    public void onScroll(int deltaX, int deltaY, ClickType type) {
-        execFocus(c -> c.onScroll(deltaX, deltaY, type));
+    public void onScroll(int deltaX, int deltaY) {
+        execFocus(c -> c.onScroll(deltaX, deltaY));
     }
 
     @Override

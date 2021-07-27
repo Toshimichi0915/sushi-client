@@ -3,6 +3,7 @@ package net.toshimichi.sushi.gui.theme.simple;
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
+import net.toshimichi.sushi.gui.layout.EmptyLayout;
 import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
@@ -22,6 +23,7 @@ public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryCo
         this.theme = theme;
         this.configurations = configurations;
         this.module = module;
+        setLayout(new EmptyLayout(this));
     }
 
     @Override
@@ -29,6 +31,12 @@ public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryCo
         super.setFocusedComponent(component);
         remove(component);
         add(0, component);
+    }
+
+    @Override
+    public void onScroll(int deltaX, int deltaY) {
+        setX(getX() + (double) deltaX / 60);
+        setY(getY() + (double) deltaY / 60);
     }
 
     @Override

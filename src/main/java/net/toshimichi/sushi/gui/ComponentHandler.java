@@ -49,7 +49,7 @@ public interface ComponentHandler {
     default void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
     }
 
-    default void onScroll(int deltaX, int deltaY, ClickType type) {
+    default void onScroll(int deltaX, int deltaY) {
     }
 
     default void onKeyPressed(int keyCode, char key) {

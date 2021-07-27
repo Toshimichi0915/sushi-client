@@ -67,6 +67,7 @@ public class ComponentMouseHandler {
     @EventHandler(timing = EventTiming.POST, priority = -100)
     public void onRenderTick(RenderTickEvent e) {
         if (!GuiUtils.isGameLocked()) return;
+
         for (ClickType type : ClickType.values()) {
 
             // fetch/update statuses
@@ -135,6 +136,10 @@ public class ComponentMouseHandler {
             status.isLastClicked = status.isClicked;
             status.lastTickMillis = status.tickMillis;
             status.tickMillis = System.currentTimeMillis();
+        }
+
+        if (Mouse.hasWheel() && Components.getTopContext() != null) {
+            Components.getTopContext().getOrigin().onScroll(0, Mouse.getDWheel());
         }
     }
 
