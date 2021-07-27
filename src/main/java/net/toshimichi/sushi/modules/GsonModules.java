@@ -101,6 +101,7 @@ public class GsonModules implements Modules {
         addModuleFactory("player_esp", PlayerEspModule::new, true);
         addModuleFactory("speed_mine", SpeedMineModule::new, true);
         addModuleFactory("anti_ghost_block", AntiGhostBlockModule::new, true);
+        addModuleFactory("gui_move", GuiMoveModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
