@@ -104,6 +104,7 @@ public class GsonModules implements Modules {
         addModuleFactory("gui_move", GuiMoveModule::new, true);
         addModuleFactory("hole_break_esp", HoleBreakEsp::new, true);
         addModuleFactory("offhand", OffhandModule::new, true);
+        addModuleFactory("refill", RefillModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
