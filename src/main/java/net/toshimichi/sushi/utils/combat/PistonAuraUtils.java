@@ -139,9 +139,11 @@ public class PistonAuraUtils {
         return list;
     }
 
-    public static List<PistonAuraAttack> find(EntityPlayer player, int distance) {
+    public static List<PistonAuraAttack> find(EntityPlayer player, int distance, int maxTargets) {
         ArrayList<PistonAuraAttack> result = new ArrayList<>();
+        int index = 0;
         for (EntityPlayer entity : EntityUtils.getNearbyPlayers(6)) {
+            if (index++ > maxTargets) break;
             result.addAll(find(player, entity, distance));
         }
         return result;

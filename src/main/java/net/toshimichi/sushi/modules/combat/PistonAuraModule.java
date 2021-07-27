@@ -45,6 +45,7 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> delay5;
     private final Configuration<IntRange> maxObsidian;
     private final Configuration<IntRange> recalculationDelay;
+    private final Configuration<IntRange> maxTargets;
     private final Configuration<Boolean> antiWeakness;
     private final Configuration<Boolean> antiGhostBlock;
     private final Configuration<IntRange> ghostBlockCheckDelay;
@@ -69,6 +70,7 @@ public class PistonAuraModule extends BaseModule {
         ConfigurationCategory other = provider.getCategory("other", "Other Settings", null);
         maxObsidian = other.get("max_obsidian", "Max Obsidian", null, IntRange.class, new IntRange(3, 5, 0, 1));
         recalculationDelay = other.get("recalculation_delay", "Recalculation Delay", null, IntRange.class, new IntRange(1, 40, 0, 1));
+        maxTargets = other.get("max_targets", "Max Targets", null, IntRange.class, new IntRange(1, 10, 1, 1));
         antiWeakness = other.get("anti_weakness", "Anti Weakness", null, Boolean.class, true);
         antiGhostBlock = other.get("anti_ghost_block", "Anti Ghost Block", null, Boolean.class, true);
         ghostBlockCheckDelay = other.get("ghost_block_check_delay", "Ghost Block Check Delay", null, IntRange.class, new IntRange(1, 20, 0, 1), antiGhostBlock::getValue, false, 0);
@@ -111,7 +113,7 @@ public class PistonAuraModule extends BaseModule {
             return;
         }
         if (attack == null || repeatCounter == 0 && lastRecalculationTick-- <= 0) {
-            List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer(), maxObsidian.getValue().getCurrent());
+            List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer(), maxObsidian.getValue().getCurrent(), maxTargets.getValue().getCurrent());
             if (attacks.isEmpty()) return;
             Collections.sort(attacks);
             attack = attacks.get(0);
