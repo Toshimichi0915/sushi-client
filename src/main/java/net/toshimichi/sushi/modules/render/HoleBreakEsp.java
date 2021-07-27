@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.modules.render;
 
-import net.toshimichi.sushi.Sushi;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -11,14 +12,12 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.modules.combat.HoleMineInfo;
-import net.toshimichi.sushi.modules.combat.HoleMinerModule;
+import net.toshimichi.sushi.utils.EntityUtils;
+import net.toshimichi.sushi.utils.render.hole.HoleUtils;
 
 import java.awt.Color;
 
-public class HoleMinerHelperModule extends BaseModule {
-
-    @Config(id = "hole_miner_id", name = "Hole Miner ID")
-    public String holeMinerId = "hole_miner";
+public class HoleBreakEsp extends BaseModule {
 
     @Config(id = "render_mode", name = "Render Mode")
     public RenderMode renderMode = RenderMode.FULL;
@@ -26,7 +25,7 @@ public class HoleMinerHelperModule extends BaseModule {
     @Config(id = "color", name = "Color")
     public EspColor color = new EspColor(new Color(255, 0, 0, 50), false, true);
 
-    public HoleMinerHelperModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
+    public HoleBreakEsp(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         new ConfigInjector(provider).inject(this);
     }
@@ -43,18 +42,18 @@ public class HoleMinerHelperModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onWorldRender(WorldRenderEvent e) {
-        Module module = Sushi.getProfile().getModules().getModule(holeMinerId);
-        if (!(module instanceof HoleMinerModule)) return;
-        HoleMinerModule holeMiner = (HoleMinerModule) module;
-        holeMiner.updateHoleMineInfo();
-        HoleMineInfo holeMineInfo = holeMiner.getHoleMineInfo();
-        if (holeMineInfo == null) return;
-        holeMineInfo.render(getWorld(), renderMode, color);
+        for (EntityPlayer player : EntityUtils.getNearbyPlayers(6)) {
+            for(EnumFacing facing: EnumFacing.HORIZONTALS) {
+                HoleMineInfo info = HoleUtils.findNormal(player, facing);
+                if(info == null) continue;
+                info.render(getWorld(), renderMode, color);
+            }
+        }
     }
 
     @Override
     public String getDefaultName() {
-        return "HoleMinerHelper";
+        return "HoleBreakESP";
     }
 
     @Override

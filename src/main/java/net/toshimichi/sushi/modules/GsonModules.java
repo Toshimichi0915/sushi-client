@@ -54,7 +54,7 @@ public class GsonModules implements Modules {
         addModuleFactory("sprint", SprintModule::new, true);
         addModuleFactory("packet_canceller", PacketCancellerModule::new, true);
         addModuleFactory("phase_fly", PhaseFlyModule::new, true);
-        addModuleFactory("phase_walk", PhaseWalkModule::new, true);
+        addModuleFactory("phase_walk", PhaseWalkModule::new, false);
         addModuleFactory("anti_stuck", AntiStuckModule::new, true);
         addModuleFactory("timer", TimerModule::new, true);
         addModuleFactory("anti_civ_break", AntiCivBreakModule::new, true);
@@ -102,6 +102,7 @@ public class GsonModules implements Modules {
         addModuleFactory("speed_mine", SpeedMineModule::new, true);
         addModuleFactory("anti_ghost_block", AntiGhostBlockModule::new, true);
         addModuleFactory("gui_move", GuiMoveModule::new, true);
+        addModuleFactory("hole_break_esp", HoleBreakEsp::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

@@ -27,6 +27,7 @@ import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.player.InventoryUtils;
 import net.toshimichi.sushi.utils.player.ItemSlot;
 import net.toshimichi.sushi.utils.player.ItemUtils;
+import net.toshimichi.sushi.utils.render.hole.HoleUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
 public class HoleMinerModule extends BaseModule {
@@ -66,32 +67,6 @@ public class HoleMinerModule extends BaseModule {
         EventHandlers.unregister(this);
         running = false;
         holeMineInfo = null;
-    }
-
-    private HoleMineInfo findNormal(EntityPlayer target, EnumFacing facing) {
-        BlockPos playerPos = BlockUtils.toBlockPos(target.getPositionVector());
-        BlockPos surroundPos = playerPos.offset(facing);
-        BlockPos aboveSurroundPos = surroundPos.offset(EnumFacing.UP);
-        BlockPos crystalPos = surroundPos.offset(facing);
-        if (getWorld().getBlockState(surroundPos).getBlock() != Blocks.OBSIDIAN) return null;
-        if (!BlockUtils.isAir(getWorld(), aboveSurroundPos) && !BlockUtils.isAir(getWorld(), crystalPos)) return null;
-
-        return new HoleMineInfo(surroundPos, crystalPos, false);
-    }
-
-    private HoleMineInfo findAntiSurround(EntityPlayer target, EnumFacing facing) {
-        BlockPos playerPos = BlockUtils.toBlockPos(target.getPositionVector());
-        BlockPos surroundPos = playerPos.offset(facing);
-        BlockPos crystalPos = surroundPos.offset(facing);
-        BlockPos crystalFloor = crystalPos.offset(EnumFacing.DOWN);
-        if (getWorld().getBlockState(surroundPos).getBlock() != Blocks.OBSIDIAN) return null;
-        if (getWorld().getBlockState(crystalFloor).getBlock() != Blocks.OBSIDIAN) return null;
-        AxisAlignedBB crystalBox = new AxisAlignedBB(crystalPos.getX(), crystalPos.getY(), crystalPos.getZ(),
-                crystalPos.getX() + 1, crystalPos.getY() + 2, crystalPos.getZ() + 1);
-        if (BlockUtils.isColliding(getWorld(), crystalBox)) return null;
-        if (!EntityUtils.canInteract(BlockUtils.toVec3d(crystalPos).add(0.5, 1.7, 0.5), 6, 3)) return null;
-
-        return new HoleMineInfo(surroundPos, crystalFloor, true);
     }
 
     private void start(HoleMineInfo info) {
@@ -181,9 +156,9 @@ public class HoleMinerModule extends BaseModule {
         for (EntityPlayer player : EntityUtils.getNearbyPlayers(6)) {
             for (EnumFacing facing : EnumFacing.HORIZONTALS) {
                 if (InventoryUtils.hasItem(Items.END_CRYSTAL) && holeMineMode == HoleMineMode.BEST_EFFORT) {
-                    chosen = choose(chosen, findAntiSurround(player, facing));
+                    chosen = choose(chosen, HoleUtils.findAntiSurround(player, facing));
                 }
-                chosen = choose(chosen, findNormal(player, facing));
+                chosen = choose(chosen, HoleUtils.findNormal(player, facing));
             }
         }
         this.holeMineInfo = chosen;

@@ -1,12 +1,17 @@
 package net.toshimichi.sushi.utils.render.hole;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import net.toshimichi.sushi.modules.combat.HoleMineInfo;
+import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.function.Consumer;
@@ -72,5 +77,35 @@ public class HoleUtils {
                 }
             }
         }
+    }
+
+    public static HoleMineInfo findNormal(EntityPlayer target, EnumFacing facing) {
+        WorldClient world = Minecraft.getMinecraft().world;
+        if(world == null) return null;
+        BlockPos playerPos = BlockUtils.toBlockPos(target.getPositionVector());
+        BlockPos surroundPos = playerPos.offset(facing);
+        BlockPos aboveSurroundPos = surroundPos.offset(EnumFacing.UP);
+        BlockPos crystalPos = surroundPos.offset(facing);
+        if (world.getBlockState(surroundPos).getBlock() != Blocks.OBSIDIAN) return null;
+        if (!BlockUtils.isAir(world, aboveSurroundPos) && !BlockUtils.isAir(world, crystalPos)) return null;
+
+        return new HoleMineInfo(surroundPos, crystalPos, false);
+    }
+
+    public static HoleMineInfo findAntiSurround(EntityPlayer target, EnumFacing facing) {
+        WorldClient world = Minecraft.getMinecraft().world;
+        if(world == null) return null;
+        BlockPos playerPos = BlockUtils.toBlockPos(target.getPositionVector());
+        BlockPos surroundPos = playerPos.offset(facing);
+        BlockPos crystalPos = surroundPos.offset(facing);
+        BlockPos crystalFloor = crystalPos.offset(EnumFacing.DOWN);
+        if (world.getBlockState(surroundPos).getBlock() != Blocks.OBSIDIAN) return null;
+        if (world.getBlockState(crystalFloor).getBlock() != Blocks.OBSIDIAN) return null;
+        AxisAlignedBB crystalBox = new AxisAlignedBB(crystalPos.getX(), crystalPos.getY(), crystalPos.getZ(),
+                crystalPos.getX() + 1, crystalPos.getY() + 2, crystalPos.getZ() + 1);
+        if (BlockUtils.isColliding(world, crystalBox)) return null;
+        if (!EntityUtils.canInteract(BlockUtils.toVec3d(crystalPos).add(0.5, 1.7, 0.5), 6, 3)) return null;
+
+        return new HoleMineInfo(surroundPos, crystalFloor, true);
     }
 }
