@@ -7,7 +7,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -16,6 +17,7 @@ import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
+import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
@@ -32,11 +34,16 @@ import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AntiPistonAuraModule extends BaseModule {
 
-    private final ArrayList<BlockPlaceInfo> spam = new ArrayList<>();
+    private final List<BlockPlaceInfo> spam = Collections.synchronizedList(new ArrayList<>());
+    private final HashSet<PistonInfo> pistons = new HashSet<>();
+    private final HashSet<EnderCrystalInfo> crystals = new HashSet<>();
     private long when;
 
     public AntiPistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
@@ -46,7 +53,6 @@ public class AntiPistonAuraModule extends BaseModule {
     @Override
     public void onEnable() {
         EventHandlers.register(this);
-        spam.clear();
     }
 
     @Override
@@ -54,12 +60,22 @@ public class AntiPistonAuraModule extends BaseModule {
         EventHandlers.unregister(this);
     }
 
-    private EntityEnderCrystal getNearbyCrystal(Vec3d vec) {
-        List<EntityInfo<EntityEnderCrystal>> crystals = EntityUtils.getNearbyEntities(vec, EntityEnderCrystal.class);
-        if (crystals.isEmpty()) return null;
-        EntityInfo<EntityEnderCrystal> candidate = crystals.get(0);
-        if (candidate.getDistanceSq() >= 4) return null;
-        else return candidate.getEntity();
+    private PistonInfo getPistonInfo(BlockPos pos) {
+        synchronized (pistons) {
+            for (PistonInfo candidate : pistons) {
+                if (candidate.getBlockPos().equals(pos)) return candidate;
+            }
+        }
+        return null;
+    }
+
+    private EnderCrystalInfo getNearbyCrystal(Vec3d vec) {
+        synchronized (crystals) {
+            for (EnderCrystalInfo candidate : crystals) {
+                if (candidate.getPos().squareDistanceTo(vec) < 4) return candidate;
+            }
+        }
+        return null;
     }
 
     private BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input) {
@@ -72,39 +88,64 @@ public class AntiPistonAuraModule extends BaseModule {
         return null;
     }
 
-    private boolean processPosition(BlockPos pos) {
-        IBlockState blockState = getWorld().getBlockState(pos);
-        if (!(blockState.getBlock() instanceof BlockPistonBase)) return false;
-        EnumFacing enumFacing = blockState.getValue(BlockDirectional.FACING);
-        EntityEnderCrystal crystal = getNearbyCrystal(BlockUtils.toVec3d(pos.offset(enumFacing)).add(0.5, 0, 0.5));
-        if (crystal == null) return false;
-        Vec3d predicted = crystal.getPositionVector().add(new Vec3d(enumFacing.getDirectionVec()).scale(0.5));
-        if (DamageUtils.getCrystalDamage(getPlayer(), predicted) < 30) return false;
-        spam.add(findBlockPlaceInfo(getWorld(), pos));
-        if (!BlockUtils.isAir(getWorld(), pos.offset(enumFacing).offset(enumFacing))) {
-            spam.add(findBlockPlaceInfo(getWorld(), pos.offset(enumFacing)));
+    private void updateAll() {
+        synchronized (pistons) {
+            pistons.clear();
+            forEachNearby(pos -> {
+                IBlockState blockState = getWorld().getBlockState(pos);
+                if (!(blockState.getBlock() instanceof BlockPistonBase)) return;
+                EnumFacing enumFacing = blockState.getValue(BlockDirectional.FACING);
+                pistons.add(new PistonInfo(pos, enumFacing));
+            });
         }
-        when = System.currentTimeMillis();
-        try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.ALL)) {
-            PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.2, getPlayer().posZ, 0, 0, true, false, DesyncMode.POSITION);
-            PositionUtils.lookAt(crystal.getPositionVector(), DesyncMode.LOOK);
-            getConnection().sendPacket(new CPacketUseEntity(crystal));
+        synchronized (crystals) {
+            crystals.clear();
+            for (EntityInfo<EntityEnderCrystal> info : EntityUtils.getNearbyEntities(getPlayer().getPositionVector(), EntityEnderCrystal.class)) {
+                if (info.getDistanceSq() > 10) continue;
+                EntityEnderCrystal crystal = info.getEntity();
+                crystals.add(new EnderCrystalInfo(crystal.getEntityId(), crystal.getPositionVector(), null));
+            }
         }
+    }
 
-        return true;
+    private void preventPistonAura() {
+        forEachNearby(pos -> {
+            PistonInfo pistonInfo = getPistonInfo(pos);
+            if (pistonInfo == null) return;
+            EnumFacing enumFacing = pistonInfo.getFacing();
+            EnderCrystalInfo crystal = getNearbyCrystal(BlockUtils.toVec3d(pos.offset(enumFacing)).add(0.5, 0, 0.5));
+            if (crystal == null) return;
+            Vec3d predicted = crystal.getPos().add(new Vec3d(enumFacing.getDirectionVec()).scale(0.5));
+            if (DamageUtils.getCrystalDamage(getPlayer(), predicted) < 30) return;
+            spam.add(findBlockPlaceInfo(getWorld(), pos));
+            if (!BlockUtils.isAir(getWorld(), pos.offset(enumFacing).offset(enumFacing))) {
+                spam.add(findBlockPlaceInfo(getWorld(), pos.offset(enumFacing)));
+            }
+            when = System.currentTimeMillis();
+            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.ALL)) {
+                PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.2, getPlayer().posZ, 0, 0, true, false, DesyncMode.POSITION);
+                PositionUtils.lookAt(crystal.getPos(), DesyncMode.LOOK);
+                getConnection().sendPacket(crystal.newAttackPacket());
+            }
+        });
+    }
+
+    private void forEachNearby(Consumer<BlockPos> consumer) {
+        BlockPos playerPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
+        for (int x = -4; x <= 4; x++) {
+            for (int y = 1; y <= 4; y++) {
+                for (int z = -4; z <= 4; z++) {
+                    BlockPos pos = new BlockPos(playerPos.getX() + x, playerPos.getY() + y, playerPos.getZ() + z);
+                    consumer.accept(pos);
+                }
+            }
+        }
     }
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        BlockPos playerPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
-        for (int x = -4; x < 5; x++) {
-            for (int y = 1; y < 5; y++) {
-                for (int z = -4; z < 5; z++) {
-                    BlockPos pos = new BlockPos(playerPos.getX() + x, playerPos.getY() + y, playerPos.getZ() + z);
-                    if (processPosition(pos)) break;
-                }
-            }
-        }
+        updateAll();
+        preventPistonAura();
         spam.removeIf(it -> {
             if (it == null) return true;
             Block block = getWorld().getBlockState(it.getBlockPos()).getBlock();
@@ -126,6 +167,32 @@ public class AntiPistonAuraModule extends BaseModule {
                 .execute();
     }
 
+    @EventHandler(timing = EventTiming.PRE)
+    public void onPacketReceive(PacketReceiveEvent e) {
+        if (!(e.getPacket() instanceof SPacketSpawnObject)) return;
+        SPacketSpawnObject packet = (SPacketSpawnObject) e.getPacket();
+        if (packet.getType() != 51) return;
+        Vec3d pos = new Vec3d(packet.getX(), packet.getY(), packet.getZ());
+        synchronized (crystals) {
+            crystals.add(new EnderCrystalInfo(packet.getEntityID(), pos, null));
+        }
+        preventPistonAura();
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onPacketReceive2(PacketReceiveEvent e) {
+        if (!(e.getPacket() instanceof SPacketBlockChange)) return;
+        SPacketBlockChange packet = (SPacketBlockChange) e.getPacket();
+        Block block = packet.getBlockState().getBlock();
+        if (block != Blocks.PISTON && block != Blocks.PISTON_HEAD) return;
+        if (!(packet.getBlockState().getBlock() instanceof BlockPistonBase)) return;
+        EnumFacing enumFacing = packet.getBlockState().getValue(BlockDirectional.FACING);
+        synchronized (pistons) {
+            pistons.add(new PistonInfo(packet.getBlockPosition(), enumFacing));
+        }
+        preventPistonAura();
+    }
+
     @Override
     public String getDefaultName() {
         return "AntiPistonAura";
@@ -134,5 +201,41 @@ public class AntiPistonAuraModule extends BaseModule {
     @Override
     public Category getDefaultCategory() {
         return Category.COMBAT;
+    }
+
+    private static class PistonInfo {
+        private final BlockPos blockPos;
+        private final EnumFacing facing;
+
+        public PistonInfo(BlockPos blockPos, EnumFacing facing) {
+            this.blockPos = blockPos;
+            this.facing = facing;
+        }
+
+        public BlockPos getBlockPos() {
+            return blockPos;
+        }
+
+        public EnumFacing getFacing() {
+            return facing;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            PistonInfo that = (PistonInfo) o;
+
+            if (blockPos != null ? !blockPos.equals(that.blockPos) : that.blockPos != null) return false;
+            return facing == that.facing;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = blockPos != null ? blockPos.hashCode() : 0;
+            result = 31 * result + (facing != null ? facing.hashCode() : 0);
+            return result;
+        }
     }
 }

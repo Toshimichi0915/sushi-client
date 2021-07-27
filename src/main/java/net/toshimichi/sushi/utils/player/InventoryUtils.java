@@ -26,22 +26,22 @@ public class InventoryUtils {
     }
 
     public static ItemSlot findAnyTool(EntityPlayerSP player) {
-        for(ItemSlot itemSlot : InventoryType.HOTBAR) {
-            if(itemSlot.getItemStack().getItem() instanceof ItemTool) return itemSlot;
+        for (ItemSlot itemSlot : InventoryType.HOTBAR) {
+            if (itemSlot.getItemStack().getItem() instanceof ItemTool) return itemSlot;
         }
         return null;
     }
 
     public static void antiWeakness(boolean b, Runnable r) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if(!b || player == null) {
+        if (!b || player == null) {
             r.run();
             return;
         }
         ItemSlot currentSlot = ItemSlot.current();
         ItemSlot swordSlot = InventoryUtils.findAnyTool(player);
         boolean switchBack = false;
-        if(swordSlot != null && player.getActivePotionEffect(MobEffects.WEAKNESS) != null) {
+        if (swordSlot != null && player.getActivePotionEffect(MobEffects.WEAKNESS) != null) {
             InventoryUtils.moveHotbar(swordSlot.getIndex());
             switchBack = true;
         }

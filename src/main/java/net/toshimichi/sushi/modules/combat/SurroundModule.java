@@ -61,9 +61,9 @@ public class SurroundModule extends BaseModule {
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing == EnumFacing.UP) continue;
             BlockPos offset = pos.offset(facing);
-            if (antiGhostBlock.getValue() && !checked.contains(BlockUtils.toVec3i(offset))) {
+            if (antiGhostBlock.getValue() && !checked.contains(offset)) {
                 toBeChecked.add(offset);
-                checked.add(BlockUtils.toVec3i(offset));
+                checked.add(offset);
             }
             List<BlockPlaceInfo> info = BlockPlaceUtils.search(getWorld(), offset, 3);
             if (info == null) continue;

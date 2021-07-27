@@ -154,7 +154,7 @@ public class NoRenderModule extends BaseModule {
             // map-id, mapScale, trackingPosition, iconsLength, icons, columns
             int mapId = read.readVarInt();
             write.writeVarInt(mapId);
-            if(mapId < 0) return;
+            if (mapId < 0) return;
             write.writeByte(read.readByte());
             write.writeBoolean(read.readBoolean());
             int iconsLength = read.readVarInt();

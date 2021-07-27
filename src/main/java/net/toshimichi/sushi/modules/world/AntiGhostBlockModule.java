@@ -7,7 +7,6 @@ import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -35,7 +34,7 @@ public class AntiGhostBlockModule extends BaseModule {
     @Config(id = "break", name = "Break")
     public Boolean breakCheck = true;
 
-    private final HashSet<Vec3i> toBeChecked = new HashSet<>();
+    private final HashSet<BlockPos> toBeChecked = new HashSet<>();
 
     public AntiGhostBlockModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -56,7 +55,7 @@ public class AntiGhostBlockModule extends BaseModule {
     public void onClientTick(ClientTickEvent e) {
         // place check
         if (!toBeChecked.isEmpty()) {
-            BlockPos[] arr = toBeChecked.stream().map(BlockUtils::toBlockPos).toArray(BlockPos[]::new);
+            BlockPos[] arr = toBeChecked.toArray(new BlockPos[0]);
             BlockUtils.checkGhostBlock(arr);
         }
         toBeChecked.clear();
@@ -85,7 +84,7 @@ public class AntiGhostBlockModule extends BaseModule {
         }
         if (breakCheck && e.getPacket() instanceof CPacketPlayerDigging) {
             CPacketPlayerDigging packet = (CPacketPlayerDigging) e.getPacket();
-            toBeChecked.add(BlockUtils.toVec3i(packet.getPosition()));
+            toBeChecked.add(packet.getPosition());
         }
     }
 

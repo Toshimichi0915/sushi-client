@@ -13,7 +13,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.toshimichi.sushi.utils.player.InventoryType;
 import net.toshimichi.sushi.utils.player.InventoryUtils;
@@ -41,16 +40,8 @@ public class BlockUtils {
         return new BlockPos(vec.x, vec.y, vec.z);
     }
 
-    public static BlockPos toBlockPos(Vec3i vec) {
-        return new BlockPos(vec.getX(), vec.getY(), vec.getZ());
-    }
-
     public static Vec3d toVec3d(BlockPos pos) {
         return new Vec3d(pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    public static Vec3i toVec3i(BlockPos pos) {
-        return new Vec3i(pos.getX(), pos.getY(), pos.getZ());
     }
 
     public static boolean isAir(World world, BlockPos pos) {

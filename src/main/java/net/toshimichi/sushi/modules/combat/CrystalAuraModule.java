@@ -1,6 +1,5 @@
 package net.toshimichi.sushi.modules.combat;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -8,9 +7,7 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
-import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketHeldItemChange;
 import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
@@ -42,7 +39,6 @@ import net.toshimichi.sushi.utils.world.BlockUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.*;
 
 public class CrystalAuraModule extends BaseModule {
@@ -203,8 +199,8 @@ public class CrystalAuraModule extends BaseModule {
 
     private boolean filter(CrystalAttack attack, boolean checkCollision) {
         if (attack == null) return false;
-        Vec3d crystalPos = attack.info.pos;
-        AxisAlignedBB crystalBox = attack.info.box;
+        Vec3d crystalPos = attack.info.getPos();
+        AxisAlignedBB crystalBox = attack.info.getBox();
 
         List<Entity> entities = getWorld().getEntitiesWithinAABBExcludingEntity(null, crystalBox);
         entities.removeIf(p -> p instanceof EntityEnderCrystal);
@@ -285,10 +281,10 @@ public class CrystalAuraModule extends BaseModule {
         ArrayList<CrystalAttack> nearby = new ArrayList<>();
         synchronized (enderCrystals) {
             for (EnderCrystalInfo entity : enderCrystals) {
-                double distanceSq = getPlayer().getPositionVector().squareDistanceTo(entity.pos);
+                double distanceSq = getPlayer().getPositionVector().squareDistanceTo(entity.getPos());
                 if (distanceSq > crystalRange.getValue().getCurrent() * crystalRange.getValue().getCurrent()) continue;
-                if (crystalAttack != null && crystalAttack.info.box.intersects(entity.box)) continue;
-                CrystalAttack attack = getCrystalAttack(entity.entityId, entity.pos, entity.box);
+                if (crystalAttack != null && crystalAttack.info.getBox().intersects(entity.getBox())) continue;
+                CrystalAttack attack = getCrystalAttack(entity.getEntityId(), entity.getPos(), entity.getBox());
                 if (filter(attack, false)) nearby.add(attack);
             }
         }
@@ -299,7 +295,7 @@ public class CrystalAuraModule extends BaseModule {
     private EnderCrystalInfo getCollidingEnderCrystal(AxisAlignedBB box) {
         synchronized (enderCrystals) {
             for (EnderCrystalInfo enderCrystalInfo : enderCrystals) {
-                if (enderCrystalInfo.box.intersects(box)) return enderCrystalInfo;
+                if (enderCrystalInfo.getBox().intersects(box)) return enderCrystalInfo;
             }
         }
         return null;
@@ -332,17 +328,8 @@ public class CrystalAuraModule extends BaseModule {
     private void breakEnderCrystal(EnderCrystalInfo enderCrystal) {
         InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> {
             try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-                PositionUtils.lookAt(enderCrystal.pos, DesyncMode.LOOK);
-                CPacketUseEntity packet = new CPacketUseEntity();
-                PacketBuffer write = new PacketBuffer(Unpooled.buffer());
-                write.writeVarInt(enderCrystal.entityId);
-                write.writeEnumValue(CPacketUseEntity.Action.ATTACK);
-                try {
-                    packet.readPacketData(write);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                getConnection().sendPacket(packet);
+                PositionUtils.lookAt(enderCrystal.getPos(), DesyncMode.LOOK);
+                getConnection().sendPacket(enderCrystal.newAttackPacket());
             }
         });
     }
@@ -364,8 +351,8 @@ public class CrystalAuraModule extends BaseModule {
         if (crystalAttack == null) return;
         if (crystalSlot == null) return;
         if (!updatePlaceCounter()) return;
-        Vec3d crystalPos = crystalAttack.info.pos;
-        EnderCrystalInfo colliding = getCollidingEnderCrystal(crystalAttack.info.box);
+        Vec3d crystalPos = crystalAttack.info.getPos();
+        EnderCrystalInfo colliding = getCollidingEnderCrystal(crystalAttack.info.getBox());
         if (colliding != null && updateBreakCounter()) breakEnderCrystal(colliding);
         try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
             PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
@@ -410,7 +397,7 @@ public class CrystalAuraModule extends BaseModule {
         // copy
         CrystalAttack crystalAttack = this.crystalAttack;
         if (crystalAttack == null) return;
-        BlockPos pos = BlockUtils.toBlockPos(crystalAttack.info.pos.subtract(0, 1, 0));
+        BlockPos pos = BlockUtils.toBlockPos(crystalAttack.info.getPos().subtract(0, 1, 0));
         AxisAlignedBB box = getWorld().getBlockState(pos).getBoundingBox(getWorld(), pos).offset(pos).grow(0.002);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         if (outline.getValue()) RenderUtils.drawOutline(box, outlineColor.getValue().getCurrentColor(), 1);
@@ -468,15 +455,4 @@ public class CrystalAuraModule extends BaseModule {
         }
     }
 
-    private static class EnderCrystalInfo {
-        final int entityId;
-        final Vec3d pos;
-        final AxisAlignedBB box;
-
-        public EnderCrystalInfo(int entityId, Vec3d pos, AxisAlignedBB box) {
-            this.entityId = entityId;
-            this.pos = pos;
-            this.box = box;
-        }
-    }
 }

@@ -15,7 +15,7 @@ public class GhostBlockCommand {
     @Default
     public void onDefault(MessageHandler out, Integer x, Integer y, Integer z, Integer id) {
         Block block = Block.getBlockById(id);
-        if(block == null) {
+        if (block == null) {
             out.send("Could not find Block with block id " + id, LogLevel.ERROR);
             return;
         }

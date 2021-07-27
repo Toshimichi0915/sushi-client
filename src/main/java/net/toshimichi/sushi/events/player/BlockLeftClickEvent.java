@@ -13,8 +13,6 @@ import net.toshimichi.sushi.events.Cancellable;
 import net.toshimichi.sushi.events.Event;
 import net.toshimichi.sushi.events.EventTiming;
 
-import javax.annotation.Nonnull;
-
 public class BlockLeftClickEvent implements Event, Cancellable {
 
     private final EventTiming timing;

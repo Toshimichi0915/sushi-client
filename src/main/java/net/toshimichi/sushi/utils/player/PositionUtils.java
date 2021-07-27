@@ -52,7 +52,7 @@ public class PositionUtils {
         return onGround;
     }
 
-    private static void updateDesyncMode() {
+    private static synchronized void updateDesyncMode() {
         boolean position = false;
         boolean rotation = false;
         boolean onGround = false;
@@ -64,23 +64,23 @@ public class PositionUtils {
         mode = new DesyncMode(position, rotation, onGround);
     }
 
-    public static DesyncCloseable desync(DesyncMode newMode) {
+    public static synchronized DesyncCloseable desync(DesyncMode newMode) {
         DesyncCloseable closeable = new DesyncCloseable();
         desync.put(closeable, newMode);
         updateDesyncMode();
         return closeable;
     }
 
-    protected static void pop(DesyncCloseable closeable) {
+    protected static synchronized void pop(DesyncCloseable closeable) {
         desync.remove(closeable);
         updateDesyncMode();
     }
 
-    public static void move(Vec3d pos, float yaw, float pitch, boolean position, boolean rotation, DesyncMode mode) {
+    public static synchronized void move(Vec3d pos, float yaw, float pitch, boolean position, boolean rotation, DesyncMode mode) {
         move(pos.x, pos.y, pos.z, yaw, pitch, position, rotation, mode);
     }
 
-    public static void move(double x, double y, double z, float yaw, float pitch, boolean position, boolean rotation, DesyncMode mode) {
+    public static synchronized void move(double x, double y, double z, float yaw, float pitch, boolean position, boolean rotation, DesyncMode mode) {
         if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z) ||
                 !Float.isFinite(yaw) || !Float.isFinite(pitch)) {
             throw new IllegalArgumentException("Invalid movement x: " + x + " y: " + y + " z: " + z +
@@ -129,7 +129,7 @@ public class PositionUtils {
         connection.sendPacket(packet);
     }
 
-    public static void lookAt(Vec3d loc, DesyncMode mode) {
+    public static synchronized void lookAt(Vec3d loc, DesyncMode mode) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) return;
         Vec3d direction = loc.subtract(new Vec3d(player.posX, player.posY + player.eyeHeight, player.posZ)).normalize();
