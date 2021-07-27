@@ -74,7 +74,7 @@ public class BlockUtils {
         else return world.getBlockState(pos).getBlock().canPlaceBlockOnSide(world, pos, facing.getOpposite());
     }
 
-    public static void place(BlockPlaceInfo info) {
+    public static void place(BlockPlaceInfo info, boolean packet) {
         Minecraft minecraft = Minecraft.getMinecraft();
         PlayerControllerMP controller = minecraft.playerController;
         EntityPlayerSP player = minecraft.player;
@@ -83,7 +83,17 @@ public class BlockUtils {
         BlockPos pos = info.getBlockPos();
         Vec3d vec = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
         BlockFace face = info.getBlockFace();
-        controller.processRightClickBlock(player, world, pos.offset(face.getFacing().getOpposite()), face.getFacing(), face.getPos().add(vec), EnumHand.MAIN_HAND);
+        NetHandlerPlayClient connection = minecraft.getConnection();
+        if (!packet || connection == null) {
+            controller.processRightClickBlock(player, world, pos.offset(face.getFacing().getOpposite()), face.getFacing(), face.getPos().add(vec), EnumHand.MAIN_HAND);
+        } else {
+            BlockPos placePos = pos.offset(face.getFacing().getOpposite());
+            Vec3d placeVec = face.getPos().add(vec);
+            float f = (float) (placeVec.x - (double) placePos.getX());
+            float f1 = (float) (placeVec.y - (double) placePos.getY());
+            float f2 = (float) (placeVec.z - (double) placePos.getZ());
+            connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(placePos, face.getFacing(), EnumHand.MAIN_HAND, f, f1, f2));
+        }
     }
 
     public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input, BlockPlaceOption option) {

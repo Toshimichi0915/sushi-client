@@ -53,7 +53,7 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
                 PositionUtils.lookAt(info, desync ? DesyncMode.LOOK : DesyncMode.NONE);
             }
         }
-        BlockUtils.place(info);
+        BlockUtils.place(info, false);
         if (index >= getInput().size()) stop(null);
     }
 }

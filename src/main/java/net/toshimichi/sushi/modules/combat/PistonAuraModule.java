@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.modules.combat;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -47,6 +48,7 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> recalculationDelay;
     private final Configuration<IntRange> maxTargets;
     private final Configuration<Boolean> antiWeakness;
+    private final Configuration<Boolean> packetPlace;
     private final Configuration<Boolean> antiGhostBlock;
     private final Configuration<IntRange> ghostBlockCheckDelay;
 
@@ -72,7 +74,8 @@ public class PistonAuraModule extends BaseModule {
         recalculationDelay = other.get("recalculation_delay", "Recalculation Delay", null, IntRange.class, new IntRange(1, 40, 0, 1));
         maxTargets = other.get("max_targets", "Max Targets", null, IntRange.class, new IntRange(1, 10, 1, 1));
         antiWeakness = other.get("anti_weakness", "Anti Weakness", null, Boolean.class, true);
-        antiGhostBlock = other.get("anti_ghost_block", "Anti Ghost Block", null, Boolean.class, true);
+        packetPlace = other.get("packet_place", "Packet Place", null, Boolean.class, true);
+        antiGhostBlock = other.get("anti_ghost_block", "Anti Ghost Block", null, Boolean.class, true, () -> !packetPlace.getValue(), false, 0);
         ghostBlockCheckDelay = other.get("ghost_block_check_delay", "Ghost Block Check Delay", null, IntRange.class, new IntRange(1, 20, 0, 1), antiGhostBlock::getValue, false, 0);
     }
 
@@ -89,8 +92,8 @@ public class PistonAuraModule extends BaseModule {
     }
 
     private void update(Configuration<IntRange> conf) {
+        running = false;
         if (conf.getValue().getCurrent() == 0) {
-            running = false;
             repeatCounter++;
             update();
         } else {
@@ -157,6 +160,7 @@ public class PistonAuraModule extends BaseModule {
                     })
                     .last(this::stop)
                     .execute();
+            return;
         } else if (attack.getCrystal() != null && (attack.getCrystal() == exploded || attack.isBlocked() || attack.isPistonActivated())) {
             TaskExecutor.newTaskChain()
                     .delay(delay2.getValue().getCurrent())
@@ -169,7 +173,10 @@ public class PistonAuraModule extends BaseModule {
                     })
                     .last(this::stop)
                     .execute();
+            return;
         } else if (!attack.isPistonPlaced()) {
+            BlockPos pos = attack.getPistonPos();
+            IBlockState state = getWorld().getBlockState(pos);
             TaskExecutor.newTaskChain()
                     .delay(delay3.getValue().getCurrent())
                     .supply(() -> attack.getPistonObsidian() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
@@ -184,16 +191,22 @@ public class PistonAuraModule extends BaseModule {
                     .then(() -> {
                         BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
                         if (info == null) return;
-                        BlockUtils.place(info);
+                        BlockUtils.place(info, packetPlace.getValue());
+                        if (packetPlace.getValue()) getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
                         attack.setPistonPlaced(true);
                         update(delay3);
                     })
+                    .last(() -> { if (packetPlace.getValue()) getWorld().setBlockState(pos, state);})
                     .last(this::stop)
                     .execute();
+            return;
         } else if (!attack.isRedstonePlaced()) {
+            boolean found = false;
             for (EnumFacing facing : EnumFacing.values()) {
                 if (facing == attack.getFacing()) continue;
-                BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos().offset(facing));
+                BlockPos pos = attack.getPistonPos().offset(facing);
+                IBlockState state = getWorld().getBlockState(pos);
+                BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), pos);
                 if (info == null) continue;
                 TaskExecutor.newTaskChain()
                         .delay(delay4.getValue().getCurrent())
@@ -201,19 +214,22 @@ public class PistonAuraModule extends BaseModule {
                         .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                         .abortIfFalse()
                         .then(() -> {
-                            BlockUtils.place(info);
+                            BlockUtils.place(info, packetPlace.getValue());
                             attack.setRedstonePlaced(true);
+                            if (packetPlace.getValue()) getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
                             update(delay4);
                         })
+                        .last(() -> {if (packetPlace.getValue()) getWorld().setBlockState(pos, state);})
                         .last(this::stop)
                         .execute();
+                found = true;
                 break;
             }
-        } else {
-            stop();
-            this.attack = null;
-            repeatCounter = 0;
+            if (found) return;
         }
+        stop();
+        this.attack = null;
+        repeatCounter = 0;
     }
 
     @EventHandler(timing = EventTiming.POST)

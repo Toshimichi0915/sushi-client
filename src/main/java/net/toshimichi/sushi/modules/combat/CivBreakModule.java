@@ -67,13 +67,13 @@ public class CivBreakModule extends BaseModule {
                     .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
-                    .then(() -> BlockUtils.place(info))
+                    .then(() -> BlockUtils.place(info, false))
                     .supply(() -> Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .then(() -> placeCrystal(attack))
                     .execute();
-            BlockUtils.place(info);
+            BlockUtils.place(info, false);
         } else if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
                     .supply(() -> Items.END_CRYSTAL)
