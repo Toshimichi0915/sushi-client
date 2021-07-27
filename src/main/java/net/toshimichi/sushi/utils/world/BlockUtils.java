@@ -65,7 +65,7 @@ public class BlockUtils {
         EnumFacing facing = face.getBlockFace() == null ? null : face.getBlockFace().getFacing();
         AxisAlignedBB box = world.getBlockState(pos).getBoundingBox(world, pos).offset(pos);
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (player != null && BlockUtils.toVec3d(pos).add(0.5, 0.5, 0.5).squareDistanceTo(player.getPositionVector()) > 64)
+        if (player != null && BlockUtils.toVec3d(pos).add(0.5, 0.5, 0.5).squareDistanceTo(player.getPositionVector()) > 36)
             return false;
         if (world.collidesWithAnyBlock(box) ||
                 !world.checkNoEntityCollision(box) && !option.isEntityCollisionIgnored()) return false;
