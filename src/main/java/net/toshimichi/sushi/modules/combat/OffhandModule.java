@@ -25,6 +25,7 @@ public class OffhandModule extends BaseModule {
     //    private final Configuration<Boolean> rightClickGap;
 //    private final Configuration<Boolean> fallCheck;
     private final Configuration<Boolean> totemOnElytra;
+    private final Configuration<Boolean> preferInventory;
 
     public OffhandModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -34,6 +35,7 @@ public class OffhandModule extends BaseModule {
 //        rightClickGap = provider.get("right_click_gapple", "Right Click Gappple", null, Boolean.class, true);
 //        fallCheck = provider.get("fall_check", "Fall Check", null, Boolean.class, true);
         totemOnElytra = provider.get("totem_on_elytra", "Totem On Elytra", null, Boolean.class, true);
+        preferInventory = provider.get("prefer_inventory", "Prefer Inventory", null, Boolean.class, true);
     }
 
     @Override
@@ -84,8 +86,16 @@ public class OffhandModule extends BaseModule {
         SwitchTarget target = getSwitchTarget();
         SwitchTarget current = getCurrent();
         if (target == current) return;
-        ItemSlot itemSlot = InventoryUtils.findItemSlot(target.getItem(), getPlayer(), InventoryType.values());
-        if (itemSlot == null) return;
+        ItemSlot itemSlot = null;
+        if (preferInventory.getValue()) {
+            itemSlot = InventoryUtils.findItemSlot(target.getItem(), getPlayer(), InventoryType.MAIN);
+        }
+        if (itemSlot == null) {
+            itemSlot = InventoryUtils.findItemSlot(target.getItem(), getPlayer(), InventoryType.values());
+        }
+        if (itemSlot == null) {
+            return;
+        }
         InventoryUtils.moveTo(itemSlot, ItemSlot.offhand());
     }
 
