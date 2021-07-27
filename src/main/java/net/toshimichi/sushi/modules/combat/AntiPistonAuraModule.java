@@ -52,6 +52,19 @@ public class AntiPistonAuraModule extends BaseModule {
     public AntiPistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         placeCoolTime = provider.get("place_cool_time", "Place Cool Time", null, IntRange.class, new IntRange(20, 1000, 10, 10));
+    }
+
+    private boolean updatePlaceCounter() {
+        if (System.currentTimeMillis() - lastPlaceTick >= placeCoolTime.getValue().getCurrent()) {
+            lastPlaceTick = System.currentTimeMillis();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onEnable() {
+        EventHandlers.register(this);
         new Thread(() -> {
             while (true) {
                 if (!isEnabled()) return;
@@ -64,11 +77,6 @@ public class AntiPistonAuraModule extends BaseModule {
                 }
             }
         }).start();
-    }
-
-    @Override
-    public void onEnable() {
-        EventHandlers.register(this);
     }
 
     @Override
@@ -124,10 +132,11 @@ public class AntiPistonAuraModule extends BaseModule {
         }
     }
 
-    private void placeObsidian() {
+    private synchronized void placeObsidian() {
         if (spam.isEmpty()) return;
         ItemSlot finalObsidianSlot = obsidianSlot;
         if (finalObsidianSlot == null) return;
+        if (!updatePlaceCounter()) return;
         switching = true;
         InventoryUtils.moveHotbar(finalObsidianSlot.getIndex());
         for (BlockPlaceInfo info : new ArrayList<>(spam)) {
@@ -190,6 +199,7 @@ public class AntiPistonAuraModule extends BaseModule {
             obsidianSlot = InventoryUtils.moveToHotbar(finalObsidianSlot);
         }
         currentSlot = ItemSlot.current();
+        placeObsidian();
     }
 
     @EventHandler(timing = EventTiming.PRE)
