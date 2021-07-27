@@ -5,6 +5,9 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.toshimichi.sushi.Sushi;
+import net.toshimichi.sushi.command.LogLevel;
+import net.toshimichi.sushi.command.MessageHandler;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -24,6 +27,7 @@ abstract public class BaseModule implements Module {
     private final Configuration<Keybind> keybind;
     private final Configuration<Boolean> temporary;
     private final Configuration<Boolean> visible;
+    private final Configuration<Boolean> toggleNotification;
     private final ModuleFactory factory;
     private final ArrayList<ElementFactory> hudElementFactories;
     private boolean isEnabled;
@@ -42,6 +46,7 @@ abstract public class BaseModule implements Module {
         this.keybind = provider.get("keybind", "Module Keybind", "Keybind for this module", Keybind.class, getDefaultKeybind(), () -> true, false, 83000);
         this.temporary = commonCategory.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, false, 84000);
         this.visible = commonCategory.get("visible", "Visible", null, Boolean.class, isVisibleByDefault(), () -> true, false, 85000);
+        this.toggleNotification = commonCategory.get("toggle_notification", "Toggle Notification", null, Boolean.class, false);
         commonCategory.get("reset", "Reset Settings", null, Runnable.class, provider::reset, () -> true, true, 86000);
 
         hudElementFactories = new ArrayList<>();
@@ -80,10 +85,18 @@ abstract public class BaseModule implements Module {
     @Override
     public void setEnabled(boolean enabled) {
         if (!isPaused) {
-            if (!this.isEnabled && enabled)
+            MessageHandler handler = Sushi.getProfile().getMessageHandler();
+            if (!this.isEnabled && enabled) {
                 onEnable();
-            else if (this.isEnabled && !enabled)
+                if (toggleNotification.getValue()) {
+                    handler.send("Enabled " + getName(), LogLevel.INFO);
+                }
+            } else if (this.isEnabled && !enabled) {
                 onDisable();
+                if (toggleNotification.getValue()) {
+                    handler.send("Disabled " + getName(), LogLevel.INFO);
+                }
+            }
         }
         this.isEnabled = enabled;
     }
