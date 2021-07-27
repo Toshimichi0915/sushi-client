@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.toshimichi.sushi.utils.player.MovementUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class EntityUtils {
@@ -86,6 +87,7 @@ public class EntityUtils {
             if (entity.getName().equals(player.getName())) continue;
             result.add((EntityPlayer) entity);
         }
+        result.sort(Comparator.comparingDouble(player::getDistanceSq));
         return result;
     }
 
