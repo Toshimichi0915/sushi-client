@@ -24,6 +24,10 @@ public class ItemSlot implements Comparable<ItemSlot> {
         return index;
     }
 
+    public int getProtocolIndex() {
+        return inventoryType.toProtocol(index);
+    }
+
     public ItemStack getItemStack() {
         return player.inventory.getStackInSlot(index);
     }
@@ -35,6 +39,10 @@ public class ItemSlot implements Comparable<ItemSlot> {
     public static ItemSlot current() {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         return new ItemSlot(player.inventory.currentItem, player);
+    }
+
+    public static ItemSlot offhand() {
+        return new ItemSlot(InventoryType.OFFHAND.getIndex());
     }
 
     public static ItemSlot[] values() {

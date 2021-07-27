@@ -75,9 +75,8 @@ public class InventoryUtils {
         NetHandlerPlayClient connection = player.connection;
         Container container = player.inventoryContainer;
         short transactionId = container.getNextTransactionID(player.inventory);
-        int index = slot.getInventoryType().toProtocol(slot.getIndex());
-        container.slotClick(index, button, type, player);
-        connection.sendPacket(new CPacketClickWindow(0, index, button, type, slot.getItemStack(), transactionId));
+        ItemStack itemStack = container.slotClick(slot.getProtocolIndex(), button, type, player);
+        connection.sendPacket(new CPacketClickWindow(0, slot.getProtocolIndex(), button, type, itemStack, transactionId));
         Minecraft.getMinecraft().playerController.updateController();
         return transactionId;
     }
@@ -91,6 +90,12 @@ public class InventoryUtils {
             InventoryUtils.clickItemSlot(itemSlot, ClickType.QUICK_MOVE, 0);
             InventoryUtils.moveHotbar(emptyHotbar.getIndex());
         }
+    }
+
+    public static void moveTo(ItemSlot from, ItemSlot to) {
+        InventoryUtils.clickItemSlot(from, ClickType.PICKUP, 0);
+        InventoryUtils.clickItemSlot(to, ClickType.PICKUP, 0);
+        InventoryUtils.clickItemSlot(from, ClickType.PICKUP, 0);
     }
 
     public static ItemSlot findBestWeapon(boolean fromInventory, boolean preferAxe) {

@@ -2,6 +2,7 @@ package net.toshimichi.sushi.utils.player;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 
 public enum InventoryType implements Iterable<ItemSlot> {
@@ -45,12 +46,20 @@ public enum InventoryType implements Iterable<ItemSlot> {
         return null;
     }
 
-    @Override
-    public Iterator<ItemSlot> iterator() {
+    private List<ItemSlot> getItemSlotList() {
         ArrayList<ItemSlot> result = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             result.add(new ItemSlot(i + min));
         }
-        return result.iterator();
+        return result;
+    }
+
+    @Override
+    public Iterator<ItemSlot> iterator() {
+        return getItemSlotList().iterator();
+    }
+
+    public ItemSlot[] getAll() {
+        return getItemSlotList().toArray(new ItemSlot[0]);
     }
 }

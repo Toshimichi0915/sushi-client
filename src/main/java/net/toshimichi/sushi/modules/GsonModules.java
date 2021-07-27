@@ -103,6 +103,7 @@ public class GsonModules implements Modules {
         addModuleFactory("anti_ghost_block", AntiGhostBlockModule::new, true);
         addModuleFactory("gui_move", GuiMoveModule::new, true);
         addModuleFactory("hole_break_esp", HoleBreakEsp::new, true);
+        addModuleFactory("offhand", OffhandModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

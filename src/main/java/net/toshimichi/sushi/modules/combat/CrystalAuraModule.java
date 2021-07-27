@@ -358,7 +358,7 @@ public class CrystalAuraModule extends BaseModule {
             PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
         }
         boolean switchBack = false;
-        if (silentSwitch.getValue()) {
+        if (silentSwitch.getValue() && crystalSlot.getInventoryType() != InventoryType.OFFHAND) {
             InventoryUtils.moveHotbar(crystalSlot.getIndex());
 //            getConnection().sendPacket(new CPacketHeldItemChange(crystalSlot.getIndex()));
             switchBack = true;
@@ -384,7 +384,7 @@ public class CrystalAuraModule extends BaseModule {
         if (crystalAttack == null && nearbyCrystalAttack == null) return;
         crystalSlot = InventoryUtils.findItemSlot(Items.END_CRYSTAL, getPlayer(), InventoryType.HOTBAR, InventoryType.OFFHAND);
         currentSlot = ItemSlot.current();
-        if (crystalSlot == null || !silentSwitch.getValue()) {
+        if (crystalSlot == null || (currentSlot.equals(crystalSlot) && !silentSwitch.getValue())) {
             TaskExecutor.newTaskChain()
                     .supply(() -> Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, switchMode.getValue()))

@@ -1,8 +1,6 @@
 package net.toshimichi.sushi.modules.combat;
 
-import net.minecraft.inventory.ClickType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.init.Items;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.IntRange;
@@ -39,15 +37,12 @@ public class AutoTotemModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
         if (lastUpdate > TickUtils.current() + delay.getValue().getCurrent()) return;
-        int offhandSlot = InventoryType.OFFHAND.getIndex();
-        ItemStack offhand = getPlayer().inventory.getStackInSlot(offhandSlot);
-        Item totem = Item.getItemById(449);
-        if (offhand.getItem().equals(totem)) return;
-        ItemSlot itemSlot = InventoryUtils.findItemSlot(totem, getPlayer(), InventoryType.values());
+        ItemSlot offhand = ItemSlot.offhand();
+        if (offhand.getItemStack().getItem().equals(Items.TOTEM_OF_UNDYING)) return;
+        ItemSlot itemSlot = InventoryUtils.findItemSlot(Items.TOTEM_OF_UNDYING, getPlayer(), InventoryType.values());
         if (itemSlot == null) return;
         lastUpdate = TickUtils.current();
-        InventoryUtils.clickItemSlot(itemSlot, ClickType.PICKUP, 0);
-        InventoryUtils.clickItemSlot(new ItemSlot(offhandSlot, getPlayer()), ClickType.PICKUP, 0);
+        InventoryUtils.moveTo(itemSlot, InventoryType.OFFHAND.getAll()[0]);
     }
 
     @Override
