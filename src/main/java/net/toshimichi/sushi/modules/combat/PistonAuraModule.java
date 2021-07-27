@@ -46,6 +46,7 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> delay5;
     private final Configuration<IntRange> maxObsidian;
     private final Configuration<IntRange> recalculationDelay;
+    private final Configuration<IntRange> obsidianDelay;
     private final Configuration<IntRange> maxTargets;
     private final Configuration<Boolean> antiWeakness;
     private final Configuration<Boolean> packetPlace;
@@ -60,6 +61,7 @@ public class PistonAuraModule extends BaseModule {
     private boolean running;
     private int repeatCounter;
     private int lastRecalculationTick;
+    private int lastObsidianTick;
     private int lastGhostBlockCheckTick;
 
     public PistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
@@ -70,9 +72,11 @@ public class PistonAuraModule extends BaseModule {
         delay3 = delay.get("delay_3", "Piston Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
         delay4 = delay.get("delay_4", "Redstone Place Delay", null, IntRange.class, new IntRange(0, 20, 0, 1));
         delay5 = delay.get("delay_5", "Obsidian Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
+
         ConfigurationCategory other = provider.getCategory("other", "Other Settings", null);
         maxObsidian = other.get("max_obsidian", "Max Obsidian", null, IntRange.class, new IntRange(3, 5, 0, 1));
         recalculationDelay = other.get("recalculation_delay", "Recalculation Delay", null, IntRange.class, new IntRange(1, 40, 0, 1));
+        obsidianDelay = other.get("obsidian_delay", "Obsidian Delay", null, IntRange.class, new IntRange(20, 100, 1, 1));
         maxTargets = other.get("max_targets", "Max Targets", null, IntRange.class, new IntRange(1, 10, 1, 1));
         antiWeakness = other.get("anti_weakness", "Anti Weakness", null, Boolean.class, true);
         packetPlace = other.get("packet_place", "Packet Place", null, Boolean.class, true);
@@ -118,7 +122,9 @@ public class PistonAuraModule extends BaseModule {
             return;
         }
         if (attack == null || repeatCounter == 0 && lastRecalculationTick-- <= 0) {
-            List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer(), maxObsidian.getValue().getCurrent(), maxTargets.getValue().getCurrent());
+            int obsidianCount = lastObsidianTick-- > 0 || repeatCounter != 0 ? 0 : maxObsidian.getValue().getCurrent();
+            if (obsidianCount != 0) lastObsidianTick = obsidianDelay.getValue().getCurrent();
+            List<PistonAuraAttack> attacks = PistonAuraUtils.find(getPlayer(), obsidianCount, maxTargets.getValue().getCurrent());
             if (attacks.isEmpty()) return;
             Collections.sort(attacks);
             attack = attacks.get(0);
