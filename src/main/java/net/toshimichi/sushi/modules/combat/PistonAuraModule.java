@@ -200,7 +200,7 @@ public class PistonAuraModule extends BaseModule {
                         BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getPistonPos());
                         if (info == null) return;
                         BlockUtils.place(info, packetPlace.getValue());
-                        if (packetPlace.getValue()) getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
+                        if (packetPlace.getValue()) getWorld().setBlockState(pos, Blocks.PISTON.getDefaultState());
                         attack.setPistonPlaced(true);
                         update(delay3);
                     })
@@ -224,7 +224,7 @@ public class PistonAuraModule extends BaseModule {
                         .then(() -> {
                             BlockUtils.place(info, packetPlace.getValue());
                             attack.setRedstonePlaced(true);
-                            if (packetPlace.getValue()) getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
+                            if (packetPlace.getValue()) getWorld().setBlockState(pos, Blocks.REDSTONE_BLOCK.getDefaultState());
                             update(delay4);
                         })
                         .last(() -> {if (packetPlace.getValue()) getWorld().setBlockState(pos, state);})
