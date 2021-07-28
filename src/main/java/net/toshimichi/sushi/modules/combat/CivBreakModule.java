@@ -106,6 +106,14 @@ public class CivBreakModule extends BaseModule {
         }
     }
 
+    public int getEnemyDamage() {
+        return damage.getValue().getCurrent();
+    }
+
+    public int getSelfDamage() {
+        return selfDamage.getValue().getCurrent();
+    }
+
     public BlockPos getBreakingBlock() {
         return breakingBlock;
     }

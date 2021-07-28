@@ -3,6 +3,7 @@ package net.toshimichi.sushi.modules.render;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -13,6 +14,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.modules.combat.CivBreakModule;
 import net.toshimichi.sushi.utils.combat.CivBreakAttack;
 import net.toshimichi.sushi.utils.combat.CivBreakUtils;
 import net.toshimichi.sushi.utils.render.RenderUtils;
@@ -28,8 +30,12 @@ public class CivBreakHelperModule extends BaseModule {
 
     private CivBreakAttack attack;
 
+    @Config(id = "civ_break_module", name = "Civ Break Module")
+    public String civBreakModule = "civ_break";
+
     @Config(id = "color", name = "Color")
     public EspColor color = new EspColor(Color.RED, false, true);
+
 
     public CivBreakHelperModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -59,7 +65,10 @@ public class CivBreakHelperModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer());
+        Module module = Sushi.getProfile().getModules().getModule(civBreakModule);
+        if (!(module instanceof CivBreakModule)) return;
+        CivBreakModule civBreak = (CivBreakModule) module;
+        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer(), civBreak.getEnemyDamage(), civBreak.getSelfDamage());
         this.attack = null;
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
