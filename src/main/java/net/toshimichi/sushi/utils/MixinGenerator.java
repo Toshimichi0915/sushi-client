@@ -30,7 +30,7 @@ public class MixinGenerator {
             addURL.setAccessible(true);
             addURL.invoke(o.getClass().getClassLoader(), temp.toURI().toURL());
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             // skip
         }
     }
