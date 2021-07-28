@@ -11,6 +11,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -29,12 +30,16 @@ import java.util.List;
 
 public class CivBreakModule extends BaseModule {
 
-    private Configuration<Boolean> antiWeakness;
+    private final Configuration<Boolean> antiWeakness;
+    private final Configuration<IntRange> damage;
+    private final Configuration<IntRange> selfDamage;
     private BlockPos breakingBlock;
 
     public CivBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         antiWeakness = provider.get("anti_weakness", "Anti Weakness", null, Boolean.class, true);
+        damage = provider.get("damage", "Damage", null, IntRange.class, new IntRange(40, 100, 10, 1));
+        selfDamage = provider.get("self_damage", "Self Damage", null, IntRange.class, new IntRange(40, 100, 10, 1));
     }
 
     @Override
@@ -54,7 +59,7 @@ public class CivBreakModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
-        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer());
+        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer(), damage.getValue().getCurrent(), selfDamage.getValue().getCurrent());
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
         CivBreakAttack attack = attacks.get(0);

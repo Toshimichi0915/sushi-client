@@ -11,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -33,6 +34,9 @@ public class AntiCivBreakModule extends BaseModule {
 
     @Config(id = "extra_safe", name = "Extra Safe")
     public Boolean extraSafe = false;
+
+    @Config(id = "damage", name = "Damage")
+    public IntRange damage = new IntRange(30, 100, 10, 1);
 
     public AntiCivBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -63,7 +67,7 @@ public class AntiCivBreakModule extends BaseModule {
             getWorld().setBlockState(floorPos, Blocks.AIR.getDefaultState());
             double damage = DamageUtils.getCrystalDamage(getPlayer(), entity.getPositionVector());
             getWorld().setBlockState(floorPos, floorState);
-            if (damage <= 30) continue;
+            if (damage <= this.damage.getCurrent()) continue;
             try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.POSITION)) {
                 PositionUtils.move(posX, getPlayer().posY + 0.2, posZ, 0, 0, true, false, DesyncMode.POSITION);
                 getConnection().sendPacket(new CPacketUseEntity(entity));
