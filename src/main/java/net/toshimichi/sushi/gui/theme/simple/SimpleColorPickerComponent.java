@@ -20,7 +20,7 @@ public class SimpleColorPickerComponent extends BaseComponent {
     private static final double MARGIN_TOP = 10;
     private static final double MARGIN_LEFT = 2;
     private static final double MARGIN_BOTTOM = 2;
-    private static final double MARGIN_CENTER = 3;
+    private static final double MARGIN_CENTER = 2;
     private static final double MARGIN_RIGHT = 2;
     private static final int MAIN_X = 50;
     private static final double SUB_X = 10;
@@ -112,7 +112,7 @@ public class SimpleColorPickerComponent extends BaseComponent {
     }
 
     private double getMainWidth() {
-        return getWidth() - getMarginCenter() - getMarginRight() - getSubX();
+        return getWidth() - getMarginLeft() - getMarginCenter() - getMarginRight() - getSubX();
     }
 
     private double getMainHeight() {
@@ -232,8 +232,7 @@ public class SimpleColorPickerComponent extends BaseComponent {
     }
 
     protected void resize() {
-        double mainWidth = getWidth() - getMarginLeft() - getMarginCenter() - getSubX() - getMarginRight();
-        setHeight(mainWidth / 2 + getMarginTop() + getMarginBottom());
+        setHeight(getMainWidth() - 10 + getMarginTop() + getMarginBottom());
     }
 
     @Override
