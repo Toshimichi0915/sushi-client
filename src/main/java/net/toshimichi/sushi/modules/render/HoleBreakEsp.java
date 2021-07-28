@@ -43,9 +43,9 @@ public class HoleBreakEsp extends BaseModule {
     @EventHandler(timing = EventTiming.POST)
     public void onWorldRender(WorldRenderEvent e) {
         for (EntityPlayer player : EntityUtils.getNearbyPlayers(6)) {
-            for(EnumFacing facing: EnumFacing.HORIZONTALS) {
+            for (EnumFacing facing : EnumFacing.HORIZONTALS) {
                 HoleMineInfo info = HoleUtils.findNormal(player, facing);
-                if(info == null) continue;
+                if (info == null) continue;
                 info.render(getWorld(), renderMode, color);
             }
         }

@@ -18,7 +18,7 @@ abstract public class SimpleBarComponent extends BaseComponent {
     public SimpleBarComponent(ThemeConstants constants, double progress) {
         this.constants = constants;
         this.progress = progress;
-        setHeight(14);
+        setHeight(12);
     }
 
     public double getProgress() {
@@ -32,11 +32,17 @@ abstract public class SimpleBarComponent extends BaseComponent {
 
     @Override
     public void onRender() {
-        Color color;
-        if (hover) color = constants.unselectedHoverColor.getValue();
-        else color = constants.disabledColor.getValue();
-        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
-        GuiUtils.drawRect(getWindowX(), getWindowY(), (int) (getWidth() * progress), getHeight(), constants.barColor.getValue());
+        Color color1;
+        Color color2;
+        if (hover) {
+            color1 = constants.unselectedHoverColor.getValue();
+            color2 = constants.selectedHoverColor.getValue();
+        } else {
+            color1 = constants.disabledColor.getValue();
+            color2 = constants.barColor.getValue();
+        }
+        GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color1);
+        GuiUtils.drawRect(getWindowX(), getWindowY(), (int) (getWidth() * progress), getHeight(), color2);
         hover = false;
     }
 

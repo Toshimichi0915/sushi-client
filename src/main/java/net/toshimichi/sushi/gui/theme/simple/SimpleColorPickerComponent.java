@@ -14,6 +14,8 @@ import static org.lwjgl.opengl.GL11.*;
 public class SimpleColorPickerComponent extends BaseComponent {
 
     private static final int SEGMENTS = 5;
+    private static final int SEGMENTS_X = 10;
+    private static final int SEGMENTS_Y = 10;
     private static final double R = 1;
     private static final double MARGIN_TOP = 10;
     private static final double MARGIN_LEFT = 2;
@@ -201,24 +203,28 @@ public class SimpleColorPickerComponent extends BaseComponent {
 
         // main
         GuiUtils.prepare2D();
-        glShadeModel(GL_SMOOTH);
-        glBegin(GL_QUADS);
-        GuiUtils.setColor(getMainColor(0, 0));
-        glVertex2d(getMainStartX(), getMainStartY());
-        GuiUtils.setColor(getMainColor(getMainX(), 0));
-        glVertex2d(getMainStartX() + getMainWidth(), getMainStartY());
-        GuiUtils.setColor(getMainColor(getMainX(), getMainY()));
-        glVertex2d(getMainStartX() + getMainWidth(), getMainStartY() + getMainHeight());
-        GuiUtils.setColor(getMainColor(0, getMainY()));
-        glVertex2d(getMainStartX(), getMainStartY() + getMainHeight());
-        glEnd();
-        GuiUtils.release2D();
+        for (int x = 0; x < SEGMENTS_X; x++) {
+            for (int y = 0; y < SEGMENTS_Y; y++) {
+                glShadeModel(GL_SMOOTH);
+                glBegin(GL_QUADS);
+                GuiUtils.setColor(getMainColor((double) x / SEGMENTS_X * getMainX(), (double) y / SEGMENTS_Y * getMainY()));
+                glVertex2d((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY());
+                GuiUtils.setColor(getMainColor((double) (x + 1) / SEGMENTS_X * getMainX(), (double) y / SEGMENTS_Y * getMainY()));
+                glVertex2d((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY());
+                GuiUtils.setColor(getMainColor((double) (x + 1) / SEGMENTS_X * getMainX(), (double) (y + 1) / SEGMENTS_Y * getMainY()));
+                glVertex2d((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY());
+                GuiUtils.setColor(getMainColor((double) x / SEGMENTS_X * getMainX(), (double) (y + 1) / SEGMENTS_Y * getMainY()));
+                glVertex2d((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY());
+                glEnd();
+            }
+        }
 
         // sub
         for (int y = 0; y < getMainY() - 1; y++) {
             double y1 = (double) y / getMainY() * getSubHeight() + getSubStartY();
             GuiUtils.drawRect(getSubStartX(), y1, getSubWidth(), getSubHeight() / getMainY(), getSubColor(y));
         }
+        GuiUtils.release2D();
 
         // circle
         drawCircle(cursorX + getMainStartX(), cursorY + getMainStartY());

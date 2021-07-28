@@ -224,7 +224,8 @@ public class PistonAuraModule extends BaseModule {
                         .then(() -> {
                             BlockUtils.place(info, packetPlace.getValue());
                             attack.setRedstonePlaced(true);
-                            if (packetPlace.getValue()) getWorld().setBlockState(pos, Blocks.REDSTONE_BLOCK.getDefaultState());
+                            if (packetPlace.getValue())
+                                getWorld().setBlockState(pos, Blocks.REDSTONE_BLOCK.getDefaultState());
                             update(delay4);
                         })
                         .last(() -> {if (packetPlace.getValue()) getWorld().setBlockState(pos, state);})

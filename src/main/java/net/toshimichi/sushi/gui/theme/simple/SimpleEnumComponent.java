@@ -25,7 +25,7 @@ public class SimpleEnumComponent<T extends Named> extends BaseComponent {
         this.text = text;
         this.values = values(tClass);
         counter = Arrays.asList(values).indexOf(init);
-        setHeight(14);
+        setHeight(12);
     }
 
     @SuppressWarnings("unchecked")
@@ -45,10 +45,10 @@ public class SimpleEnumComponent<T extends Named> extends BaseComponent {
         if (hover) color = constants.unselectedHoverColor.getValue();
         else color = constants.disabledColor.getValue();
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
-        GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, false)
-                .draw(getWindowX() + 1, getWindowY() + 2);
-        TextPreview preview = GuiUtils.prepareText(getNamed(counter).getName(), constants.font.getValue(), constants.textColor.getValue(), 10, false);
-        preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 2);
+        GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 9, false)
+                .draw(getWindowX() + 1, getWindowY() + 1);
+        TextPreview preview = GuiUtils.prepareText(getNamed(counter).getName(), constants.font.getValue(), constants.textColor.getValue(), 9, false);
+        preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 1);
         hover = false;
     }
 

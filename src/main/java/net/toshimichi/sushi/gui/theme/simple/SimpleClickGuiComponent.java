@@ -8,7 +8,6 @@ import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.modules.Module;
-import net.toshimichi.sushi.utils.render.GuiUtils;
 
 
 public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryComponent> {
@@ -41,8 +40,8 @@ public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryCo
 
     @Override
     public void onRelocate() {
-        setWidth(GuiUtils.getWidth());
-        setHeight(GuiUtils.getHeight());
+        setWidth(Double.MAX_VALUE);
+        setHeight(Double.MAX_VALUE);
 
         addCategory:
         for (Category category : Sushi.getProfile().getCategories().getAll()) {

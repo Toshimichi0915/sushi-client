@@ -19,7 +19,7 @@ public class SimpleClickComponent extends BaseComponent {
         this.constants = constants;
         this.text = text;
         this.onClick = onClick;
-        setHeight(14);
+        setHeight(12);
     }
 
     @Override
@@ -31,8 +31,8 @@ public class SimpleClickComponent extends BaseComponent {
         hover = false;
         hold = false;
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color);
-        GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 10, false)
-                .draw(getWindowX() + 1, getWindowY() + 2);
+        GuiUtils.prepareText(text, constants.font.getValue(), constants.textColor.getValue(), 9, false)
+                .draw(getWindowX() + 1, getWindowY() + 1);
     }
 
     @Override

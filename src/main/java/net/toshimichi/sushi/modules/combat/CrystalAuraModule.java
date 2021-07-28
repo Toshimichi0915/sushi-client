@@ -112,7 +112,7 @@ public class CrystalAuraModule extends BaseModule {
         y255Attack = damage.get("y_255_attack", "Y 255 Attack", null, Boolean.class, true);
 
         // Switch
-        ConfigurationCategory switchCategory = provider.getCategory("switch", "Switch", null);
+        ConfigurationCategory switchCategory = provider.getCategory("switch", "Switch Settings", null);
         switchMode = switchCategory.get("switch", "Switch Mode", null, ItemSwitchMode.class, ItemSwitchMode.INVENTORY);
         antiWeakness = switchCategory.get("anti_weakness", "Anti Weakness", null, Boolean.class, false);
         silentSwitch = switchCategory.get("silent_switch", "Silent Switch", null, Boolean.class, true);

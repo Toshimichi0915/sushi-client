@@ -39,7 +39,7 @@ public class SurroundModule extends BaseModule {
         disableAfter = provider.get("disable_after", "Disable After", null, Boolean.class, false);
         disableOnJump = provider.get("disable_on_jump", "Disable On Jump", null, Boolean.class, false);
         packetPlace = provider.get("packet_place", "Packet Place", null, Boolean.class, true);
-        antiGhostBlock = provider.get("anti_ghost_block", "Anti Ghost Block", null, Boolean.class, true, ()->!packetPlace.getValue(), false, 0);
+        antiGhostBlock = provider.get("anti_ghost_block", "Anti Ghost Block", null, Boolean.class, true, () -> !packetPlace.getValue(), false, 0);
     }
 
     @Override

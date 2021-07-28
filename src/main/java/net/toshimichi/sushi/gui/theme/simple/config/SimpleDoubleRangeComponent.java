@@ -17,15 +17,14 @@ public class SimpleDoubleRangeComponent extends SimpleBarComponent implements Co
         super(constants, (config.getValue().getCurrent() - config.getValue().getBottom()) / (config.getValue().getTop() - config.getValue().getBottom()));
         this.config = config;
         this.constants = constants;
-        setHeight(14);
     }
 
     @Override
     public void onRender() {
         super.onRender();
-        GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, false).draw(getWindowX() + 1, getWindowY() + 2);
-        TextPreview preview = GuiUtils.prepareText(String.format("%." + config.getValue().getDigits() + "f", config.getValue().getCurrent()), constants.font.getValue(), constants.textColor.getValue(), 10, false);
-        preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 2);
+        GuiUtils.prepareText(config.getName(), constants.font.getValue(), constants.textColor.getValue(), 9, false).draw(getWindowX() + 1, getWindowY() + 1);
+        TextPreview preview = GuiUtils.prepareText(String.format("%." + config.getValue().getDigits() + "f", config.getValue().getCurrent()), constants.font.getValue(), constants.textColor.getValue(), 9, false);
+        preview.draw(getWindowX() + getWidth() - preview.getWidth() - 1, getWindowY() + 1);
     }
 
     @Override

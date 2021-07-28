@@ -20,7 +20,7 @@ public class SimpleModuleToggleComponent extends SimpleToggleComponent<Module> {
         this.constants = constants;
         this.module = module;
         this.component = component;
-        setHeight(16);
+        setHeight(14);
     }
 
     @Override
@@ -30,18 +30,15 @@ public class SimpleModuleToggleComponent extends SimpleToggleComponent<Module> {
 
     @Override
     public void onRender() {
-        GuiUtils.prepareArea(this);
         setToggled(module.isEnabled());
         super.onRender();
         GuiUtils.prepareText(module.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true)
-                .draw(getWindowX() + 5, getWindowY() + 2);
+                .draw(getWindowX() + 5, getWindowY() + 1);
         double x = getWindowX() + getWidth() - 10;
         double y = getWindowY() + getHeight() / 2;
         double midY = getWindowY() + getHeight() / 2 + (component.getProgress() - 0.5) * getHeight() * 1 / 3;
-        if (component.getProgress() == 1) midY++;
         GuiUtils.drawLine(x, y, x + 3, midY, Color.WHITE, 2);
         GuiUtils.drawLine(x + 3, midY, x + 6, y, Color.WHITE, 2);
-        GuiUtils.releaseArea();
     }
 
     @Override

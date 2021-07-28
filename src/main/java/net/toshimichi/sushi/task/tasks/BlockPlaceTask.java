@@ -7,7 +7,6 @@ import net.toshimichi.sushi.utils.player.DesyncCloseable;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
-import net.toshimichi.sushi.utils.world.BlockPlaceOption;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 import net.toshimichi.sushi.utils.world.PlaceOptions;
 

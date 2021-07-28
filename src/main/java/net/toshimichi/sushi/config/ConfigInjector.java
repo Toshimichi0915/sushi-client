@@ -44,7 +44,7 @@ public class ConfigInjector {
                     validators.put(entry.getValue(), () -> {
                         try {
                             boolean b = (Boolean) supplier.getKey().get(obj);
-                            if(when.startsWith("!")) return !b;
+                            if (when.startsWith("!")) return !b;
                             else return b;
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();

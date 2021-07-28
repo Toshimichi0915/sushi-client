@@ -47,7 +47,7 @@ public class ItemSlot implements Comparable<ItemSlot> {
     }
 
     public static ItemSlot hand(EnumHand hand) {
-        if(hand == EnumHand.MAIN_HAND) return current();
+        if (hand == EnumHand.MAIN_HAND) return current();
         else return offhand();
     }
 

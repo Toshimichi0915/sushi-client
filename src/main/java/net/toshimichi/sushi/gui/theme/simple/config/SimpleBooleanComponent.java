@@ -15,7 +15,7 @@ public class SimpleBooleanComponent extends SimpleToggleComponent<Configuration<
         super(constants, conf.getValue());
         this.constants = constants;
         this.conf = conf;
-        setHeight(14);
+        setHeight(12);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SimpleBooleanComponent extends SimpleToggleComponent<Configuration<
     public void onRender() {
         setToggled(conf.getValue());
         super.onRender();
-        GuiUtils.prepareText(conf.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, false).draw(getWindowX() + 1, getWindowY() + 2);
+        GuiUtils.prepareText(conf.getName(), constants.font.getValue(), constants.textColor.getValue(), 9, false).draw(getWindowX() + 1, getWindowY() + 1);
     }
 
     @Override

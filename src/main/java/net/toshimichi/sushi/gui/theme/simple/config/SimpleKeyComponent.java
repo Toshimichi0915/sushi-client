@@ -21,7 +21,7 @@ public class SimpleKeyComponent extends BaseComponent {
     public SimpleKeyComponent(ThemeConstants constants, int[] keyCodes) {
         this.constants = constants;
         this.keyCodes = keyCodes;
-        setHeight(14);
+        setHeight(12);
     }
 
     @Override
@@ -43,8 +43,8 @@ public class SimpleKeyComponent extends BaseComponent {
         } else {
             builder.append("Keybind: NONE");
         }
-        GuiUtils.prepareText(builder.toString(), constants.font.getValue(), constants.textColor.getValue(), 10, false)
-                .draw(getWindowX() + 1, getWindowY() + 2);
+        GuiUtils.prepareText(builder.toString(), constants.font.getValue(), constants.textColor.getValue(), 9, false)
+                .draw(getWindowX() + 1, getWindowY() + 1);
         hover = false;
     }
 

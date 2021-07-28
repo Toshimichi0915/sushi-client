@@ -4,6 +4,7 @@ import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ConfigComponent;
+import net.toshimichi.sushi.gui.Insets;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
@@ -21,6 +22,7 @@ public class SimpleConfigCategoryComponent extends BasePanelComponent<Component>
         this.theme = theme;
         this.configurations = configurations;
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
+        setMargin(new Insets(2, 2, 2, 2));
     }
 
     private boolean contains(Configuration<?> conf) {
@@ -37,6 +39,7 @@ public class SimpleConfigCategoryComponent extends BasePanelComponent<Component>
             if (contains(conf)) continue;
             ConfigComponent<?> component = theme.newConfigComponent(conf);
             if (component == null) continue;
+            component.setMargin(new Insets(0, 0, 0.5, 0));
             add(component, true);
         }
         for (Component component : new ArrayList<>(this)) {

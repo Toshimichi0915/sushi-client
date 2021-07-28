@@ -9,6 +9,7 @@ import net.toshimichi.sushi.gui.SmoothCollapseComponent;
 import net.toshimichi.sushi.gui.base.BaseSettingComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.render.GuiUtils;
+import net.toshimichi.sushi.utils.render.TextPreview;
 
 import java.awt.Color;
 
@@ -23,13 +24,12 @@ public class SimpleConfigCategoryHeaderComponent extends BaseSettingComponent<Co
         this.constants = constants;
         this.configCategory = configCategory;
         this.component = component;
-        setHeight(16);
+        setHeight(14);
         setMargin(new Insets(2, 2, 2, 2));
     }
 
     @Override
     public void onRender() {
-        GuiUtils.prepareArea(this);
         Configuration<Color> color;
         if (component.isCollapsed()) {
             if (hover) color = constants.selectedHoverColor;
@@ -39,16 +39,13 @@ public class SimpleConfigCategoryHeaderComponent extends BaseSettingComponent<Co
             else color = constants.disabledColor;
         }
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), color.getValue());
-        GuiUtils.prepareText(configCategory.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true)
-                .draw(getWindowX() + 5, getWindowY() + 3);
-        GuiUtils.releaseArea();
-
+        TextPreview preview = GuiUtils.prepareText(configCategory.getName(), constants.font.getValue(), constants.textColor.getValue(), 10, true);
+        preview.draw(getWindowX() + (getWidth() - preview.getWidth()) / 2 - 1, getWindowY() + 1);
         hover = false;
     }
 
     @Override
     public void onClick(int x, int y, ClickType type) {
-        if (type != ClickType.RIGHT) return;
         component.setCollapsed(!component.isCollapsed());
     }
 

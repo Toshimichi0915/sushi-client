@@ -81,7 +81,7 @@ public class HoleUtils {
 
     public static HoleMineInfo findNormal(EntityPlayer target, EnumFacing facing) {
         WorldClient world = Minecraft.getMinecraft().world;
-        if(world == null) return null;
+        if (world == null) return null;
         BlockPos playerPos = BlockUtils.toBlockPos(target.getPositionVector());
         BlockPos surroundPos = playerPos.offset(facing);
         BlockPos aboveSurroundPos = surroundPos.offset(EnumFacing.UP);
@@ -94,7 +94,7 @@ public class HoleUtils {
 
     public static HoleMineInfo findAntiSurround(EntityPlayer target, EnumFacing facing) {
         WorldClient world = Minecraft.getMinecraft().world;
-        if(world == null) return null;
+        if (world == null) return null;
         BlockPos playerPos = BlockUtils.toBlockPos(target.getPositionVector());
         BlockPos surroundPos = playerPos.offset(facing);
         BlockPos crystalPos = surroundPos.offset(facing);
