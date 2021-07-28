@@ -19,12 +19,18 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
 
     private final boolean rotate;
     private final boolean desync;
+    private final boolean packet;
     private final PlaceOptions[] option;
     private final WorldClient world;
 
     public BlockPlaceTask(boolean rotate, boolean desync, PlaceOptions... option) {
+        this(rotate, desync, false, option);
+    }
+
+    public BlockPlaceTask(boolean rotate, boolean desync, boolean packet, PlaceOptions... option) {
         this.rotate = rotate;
         this.desync = desync;
+        this.packet = packet;
         this.option = option;
         Minecraft minecraft = Minecraft.getMinecraft();
         world = minecraft.world;
@@ -50,7 +56,7 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
                 PositionUtils.lookAt(info, desync ? DesyncMode.LOOK : DesyncMode.NONE);
             }
         }
-        BlockUtils.place(info, false);
+        BlockUtils.place(info, packet);
         if (index >= getInput().size()) stop(null);
     }
 }
