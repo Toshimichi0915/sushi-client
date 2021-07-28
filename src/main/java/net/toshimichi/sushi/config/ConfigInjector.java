@@ -39,10 +39,13 @@ public class ConfigInjector {
                 continue;
             }
             for (Map.Entry<Field, Config> supplier : suppliers.entrySet()) {
-                if (when.equals(supplier.getValue().id())) {
+                if (when.startsWith("!") && when.replaceFirst("!", "").equals(supplier.getValue().id()) ||
+                        when.equals(supplier.getValue().id())) {
                     validators.put(entry.getValue(), () -> {
                         try {
-                            return (Boolean) supplier.getKey().get(obj);
+                            boolean b = (Boolean) supplier.getKey().get(obj);
+                            if(when.startsWith("!")) return !b;
+                            else return b;
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
                             return true;

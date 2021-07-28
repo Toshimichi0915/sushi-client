@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 public class ItemSlot implements Comparable<ItemSlot> {
     private final int index;
@@ -43,6 +44,11 @@ public class ItemSlot implements Comparable<ItemSlot> {
 
     public static ItemSlot offhand() {
         return new ItemSlot(InventoryType.OFFHAND.getIndex());
+    }
+
+    public static ItemSlot hand(EnumHand hand) {
+        if(hand == EnumHand.MAIN_HAND) return current();
+        else return offhand();
     }
 
     public static ItemSlot[] values() {

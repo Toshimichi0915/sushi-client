@@ -9,4 +9,10 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface AccessorMinecraft {
     @Accessor("timer")
     Timer getTimer();
+
+    @Accessor("rightClickDelayTimer")
+    int getRightClickDelayTimer();
+
+    @Accessor("rightClickDelayTimer")
+    void setRightClickDelayTimer(int delay);
 }
