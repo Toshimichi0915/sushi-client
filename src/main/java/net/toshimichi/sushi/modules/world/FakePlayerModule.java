@@ -5,7 +5,7 @@ import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.MobEffects;
-import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.network.play.server.SPacketDestroyEntities;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.toshimichi.sushi.Sushi;
@@ -75,19 +75,21 @@ public class FakePlayerModule extends BaseModule {
     public void onAttack(PacketSendEvent e) {
         if (!showDamage) return;
         if (fakePlayer == null) return;
-        if (!(e.getPacket() instanceof CPacketUseEntity)) return;
-        CPacketUseEntity packet = (CPacketUseEntity) e.getPacket();
-        Entity entity = packet.getEntityFromWorld(getWorld());
-        if (entity == null) return;
-        double raw, damage;
-        if (entity instanceof EntityEnderCrystal) {
-            raw = DamageUtils.getCrystalDamage(fakePlayer, entity.getPositionVector());
-            damage = DamageUtils.applyModifier(fakePlayer, raw, DamageUtils.EXPLOSION);
-        } else {
-            return;
+        if (!(e.getPacket() instanceof SPacketDestroyEntities)) return;
+        SPacketDestroyEntities packet = (SPacketDestroyEntities) e.getPacket();
+        for (int entityId : packet.getEntityIDs()) {
+            Entity entity = getWorld().getEntityByID(entityId);
+            if (entity == null) continue;
+            double raw, damage;
+            if (entity instanceof EntityEnderCrystal) {
+                raw = DamageUtils.getCrystalDamage(fakePlayer, entity.getPositionVector());
+                damage = DamageUtils.applyModifier(fakePlayer, raw, DamageUtils.EXPLOSION);
+            } else {
+                continue;
+            }
+            Sushi.getProfile().getMessageHandler().send("Damage: " + FORMATTER.format(damage) +
+                    "(" + FORMATTER.format(raw) + ")", LogLevel.INFO);
         }
-        Sushi.getProfile().getMessageHandler().send("Damage: " + FORMATTER.format(damage) +
-                "(" + FORMATTER.format(raw) + ")", LogLevel.INFO);
     }
 
     @Override
