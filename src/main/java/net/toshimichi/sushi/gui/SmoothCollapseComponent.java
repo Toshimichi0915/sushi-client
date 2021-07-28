@@ -6,7 +6,7 @@ public class SmoothCollapseComponent<T extends Component> extends CollapseCompon
 
     private final double totalMillis;
     private long millis;
-    private boolean collapsed;
+    private boolean collapsed = true;
 
     public SmoothCollapseComponent(T component, CollapseMode mode, double totalMillis) {
         super(component, mode);
@@ -25,7 +25,7 @@ public class SmoothCollapseComponent<T extends Component> extends CollapseCompon
     @Override
     public void onRelocate() {
         double progress = MathHelper.clamp((System.currentTimeMillis() - millis) / totalMillis, 0, 1);
-        if (collapsed) setProgress(progress);
+        if (!collapsed) setProgress(progress);
         else setProgress(1 - progress);
         super.onRelocate();
     }

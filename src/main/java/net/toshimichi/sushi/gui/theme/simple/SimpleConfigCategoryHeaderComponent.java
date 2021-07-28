@@ -31,7 +31,7 @@ public class SimpleConfigCategoryHeaderComponent extends BaseSettingComponent<Co
     @Override
     public void onRender() {
         Configuration<Color> color;
-        if (component.isCollapsed()) {
+        if (!component.isCollapsed()) {
             if (hover) color = constants.selectedHoverColor;
             else color = constants.enabledColor;
         } else {
@@ -51,7 +51,7 @@ public class SimpleConfigCategoryHeaderComponent extends BaseSettingComponent<Co
 
     @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
-        if (status != MouseStatus.END || type != ClickType.RIGHT) return;
+        if (status != MouseStatus.END) return;
         component.setCollapsed(!component.isCollapsed());
     }
 
