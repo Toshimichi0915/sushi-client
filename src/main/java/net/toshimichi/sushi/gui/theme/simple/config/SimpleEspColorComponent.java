@@ -53,7 +53,7 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
         this.alphaComponent = new SimpleIntRangeComponent(constants, alpha);
 
         c.addHandler(esp -> {
-            if (!applyAlpha(esp.getColor()).equals(applyAlpha(color.getValue()))) {
+            if (!ignoreUpdate && !applyAlpha(esp.getColor()).equals(applyAlpha(color.getValue()))) {
                 color.setValue(applyAlpha(esp.getColor()));
             }
             if (esp.isRainbow() != rainbow.getValue()) {
