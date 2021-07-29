@@ -1,5 +1,7 @@
 package net.toshimichi.sushi.command;
 
 public interface MessageHandler {
-    void send(String message, LogLevel level);
+    void send(LogLevel level, String message);
+
+    void custom(String message);
 }

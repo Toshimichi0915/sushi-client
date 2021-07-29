@@ -50,8 +50,10 @@ public class SimpleFrameComponent<T extends Component> extends BasePanelComponen
         hold = false;
         GuiUtils.drawRect(component.getWindowX() - MARGIN, component.getWindowY() - MARGIN, component.getWidth() + 2 * MARGIN, component.getHeight() + 2 * MARGIN, constants.menuBarColor.getValue());
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), BAR_HEIGHT + 2 * MARGIN, constants.menuBarColor.getValue());
-        if(outline) GuiUtils.drawOutline(getWindowX() + getWidth() - BAR_WIDTH - MARGIN, getWindowY() + MARGIN, BAR_WIDTH, BAR_HEIGHT, backgroundColor, 1);
-        else GuiUtils.drawRect(getWindowX() + getWidth() - BAR_WIDTH - MARGIN, getWindowY() + MARGIN, BAR_WIDTH, BAR_HEIGHT, backgroundColor);
+        if (outline)
+            GuiUtils.drawOutline(getWindowX() + getWidth() - BAR_WIDTH - MARGIN, getWindowY() + MARGIN, BAR_WIDTH, BAR_HEIGHT, backgroundColor, 1);
+        else
+            GuiUtils.drawRect(getWindowX() + getWidth() - BAR_WIDTH - MARGIN, getWindowY() + MARGIN, BAR_WIDTH, BAR_HEIGHT, backgroundColor);
         super.onRender();
     }
 

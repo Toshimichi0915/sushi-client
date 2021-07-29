@@ -4,7 +4,10 @@ import net.toshimichi.sushi.config.data.EspColor;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class SystemFontTextPreview implements TextPreview {
@@ -40,33 +43,39 @@ public class SystemFontTextPreview implements TextPreview {
             color = color.setColor(Color.getHSBColor((float) (y / GuiUtils.getWindowHeight() + h), 1, 1));
         }
         if (shadow) {
-            renderer.drawString(text, x + 0.5F, y + 2.5F, new Color(100, 100, 100, color.getColor().getAlpha()), false);
+            renderer.drawString(text, x + 0.5F, y + 2.5F, color.getCurrentColor(), true);
         }
         renderer.drawString(text, x, y + 2, color.getCurrentColor(), false);
     }
 
-    public static SystemFontTextPreview newTextPreview(String text, String font, EspColor color, int pts, boolean shadow) {
+    public static SystemFontTextPreview newTextPreview(String text, String fontName, EspColor color, int pts, boolean shadow) {
         // load from cached fonts
         for (FontData ttf : cachedFonts) {
-            if (ttf.fontName.equals(font) && ttf.size == pts) {
+            if (ttf.fontName.equals(fontName) && ttf.size == pts) {
                 return new SystemFontTextPreview(text, ttf.font, color, shadow);
             }
         }
 
         // check if the font exists
-        boolean fontFound = false;
+        Font font = null;
         for (String s : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            if (s.equals(font)) {
-                fontFound = true;
+            if (s.equals(fontName)) {
+                font = new Font(fontName, Font.PLAIN, pts * 2);
                 break;
             }
         }
-        if (!fontFound)
-            return null;
+        if (font == null) {
+            try (InputStream in = SystemFontTextPreview.class.getResourceAsStream("/assets/minecraft/sushi/font/" + fontName + ".ttf")) {
+                if (in != null) font = Font.createFont(Font.TRUETYPE_FONT, in).deriveFont(Font.PLAIN, pts * 2);
+            } catch (IOException | FontFormatException e) {
+                return null;
+            }
+        }
+        if (font == null) return null;
 
         // load TTF
-        SystemFontRenderer renderer = new SystemFontRenderer(new Font(font, Font.PLAIN, pts * 2), true, true);
-        cachedFonts.add(new FontData(font, renderer, pts));
+        SystemFontRenderer renderer = new SystemFontRenderer(font, true, true);
+        cachedFonts.add(new FontData(fontName, renderer, pts));
         return new SystemFontTextPreview(text, renderer, color, shadow);
     }
 

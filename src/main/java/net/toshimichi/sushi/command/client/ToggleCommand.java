@@ -12,6 +12,6 @@ public class ToggleCommand {
     @Default
     public void onDefault(MessageHandler out, Module module) {
         module.setEnabled(!module.isEnabled());
-        out.send(module.getName() + " has been " + (module.isEnabled() ? "enabled" : "disabled"), LogLevel.INFO);
+        out.send(LogLevel.INFO, module.getName() + " has been " + (module.isEnabled() ? "enabled" : "disabled"));
     }
 }

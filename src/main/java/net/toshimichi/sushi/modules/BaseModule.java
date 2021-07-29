@@ -89,12 +89,12 @@ abstract public class BaseModule implements Module {
             if (!this.isEnabled && enabled) {
                 onEnable();
                 if (toggleNotification.getValue()) {
-                    handler.send("Enabled " + getName(), LogLevel.INFO);
+                    handler.send(LogLevel.INFO, "Enabled " + getName());
                 }
             } else if (this.isEnabled && !enabled) {
                 onDisable();
                 if (toggleNotification.getValue()) {
-                    handler.send("Disabled " + getName(), LogLevel.INFO);
+                    handler.send(LogLevel.INFO, "Disabled " + getName());
                 }
             }
         }

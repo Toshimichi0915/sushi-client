@@ -34,7 +34,7 @@ abstract public class BaseHudElementComponent extends BaseComponent implements H
         for (Configuration<TextSettings> conf : textSettings) {
             if (conf.getId().equals(id)) return conf;
         }
-        Configuration<TextSettings> newConf = getConfiguration(id, "", null, TextSettings.class, DEFAULT_TEXT_SETTINGS);
+        Configuration<TextSettings> newConf = getConfiguration(id, "", null, TextSettings.class, getDefaultTextSettings());
         textSettings.add(newConf);
         return newConf;
     }
@@ -56,6 +56,10 @@ abstract public class BaseHudElementComponent extends BaseComponent implements H
                 ((HudElementComponentHandler) handler).setActive(active);
             }
         }
+    }
+
+    protected TextSettings getDefaultTextSettings() {
+        return DEFAULT_TEXT_SETTINGS;
     }
 
     @Override

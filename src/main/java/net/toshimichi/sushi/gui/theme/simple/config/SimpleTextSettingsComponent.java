@@ -6,6 +6,7 @@ import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ConfigComponent;
+import net.toshimichi.sushi.gui.Insets;
 import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
@@ -38,6 +39,10 @@ public class SimpleTextSettingsComponent extends BasePanelComponent<Component> i
         this.ptsComponent = new SimpleIntRangeComponent(constants, pts);
         this.shadowComponent = new SimpleBooleanComponent(constants, shadow);
         this.colorComponent = new SimpleEspColorComponent(constants, color);
+
+        ptsComponent.setMargin(new Insets(0, 1, 0, 1));
+        shadowComponent.setMargin(new Insets(0, 1, 0, 1));
+        colorComponent.setMargin(new Insets(0, 1, 1, 1));
 
         c.addHandler(it -> {
             if (!it.getFont().equals(font.getValue())) font.setValue(it.getFont());

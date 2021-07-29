@@ -16,12 +16,12 @@ public class GhostBlockCommand {
     public void onDefault(MessageHandler out, Integer x, Integer y, Integer z, Integer id) {
         Block block = Block.getBlockById(id);
         if (block == null) {
-            out.send("Could not find Block with block id " + id, LogLevel.ERROR);
+            out.send(LogLevel.ERROR, "Could not find Block with block id " + id);
             return;
         }
         WorldClient world = Minecraft.getMinecraft().world;
         if (world == null) {
-            out.send("World is not loaded", LogLevel.ERROR);
+            out.send(LogLevel.ERROR, "World is not loaded");
             return;
         }
         world.setBlockState(new BlockPos(x, y, z), block.getDefaultState());

@@ -12,6 +12,6 @@ public class DrawCommand {
     @Default
     public void onDefault(MessageHandler out, Module module) {
         module.setVisible(!module.isVisible());
-        out.send(module.getName() + " is now " + (module.isVisible() ? "shown" : "hidden"), LogLevel.INFO);
+        out.send(LogLevel.INFO, module.getName() + " is now " + (module.isVisible() ? "shown" : "hidden"));
     }
 }

@@ -43,12 +43,12 @@ public class SetCommand extends BaseCommand {
                 if (!conf.getId().equalsIgnoreCase(key) && !conf.getName().equalsIgnoreCase(key)) continue;
                 Object value = ((TypeParser<Object>) Commands.findParser(conf.getValueClass())).parse(original.size(), stack, conf.getValue());
                 ((Configuration<Object>) conf).setValue(value);
-                out.send("Changed configuration " + conf.getName(), LogLevel.INFO);
+                out.send(LogLevel.INFO, "Changed configuration " + conf.getName());
                 return;
             }
             throw new ParseException("A configuration named " + key + " was not found");
         } catch (ParseException e) {
-            out.send(e.getMessage(), LogLevel.ERROR);
+            out.send(LogLevel.ERROR, e.getMessage());
         }
     }
 }

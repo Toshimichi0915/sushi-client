@@ -57,13 +57,13 @@ abstract public class BaseCommand implements Command {
     abstract protected String getSyntax();
 
     protected void executeDefault(MessageHandler out, List<String> args, List<String> original) {
-        out.send("Sub commands:", LogLevel.INFO);
+        out.send(LogLevel.INFO, "Sub commands:");
         for (SubCommand subCommand : getSubCommands()) {
             String description = subCommand.getDescription();
             if (description == null)
-                out.send("  " + subCommand.getName(), LogLevel.INFO);
+                out.send(LogLevel.INFO, "  " + subCommand.getName());
             else
-                out.send("  " + subCommand.getName() + " - " + subCommand.getDescription(), LogLevel.INFO);
+                out.send(LogLevel.INFO, "  " + subCommand.getName() + " - " + subCommand.getDescription());
         }
     }
 }

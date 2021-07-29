@@ -9,11 +9,16 @@ import static net.minecraft.util.text.TextFormatting.*;
 
 public class ChatMessageHandler implements MessageHandler {
     @Override
-    public void send(String message, LogLevel level) {
+    public void send(LogLevel level, String message) {
         TextFormatting color;
         if (level == LogLevel.WARN) color = YELLOW;
         else if (level == LogLevel.ERROR) color = RED;
         else color = AQUA;
         Minecraft.getMinecraft().ingameGUI.addChatMessage(ChatType.CHAT, new TextComponentString(color + message));
+    }
+
+    @Override
+    public void custom(String message) {
+        Minecraft.getMinecraft().ingameGUI.addChatMessage(ChatType.CHAT, new TextComponentString(message));
     }
 }

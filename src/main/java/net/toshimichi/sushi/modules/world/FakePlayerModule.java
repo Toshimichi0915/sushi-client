@@ -87,8 +87,8 @@ public class FakePlayerModule extends BaseModule {
             } else {
                 continue;
             }
-            Sushi.getProfile().getMessageHandler().send("Damage: " + FORMATTER.format(damage) +
-                    "(" + FORMATTER.format(raw) + ")", LogLevel.INFO);
+            Sushi.getProfile().getMessageHandler().send(LogLevel.INFO, "Damage: " + FORMATTER.format(damage) +
+                    "(" + FORMATTER.format(raw) + ")");
         }
     }
 

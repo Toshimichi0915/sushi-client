@@ -54,12 +54,12 @@ public class AutoVoteModule extends BaseModule {
             String csrf = document.select("input[name=csrf]").val();
             String dataSiteKey = document.select(".h-captcha").attr("data-sitekey");
             if (csrf.isEmpty() || dataSiteKey.isEmpty()) {
-                messageHandler.send(ALREADY_VOTED, LogLevel.INFO);
+                messageHandler.send(LogLevel.INFO, ALREADY_VOTED);
                 return;
             }
             byte[] apiKeyBytes = EncryptUtils.decrypt(EncryptUtils.getHWID(), Base64.getDecoder().decode(encryptedApiKey));
             if (apiKeyBytes == null) {
-                messageHandler.send(BROKEN_API_KEY, LogLevel.ERROR);
+                messageHandler.send(LogLevel.ERROR, BROKEN_API_KEY);
                 return;
             }
             HttpPost post = new HttpPost(targetUrl + "/solve-captcha");
@@ -82,7 +82,7 @@ public class AutoVoteModule extends BaseModule {
                 }
             }
             if (answer == null) {
-                messageHandler.send(BROKEN_API_KEY, LogLevel.ERROR);
+                messageHandler.send(LogLevel.ERROR, BROKEN_API_KEY);
                 return;
             }
 
@@ -97,9 +97,9 @@ public class AutoVoteModule extends BaseModule {
             try (CloseableHttpResponse res = httpClient.execute(post3)) {
                 System.out.println(IOUtils.toString(res.getEntity().getContent(), UTF_8));
             }
-            messageHandler.send(SUCCESS, LogLevel.INFO);
+            messageHandler.send(LogLevel.INFO, SUCCESS);
         } catch (Exception e) {
-            messageHandler.send(ERROR, LogLevel.ERROR);
+            messageHandler.send(LogLevel.ERROR, ERROR);
             e.printStackTrace();
         } finally {
             running = false;

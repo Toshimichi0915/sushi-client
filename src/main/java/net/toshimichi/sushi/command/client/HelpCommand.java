@@ -12,12 +12,12 @@ public class HelpCommand {
 
     @Default
     public void onDefault(MessageHandler out) {
-        out.send("Commands: ", LogLevel.INFO);
+        out.send(LogLevel.INFO, "Commands: ");
         for (Command command : Commands.getCommands()) {
             if (command.getDescription() == null)
-                out.send("  " + command.getName(), LogLevel.INFO);
+                out.send(LogLevel.INFO, "  " + command.getName());
             else
-                out.send("  " + command.getName() + " - " + command.getDescription(), LogLevel.INFO);
+                out.send(LogLevel.INFO, "  " + command.getName() + " - " + command.getDescription());
         }
     }
 }

@@ -12,6 +12,6 @@ public class PrefixCommand {
     @Default
     public void onDefault(MessageHandler out, Character prefix) {
         Sushi.getProfile().setPrefix(prefix);
-        out.send("Set prefix to " + prefix, LogLevel.INFO);
+        out.send(LogLevel.INFO, "Set prefix to " + prefix);
     }
 }

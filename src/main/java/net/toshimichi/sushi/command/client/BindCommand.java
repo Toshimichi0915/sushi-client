@@ -18,11 +18,11 @@ public class BindCommand {
         for (int i = 0; i < keys.length; i++) {
             keyCode[i] = Keyboard.getKeyIndex(keys[i].toUpperCase());
             if (keyCode[i] == Keyboard.KEY_NONE) {
-                out.send("Key name " + keys[i] + " is not recognized", LogLevel.ERROR);
+                out.send(LogLevel.ERROR, "Key name " + keys[i] + " is not recognized");
                 return;
             }
         }
         module.setKeybind(new Keybind(ActivationType.TOGGLE, keyCode));
-        out.send("Changed keybinding for " + module.getName(), LogLevel.INFO);
+        out.send(LogLevel.INFO, "Changed keybinding for " + module.getName());
     }
 }

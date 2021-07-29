@@ -9,6 +9,7 @@ import net.toshimichi.sushi.gui.hud.BaseHudElementComponent;
 import net.toshimichi.sushi.modules.Module;
 import net.toshimichi.sushi.utils.render.GuiUtils;
 import net.toshimichi.sushi.utils.render.TextPreview;
+import net.toshimichi.sushi.utils.render.TextSettings;
 
 import java.awt.Color;
 import java.util.*;
@@ -76,6 +77,11 @@ public class ModuleListComponent extends BaseHudElementComponent {
             preview.draw(getWindowX() + offset + paddingLeft.getValue().getCurrent(), getWindowY() + height + paddingTop.getValue().getCurrent());
             height += preview.getHeight() + margin.getValue().getCurrent();
         }
+    }
+
+    @Override
+    protected TextSettings getDefaultTextSettings() {
+        return super.getDefaultTextSettings().setFont("sfui");
     }
 
     @Override
