@@ -10,25 +10,31 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.*;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityPlayerSP.class)
 public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
+    @Shadow
+    public abstract void move(MoverType type, double x, double y, double z);
+
     public MixinEntityPlayerSP(World worldIn, GameProfile playerProfile) {
         super(worldIn, playerProfile);
     }
 
-    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;move(Lnet/minecraft/entity/MoverType;DDD)V"), method = "move")
-    public void onMove(AbstractClientPlayer abstractClientPlayer, MoverType type, double x, double y, double z) {
+    @Inject(method = "move", at = @At("HEAD"), cancellable = true)
+    public void onMove(MoverType type, double x, double y, double z, CallbackInfo ci) {
         PlayerMoveEvent pre = new PlayerMoveEvent(EventTiming.PRE, type, x, y, z);
         EventHandlers.callEvent(pre);
-        if (!pre.isCancelled()) {
-            super.move(pre.getType(), pre.getX(), pre.getY(), pre.getZ());
+        boolean changed = pre.getType() != type || pre.getX() != x || pre.getY() != y || pre.getZ() != z;
+        if (pre.isCancelled() || changed) {
+            ci.cancel();
+            if (changed) move(pre.getType(), pre.getX(), pre.getY(), pre.getZ());
+            return;
         }
         PlayerMoveEvent post = new PlayerMoveEvent(EventTiming.POST, type, x, y, z);
         EventHandlers.callEvent(post);
