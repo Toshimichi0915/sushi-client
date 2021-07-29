@@ -48,7 +48,7 @@ public class ThemeConstants {
         hoverCrossMarkColor = c.get("gui.hover_cross_mark_color", "Hover Cross Mark Color", null, Color.class, new Color(230, 200, 200));
         hoverCrossMarkBackgroundColor = c.get("gui.hover_cross_mark_background_color", "Hover Cross Mark Background Color", null, Color.class, new Color(100, 30, 30));
         selectedCrossMarkColor = c.get("gui.selected_cross_mark_color", "Selected Cross Mark Color", null, Color.class, new Color(230, 200, 200));
-        selectedCrossMarkBackgroundColor = c.get("gui.selected_cross_mark_background_color", "Selected Cross Mark Background Color", null, Color.class, new Color(255, 0, 0));
+        selectedCrossMarkBackgroundColor = c.get("gui.selected_cross_mark_background_color", "Selected Cross Mark Background Color", null, Color.class, new Color(160, 30, 30));
 
         font = c.get("gui.font", "Font", null, String.class, "Calibri");
     }

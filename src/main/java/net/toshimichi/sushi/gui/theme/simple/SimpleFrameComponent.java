@@ -36,23 +36,22 @@ public class SimpleFrameComponent<T extends Component> extends BasePanelComponen
 
     @Override
     public void onRender() {
-//        Color color = constants.crossMarkColor.getValue();
+        boolean outline = true;
         Color backgroundColor = constants.crossMarkBackgroundColor.getValue();
         if (hover) {
-//            color = constants.hoverCrossMarkColor.getValue();
+            outline = false;
             backgroundColor = constants.hoverCrossMarkBackgroundColor.getValue();
         }
         if (hold) {
-//            color = constants.selectedCrossMarkColor.getValue();
+            outline = false;
             backgroundColor = constants.selectedCrossMarkBackgroundColor.getValue();
         }
         hover = false;
         hold = false;
         GuiUtils.drawRect(component.getWindowX() - MARGIN, component.getWindowY() - MARGIN, component.getWidth() + 2 * MARGIN, component.getHeight() + 2 * MARGIN, constants.menuBarColor.getValue());
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), BAR_HEIGHT + 2 * MARGIN, constants.menuBarColor.getValue());
-        GuiUtils.drawRect(getWindowX() + getWidth() - BAR_WIDTH - MARGIN, getWindowY() + MARGIN, BAR_WIDTH, BAR_HEIGHT, backgroundColor);
-//        GuiUtils.drawLine(getWindowX() + getWidth() - BAR_WIDTH + 6, getWindowY() + 4, getWindowX() + getWidth() - 6, getWindowY() + BAR_HEIGHT - 4, color, 2);
-//        GuiUtils.drawLine(getWindowX() + getWidth() - BAR_WIDTH + 6, getWindowY() + BAR_HEIGHT - 4, getWindowX() + getWidth() - 6, getWindowY() + 4, color, 2);
+        if(outline) GuiUtils.drawOutline(getWindowX() + getWidth() - BAR_WIDTH - MARGIN, getWindowY() + MARGIN, BAR_WIDTH, BAR_HEIGHT, backgroundColor, 1);
+        else GuiUtils.drawRect(getWindowX() + getWidth() - BAR_WIDTH - MARGIN, getWindowY() + MARGIN, BAR_WIDTH, BAR_HEIGHT, backgroundColor);
         super.onRender();
     }
 
