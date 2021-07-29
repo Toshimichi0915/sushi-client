@@ -8,6 +8,7 @@ import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
+import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -21,11 +22,11 @@ import java.util.HashSet;
 
 public class StorageEspModule extends BaseModule {
 
-    private static final Color CHEST_COLOR = new Color(160, 110, 40);
-    private static final Color ENDER_CHEST_COLOR = new Color(40, 54, 56);
-    private static final Color DISPENSER_COLOR = new Color(100, 100, 100);
-    private static final Color FURNACE_COLOR = new Color(122, 122, 122);
-    private static final Color HOPPER_COLOR = new Color(72, 72, 72);
+    private static final Color CHEST_COLOR = new Color(160, 110, 40, 100);
+    private static final Color ENDER_CHEST_COLOR = new Color(40, 54, 56, 100);
+    private static final Color DISPENSER_COLOR = new Color(100, 100, 100, 100);
+    private static final Color FURNACE_COLOR = new Color(122, 122, 122, 100);
+    private static final Color HOPPER_COLOR = new Color(72, 72, 72, 100);
     private final Frustum frustum = new Frustum();
     private final HashSet<TileEntityChest> rendered = new HashSet<>();
 
@@ -41,20 +42,41 @@ public class StorageEspModule extends BaseModule {
     @Config(id = "chest", name = "Chest")
     public Boolean chest = true;
 
+    @Config(id = "chest_color", name = "Chest Color", when = "chest")
+    public EspColor chestColor = new EspColor(CHEST_COLOR, false, true);
+
     @Config(id = "ender_chest", name = "Ender Chest")
     public Boolean enderChest = false;
+
+    @Config(id = "ender_chest_color", name = "Ender Chest color", when = "ender_chest")
+    public EspColor enderChestColor = new EspColor(ENDER_CHEST_COLOR, false, true);
 
     @Config(id = "dispenser", name = "Dispenser")
     public Boolean dispenser = false;
 
-    @Config(id = "shulker Box", name = "Shulker Box")
+    @Config(id = "dispenser_color", name = "Dispenser Color", when = "dispenser")
+    public EspColor dispenserColor = new EspColor(DISPENSER_COLOR, false, true);
+
+    @Config(id = "shulker_box", name = "Shulker Box")
     public Boolean shulkerBox = false;
+
+    @Config(id = "shulker_box_custom_color", name = "Custom Shulker Box", when = "shulker_box")
+    public Boolean shulkerBoxCustomColor = false;
+
+    @Config(id = "shulker_box_color", name = "Shulker Box Color", when = "shulker_box")
+    public EspColor shulkerBoxColor = new EspColor(new Color(100, 100, 100, 100), false, true);
 
     @Config(id = "furnace", name = "Furnace")
     public Boolean furnace = false;
 
+    @Config(id = "furnace_color", name = "Furnace Color", when = "furnace")
+    public EspColor furnaceColor = new EspColor(FURNACE_COLOR, false, true);
+
     @Config(id = "hopper", name = "Hopper")
     public Boolean hopper = false;
+
+    @Config(id = "hopper_color", name = "Hopper Color", when = "hopper")
+    public EspColor hopperColor = new EspColor(HOPPER_COLOR, false, true);
 
     public StorageEspModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -73,17 +95,18 @@ public class StorageEspModule extends BaseModule {
 
     private Color getColor(TileEntity entity) {
         if (entity instanceof TileEntityChest && chest) {
-            return CHEST_COLOR;
+            return chestColor.getCurrentColor();
         } else if (entity instanceof TileEntityEnderChest && enderChest) {
-            return ENDER_CHEST_COLOR;
+            return enderChestColor.getCurrentColor();
         } else if (entity instanceof TileEntityDispenser && dispenser) {
-            return DISPENSER_COLOR;
+            return dispenserColor.getCurrentColor();
         } else if (entity instanceof TileEntityShulkerBox && shulkerBox) {
-            return new Color(((TileEntityShulkerBox) entity).getColor().getColorValue());
+            if (shulkerBoxCustomColor) shulkerBoxColor.getCurrentColor();
+            else return new Color(((TileEntityShulkerBox) entity).getColor().getColorValue());
         } else if (entity instanceof TileEntityFurnace && furnace) {
-            return FURNACE_COLOR;
+            return furnaceColor.getCurrentColor();
         } else if (entity instanceof TileEntityHopper && hopper) {
-            return HOPPER_COLOR;
+            return hopperColor.getCurrentColor();
         }
         return null;
     }
@@ -115,14 +138,14 @@ public class StorageEspModule extends BaseModule {
             }
             box = box.grow(0.002);
             if (tracers) {
-                RenderUtils.drawLine(camera, box.getCenter(), color, 1);
+                RenderUtils.drawLine(camera, box.getCenter(), new Color(color.getRGB()), 1);
             }
             if (!frustum.isBoundingBoxInFrustum(box)) continue;
             if (outline) {
                 RenderUtils.drawOutline(box, new Color(color.getRGB()), 1);
             }
             if (fill) {
-                RenderUtils.drawFilled(box, new Color(color.getRed(), color.getGreen(), color.getBlue(), 100));
+                RenderUtils.drawFilled(box, color);
             }
         }
         GL11.glEnable(GL11.GL_DEPTH_TEST);
