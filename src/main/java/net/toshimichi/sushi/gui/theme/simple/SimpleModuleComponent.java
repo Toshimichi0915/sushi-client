@@ -1,13 +1,12 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
-import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.AnyPanelComponent;
 import net.toshimichi.sushi.gui.SmoothCollapseComponent;
-import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.modules.Module;
 
-public class SimpleModuleComponent extends BasePanelComponent<Component> {
+public class SimpleModuleComponent extends AnyPanelComponent {
     private final Module module;
 
     public SimpleModuleComponent(Module module, SimpleModuleToggleComponent toggleComponent, SmoothCollapseComponent<SimpleModuleConfigComponent> collapseComponent) {

@@ -4,17 +4,16 @@ import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.FakeConfiguration;
 import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.config.data.IntRange;
-import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.AnyPanelComponent;
 import net.toshimichi.sushi.gui.ConfigComponent;
 import net.toshimichi.sushi.gui.Insets;
-import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.render.GuiUtils;
 import net.toshimichi.sushi.utils.render.TextSettings;
 
-public class SimpleTextSettingsComponent extends BasePanelComponent<Component> implements ConfigComponent<TextSettings> {
+public class SimpleTextSettingsComponent extends AnyPanelComponent implements ConfigComponent<TextSettings> {
 
     private final ThemeConstants constants;
     private final Configuration<TextSettings> configuration;

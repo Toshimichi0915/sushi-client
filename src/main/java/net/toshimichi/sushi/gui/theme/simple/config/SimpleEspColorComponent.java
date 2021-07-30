@@ -5,7 +5,6 @@ import net.toshimichi.sushi.config.FakeConfiguration;
 import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.gui.*;
-import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
@@ -15,7 +14,7 @@ import net.toshimichi.sushi.utils.render.GuiUtils;
 
 import java.awt.Color;
 
-public class SimpleEspColorComponent extends BasePanelComponent<Component> implements ConfigComponent<EspColor> {
+public class SimpleEspColorComponent extends AnyPanelComponent implements ConfigComponent<EspColor> {
 
     private final ThemeConstants constants;
     private final Configuration<EspColor> configuration;
@@ -73,7 +72,7 @@ public class SimpleEspColorComponent extends BasePanelComponent<Component> imple
         rainbowComponent.setMargin(new Insets(0, marginLeft, 0, marginRight));
         alphaComponent.setMargin(new Insets(0, marginLeft, 2, marginRight));
 
-        SmoothCollapseComponent<?> collapseComponent = new SmoothCollapseComponent<>(new BasePanelComponent<Component>() {{
+        SmoothCollapseComponent<?> collapseComponent = new SmoothCollapseComponent<>(new AnyPanelComponent() {{
             add(colorPickerComponent);
             add(rainbowComponent);
             add(alphaComponent);

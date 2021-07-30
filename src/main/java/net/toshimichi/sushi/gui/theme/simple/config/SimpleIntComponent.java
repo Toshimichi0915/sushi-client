@@ -1,16 +1,15 @@
 package net.toshimichi.sushi.gui.theme.simple.config;
 
 import net.toshimichi.sushi.config.Configuration;
-import net.toshimichi.sushi.gui.Component;
+import net.toshimichi.sushi.gui.AnyPanelComponent;
 import net.toshimichi.sushi.gui.ConfigComponent;
-import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTextComponent;
 import net.toshimichi.sushi.gui.theme.simple.SimpleTextHeaderComponent;
 
-public class SimpleIntComponent extends BasePanelComponent<Component> implements ConfigComponent<Integer> {
+public class SimpleIntComponent extends AnyPanelComponent implements ConfigComponent<Integer> {
 
     private final SimpleTextComponent textComponent;
     private final Configuration<Integer> config;

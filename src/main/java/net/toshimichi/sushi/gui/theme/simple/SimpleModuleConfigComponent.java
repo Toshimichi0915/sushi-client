@@ -2,11 +2,10 @@ package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.config.ConfigurationCategory;
+import net.toshimichi.sushi.gui.AnyPanelComponent;
 import net.toshimichi.sushi.gui.CollapseMode;
-import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.Insets;
 import net.toshimichi.sushi.gui.SmoothCollapseComponent;
-import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.gui.theme.Theme;
@@ -17,7 +16,7 @@ import net.toshimichi.sushi.modules.client.HudModule;
 
 import java.util.Arrays;
 
-public class SimpleModuleConfigComponent extends BasePanelComponent<Component> {
+public class SimpleModuleConfigComponent extends AnyPanelComponent {
     public SimpleModuleConfigComponent(ThemeConstants constants, Theme theme, Module module) {
         setLayout(new FlowLayout(this, FlowDirection.DOWN));
         add(new SimpleConfigCategoryComponent(theme, module.getConfigurations()));

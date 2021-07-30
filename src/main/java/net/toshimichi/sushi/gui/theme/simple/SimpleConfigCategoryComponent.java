@@ -2,17 +2,17 @@ package net.toshimichi.sushi.gui.theme.simple;
 
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.Configurations;
+import net.toshimichi.sushi.gui.AnyPanelComponent;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ConfigComponent;
 import net.toshimichi.sushi.gui.Insets;
-import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.gui.theme.Theme;
 
 import java.util.ArrayList;
 
-public class SimpleConfigCategoryComponent extends BasePanelComponent<Component> {
+public class SimpleConfigCategoryComponent extends AnyPanelComponent {
 
     private final Theme theme;
     private final Configurations configurations;

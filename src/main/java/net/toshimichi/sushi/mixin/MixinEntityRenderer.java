@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.render.HurtCameraEffectEvent;
 import net.toshimichi.sushi.events.render.ItemActivationRenderEvent;
@@ -13,6 +14,7 @@ import net.toshimichi.sushi.events.world.EntityTraceEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -40,5 +42,10 @@ public class MixinEntityRenderer {
         ItemActivationRenderEvent event = new ItemActivationRenderEvent(stack);
         EventHandlers.callEvent(event);
         if (event.isCancelled()) event.setCancelled(true);
+    }
+
+    @ModifyVariable(method = "orientCamera", at = @At(value = "STORE", ordinal = 0), ordinal = 0)
+    public RayTraceResult orientCameraStoreRayTraceBlocks(RayTraceResult value) {
+        return null;
     }
 }

@@ -1,11 +1,10 @@
 package net.toshimichi.sushi.gui.theme.simple.config;
 
 import net.toshimichi.sushi.config.Configuration;
+import net.toshimichi.sushi.gui.AnyPanelComponent;
 import net.toshimichi.sushi.gui.CollapseMode;
-import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.gui.ConfigComponent;
 import net.toshimichi.sushi.gui.SmoothCollapseComponent;
-import net.toshimichi.sushi.gui.base.BasePanelComponent;
 import net.toshimichi.sushi.gui.layout.FlowDirection;
 import net.toshimichi.sushi.gui.layout.FlowLayout;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
@@ -14,7 +13,7 @@ import net.toshimichi.sushi.gui.theme.simple.SimpleColorPickerHeaderComponent;
 
 import java.awt.Color;
 
-public class SimpleColorComponent extends BasePanelComponent<Component> implements ConfigComponent<Color> {
+public class SimpleColorComponent extends AnyPanelComponent implements ConfigComponent<Color> {
 
     private final SimpleColorPickerComponent simpleColorPickerComponent;
     private final Configuration<Color> configuration;
