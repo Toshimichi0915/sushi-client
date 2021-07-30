@@ -79,7 +79,7 @@ public class SurroundModule extends BaseModule {
         }
         BlockUtils.checkGhostBlock(toBeChecked.toArray(new BlockPos[0]));
         placeList.removeIf(it -> {
-            AxisAlignedBB box = getWorld().getBlockState(it.getBlockPos()).getBoundingBox(getWorld(), it.getBlockPos());
+            AxisAlignedBB box = getWorld().getBlockState(it.getBlockPos()).getBoundingBox(getWorld(), it.getBlockPos()).offset(it.getBlockPos());
             for (EntityInfo<EntityEnderCrystal> crystal : EntityUtils.getNearbyEntities(Vec3d.ZERO, EntityEnderCrystal.class)) {
                 if (crystal.getEntity().getEntityBoundingBox().intersects(box)) return true;
             }
