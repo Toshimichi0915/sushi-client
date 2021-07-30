@@ -70,6 +70,7 @@ public class EntityUtils {
         ArrayList<EntityInfo<T>> result = new ArrayList<>();
         for (Entity entity : Minecraft.getMinecraft().world.loadedEntityList) {
             if (!entityClass.isAssignableFrom(entity.getClass())) continue;
+            if (entity.isDead) continue;
             result.add(new EntityInfo<>((T) entity, origin.squareDistanceTo(entity.getPositionVector())));
         }
         result.sort(null);
@@ -85,6 +86,7 @@ public class EntityUtils {
             if (!(entity instanceof EntityPlayer)) continue;
             if (entity.getDistanceSq(player) > distance * distance) continue;
             if (entity.getName().equals(player.getName())) continue;
+            if (entity.isDead) continue;
             result.add((EntityPlayer) entity);
         }
         result.sort(Comparator.comparingDouble(player::getDistanceSq));
