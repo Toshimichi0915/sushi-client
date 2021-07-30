@@ -30,8 +30,8 @@ abstract public class BaseModule implements Module {
     private final Configuration<Boolean> toggleNotification;
     private final ModuleFactory factory;
     private final ArrayList<ElementFactory> hudElementFactories;
-    private boolean isEnabled;
-    private boolean isPaused;
+    private boolean enabled;
+    private boolean paused;
 
     public BaseModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         this.id = id;
@@ -79,41 +79,41 @@ abstract public class BaseModule implements Module {
 
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        if (!isPaused) {
+        if (!paused) {
             MessageHandler handler = Sushi.getProfile().getMessageHandler();
-            if (!this.isEnabled && enabled) {
+            if (!this.enabled && enabled) {
                 onEnable();
                 if (toggleNotification.getValue()) {
                     handler.send(LogLevel.INFO, "Enabled " + getName());
                 }
-            } else if (this.isEnabled && !enabled) {
+            } else if (this.enabled && !enabled) {
                 onDisable();
                 if (toggleNotification.getValue()) {
                     handler.send(LogLevel.INFO, "Disabled " + getName());
                 }
             }
         }
-        this.isEnabled = enabled;
+        this.enabled = enabled;
     }
 
     @Override
     public boolean isPaused() {
-        return isPaused;
+        return paused;
     }
 
     @Override
     public void setPaused(boolean paused) {
-        if (!this.isPaused && paused && isEnabled) {
+        if (!this.paused && paused && enabled) {
             onDisable();
-        } else if (this.isPaused && !paused && !isEnabled) {
+        } else if (this.paused && !paused && enabled) {
             onEnable();
         }
-        this.isPaused = paused;
+        this.paused = paused;
     }
 
     public void onEnable() {
