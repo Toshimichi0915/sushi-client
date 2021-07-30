@@ -1,9 +1,12 @@
 package net.toshimichi.sushi.modules.combat;
 
+import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -15,6 +18,8 @@ import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
+import net.toshimichi.sushi.utils.EntityInfo;
+import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.player.*;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockPlaceUtils;
@@ -73,6 +78,13 @@ public class SurroundModule extends BaseModule {
             placeList.addAll(info);
         }
         BlockUtils.checkGhostBlock(toBeChecked.toArray(new BlockPos[0]));
+        placeList.removeIf(it -> {
+            AxisAlignedBB box = getWorld().getBlockState(it.getBlockPos()).getBoundingBox(getWorld(), it.getBlockPos());
+            for (EntityInfo<EntityEnderCrystal> crystal : EntityUtils.getNearbyEntities(Vec3d.ZERO, EntityEnderCrystal.class)) {
+                if (crystal.getEntity().getEntityBoundingBox().intersects(box)) return true;
+            }
+            return false;
+        });
         if (placeList.isEmpty()) return;
         ItemSlot obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), getPlayer(), InventoryType.values());
         if (obsidianSlot == null) return;
