@@ -41,7 +41,7 @@ public class MixinEntityRenderer {
     public void renderItemActivation(ItemStack stack, CallbackInfo ci) {
         ItemActivationRenderEvent event = new ItemActivationRenderEvent(stack);
         EventHandlers.callEvent(event);
-        if (event.isCancelled()) event.setCancelled(true);
+        if (event.isCancelled()) ci.cancel();
     }
 
     @ModifyVariable(method = "orientCamera", at = @At(value = "STORE", ordinal = 0), ordinal = 0)
