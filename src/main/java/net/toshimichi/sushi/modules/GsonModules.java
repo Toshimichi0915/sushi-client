@@ -107,6 +107,7 @@ public class GsonModules implements Modules {
         addModuleFactory("refill", RefillModule::new, true);
         addModuleFactory("fast_use", FastUseModule::new, true);
         addModuleFactory("auto_trap", AutoTrapModule::new, true);
+        addModuleFactory("auto_mend", AutoMendModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

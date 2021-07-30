@@ -82,6 +82,7 @@ public class InventoryUtils {
     }
 
     public static ItemSlot moveToHotbar(ItemSlot itemSlot) {
+        if (itemSlot.getInventoryType() == InventoryType.HOTBAR) return itemSlot;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         ItemSlot emptyHotbar = InventoryUtils.findItemSlot(null, player, InventoryType.HOTBAR);
         if (emptyHotbar == null) {
