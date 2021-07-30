@@ -15,7 +15,10 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.CPacketClickWindow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class InventoryUtils {
 
@@ -51,19 +54,27 @@ public class InventoryUtils {
         }
     }
 
-    public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
+    public static ItemSlot[] find(Predicate<ItemSlot> predicate, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
         ArrayList<ItemSlot> list = new ArrayList<>();
         for (InventoryType type : allowed) {
             for (int i = 0; i < type.getSize(); i++) {
                 int index = i + type.getIndex();
-                ItemStack itemStack = player.inventory.getStackInSlot(index);
-                if (searching == null && itemStack.isEmpty() || itemStack.getItem().equals(searching))
+                if(predicate.test(new ItemSlot(i + type.getIndex())))
                     list.add(new ItemSlot(index, player));
             }
         }
         list.sort(comparator);
-        if (list.isEmpty()) return null;
-        else return list.get(0);
+        return list.toArray(new ItemSlot[0]);
+    }
+
+    public static ItemSlot[] findItemSlots(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
+        return find(it->it.getItemStack().getItem() == searching, player, comparator, allowed);
+    }
+
+    public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
+        ItemSlot[] array = findItemSlots(searching, player, comparator, allowed);
+        if (array.length == 0) return null;
+        else return array[0];
     }
 
     public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, InventoryType... allowed) {
