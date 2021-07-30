@@ -27,6 +27,7 @@ public class StepModule extends BaseModule {
 
     private final Configuration<Boolean> reverse;
     private final Configuration<IntRange> reverseHeight;
+    private final Configuration<DoubleRange> reverseMinHeight;
 
     private final Configuration<Boolean> pauseInHole;
     private final Configuration<Boolean> pauseOnSneak;
@@ -41,6 +42,7 @@ public class StepModule extends BaseModule {
 
         reverse = provider.get("reverse", "Reverse", null, Boolean.class, true);
         reverseHeight = provider.get("reverse_height", "Reverse Height", null, IntRange.class, new IntRange(2, 8, 1, 1), reverse::getValue, false, 0);
+        reverseMinHeight = provider.get("reverse_min_height", "Reverse Min Height", null, DoubleRange.class, new DoubleRange(0.3, 1, 0, 0.1, 1), reverse::getValue, false, 0);
 
         pauseInHole = provider.get("pause_in_hole", "Pause In Hole", null, Boolean.class, true);
         pauseOnSneak = provider.get("pause_on_sneak", "Pause On Sneak", null, Boolean.class, true);
@@ -92,6 +94,7 @@ public class StepModule extends BaseModule {
                 if (getWorld().collidesWithAnyBlock(box)) continue;
                 Vec3d resultPos = getPlayer().getPositionVector().add(pos);
                 double height = getMaxHeight(box);
+                if (getPlayer().posY - height < reverseMinHeight.getValue().getCurrent()) continue;
                 if (Double.isNaN(height)) continue;
                 if (getPlayer().movementInput.jump) continue;
                 PositionUtils.move(resultPos.x, height, resultPos.z, 0, 0, true, false, DesyncMode.NONE);
