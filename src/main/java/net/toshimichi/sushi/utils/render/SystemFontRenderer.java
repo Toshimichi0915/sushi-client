@@ -112,10 +112,10 @@ public class SystemFontRenderer extends SystemFont {
                 drawChar(currentData, c, (float) x, (float) y);
                 GlStateManager.glEnd();
                 if (strikethrough)
-                    drawLine(x, y + (double) currentData[c].height / 2, x + currentData[c].width - 8.0D, y + (double) currentData[c].height / 2, 1.0F);
+                    drawLine(x, y + (double) currentData[c].height / 2, x + currentData[c].width - paddingWidth, y + (double) currentData[c].height / 2, 1.0F);
                 if (underline)
-                    drawLine(x, y + currentData[c].height - 2.0D, x + currentData[c].width - 8.0D, y + currentData[c].height - 2.0D, 1.0F);
-                x += currentData[c].width - 8 + this.charOffset;
+                    drawLine(x, y + currentData[c].height - 2.0D, x + currentData[c].width - paddingWidth, y + currentData[c].height - 2.0D, 1.0F);
+                x += currentData[c].width - paddingWidth + this.charOffset;
             }
         }
         GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_DONT_CARE);
@@ -166,7 +166,7 @@ public class SystemFontRenderer extends SystemFont {
                 }
                 i++;
             } else if (character < currentData.length) {
-                width += currentData[character].width - 8 + this.charOffset;
+                width += currentData[character].width - paddingWidth + this.charOffset;
             }
         }
         return width / 2;

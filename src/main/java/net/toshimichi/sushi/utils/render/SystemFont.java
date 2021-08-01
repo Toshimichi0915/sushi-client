@@ -14,17 +14,26 @@ import static org.lwjgl.opengl.GL11.glVertex2d;
 
 public class SystemFont {
 
-    private final float imgSize = 1024;
+    protected final int paddingWidth;
+    protected final int paddingHeight;
+    protected final int marginWidth;
+    protected final int marginHeight;
+    protected final float imageSize;
     protected final Font font;
     protected final boolean antiAlias;
     protected final boolean fractionalMetrics;
+    protected final DynamicTexture tex;
     protected CharData[] charData = new CharData[256];
-    protected int fontHeight = -1;
+    protected float fontHeight = -1;
     protected int charOffset = 0;
-    protected DynamicTexture tex;
 
     public SystemFont(Font font, boolean antiAlias, boolean fractionalMetrics) {
         this.font = font;
+        this.paddingWidth = 8;
+        this.paddingHeight = 0;
+        this.marginWidth = font.getSize();
+        this.marginHeight = font.getSize() / 2;
+        this.imageSize = (font.getSize() / 20 + 1) * 1024;
         this.antiAlias = antiAlias;
         this.fractionalMetrics = fractionalMetrics;
         this.tex = setupTexture(font, antiAlias, fractionalMetrics, this.charData);
@@ -42,29 +51,29 @@ public class SystemFont {
     }
 
     protected BufferedImage generateFontImage(Font font, boolean antiAlias, boolean fractionalMetrics, CharData[] chars) {
-        int imgSize = (int) this.imgSize;
-        BufferedImage bufferedImage = new BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB);
+        int imageSize = (int) this.imageSize;
+        BufferedImage bufferedImage = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) bufferedImage.getGraphics();
         g.setFont(font);
         g.setColor(new Color(255, 255, 255, 0));
-        g.fillRect(0, 0, imgSize, imgSize);
+        g.fillRect(0, 0, imageSize, imageSize);
         g.setColor(Color.WHITE);
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, fractionalMetrics ? RenderingHints.VALUE_FRACTIONALMETRICS_ON : RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAlias ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAlias ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         FontMetrics fontMetrics = g.getFontMetrics();
-        int charHeight = 0;
+        float charHeight = 0;
         int positionX = 0;
         int positionY = 1;
         for (int i = 0; i < chars.length; i++) {
             char ch = (char) i;
             CharData charData = new CharData();
             Rectangle2D dimensions = fontMetrics.getStringBounds(String.valueOf(ch), g);
-            charData.width = (dimensions.getBounds().width + 8);
-            charData.height = dimensions.getBounds().height;
-            if (positionX + charData.width >= imgSize) {
+            charData.width = (float) dimensions.getBounds2D().getWidth() + paddingWidth;
+            charData.height = (float) dimensions.getBounds2D().getHeight() + paddingHeight;
+            if (positionX + charData.width >= imageSize) {
                 positionX = 0;
-                positionY += charHeight;
+                positionY += charHeight + marginHeight;
                 charHeight = 0;
             }
             if (charData.height > charHeight) {
@@ -77,7 +86,7 @@ public class SystemFont {
             }
             chars[i] = charData;
             g.drawString(String.valueOf(ch), positionX + 2, positionY + fontMetrics.getAscent());
-            positionX += charData.width;
+            positionX += charData.width + marginWidth;
         }
         return bufferedImage;
     }
@@ -87,10 +96,10 @@ public class SystemFont {
     }
 
     protected void drawQuad(float x, float y, float width, float height, float srcX, float srcY, float srcWidth, float srcHeight) {
-        float renderSRCX = srcX / imgSize;
-        float renderSRCY = srcY / imgSize;
-        float renderSRCWidth = srcWidth / imgSize;
-        float renderSRCHeight = srcHeight / imgSize;
+        float renderSRCX = srcX / imageSize;
+        float renderSRCY = srcY / imageSize;
+        float renderSRCWidth = srcWidth / imageSize;
+        float renderSRCHeight = srcHeight / imageSize;
         glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY);
         glVertex2d(x + width, y);
         glTexCoord2f(renderSRCX, renderSRCY);
@@ -105,24 +114,24 @@ public class SystemFont {
         glVertex2d(x + width, y);
     }
 
-    public int getHeight() {
-        return (this.fontHeight - 8) / 2;
+    public float getHeight() {
+        return (this.fontHeight - paddingHeight - 8) / 2;
     }
 
     public int getStringWidth(String text) {
         int width = 0;
         for (char c : text.toCharArray()) {
             if (c < this.charData.length) {
-                width += this.charData[c].width - 8 + this.charOffset;
+                width += this.charData[c].width - paddingWidth + this.charOffset;
             }
         }
         return width / 2;
     }
 
     protected static class CharData {
-        public int width;
-        public int height;
-        public int storedX;
-        public int storedY;
+        public float width;
+        public float height;
+        public float storedX;
+        public float storedY;
     }
 }

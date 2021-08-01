@@ -98,9 +98,12 @@ public class NameTagsModule extends BaseModule {
             GL11.glScaled(scale, scale, 1);
 
             StringBuilder text = new StringBuilder(entity.getName());
-            text.append(' ');
+            double health = ((EntityLivingBase)entity).getHealth() + ((EntityLivingBase)entity).getAbsorptionAmount();
+            if(health > 12) text.append(" §a");
+            else if(health > 6) text.append(" §e");
+            else text.append(" §4");
             text.append(FORMAT.format(((EntityLivingBase) entity).getHealth()));
-            TextPreview preview = GuiUtils.prepareText(text.toString(), "Calibri", Color.WHITE, 30, true);
+            TextPreview preview = GuiUtils.prepareText(text.toString(), "Calibri", Color.WHITE, 40, false);
             double width = preview.getWidth();
             double height = preview.getHeight();
             double x = -width / 2;
