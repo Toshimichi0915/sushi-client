@@ -3,11 +3,13 @@ package net.toshimichi.sushi.modules.render;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.config.data.DoubleRange;
+import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
@@ -55,6 +57,12 @@ public class NameTagsModule extends BaseModule {
     @Config(id = "scale_multiplier", name = "Scale Multiplier")
     public DoubleRange scaleMultiplier = new DoubleRange(3, 10, 1, 0.1, 1);
 
+    @Config(id = "min_scale", name = "Min Scale")
+    public IntRange minScale = new IntRange(1, 100, 1,  1);
+
+    @Config(id = "max_scale", name = "Max Scale")
+    public IntRange maxScale = new IntRange(100, 100, 1,  1);
+
     public NameTagsModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         new ConfigInjector(provider).inject(this);
@@ -101,6 +109,7 @@ public class NameTagsModule extends BaseModule {
 
             // set up matrix
             double scale = RenderUtils.getScale(RenderUtils.getInterpolatedPos(entity)) * scaleMultiplier.getCurrent();
+            scale = MathHelper.clamp(scale, minScale.getCurrent() / 100D, maxScale.getCurrent() / 100D);
             GL11.glPushMatrix();
             GL11.glTranslated(head.x, head.y, 0);
             GL11.glScaled(scale, scale, 1);
