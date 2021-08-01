@@ -11,6 +11,7 @@ import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
+import net.toshimichi.sushi.events.render.LivingLabelRenderEvent;
 import net.toshimichi.sushi.events.render.OverlayRenderEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.EntityState;
@@ -110,6 +111,13 @@ public class NameTagsModule extends BaseModule {
 
             GL11.glPopMatrix();
         }
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onLivingLabelRender(LivingLabelRenderEvent e) {
+        if (!(e.getEntity() instanceof EntityLivingBase)) return;
+        if (!canShow((EntityLivingBase) e.getEntity())) return;
+        e.setCancelled(true);
     }
 
     @Override
