@@ -3,6 +3,7 @@ package net.toshimichi.sushi.utils.render;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -49,6 +50,7 @@ public class SystemFontRenderer extends SystemFont {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
         GlStateManager.enableTexture2D();
+        GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_NICEST);
         GlStateManager.bindTexture(tex.getGlTextureId());
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
@@ -118,7 +120,6 @@ public class SystemFontRenderer extends SystemFont {
                 x += currentData[c].width - paddingWidth + this.charOffset;
             }
         }
-        GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_DONT_CARE);
         GlStateManager.popMatrix();
     }
 

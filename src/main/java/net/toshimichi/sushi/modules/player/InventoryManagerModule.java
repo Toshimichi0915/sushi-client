@@ -32,18 +32,18 @@ public class InventoryManagerModule extends BaseModule {
     private final Configuration<Boolean> hotbar;
     private final ArrayList<SwitchInfo> all;
 
-    private void add(String id, String name, int min, int max, ConfigurationCategory category, Predicate<ItemStack> item) {
+    private void add(String id, String name, int min, int max, ConfigurationCategory category, int stackSize, Predicate<ItemStack> item) {
         Configuration<IntRange> conf1 = category.get("min_" + id, "Min " + name, null, IntRange.class, new IntRange(min, 36, 0, 1));
         Configuration<IntRange> conf2 = category.get("max_" + id, "Max " + name, null, IntRange.class, new IntRange(max, 36, 0, 1));
-        all.add(new SwitchInfo(item, conf1, conf2));
+        all.add(new SwitchInfo(stackSize, item, conf1, conf2));
     }
 
     private void add(String id, String name, int min, int max, ConfigurationCategory category, Item item) {
-        add(id, name, min, max, category, it -> it.getItem() == item);
+        add(id, name, min, max, category, item.getItemStackLimit(), it -> it.getItem() == item);
     }
 
     private void addArrow(String id, String name, int min, int max, ConfigurationCategory category, Potion effect) {
-        add(id, name, min, max, category, it -> {
+        add(id, name, min, max, category, 64, it -> {
             if (it.getItem() != Items.TIPPED_ARROW) return false;
             return PotionUtils.getEffectsFromStack(it).stream()
                     .anyMatch(e -> e.getPotion() == effect);
@@ -104,7 +104,7 @@ public class InventoryManagerModule extends BaseModule {
         ArrayList<SwitchCandidate> result = new ArrayList<>();
         HashMap<ItemStack, Integer> items = new HashMap<>();
         for (EntityInfo<EntityItem> entityInfo : EntityUtils.getNearbyEntities(getPlayer().getPositionVector(), EntityItem.class)) {
-            if (entityInfo.getDistanceSq() > 3) continue;
+            if (entityInfo.getDistanceSq() > 1) continue;
             ItemStack itemStack = entityInfo.getEntity().getItem();
             items.put(itemStack, items.getOrDefault(itemStack, 0) + itemStack.getCount());
         }
@@ -175,11 +175,13 @@ public class InventoryManagerModule extends BaseModule {
     }
 
     private class SwitchInfo implements Comparable<SwitchInfo> {
+        private final int stackSize;
         private final Predicate<ItemStack> item;
         private final Configuration<IntRange> min;
         private final Configuration<IntRange> max;
 
-        public SwitchInfo(Predicate<ItemStack> item, Configuration<IntRange> min, Configuration<IntRange> max) {
+        public SwitchInfo(int stackSize, Predicate<ItemStack> item, Configuration<IntRange> min, Configuration<IntRange> max) {
+            this.stackSize = stackSize;
             this.item = item;
             this.min = min;
             this.max = max;
@@ -190,11 +192,11 @@ public class InventoryManagerModule extends BaseModule {
         }
 
         public int getMin() {
-            return min.getValue().getCurrent() * 64;
+            return min.getValue().getCurrent() * stackSize;
         }
 
         public int getMax() {
-            return max.getValue().getCurrent() * 64;
+            return max.getValue().getCurrent() * stackSize;
         }
 
         public int checkInv() {

@@ -30,7 +30,7 @@ public class SimpleTextSettingsComponent extends AnyPanelComponent implements Co
         this.constants = constants;
         this.configuration = c;
         this.font = new FakeConfiguration<>("font", "Font", null, String.class, c.getValue().getFont());
-        this.pts = new FakeConfiguration<>("pts", "Pts", null, IntRange.class, new IntRange(9, 30, 1, 1));
+        this.pts = new FakeConfiguration<>("pts", "pts", null, IntRange.class, new IntRange(9, 30, 1, 1));
         this.shadow = new FakeConfiguration<>("shadow", "Shadow", null, Boolean.class, true);
         this.color = new FakeConfiguration<>("color", "Color", null, EspColor.class, c.getValue().getColor());
 

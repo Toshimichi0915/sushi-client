@@ -5,6 +5,7 @@ import net.toshimichi.sushi.config.Configurations;
 import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.gui.ComponentHandler;
 import net.toshimichi.sushi.gui.base.BaseComponent;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 import net.toshimichi.sushi.utils.render.TextSettings;
 
 import java.awt.Color;
@@ -36,6 +37,7 @@ abstract public class BaseHudElementComponent extends BaseComponent implements H
         }
         Configuration<TextSettings> newConf = getConfiguration(id, "", null, TextSettings.class, getDefaultTextSettings());
         textSettings.add(newConf);
+        GuiUtils.prepareFont(newConf.getValue().getFont(), newConf.getValue().getPts());
         return newConf;
     }
 

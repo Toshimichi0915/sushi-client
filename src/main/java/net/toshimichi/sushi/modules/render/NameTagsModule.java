@@ -28,6 +28,12 @@ public class NameTagsModule extends BaseModule {
 
     private static final DecimalFormat FORMAT = new DecimalFormat("0.0");
 
+    @Config(id = "font", name = "Font")
+    public String fontName = "Calibri";
+
+//    @Config(id = "pts", name = "pts")
+    public Integer pts = 40;
+
     @Config(id = "player", name = "Show players")
     public Boolean player = true;
 
@@ -52,6 +58,7 @@ public class NameTagsModule extends BaseModule {
     public NameTagsModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         new ConfigInjector(provider).inject(this);
+        GuiUtils.prepareFont(fontName, pts);
     }
 
     @Override
@@ -69,6 +76,7 @@ public class NameTagsModule extends BaseModule {
             if (entity.getName().equals(getPlayer().getName())) return self;
             else return player;
         }
+        if (!mob) return false;
         EntityState state = EntityUtils.getEntityType(entity);
         switch (state) {
             case PASSIVE:
@@ -98,12 +106,12 @@ public class NameTagsModule extends BaseModule {
             GL11.glScaled(scale, scale, 1);
 
             StringBuilder text = new StringBuilder(entity.getName());
-            double health = ((EntityLivingBase)entity).getHealth() + ((EntityLivingBase)entity).getAbsorptionAmount();
-            if(health > 12) text.append(" §a");
-            else if(health > 6) text.append(" §e");
+            double health = ((EntityLivingBase) entity).getHealth() + ((EntityLivingBase) entity).getAbsorptionAmount();
+            if (health > 12) text.append(" §a");
+            else if (health > 6) text.append(" §e");
             else text.append(" §4");
             text.append(FORMAT.format(((EntityLivingBase) entity).getHealth()));
-            TextPreview preview = GuiUtils.prepareText(text.toString(), "Calibri", Color.WHITE, 40, false);
+            TextPreview preview = GuiUtils.prepareText(text.toString(), fontName, Color.WHITE, pts, false);
             double width = preview.getWidth();
             double height = preview.getHeight();
             double x = -width / 2;

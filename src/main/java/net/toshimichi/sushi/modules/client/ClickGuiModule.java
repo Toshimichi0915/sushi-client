@@ -23,6 +23,9 @@ public class ClickGuiModule extends BaseModule {
         super(id, modules, categories, provider, factory);
         fallbackTheme = Sushi.getDefaultTheme();
         theme = provider.get("theme", "Theme", "ClickGUI Theme", String.class, fallbackTheme.getId());
+        // prepare font for SimpleClickGui (for performance reasons)
+        // maybe ugly but this should not cause bugs
+        getTheme().newClickGui(this);
     }
 
     @Override
@@ -30,17 +33,19 @@ public class ClickGuiModule extends BaseModule {
         return true;
     }
 
+    private Theme getTheme() {
+        for (Theme t : Sushi.getThemes()) {
+            if (t.getId().equalsIgnoreCase(this.theme.getId())) {
+                return t;
+            }
+        }
+        return fallbackTheme;
+    }
+
     @Protect
     @Override
     public void onEnable() {
-        Theme theme = fallbackTheme;
-        for (Theme t : Sushi.getThemes()) {
-            if (t.getId().equalsIgnoreCase(this.theme.getId())) {
-                theme = t;
-                break;
-            }
-        }
-        Component component = theme.newClickGui(this);
+        Component component = getTheme().newClickGui(this);
         context = Components.show(component, false, false);
         GuiUtils.lockGame(() -> setEnabled(false));
     }

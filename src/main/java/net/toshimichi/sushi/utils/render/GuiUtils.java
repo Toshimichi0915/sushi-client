@@ -114,6 +114,10 @@ public class GuiUtils {
         GlStateManager.color((float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, (float) color.getAlpha() / 255);
     }
 
+    public static void prepareFont(String font, int pts) {
+        prepareText("", font, Color.BLACK, pts, false);
+    }
+
     public static TextPreview prepareText(String text, String font, EspColor color, int pts, boolean shadow) {
         if (font != null) {
             SystemFontTextPreview preview = SystemFontTextPreview.newTextPreview(text, font, color, pts, shadow);

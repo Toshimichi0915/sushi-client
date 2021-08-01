@@ -8,6 +8,7 @@ import net.toshimichi.sushi.gui.theme.Theme;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.modules.Category;
 import net.toshimichi.sushi.modules.Module;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 
 public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryComponent> {
@@ -23,6 +24,8 @@ public class SimpleClickGuiComponent extends BasePanelComponent<SimpleCategoryCo
         this.configurations = configurations;
         this.module = module;
         setLayout(new EmptyLayout(this));
+        GuiUtils.prepareFont(constants.font.getValue(), 9);
+        GuiUtils.prepareFont(constants.font.getValue(), 10);
     }
 
     @Override
