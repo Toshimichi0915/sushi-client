@@ -26,6 +26,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.events.tick.GameTickEvent;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
@@ -134,18 +135,6 @@ public class CrystalAuraModule extends BaseModule {
     @Override
     public void onEnable() {
         EventHandlers.register(this);
-        new Thread(() -> {
-            while (true) {
-                if (!isEnabled()) return;
-                try {
-                    placeCrystal();
-                    long sleep = placeCoolTime.getValue().getCurrent() - (System.currentTimeMillis() - lastPlaceTick);
-                    if (sleep > 0) Thread.sleep(sleep);
-                } catch (InterruptedException e) {
-                    // shut down the thread
-                }
-            }
-        }).start();
     }
 
     @Override
@@ -389,6 +378,11 @@ public class CrystalAuraModule extends BaseModule {
                     .then(new ItemSwitchTask(null, switchMode.getValue()))
                     .execute();
         }
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void onGameTickEvent(GameTickEvent e) {
+        placeCrystal();
     }
 
     @EventHandler(timing = EventTiming.POST)

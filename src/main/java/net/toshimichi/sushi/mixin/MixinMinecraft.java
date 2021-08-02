@@ -6,6 +6,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.client.GameFocusEvent;
 import net.toshimichi.sushi.events.client.WorldLoadEvent;
+import net.toshimichi.sushi.events.tick.GameTickEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -43,6 +44,18 @@ public class MixinMinecraft {
     @Inject(at = @At("HEAD"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V")
     public void onPreLoadWorld(WorldClient client, String loadingMessage, CallbackInfo ci) {
         EventHandlers.callEvent(new WorldLoadEvent(EventTiming.PRE, client));
+    }
+
+    @Inject(at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Timer;updateTimer()V"), method = "runGameLoop")
+    public void updateTimer(CallbackInfo ci) {
+        GameTickEvent pre = new GameTickEvent(EventTiming.PRE);
+        EventHandlers.callEvent(pre);
+    }
+
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;updateDisplay()V"), method = "runGameLoop")
+    public void updateDisplay(CallbackInfo ci) {
+        GameTickEvent post = new GameTickEvent(EventTiming.POST);
+        EventHandlers.callEvent(post);
     }
 
     @Inject(at = @At("TAIL"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V")

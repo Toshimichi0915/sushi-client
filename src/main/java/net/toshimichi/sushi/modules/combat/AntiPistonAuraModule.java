@@ -22,6 +22,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.events.tick.GameTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.EntityInfo;
 import net.toshimichi.sushi.utils.EntityUtils;
@@ -44,10 +45,10 @@ public class AntiPistonAuraModule extends BaseModule {
     private final HashSet<EnderCrystalInfo> crystals = new HashSet<>();
     private final Configuration<IntRange> placeCoolTime;
     private long lastPlaceTick;
-    private volatile ItemSlot obsidianSlot;
-    private volatile ItemSlot currentSlot;
-    private volatile long when;
-    private volatile boolean switching;
+    private ItemSlot obsidianSlot;
+    private ItemSlot currentSlot;
+    private long when;
+    private boolean switching;
 
     public AntiPistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -65,18 +66,6 @@ public class AntiPistonAuraModule extends BaseModule {
     @Override
     public void onEnable() {
         EventHandlers.register(this);
-        new Thread(() -> {
-            while (true) {
-                if (!isEnabled()) return;
-                try {
-                    placeObsidian();
-                    long sleep = placeCoolTime.getValue().getCurrent() - (System.currentTimeMillis() - lastPlaceTick);
-                    if (sleep > 0) Thread.sleep(sleep);
-                } catch (InterruptedException e) {
-                    // shut down the thread
-                }
-            }
-        }).start();
     }
 
     @Override
@@ -233,6 +222,11 @@ public class AntiPistonAuraModule extends BaseModule {
         if (!switching) return;
         if (!(e.getPacket() instanceof SPacketHeldItemChange)) return;
         e.setCancelled(true);
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void onGameTick(GameTickEvent e) {
+        placeObsidian();
     }
 
     @Override
