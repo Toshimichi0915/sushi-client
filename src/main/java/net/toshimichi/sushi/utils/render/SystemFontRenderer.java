@@ -79,8 +79,8 @@ public class SystemFontRenderer extends SystemFont {
                     if (colorIndex < 0) colorIndex = 15;
                     if (shadow) colorIndex += 16;
                     int colorCode = this.colorCodes[colorIndex];
-                    color = new Color((colorCode >> 16 & 0xFF) / 255.0F, (colorCode >> 8 & 0xFF) / 255.0F, (colorCode & 0xFF) / 255.0F, color.getAlpha());
-                    GlStateManager.color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
+                    color = new Color((colorCode >> 16 & 0xFF), (colorCode >> 8 & 0xFF), (colorCode & 0xFF), color.getAlpha());
+                    GlStateManager.color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, color.getAlpha() / 255F);
                 } else if (colorIndex == 16) {
                     randomCase = true;
                     // not implemented
