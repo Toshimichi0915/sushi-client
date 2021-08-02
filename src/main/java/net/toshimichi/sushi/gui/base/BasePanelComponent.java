@@ -87,6 +87,14 @@ public class BasePanelComponent<T extends Component> extends BaseListComponent<T
     }
 
     @Override
+    public void setFocused(boolean focused) {
+        if (!focused) {
+            forEach(c -> c.setFocused(false));
+        }
+        super.setFocused(focused);
+    }
+
+    @Override
     public void onHold(int fromX, int fromY, int toX, int toY, ClickType type, MouseStatus status) {
         T from = getTopComponent(fromX, fromY);
         T to = getTopComponent(toX, toY);

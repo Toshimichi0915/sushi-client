@@ -74,6 +74,17 @@ public class GuiUtils {
         scissor.scissor();
     }
 
+    public static void prepareArea(double x, double y, double width, double height) {
+        glPushAttrib(GL_SCISSOR_BIT);
+        glEnable(GL_SCISSOR_TEST);
+        y = Math.max(GuiUtils.getWindowHeight() - GuiUtils.toWindowY(y + height), 0);
+        Scissor scissor = new Scissor(GuiUtils.toWindowX(x), y, GuiUtils.toWindowX(width), GuiUtils.toWindowY(height));
+        if (!scissorStack.isEmpty())
+            scissor = scissor.clip(scissorStack.peek());
+        scissorStack.push(scissor);
+        scissor.scissor();
+    }
+
     public static void releaseArea() {
         glPopAttrib();
         scissorStack.pop();

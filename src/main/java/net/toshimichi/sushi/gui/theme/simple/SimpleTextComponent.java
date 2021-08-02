@@ -3,6 +3,7 @@ package net.toshimichi.sushi.gui.theme.simple;
 import net.toshimichi.sushi.gui.base.BaseComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.render.GuiUtils;
+import net.toshimichi.sushi.utils.render.TextPreview;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
@@ -61,8 +62,13 @@ abstract public class SimpleTextComponent extends BaseComponent {
         GuiUtils.drawRect(getWindowX() + 1, getWindowY() + 1, getWidth() - 2, getHeight() - 2, background);
         String render = text.toString();
         if (isFocused() && System.currentTimeMillis() / 500 % 2 == 0) render += " _";
-        GuiUtils.prepareText(render, constants.font.getValue(), constants.textColor.getValue(), 9, true)
-                .draw(getWindowX() + 2, getWindowY() + 2);
+        TextPreview preview = GuiUtils.prepareText(render, constants.font.getValue(), constants.textColor.getValue(), 9, true);
+        double width = GuiUtils.prepareText(text.toString(), constants.font.getValue(), constants.textColor.getValue(), 9, true).getWidth();
+        double offset = Math.min(getWidth() - width - 7, 0);
+        if (offset != 0) offset -= 10;
+        GuiUtils.prepareArea(getWindowX() + 1, getWindowY() + 1, getWidth() - 2, getHeight() - 2);
+        preview.draw(getWindowX() + 2 + offset, getWindowY() + 2);
+        GuiUtils.releaseArea();
     }
 
     @Override
