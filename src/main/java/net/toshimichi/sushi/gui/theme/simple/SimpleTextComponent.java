@@ -59,7 +59,9 @@ abstract public class SimpleTextComponent extends BaseComponent {
         else background = constants.outlineColor.getValue();
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
         GuiUtils.drawRect(getWindowX() + 1, getWindowY() + 1, getWidth() - 2, getHeight() - 2, background);
-        GuiUtils.prepareText(text.toString(), constants.font.getValue(), constants.textColor.getValue(), 9, true)
+        String render = text.toString();
+        if (isFocused() && System.currentTimeMillis() / 500 % 2 == 0) render += " _";
+        GuiUtils.prepareText(render, constants.font.getValue(), constants.textColor.getValue(), 9, true)
                 .draw(getWindowX() + 2, getWindowY() + 2);
     }
 
