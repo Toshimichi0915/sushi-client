@@ -121,25 +121,22 @@ public class AutoPullModule extends BaseModule {
             }
         }
         if (pistonPlace == null) return;
-        EnumFacing finalPistonFacing = pistonFacing;
-        BlockPlaceInfo finalPistonPlace = pistonPlace;
-        BlockPlaceInfo finalRedstonePlace = redstonePlace;
 
         // rotate
         try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-            Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(finalPistonFacing.getDirectionVec()));
+            Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(pistonFacing.getDirectionVec()));
             PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
 
             TaskExecutor.newTaskChain()
-                    .supply(() -> Item.getItemFromBlock(Blocks.PISTON))
+                    .supply(Item.getItemFromBlock(Blocks.PISTON))
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
-                    .supply(() -> Collections.singletonList(finalPistonPlace))
+                    .supply(Collections.singletonList(pistonPlace))
                     .then(new BlockPlaceTask(false, false))
-                    .supply(() -> Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
+                    .supply(Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
-                    .supply(() -> Collections.singletonList(finalRedstonePlace))
+                    .supply(Collections.singletonList(redstonePlace))
                     .then(new BlockPlaceTask(false, false))
                     .last(closeable::close)
                     .execute();

@@ -33,7 +33,7 @@ public class NameTagsModule extends BaseModule {
     @Config(id = "font", name = "Font")
     public String fontName = "Calibri";
 
-//    @Config(id = "pts", name = "pts")
+    //    @Config(id = "pts", name = "pts")
     public Integer pts = 40;
 
     @Config(id = "player", name = "Show players")
@@ -58,10 +58,10 @@ public class NameTagsModule extends BaseModule {
     public DoubleRange scaleMultiplier = new DoubleRange(3, 10, 1, 0.1, 1);
 
     @Config(id = "min_scale", name = "Min Scale")
-    public IntRange minScale = new IntRange(1, 100, 1,  1);
+    public IntRange minScale = new IntRange(1, 100, 1, 1);
 
     @Config(id = "max_scale", name = "Max Scale")
-    public IntRange maxScale = new IntRange(100, 100, 1,  1);
+    public IntRange maxScale = new IntRange(100, 100, 1, 1);
 
     public NameTagsModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);

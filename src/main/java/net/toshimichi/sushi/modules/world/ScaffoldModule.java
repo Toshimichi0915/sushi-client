@@ -50,7 +50,7 @@ public class ScaffoldModule extends BaseModule {
         List<BlockPlaceInfo> tasks = BlockPlaceUtils.search(getWorld(), floorPos, 3);
         if (tasks == null) return;
         TaskExecutor.newTaskChain()
-                .supply(() -> tasks)
+                .supply(tasks)
                 .then(new BlockPlaceTask(true, true))
                 .execute();
     }

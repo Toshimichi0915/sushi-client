@@ -29,6 +29,10 @@ public interface TaskChain<I> {
         return then(new FunctionalSupplierTask<>(true, task));
     }
 
+    default <R> TaskChain<R> supply(R r) {
+        return supply(() -> r);
+    }
+
     default <R> TaskChain<R> loop(SupplierTask<R> task) {
         return then(new FunctionalSupplierTask<>(false, task));
     }

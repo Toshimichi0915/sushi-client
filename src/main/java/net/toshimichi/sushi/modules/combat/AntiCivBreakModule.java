@@ -77,10 +77,10 @@ public class AntiCivBreakModule extends BaseModule {
             if (face == null) continue;
             TaskExecutor.newTaskChain()
                     .delay(1)
-                    .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
+                    .supply(Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, false))
                     .abortIfFalse()
-                    .supply(() -> Collections.singletonList(face))
+                    .supply(Collections.singletonList(face))
                     .then(new BlockPlaceTask(true, true, PlaceOptions.IGNORE_ENTITY))
                     .execute();
         }
@@ -95,10 +95,10 @@ public class AntiCivBreakModule extends BaseModule {
         BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), targetPos);
         if (info == null) return;
         TaskExecutor.newTaskChain()
-                .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
+                .supply(Item.getItemFromBlock(Blocks.OBSIDIAN))
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
-                .supply(() -> Collections.singletonList(info))
+                .supply(Collections.singletonList(info))
                 .then(new BlockPlaceTask(true, true))
                 .delay(5)
                 .then(() -> BlockUtils.checkGhostBlock(targetPos))

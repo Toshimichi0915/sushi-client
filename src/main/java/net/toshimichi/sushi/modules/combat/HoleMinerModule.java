@@ -106,12 +106,12 @@ public class HoleMinerModule extends BaseModule {
                     .delay(finalWaitTime)
                     .abortIf(() -> !running)
 
-                    .supply(() -> Items.END_CRYSTAL)
+                    .supply(Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .then(() -> getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(crystalFloor, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F)))
 
-                    .supply(() -> Items.DIAMOND_PICKAXE)
+                    .supply(Items.DIAMOND_PICKAXE)
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .then(finishTask)
@@ -122,7 +122,7 @@ public class HoleMinerModule extends BaseModule {
                     .delay(finalWaitTime)
                     .abortIf(() -> !running)
 
-                    .supply(() -> Items.DIAMOND_PICKAXE)
+                    .supply(Items.DIAMOND_PICKAXE)
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .then(finishTask)

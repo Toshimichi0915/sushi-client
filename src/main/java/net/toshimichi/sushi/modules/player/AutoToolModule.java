@@ -109,7 +109,7 @@ public class AutoToolModule extends BaseModule {
         }
         running = true;
         TaskExecutor.newTaskChain()
-                .supply(() -> itemSlot)
+                .supply(itemSlot)
                 .then(new ItemSlotSwitchTask())
                 .then(() -> running = false)
                 .execute();

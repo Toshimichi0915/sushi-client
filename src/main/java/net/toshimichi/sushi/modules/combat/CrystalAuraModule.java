@@ -385,7 +385,7 @@ public class CrystalAuraModule extends BaseModule {
         currentSlot = ItemSlot.current();
         if (crystalSlot == null || (currentSlot.equals(crystalSlot) && !silentSwitch.getValue())) {
             TaskExecutor.newTaskChain()
-                    .supply(() -> Items.END_CRYSTAL)
+                    .supply(Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, switchMode.getValue()))
                     .execute();
         }

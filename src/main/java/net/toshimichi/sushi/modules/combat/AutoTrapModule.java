@@ -71,12 +71,11 @@ public class AutoTrapModule extends BaseModule {
         }
         if (target == null) return;
         running = true;
-        List<BlockPlaceInfo> finalTarget = target;
         TaskExecutor.newTaskChain()
-                .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
+                .supply(Item.getItemFromBlock(Blocks.OBSIDIAN))
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
-                .supply(() -> finalTarget)
+                .supply(target)
                 .then(new BlockPlaceTask(true, true))
                 .last(() -> running = false)
                 .execute();

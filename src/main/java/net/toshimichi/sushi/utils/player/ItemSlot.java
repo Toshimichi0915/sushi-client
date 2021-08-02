@@ -61,12 +61,12 @@ public class ItemSlot implements Comparable<ItemSlot> {
 
     public static ItemSlot[] valueOf(InventoryType... types) {
         int size = 0;
-        for(InventoryType type : types) {
+        for (InventoryType type : types) {
             size += type.getSize();
         }
         ItemSlot[] result = new ItemSlot[size];
         size = 0;
-        for(InventoryType type : types) {
+        for (InventoryType type : types) {
             ItemSlot[] all = type.getAll();
             System.arraycopy(all, 0, result, size, all.length);
             size += all.length;

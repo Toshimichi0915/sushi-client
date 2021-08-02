@@ -15,9 +15,7 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.CPacketClickWindow;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class InventoryUtils {
@@ -59,7 +57,7 @@ public class InventoryUtils {
         for (InventoryType type : allowed) {
             for (int i = 0; i < type.getSize(); i++) {
                 int index = i + type.getIndex();
-                if(predicate.test(new ItemSlot(i + type.getIndex())))
+                if (predicate.test(new ItemSlot(i + type.getIndex())))
                     list.add(new ItemSlot(index, player));
             }
         }
@@ -68,7 +66,7 @@ public class InventoryUtils {
     }
 
     public static ItemSlot[] findItemSlots(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
-        return find(it->it.getItemStack().getItem() == searching, player, comparator, allowed);
+        return find(it -> it.getItemStack().getItem() == searching, player, comparator, allowed);
     }
 
     public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {

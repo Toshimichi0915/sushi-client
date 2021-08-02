@@ -55,7 +55,7 @@ public class HoleEspModule extends BaseModule {
         super(id, modules, categories, provider, factory);
         new ConfigInjector(provider).inject(this);
         for (int i = 0; i < partialHoles.length; i++) {
-            partialHoles[i] = Collections.synchronizedList(new ArrayList<>());
+            partialHoles[i] = new ArrayList<>();
         }
     }
 
@@ -91,7 +91,9 @@ public class HoleEspModule extends BaseModule {
         HoleUtils.findHoles(getWorld(), from, to, doubleHole, target::add);
 
         for (List<HoleInfo> hole : partialHoles) {
-            distinctHoles.addAll(hole);
+            synchronized (hole) {
+                distinctHoles.addAll(hole);
+            }
         }
         ArrayList<HoleInfo> holes = new ArrayList<>(distinctHoles);
         Collections.sort(holes);
@@ -103,6 +105,10 @@ public class HoleEspModule extends BaseModule {
         for (HoleInfo info : holes) {
             mode.render(getWorld(), info, obsidianColor, bedrockColor);
         }
+    }
+
+    public List<HoleInfo> getHoles() {
+        return new ArrayList<>(holes);
     }
 
     @Override

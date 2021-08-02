@@ -94,10 +94,10 @@ public class SurroundModule extends BaseModule {
         }
         running = true;
         TaskExecutor.newTaskChain()
-                .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
+                .supply(Item.getItemFromBlock(Blocks.OBSIDIAN))
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
-                .supply(() -> placeList)
+                .supply(placeList)
                 .then(new BlockPlaceTask(true, true, packetPlace.getValue()))
                 .last(() -> running = false)
                 .execute();

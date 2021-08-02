@@ -142,13 +142,13 @@ public class PistonAuraModule extends BaseModule {
         if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
                     .delay(delay1.getValue().getCurrent())
-                    .supply(() -> attack.getCrystalObsidian() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
+                    .supply(attack.getCrystalObsidian() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .supply(attack::getCrystalObsidian)
                     .then(new BlockPlaceTask(true, true))
                     .delay(() -> attack.getCrystalObsidian() == null ? 0 : delay5.getValue().getCurrent())
-                    .supply(() -> Items.END_CRYSTAL)
+                    .supply(Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                     .abortIfFalse()
                     .then(() -> {
@@ -187,13 +187,13 @@ public class PistonAuraModule extends BaseModule {
             IBlockState state = getWorld().getBlockState(pos);
             TaskExecutor.newTaskChain()
                     .delay(delay3.getValue().getCurrent())
-                    .supply(() -> attack.getPistonObsidian() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
+                    .supply(attack.getPistonObsidian() == null ? null : Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .supply(attack::getPistonObsidian)
                     .then(new BlockPlaceTask(false, false))
                     .delay(attack.getPistonObsidian() == null ? 0 : delay5.getValue().getCurrent())
-                    .supply(() -> Item.getItemFromBlock(Blocks.PISTON))
+                    .supply(Item.getItemFromBlock(Blocks.PISTON))
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                     .abortIfFalse()
                     .then(() -> {
@@ -218,7 +218,7 @@ public class PistonAuraModule extends BaseModule {
                 if (info == null) continue;
                 TaskExecutor.newTaskChain()
                         .delay(delay4.getValue().getCurrent())
-                        .supply(() -> Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
+                        .supply(Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
                         .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                         .abortIfFalse()
                         .then(() -> {

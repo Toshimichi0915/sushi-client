@@ -69,11 +69,11 @@ public class CivBreakModule extends BaseModule {
             BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getObsidianPos());
             if (info == null) return;
             TaskExecutor.newTaskChain()
-                    .supply(() -> Item.getItemFromBlock(Blocks.OBSIDIAN))
+                    .supply(Item.getItemFromBlock(Blocks.OBSIDIAN))
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .then(() -> BlockUtils.place(info, false))
-                    .supply(() -> Items.END_CRYSTAL)
+                    .supply(Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .then(() -> placeCrystal(attack))
@@ -81,7 +81,7 @@ public class CivBreakModule extends BaseModule {
             BlockUtils.place(info, false);
         } else if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
-                    .supply(() -> Items.END_CRYSTAL)
+                    .supply(Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .then(() -> placeCrystal(attack))
@@ -92,13 +92,13 @@ public class CivBreakModule extends BaseModule {
             }
             if (breakingBlock != BlockUtils.getBreakingBlockPos()) {
                 TaskExecutor.newTaskChain()
-                        .supply(() -> Items.DIAMOND_PICKAXE)
+                        .supply(Items.DIAMOND_PICKAXE)
                         .then(new ItemSwitchTask(null, true))
                         .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN)))
                         .execute();
             } else {
                 TaskExecutor.newTaskChain()
-                        .supply(() -> Items.DIAMOND_PICKAXE)
+                        .supply(Items.DIAMOND_PICKAXE)
                         .then(new ItemSwitchTask(null, true))
                         .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN)))
                         .execute();
