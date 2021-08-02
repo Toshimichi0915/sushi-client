@@ -118,8 +118,8 @@ public class SystemFont {
         return (this.fontHeight - paddingHeight - 8) / 2;
     }
 
-    public int getStringWidth(String text) {
-        int width = 0;
+    public double getStringWidth(String text) {
+        double width = 0;
         for (char c : text.toCharArray()) {
             if (c < this.charData.length) {
                 width += this.charData[c].width - paddingWidth + this.charOffset;

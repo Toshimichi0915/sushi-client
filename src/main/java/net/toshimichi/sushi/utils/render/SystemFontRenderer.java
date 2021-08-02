@@ -142,11 +142,11 @@ public class SystemFontRenderer extends SystemFont {
     }
 
     @Override
-    public int getStringWidth(String text) {
+    public double getStringWidth(String text) {
         if (text == null) {
             return 0;
         }
-        int width = 0;
+        double width = 0;
         CharData[] currentData = this.charData;
         boolean bold = false;
         boolean italic = false;
