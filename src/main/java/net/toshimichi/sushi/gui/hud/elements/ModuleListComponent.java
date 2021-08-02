@@ -7,6 +7,7 @@ import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.gui.hud.BaseHudElementComponent;
 import net.toshimichi.sushi.modules.Module;
+import net.toshimichi.sushi.modules.ModuleSuffix;
 import net.toshimichi.sushi.utils.render.GuiUtils;
 import net.toshimichi.sushi.utils.render.TextPreview;
 import net.toshimichi.sushi.utils.render.TextSettings;
@@ -41,7 +42,9 @@ public class ModuleListComponent extends BaseHudElementComponent {
         for (Module module : Sushi.getProfile().getModules().getAll()) {
             if (!module.isEnabled()) continue;
             if (!module.isVisible()) continue;
-            TextPreview preview = GuiUtils.prepareText(module.getName(), getTextSettings("text").getValue());
+            String text = module.getName();
+            if (module instanceof ModuleSuffix) text += " §7" + ((ModuleSuffix) module).getSuffix();
+            TextPreview preview = GuiUtils.prepareText(text, getTextSettings("text").getValue());
             list.add(new AbstractMap.SimpleEntry<>(module, preview));
             if (totalWidth < preview.getWidth()) totalWidth = preview.getWidth();
             totalHeight += preview.getHeight() + margin.getValue().getCurrent();

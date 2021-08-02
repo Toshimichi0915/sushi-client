@@ -11,7 +11,7 @@ import net.toshimichi.sushi.modules.*;
 
 import java.util.ArrayList;
 
-public class BlinkModule extends BaseModule implements ModuleSuffix {
+public class BlinkModule extends BaseModule {
 
     private final ArrayList<CPacketPlayer> packets = new ArrayList<>();
     private final Configuration<Boolean> all;
@@ -50,10 +50,5 @@ public class BlinkModule extends BaseModule implements ModuleSuffix {
     @Override
     public Category getDefaultCategory() {
         return Category.PLAYER;
-    }
-
-    @Override
-    public String getSuffix() {
-        return Integer.toString(packets.size());
     }
 }
