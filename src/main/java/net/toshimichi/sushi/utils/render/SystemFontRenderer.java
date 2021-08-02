@@ -1,15 +1,20 @@
 package net.toshimichi.sushi.utils.render;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class SystemFontRenderer extends SystemFont {
 
+    private final FontRenderer fontRenderer;
     protected final CharData[] boldChars = new CharData[256];
     protected final CharData[] italicChars = new CharData[256];
     protected final CharData[] boldItalicChars = new CharData[256];
@@ -21,6 +26,7 @@ public class SystemFontRenderer extends SystemFont {
 
     public SystemFontRenderer(Font font, boolean antiAlias, boolean fractionalMetrics) {
         super(font, antiAlias, fractionalMetrics);
+        fontRenderer = Minecraft.getMinecraft().fontRenderer;
         setUpColorCodes();
         setUpDecoratedChars();
     }
@@ -50,8 +56,9 @@ public class SystemFontRenderer extends SystemFont {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
         GlStateManager.enableTexture2D();
-        GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_NICEST);
+        GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_DONT_CARE);
         GlStateManager.bindTexture(tex.getGlTextureId());
+        ArrayList<VanillaChar> vanillaChars = new ArrayList<>();
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '\u00A7') {
@@ -72,7 +79,8 @@ public class SystemFontRenderer extends SystemFont {
                     if (colorIndex < 0) colorIndex = 15;
                     if (shadow) colorIndex += 16;
                     int colorCode = this.colorCodes[colorIndex];
-                    GlStateManager.color((colorCode >> 16 & 0xFF) / 255.0F, (colorCode >> 8 & 0xFF) / 255.0F, (colorCode & 0xFF) / 255.0F, color.getAlpha());
+                    color = new Color((colorCode >> 16 & 0xFF) / 255.0F, (colorCode >> 8 & 0xFF) / 255.0F, (colorCode & 0xFF) / 255.0F, color.getAlpha());
+                    GlStateManager.color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
                 } else if (colorIndex == 16) {
                     randomCase = true;
                     // not implemented
@@ -118,9 +126,19 @@ public class SystemFontRenderer extends SystemFont {
                 if (underline)
                     drawLine(x, y + currentData[c].height - 2.0D, x + currentData[c].width - paddingWidth, y + currentData[c].height - 2.0D, 1.0F);
                 x += currentData[c].width - paddingWidth + this.charOffset;
+            } else {
+                vanillaChars.add(new VanillaChar(x, y, c, color.getRGB()));
+                x += fontRenderer.getStringWidth(Character.toString(c)) * 2;
             }
         }
         GlStateManager.popMatrix();
+        for (VanillaChar vc : vanillaChars) {
+            glPushMatrix();
+            glTranslated(vc.x / 2, vc.y / 2, 0);
+            glScaled(font.getSize() / 18D, font.getSize() / 18D, 0);
+            fontRenderer.drawString(Character.toString(vc.c), 1, 1, vc.color, shadow);
+            glPopMatrix();
+        }
     }
 
     @Override
@@ -168,6 +186,8 @@ public class SystemFontRenderer extends SystemFont {
                 i++;
             } else if (character < currentData.length) {
                 width += currentData[character].width - paddingWidth + this.charOffset;
+            } else {
+                width += fontRenderer.getStringWidth(Character.toString(character)) * 2;
             }
         }
         return width / 2;
@@ -206,6 +226,20 @@ public class SystemFontRenderer extends SystemFont {
                 blue /= 4;
             }
             this.colorCodes[index] = ((red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF);
+        }
+    }
+
+    private static class VanillaChar {
+        double x;
+        double y;
+        char c;
+        int color;
+
+        public VanillaChar(double x, double y, char c, int color) {
+            this.x = x;
+            this.y = y;
+            this.c = c;
+            this.color = color;
         }
     }
 }
