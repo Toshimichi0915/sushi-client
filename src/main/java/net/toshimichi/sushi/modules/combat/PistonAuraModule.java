@@ -152,7 +152,7 @@ public class PistonAuraModule extends BaseModule {
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                     .abortIfFalse()
                     .then(() -> {
-                        if (antiGhostBlock.getValue()) {
+                        if (!packetPlace.getValue() && antiGhostBlock.getValue()) {
                             ghostBlocks.add(attack.getPistonPos());
                             for (EnumFacing facing : EnumFacing.values()) {
                                 BlockPos redstone = attack.getPistonPos().offset(facing);
