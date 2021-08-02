@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.config.data;
 
 import com.google.gson.annotations.SerializedName;
+import net.toshimichi.sushi.utils.render.GuiUtils;
 
 import java.awt.Color;
 
@@ -20,6 +21,16 @@ public class EspColor {
 
     public Color getColor() {
         return color;
+    }
+
+    public Color getColor(double y) {
+        Color result = getCurrentColor();
+        if (isRainbow()) {
+            double h = System.currentTimeMillis() / 10000D - System.currentTimeMillis() / 10000;
+            result = Color.getHSBColor((float) (y / GuiUtils.getWindowHeight() + h), 1, 1);
+            result = new Color(result.getRGB() | (getCurrentColor().getAlpha() & 0xFF), true);
+        }
+        return result;
     }
 
     public boolean isRainbow() {

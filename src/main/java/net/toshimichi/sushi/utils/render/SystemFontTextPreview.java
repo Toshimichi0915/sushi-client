@@ -2,7 +2,6 @@ package net.toshimichi.sushi.utils.render;
 
 import net.toshimichi.sushi.config.data.EspColor;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -38,14 +37,10 @@ public class SystemFontTextPreview implements TextPreview {
 
     @Override
     public void draw(double x, double y) {
-        if (color.isRainbow()) {
-            double h = System.currentTimeMillis() / 10000D - System.currentTimeMillis() / 10000;
-            color = color.setColor(Color.getHSBColor((float) (y / GuiUtils.getWindowHeight() + h), 1, 1));
-        }
         if (shadow) {
-            renderer.drawString(text, x + 0.5F, y + 2.5F, color.getCurrentColor(), true);
+            renderer.drawString(text, x + 0.5F, y + 2.5F, color.getColor(y), true);
         }
-        renderer.drawString(text, x, y + 2, color.getCurrentColor(), false);
+        renderer.drawString(text, x, y + 2, color.getColor(y), false);
     }
 
     public static SystemFontTextPreview newTextPreview(String text, String fontName, EspColor color, int pts, boolean shadow) {
