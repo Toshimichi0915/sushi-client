@@ -1,6 +1,7 @@
 package net.toshimichi.sushi.modules.player;
 
 import net.minecraft.network.play.client.CPacketPlayer;
+import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
@@ -13,9 +14,11 @@ import java.util.ArrayList;
 public class BlinkModule extends BaseModule implements ModuleSuffix {
 
     private final ArrayList<CPacketPlayer> packets = new ArrayList<>();
+    private final Configuration<Boolean> all;
 
     public BlinkModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        all = provider.get("all", "All Packets", null, Boolean.class, true);
     }
 
     @Override
@@ -34,7 +37,7 @@ public class BlinkModule extends BaseModule implements ModuleSuffix {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onPacketSend(PacketSendEvent e) {
-        if (!(e.getPacket() instanceof CPacketPlayer)) return;
+        if (!all.getValue() && !(e.getPacket() instanceof CPacketPlayer)) return;
         packets.add((CPacketPlayer) e.getPacket());
         e.setCancelled(true);
     }
