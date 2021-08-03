@@ -113,6 +113,12 @@ public class StepModule extends BaseModule {
                 if (getWorld().collidesWithAnyBlock(box2)) continue;
                 Vec3d resultPos = getPlayer().getPositionVector().add(scaled).add(pos);
                 double height = getMaxHeight(box);
+                for (int i = 1; i < height - getPlayer().posY; i++) {
+                    if (!getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, i, 0))) {
+                        PositionUtils.move(getPlayer().posX, getPlayer().posY + i, getPlayer().posZ,
+                                0, 0, true, false, DesyncMode.NONE);
+                    }
+                }
                 PositionUtils.move(resultPos.x, height, resultPos.z, 0, 0, true, false, DesyncMode.NONE);
                 getPlayer().motionX = motionX;
                 getPlayer().motionY = 0;
