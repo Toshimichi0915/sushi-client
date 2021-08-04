@@ -160,6 +160,7 @@ public class InventoryUtils {
             }
         }
         if (Double.compare(fastest, 1) == 0) {
+            if (!(ItemSlot.current().getItemStack().getItem() instanceof ItemTool)) return ItemSlot.current();
             for (int i = 0; i < 9; i++) {
                 ItemSlot hotbarItemSlot = new ItemSlot(i);
                 Item hotbarItem = hotbarItemSlot.getItemStack().getItem();
