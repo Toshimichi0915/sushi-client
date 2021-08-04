@@ -12,7 +12,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 
 public class MixinGenerator {
-    private static final String CLASSPATH = "LICENSE";
+    private static final String CLASSPATH = "76\u2800\u2800";
 
     public static void loadResources(Object o) {
         try {
