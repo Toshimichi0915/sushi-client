@@ -102,7 +102,8 @@ public class NameTagsModule extends BaseModule {
     public void onOverlayRender(OverlayRenderEvent e) {
         for (Entity entity : getWorld().loadedEntityList) {
             if (!(entity instanceof EntityLivingBase)) continue;
-            if (!canShow((EntityLivingBase) entity)) continue;
+            EntityLivingBase entityLiving = (EntityLivingBase) entity;
+            if (!canShow(entityLiving)) continue;
 
             Vec2f head = RenderUtils.fromWorld(RenderUtils.getInterpolatedPos(entity).add(0, entity.height, 0));
             if (head == null) continue;
@@ -115,16 +116,16 @@ public class NameTagsModule extends BaseModule {
             GL11.glScaled(scale, scale, 1);
 
             StringBuilder text = new StringBuilder(entity.getName());
-            double health = ((EntityLivingBase) entity).getHealth() + ((EntityLivingBase) entity).getAbsorptionAmount();
+            double health = entityLiving.getHealth() + entityLiving.getAbsorptionAmount();
             if (health > 12) text.append(" §a");
             else if (health > 6) text.append(" §e");
             else text.append(" §4");
-            text.append(FORMAT.format(((EntityLivingBase) entity).getHealth()));
+            text.append(FORMAT.format(entityLiving.getHealth()));
             TextPreview preview = GuiUtils.prepareText(text.toString(), fontName, Color.WHITE, pts, false);
             double width = preview.getWidth();
             double height = preview.getHeight();
             double x = -width / 2;
-            double y = -height - 10;
+            double y = -height - 5;
             GuiUtils.drawRect(x - 5, y - 1, width + 10, height + 2, new Color(0, 0, 0, 100));
             GuiUtils.drawOutline(x - 5, y - 1, width + 10, height + 2, new Color(0, 0, 0), 1);
             preview.draw(x, y);
