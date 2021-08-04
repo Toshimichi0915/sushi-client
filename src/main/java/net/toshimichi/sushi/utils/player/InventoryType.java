@@ -1,5 +1,7 @@
 package net.toshimichi.sushi.utils.player;
 
+import net.minecraft.item.ItemStack;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -52,6 +54,17 @@ public enum InventoryType implements Iterable<ItemSlot> {
             result.add(new ItemSlot(i + min));
         }
         return result;
+    }
+
+    public ItemSlot findStackable(ItemStack itemStack) {
+        itemStack = itemStack.copy();
+        itemStack.setCount(1);
+        for (ItemSlot candidate : this) {
+            ItemStack stack = candidate.getItemStack().copy();
+            stack.setCount(1);
+            if (ItemStack.areItemStacksEqual(itemStack, stack)) return candidate;
+        }
+        return null;
     }
 
     @Override

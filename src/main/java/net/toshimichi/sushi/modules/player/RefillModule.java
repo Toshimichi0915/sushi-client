@@ -4,7 +4,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.toshimichi.sushi.config.Config;
 import net.toshimichi.sushi.config.ConfigInjector;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -64,18 +63,8 @@ public class RefillModule extends BaseModule {
         for (ItemSlot hotbar : InventoryType.HOTBAR) {
             Item item = hotbar.getItemStack().getItem();
             if (hotbar.getItemStack().getCount() > threshold.getCurrent()) continue;
-            ItemStack item1 = hotbar.getItemStack().copy();
-            item1.setCount(1);
 
-            ItemSlot from = null;
-            for (ItemSlot candidate : InventoryType.MAIN) {
-                ItemStack item2 = candidate.getItemStack().copy();
-                item2.setCount(1);
-                if (ItemStack.areItemStacksEqual(item1, item2)) {
-                    from = candidate;
-                    break;
-                }
-            }
+            ItemSlot from = InventoryType.MAIN.findStackable(hotbar.getItemStack());
 
             if (from == null) continue;
             if (item == Items.EXPERIENCE_BOTTLE && expBottle ||
