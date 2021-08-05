@@ -28,6 +28,9 @@ public class AntiGhostBlockModule extends BaseModule {
     @Config(id = "crystal_detection", name = "Crystal Detection")
     public Boolean crystalDetection = true;
 
+    @Config(id = "assume_error", name = "Assume Error", when = "crystal_detection")
+    public Boolean assumeError = false;
+
     @Config(id = "place", name = "Place")
     public Boolean placeCheck = true;
 
@@ -68,7 +71,7 @@ public class AntiGhostBlockModule extends BaseModule {
                 if (BlockUtils.isAir(getWorld(), pos)) continue;
                 if (!EntityUtils.canInteract(crystal.getEntity(), 6, 3))
                     return;
-                getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
+                if (assumeError) getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
                 BlockUtils.checkGhostBlock(pos);
             }
         }
