@@ -28,10 +28,12 @@ import java.util.List;
 
 public class AutoMendModule extends BaseModule {
 
+    private final Configuration<IntRange> delay;
     private final Configuration<Boolean> repairAll;
     private final Configuration<Boolean> autoDisable;
     private final Configuration<Boolean> crystalCheck;
     private final Configuration<IntRange> selfHp;
+    private int lastDelayTicks;
 
     private static final EntityEquipmentSlot[] SLOTS = {
             EntityEquipmentSlot.FEET,
@@ -42,6 +44,7 @@ public class AutoMendModule extends BaseModule {
 
     public AutoMendModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(0, 10, 1, 1));
         repairAll = provider.get("repair_all", "Repair All", null, Boolean.class, true);
         autoDisable = provider.get("auto_disable", "Auto Disable", null, Boolean.class, true);
         crystalCheck = provider.get("crystal_check", "Crystal Check", null, Boolean.class, true);
@@ -69,6 +72,7 @@ public class AutoMendModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
+        if (lastDelayTicks-- > 0) return;
         ItemSlot expBottle = InventoryUtils.findItemSlot(Items.EXPERIENCE_BOTTLE, getPlayer(), InventoryType.values());
         List<EntityInfo<EntityEnderCrystal>> crystals = EntityUtils.getNearbyEntities(getPlayer().getPositionVector(), EntityEnderCrystal.class);
         double crystalDamage;
@@ -127,8 +131,8 @@ public class AutoMendModule extends BaseModule {
             return;
         }
 
+        lastDelayTicks = delay.getValue().getCurrent();
         InventoryUtils.moveToHotbar(expBottle);
-
         try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
             PositionUtils.move(Vec3d.ZERO, getPlayer().rotationYaw, -90, false, true, DesyncMode.LOOK);
             InventoryUtils.moveHotbar(expBottle.getIndex());
