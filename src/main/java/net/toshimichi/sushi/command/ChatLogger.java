@@ -7,7 +7,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import static net.minecraft.util.text.TextFormatting.*;
 
-public class ChatMessageHandler implements MessageHandler {
+public class ChatLogger implements Logger {
     @Override
     public void send(LogLevel level, String message) {
         TextFormatting color;

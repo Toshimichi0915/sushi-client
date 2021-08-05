@@ -1,6 +1,6 @@
 package net.toshimichi.sushi;
 
-import net.toshimichi.sushi.command.MessageHandler;
+import net.toshimichi.sushi.command.Logger;
 import net.toshimichi.sushi.modules.Categories;
 import net.toshimichi.sushi.modules.Modules;
 
@@ -16,7 +16,7 @@ public interface Profile {
 
     void setPrefix(char prefix);
 
-    MessageHandler getMessageHandler();
+    Logger getLogger();
 
     void load();
 

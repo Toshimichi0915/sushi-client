@@ -1,8 +1,8 @@
 package net.toshimichi.sushi;
 
 import com.google.gson.Gson;
-import net.toshimichi.sushi.command.ChatMessageHandler;
-import net.toshimichi.sushi.command.MessageHandler;
+import net.toshimichi.sushi.command.ChatLogger;
+import net.toshimichi.sushi.command.Logger;
 import net.toshimichi.sushi.hwid.annotations.Protect;
 import net.toshimichi.sushi.modules.Categories;
 import net.toshimichi.sushi.modules.GsonCategories;
@@ -90,8 +90,8 @@ public class GsonProfiles implements Profiles {
         }
 
         @Override
-        public MessageHandler getMessageHandler() {
-            return new ChatMessageHandler();
+        public Logger getLogger() {
+            return new ChatLogger();
         }
 
         @Protect

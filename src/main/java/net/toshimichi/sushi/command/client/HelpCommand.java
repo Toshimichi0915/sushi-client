@@ -3,7 +3,7 @@ package net.toshimichi.sushi.command.client;
 import net.toshimichi.sushi.command.Command;
 import net.toshimichi.sushi.command.Commands;
 import net.toshimichi.sushi.command.LogLevel;
-import net.toshimichi.sushi.command.MessageHandler;
+import net.toshimichi.sushi.command.Logger;
 import net.toshimichi.sushi.command.annotation.CommandAlias;
 import net.toshimichi.sushi.command.annotation.Default;
 
@@ -11,7 +11,7 @@ import net.toshimichi.sushi.command.annotation.Default;
 public class HelpCommand {
 
     @Default
-    public void onDefault(MessageHandler out) {
+    public void onDefault(Logger out) {
         out.send(LogLevel.INFO, "Commands: ");
         for (Command command : Commands.getCommands()) {
             if (command.getDescription() == null)

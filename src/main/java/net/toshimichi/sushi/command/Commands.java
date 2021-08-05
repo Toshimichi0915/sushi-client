@@ -21,7 +21,7 @@ public class Commands {
         addTypeParser(new CharParser());
         addTypeParser(new StringParser());
         addTypeParser(new BooleanParser());
-        addTypeParser(new MessageHandlerParser());
+        addTypeParser(new LoggerParser());
         addTypeParser(new ModuleParser());
         addTypeParser(new BlockArrayParser());
         addTypeParser(new StringArrayParser());
@@ -119,7 +119,7 @@ public class Commands {
     }
 
     @Protect
-    public static boolean execute(MessageHandler out, String name, List<String> args) {
+    public static boolean execute(Logger out, String name, List<String> args) {
         CommandMap map = getCommandMap(name);
         if (map != null) {
             map.command.execute(out, new ArrayList<>(args));

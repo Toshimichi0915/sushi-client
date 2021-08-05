@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.command.client;
 
 import net.toshimichi.sushi.command.LogLevel;
-import net.toshimichi.sushi.command.MessageHandler;
+import net.toshimichi.sushi.command.Logger;
 import net.toshimichi.sushi.command.annotation.CommandAlias;
 import net.toshimichi.sushi.command.annotation.Default;
 import net.toshimichi.sushi.modules.ActivationType;
@@ -13,7 +13,7 @@ import org.lwjgl.input.Keyboard;
 public class BindCommand {
 
     @Default
-    public void onDefault(MessageHandler out, Module module, String... keys) {
+    public void onDefault(Logger out, Module module, String... keys) {
         int[] keyCode = new int[keys.length];
         for (int i = 0; i < keys.length; i++) {
             keyCode[i] = Keyboard.getKeyIndex(keys[i].toUpperCase());

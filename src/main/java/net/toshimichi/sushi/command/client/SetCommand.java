@@ -29,7 +29,7 @@ public class SetCommand extends BaseCommand {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void executeDefault(MessageHandler out, List<String> args, List<String> original) {
+    protected void executeDefault(Logger out, List<String> args, List<String> original) {
         try {
             Stack<String> stack = new Stack<>();
             ArrayList<String> reverse = new ArrayList<>(args);

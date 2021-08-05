@@ -1,7 +1,7 @@
 package net.toshimichi.sushi.command.client;
 
 import net.toshimichi.sushi.command.LogLevel;
-import net.toshimichi.sushi.command.MessageHandler;
+import net.toshimichi.sushi.command.Logger;
 import net.toshimichi.sushi.command.annotation.CommandAlias;
 import net.toshimichi.sushi.command.annotation.Default;
 import net.toshimichi.sushi.modules.Module;
@@ -10,7 +10,7 @@ import net.toshimichi.sushi.modules.Module;
 public class ToggleCommand {
 
     @Default
-    public void onDefault(MessageHandler out, Module module) {
+    public void onDefault(Logger out, Module module) {
         module.setEnabled(!module.isEnabled());
         out.send(LogLevel.INFO, module.getName() + " has been " + (module.isEnabled() ? "enabled" : "disabled"));
     }

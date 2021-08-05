@@ -41,7 +41,7 @@ abstract public class BaseCommand implements Command {
     }
 
     @Override
-    public void execute(MessageHandler out, List<String> args, List<String> original) {
+    public void execute(Logger out, List<String> args, List<String> original) {
         if (args.isEmpty()) {
             executeDefault(out, args, original);
             return;
@@ -56,7 +56,7 @@ abstract public class BaseCommand implements Command {
 
     abstract protected String getSyntax();
 
-    protected void executeDefault(MessageHandler out, List<String> args, List<String> original) {
+    protected void executeDefault(Logger out, List<String> args, List<String> original) {
         out.send(LogLevel.INFO, "Sub commands:");
         for (SubCommand subCommand : getSubCommands()) {
             String description = subCommand.getDescription();

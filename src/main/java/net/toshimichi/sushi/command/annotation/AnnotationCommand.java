@@ -57,7 +57,7 @@ public class AnnotationCommand extends BaseCommand {
     }
 
     @Override
-    protected void executeDefault(MessageHandler out, List<String> args, List<String> original) {
+    protected void executeDefault(Logger out, List<String> args, List<String> original) {
         if (method == null || parsers == null) {
             super.executeDefault(out, args, original);
             return;

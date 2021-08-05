@@ -2,7 +2,7 @@ package net.toshimichi.sushi.modules.client;
 
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.command.LogLevel;
-import net.toshimichi.sushi.command.MessageHandler;
+import net.toshimichi.sushi.command.Logger;
 import net.toshimichi.sushi.config.RootConfigurations;
 import net.toshimichi.sushi.hwid.annotations.Value;
 import net.toshimichi.sushi.hwid.gen.EncryptUtils;
@@ -43,7 +43,7 @@ public class AutoVoteModule extends BaseModule {
     }
 
     private void tryVote() {
-        MessageHandler messageHandler = Sushi.getProfile().getMessageHandler();
+        Logger logger = Sushi.getProfile().getLogger();
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             running = true;
             String getRes;
@@ -54,12 +54,12 @@ public class AutoVoteModule extends BaseModule {
             String csrf = document.select("input[name=csrf]").val();
             String dataSiteKey = document.select(".h-captcha").attr("data-sitekey");
             if (csrf.isEmpty() || dataSiteKey.isEmpty()) {
-                messageHandler.send(LogLevel.INFO, ALREADY_VOTED);
+                logger.send(LogLevel.INFO, ALREADY_VOTED);
                 return;
             }
             byte[] apiKeyBytes = EncryptUtils.decrypt(EncryptUtils.getHWID(), Base64.getDecoder().decode(encryptedApiKey));
             if (apiKeyBytes == null) {
-                messageHandler.send(LogLevel.ERROR, BROKEN_API_KEY);
+                logger.send(LogLevel.ERROR, BROKEN_API_KEY);
                 return;
             }
             HttpPost post = new HttpPost(targetUrl + "/solve-captcha");
@@ -82,7 +82,7 @@ public class AutoVoteModule extends BaseModule {
                 }
             }
             if (answer == null) {
-                messageHandler.send(LogLevel.ERROR, BROKEN_API_KEY);
+                logger.send(LogLevel.ERROR, BROKEN_API_KEY);
                 return;
             }
 
@@ -97,9 +97,9 @@ public class AutoVoteModule extends BaseModule {
             try (CloseableHttpResponse res = httpClient.execute(post3)) {
                 System.out.println(IOUtils.toString(res.getEntity().getContent(), UTF_8));
             }
-            messageHandler.send(LogLevel.INFO, SUCCESS);
+            logger.send(LogLevel.INFO, SUCCESS);
         } catch (Exception e) {
-            messageHandler.send(LogLevel.ERROR, ERROR);
+            logger.send(LogLevel.ERROR, ERROR);
             e.printStackTrace();
         } finally {
             running = false;

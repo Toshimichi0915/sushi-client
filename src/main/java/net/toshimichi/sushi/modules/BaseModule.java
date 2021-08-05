@@ -7,7 +7,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.toshimichi.sushi.Sushi;
 import net.toshimichi.sushi.command.LogLevel;
-import net.toshimichi.sushi.command.MessageHandler;
+import net.toshimichi.sushi.command.Logger;
 import net.toshimichi.sushi.config.Configuration;
 import net.toshimichi.sushi.config.ConfigurationCategory;
 import net.toshimichi.sushi.config.RootConfigurations;
@@ -85,7 +85,7 @@ abstract public class BaseModule implements Module {
     @Override
     public void setEnabled(boolean enabled) {
         if (!paused) {
-            MessageHandler handler = Sushi.getProfile().getMessageHandler();
+            Logger handler = Sushi.getProfile().getLogger();
             if (!this.enabled && enabled) {
                 onEnable();
                 if (toggleNotification.getValue()) {

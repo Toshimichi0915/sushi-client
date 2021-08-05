@@ -13,7 +13,7 @@ public interface Command extends SubCommand {
      * @param out  the handler messages are output to
      * @param args command arguments
      */
-    default void execute(MessageHandler out, List<String> args) {
+    default void execute(Logger out, List<String> args) {
         execute(out, args, args);
     }
 

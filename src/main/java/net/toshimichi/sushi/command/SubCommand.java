@@ -39,5 +39,5 @@ public interface SubCommand {
      */
     List<String> complete(List<String> args);
 
-    void execute(MessageHandler out, List<String> args, List<String> original);
+    void execute(Logger out, List<String> args, List<String> original);
 }
