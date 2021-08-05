@@ -34,6 +34,6 @@ public interface Configuration<T> {
     void removeHandler(Consumer<T> handler);
 
     default void reset() {
-        setValue(getDefaultValue());
+        if (!isTemporary()) setValue(getDefaultValue());
     }
 }
