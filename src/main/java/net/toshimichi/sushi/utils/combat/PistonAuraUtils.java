@@ -30,6 +30,15 @@ public class PistonAuraUtils {
         else return PlaceState.BLOCKED;
     }
 
+    private static boolean checkPistonFacing(EntityPlayer player, BlockPos pos) {
+        if (Math.abs(player.posX - pos.getX() - 0.5) >= 2) return true;
+        if (Math.abs(player.posZ - pos.getZ() - 0.5) >= 2) return true;
+        double eyeHeight = player.posY + player.getEyeHeight();
+        if (eyeHeight - pos.getY() >= 2) return false;
+        if (eyeHeight - pos.getY() <= 0) return false;
+        return true;
+    }
+
     private static List<PistonAuraAttack> find(EntityPlayer player, EntityPlayer target, BlockPos obsidianPos, int distance) {
 
         Block block = player.world.getBlockState(obsidianPos).getBlock();
@@ -74,9 +83,7 @@ public class PistonAuraUtils {
 
                 BlockPos airPos = pos2.offset(opposite);
                 BlockPos pistonPos = airPos.offset(opposite);
-                double sin = (pistonPos.getY() - player.posY) /
-                        player.getPositionVector().distanceTo(BlockUtils.toVec3d(pistonPos).add(0.5, 0.5, 0.5));
-                if (Math.abs(sin) > 0.5D) continue;
+                if (!checkPistonFacing(player, pistonPos)) continue;
                 PlaceState state1 = getPlaceState(player, airPos, Blocks.PISTON_HEAD, Blocks.PISTON_EXTENSION);
                 PlaceState state2 = getPlaceState(player, pistonPos, Blocks.PISTON, Blocks.STICKY_PISTON);
                 PlaceState state3 = PlaceState.UNREACHABLE;
@@ -87,9 +94,11 @@ public class PistonAuraUtils {
                     if (state3 == PlaceState.UNREACHABLE) {
                         if (placeState != PlaceState.UNREACHABLE) state3 = placeState;
                     } else if (state3 == PlaceState.BLOCKED) {
-                        if (placeState != PlaceState.BLOCKED) state3 = placeState;
+                        if (placeState != PlaceState.UNREACHABLE && placeState != PlaceState.BLOCKED)
+                            state3 = placeState;
                     } else if (state3 == PlaceState.AIR) {
-                        if (placeState != PlaceState.AIR) state3 = placeState;
+                        if (placeState != PlaceState.UNREACHABLE && placeState != PlaceState.BLOCKED && placeState != PlaceState.AIR)
+                            state3 = placeState;
                     }
                 }
 

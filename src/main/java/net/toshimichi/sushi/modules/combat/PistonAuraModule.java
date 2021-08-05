@@ -63,6 +63,7 @@ public class PistonAuraModule extends BaseModule {
     private int lastRecalculationTick;
     private int lastObsidianTick;
     private int lastGhostBlockCheckTick;
+    private int lastExplosionTick;
 
     public PistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -94,13 +95,18 @@ public class PistonAuraModule extends BaseModule {
     public void onDisable() {
         EventHandlers.unregister(this);
         exploded = null;
+        attack = null;
+        lastRecalculationTick = 0;
+        lastObsidianTick = 0;
+        lastGhostBlockCheckTick = 0;
+        lastExplosionTick = 0;
         stop();
     }
 
     private void update(Configuration<IntRange> conf) {
-        running = false;
         if (conf.getValue().getCurrent() == 0) {
             repeatCounter++;
+            running = false;
             update();
         } else {
             repeatCounter = 0;
@@ -131,7 +137,7 @@ public class PistonAuraModule extends BaseModule {
             lastRecalculationTick = recalculationDelay.getValue().getCurrent();
         }
         if (attack == null) return;
-        if (exploded != null && exploded.isAddedToWorld()) return;
+        if (exploded != null && !exploded.isDead && lastExplosionTick-- > 0) return;
         running = true;
         if (closeable == null) {
             closeable = PositionUtils.desync(DesyncMode.LOOK);
@@ -176,6 +182,7 @@ public class PistonAuraModule extends BaseModule {
                         InventoryUtils.antiWeakness(antiWeakness.getValue(), () ->
                                 getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal())));
                         exploded = attack.getCrystal();
+                        lastExplosionTick = 10;
                         this.attack = null;
                         update(delay2);
                     })
