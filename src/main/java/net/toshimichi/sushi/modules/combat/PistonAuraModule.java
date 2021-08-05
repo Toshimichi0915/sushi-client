@@ -217,7 +217,7 @@ public class PistonAuraModule extends BaseModule {
             return;
         } else if (!attack.isRedstonePlaced()) {
             boolean found = false;
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : new EnumFacing[]{EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.WEST, EnumFacing.UP}) {
                 if (facing == attack.getFacing()) continue;
                 BlockPos pos = attack.getPistonPos().offset(facing);
                 IBlockState state = getWorld().getBlockState(pos);
