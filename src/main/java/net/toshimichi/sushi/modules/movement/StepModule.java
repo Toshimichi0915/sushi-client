@@ -17,10 +17,12 @@ import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.render.hole.HoleUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StepModule extends BaseModule {
 
+    private final Configuration<Boolean> phase;
     private final Configuration<Boolean> normal;
     private final Configuration<IntRange> height;
     private final Configuration<DoubleRange> delta;
@@ -36,6 +38,7 @@ public class StepModule extends BaseModule {
 
     public StepModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        phase = provider.get("phase", "Phase", null, Boolean.class, true);
         normal = provider.get("normal", "Normal", null, Boolean.class, true);
         height = provider.get("height", "Height", null, IntRange.class, new IntRange(2, 8, 1, 1), normal::getValue, false, 0);
         delta = provider.get("delta", "Delta", null, DoubleRange.class, new DoubleRange(0.1, 1, 0, 0.1, 1), normal::getValue, false, 0);
@@ -72,6 +75,12 @@ public class StepModule extends BaseModule {
         return updated ? maxY : Double.NaN;
     }
 
+    private void sendAll(List<Vec3d> packets) {
+        for (Vec3d vec : packets) {
+            PositionUtils.move(vec.x, vec.y, vec.z, 0, 0, true, false, DesyncMode.NONE);
+        }
+    }
+
     @EventHandler(timing = EventTiming.PRE)
     public void onPrePlayerMove(PlayerMoveEvent e) {
         motionX = getPlayer().motionX;
@@ -97,12 +106,17 @@ public class StepModule extends BaseModule {
                 if (getPlayer().posY - height < reverseMinHeight.getValue().getCurrent()) continue;
                 if (Double.isNaN(height)) continue;
                 if (getPlayer().movementInput.jump) continue;
+                ArrayList<Vec3d> packets = new ArrayList<>();
                 for (int i = 1; i < getPlayer().posY - height; i++) {
-                    if (!getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, -i, 0))) {
-                        PositionUtils.move(getPlayer().posX, getPlayer().posY - i, getPlayer().posZ,
-                                0, 0, true, false, DesyncMode.NONE);
+                    if (getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, -i, 0))) {
+                        if (!phase.getValue()) {
+                            return;
+                        }
+                    } else {
+                        packets.add(new Vec3d(getPlayer().posX, getPlayer().posY - i, getPlayer().posZ));
                     }
                 }
+                sendAll(packets);
                 PositionUtils.move(resultPos.x, height, resultPos.z, 0, 0, true, false, DesyncMode.NONE);
                 getPlayer().motionX = motionX;
                 getPlayer().motionY = 0;
@@ -119,12 +133,17 @@ public class StepModule extends BaseModule {
                 if (getWorld().collidesWithAnyBlock(box2)) continue;
                 Vec3d resultPos = getPlayer().getPositionVector().add(scaled).add(pos);
                 double height = getMaxHeight(box);
+                ArrayList<Vec3d> packets = new ArrayList<>();
                 for (int i = 1; i < height - getPlayer().posY; i++) {
-                    if (!getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, i, 0))) {
-                        PositionUtils.move(getPlayer().posX, getPlayer().posY + i, getPlayer().posZ,
-                                0, 0, true, false, DesyncMode.NONE);
+                    if (getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, -i, 0))) {
+                        if (!phase.getValue()) {
+                            return;
+                        }
+                    } else {
+                        packets.add(new Vec3d(getPlayer().posX, getPlayer().posY + i, getPlayer().posZ));
                     }
                 }
+                sendAll(packets);
                 PositionUtils.move(resultPos.x, height, resultPos.z, 0, 0, true, false, DesyncMode.NONE);
                 getPlayer().motionX = motionX;
                 getPlayer().motionY = 0;
