@@ -44,7 +44,7 @@ public class AutoMendModule extends BaseModule {
 
     public AutoMendModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(0, 10, 1, 1));
+        delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(0, 10, 0, 1));
         repairAll = provider.get("repair_all", "Repair All", null, Boolean.class, true);
         autoDisable = provider.get("auto_disable", "Auto Disable", null, Boolean.class, true);
         crystalCheck = provider.get("crystal_check", "Crystal Check", null, Boolean.class, true);

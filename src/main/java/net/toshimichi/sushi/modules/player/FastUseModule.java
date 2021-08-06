@@ -22,7 +22,7 @@ import net.toshimichi.sushi.utils.player.ItemSlot;
 public class FastUseModule extends BaseModule {
 
     @Config(id = "delay", name = "Delay")
-    public IntRange delay = new IntRange(0, 10, 1, 1);
+    public IntRange delay = new IntRange(0, 10, 0, 1);
 
     @Config(id = "blocks", name = "Blocks")
     public Boolean blocks = true;
