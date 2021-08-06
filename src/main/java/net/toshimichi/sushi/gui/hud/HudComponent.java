@@ -27,6 +27,7 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
         addElement(OverworldComponent::new, "overworld", "Overworld");
         addElement(NetherComponent::new, "nether", "Nether");
         addElement(FpsComponent::new, "fps", "FPS");
+        addElement(ArmorComponent::new, "armor", "Armor");
     }
 
     private void addVirtual(VirtualHudElementComponent component) {
