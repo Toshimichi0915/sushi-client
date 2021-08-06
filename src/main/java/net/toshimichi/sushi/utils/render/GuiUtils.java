@@ -127,7 +127,7 @@ public class GuiUtils {
 
     public static void prepareFont(String font, int pts) {
         // 100 mega bytes
-        if (Runtime.getRuntime().freeMemory() < 10E8) return;
+        if (Runtime.getRuntime().freeMemory() < 100_000_000) return;
         prepareText("", font, Color.BLACK, pts, false);
     }
 
