@@ -62,7 +62,7 @@ public class NameTagsModule extends BaseModule {
     @Config(id = "hostile", name = "Show Hostile Mobs", when = "mob")
     public Boolean hostile = false;
 
-    @Config(id = "scale_multiplier", name = "Scale Multiplier")
+    @Config(id = "scale_multiplier", name = "Scale")
     public DoubleRange scaleMultiplier = new DoubleRange(3, 10, 1, 0.1, 1);
 
     @Config(id = "min_scale", name = "Min Scale")
