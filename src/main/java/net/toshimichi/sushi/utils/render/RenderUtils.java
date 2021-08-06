@@ -57,11 +57,11 @@ public class RenderUtils {
     public static double getScale(Vec3d pos) {
         Minecraft client = Minecraft.getMinecraft();
         double rad = Math.toRadians(((AccessorEntityRenderer) client.entityRenderer).invokeGetFOVModifier(client.getRenderPartialTicks(), true));
-        return 1 / (rad * MathHelper.sqrt(pos.subtract(getCameraPos()).squareDistanceTo(Vec3d.ZERO)));
+        return 1 / (rad * MathHelper.sqrt(pos.subtract(getViewerPos()).squareDistanceTo(Vec3d.ZERO)));
     }
 
     public static Vec2f fromWorld(Vec3d pos) {
-        Vector4f vec = toVec4f(pos.subtract(getInterpolatedPos()));
+        Vector4f vec = toVec4f(pos.subtract(getViewerPos()));
         mulMVP(vec);
         if (vec.w < 0) return null; // invisible area
         vec.x *= 1 / vec.w;
