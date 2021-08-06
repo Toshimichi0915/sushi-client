@@ -89,6 +89,7 @@ public class Commands {
         if (command.isEmpty()) return "";
         boolean lastEmpty = command.charAt(command.length() - 1) == ' ';
         List<String> args = Arrays.asList(command.split("\\s+"));
+        if (args.isEmpty()) return "";
         String name = args.get(0);
         args = args.size() > 1 ? args.subList(1, args.size()) : Collections.emptyList();
         CommandMap map;
