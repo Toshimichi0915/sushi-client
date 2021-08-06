@@ -16,7 +16,7 @@ public class SpeedComponent extends TextElementComponent {
 
     public SpeedComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
-        format = configurations.get("element." + id + ".format", "Format", null, String.class, "{m/s} m/s");
+        format = getConfiguration("format", "Format", null, String.class, "{m/s} m/s");
     }
 
     @Override
