@@ -120,7 +120,7 @@ public class NameTagsModule extends BaseModule {
             if (health > 12) text.append(" §a");
             else if (health > 6) text.append(" §e");
             else text.append(" §4");
-            text.append(FORMAT.format(entityLiving.getHealth()));
+            text.append(FORMAT.format(health));
             TextPreview preview = GuiUtils.prepareText(text.toString(), fontName, Color.WHITE, pts, false);
             double width = preview.getWidth();
             double height = preview.getHeight();
