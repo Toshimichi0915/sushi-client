@@ -37,9 +37,10 @@ public class VanillaTextPreview implements TextPreview {
     public void draw(double x, double y) {
         renderer.FONT_HEIGHT = pts;
         glPushMatrix();
-        glPushAttrib(GL_COLOR_BUFFER_BIT);
+        glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
         glTranslated(x, y, 0);
         glScaled(pts / 9D, pts / 9D, 0);
+        glEnable(GL_BLEND);
         if (pts % 9 != 0 && pts < 20) {
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
