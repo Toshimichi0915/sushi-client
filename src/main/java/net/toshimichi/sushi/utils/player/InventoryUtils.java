@@ -3,6 +3,7 @@ package net.toshimichi.sushi.utils.player;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
@@ -13,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.CPacketClickWindow;
-import net.minecraft.network.play.client.CPacketHeldItemChange;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -66,8 +66,9 @@ public class InventoryUtils {
 
     public static synchronized void silentSwitch(boolean b, int slot, Runnable r) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
+        PlayerControllerMP controller = Minecraft.getMinecraft().playerController;
         NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
-        if (slot < 0 || slot > 9) {
+        if (slot < 0 || slot >= 9) {
             r.run();
             return;
         }
@@ -81,9 +82,9 @@ public class InventoryUtils {
         hotbarSlot = slot;
         switching = true;
         int current = ItemSlot.current().getIndex();
-        connection.sendPacket(new CPacketHeldItemChange(slot));
+        InventoryUtils.moveHotbar(slot);
         r.run();
-        connection.sendPacket(new CPacketHeldItemChange(current));
+        InventoryUtils.moveHotbar(current);
         switching = false;
     }
 
