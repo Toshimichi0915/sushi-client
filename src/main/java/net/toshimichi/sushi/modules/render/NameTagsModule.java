@@ -48,6 +48,12 @@ public class NameTagsModule extends BaseModule {
     @Config(id = "player", name = "Show players")
     public Boolean player = true;
 
+    @Config(id = "show_ping", name = "Show Ping", when = "player")
+    public Boolean showPing = true;
+
+    @Config(id = "show_hp", name = "Show HP", when = "player")
+    public Boolean showHealth = true;
+
     @Config(id = "self", name = "Show self", when = "player")
     public Boolean self = false;
 
@@ -133,11 +139,18 @@ public class NameTagsModule extends BaseModule {
             glScaled(scale, scale, 1);
 
             StringBuilder text = new StringBuilder(entity.getName());
-            double health = entityLiving.getHealth() + entityLiving.getAbsorptionAmount();
-            if (health > 12) text.append(" §a");
-            else if (health > 6) text.append(" §e");
-            else text.append(" §4");
-            text.append(FORMAT.format(health));
+            if (showPing && entity instanceof EntityPlayer) {
+                text.append(' ');
+                text.append(getConnection().getPlayerInfo(entity.getUniqueID()).getResponseTime());
+                text.append("ms");
+            }
+            if (showHealth) {
+                double health = entityLiving.getHealth() + entityLiving.getAbsorptionAmount();
+                if (health > 12) text.append(" §a");
+                else if (health > 6) text.append(" §e");
+                else text.append(" §4");
+                text.append(FORMAT.format(health));
+            }
             TextPreview preview = GuiUtils.prepareText(text.toString(), fontName, Color.WHITE, pts, false);
             double width = preview.getWidth();
             double height = preview.getHeight();
