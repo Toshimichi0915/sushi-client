@@ -129,6 +129,7 @@ public class SushiMod {
         EventHandlers.register(new TickHandler());
         EventHandlers.register(new RenderUtilsHandler());
         EventHandlers.register(new BlockBreakHandler());
+        EventHandlers.register(new SilentSwitchHandler());
         EventHandlers.register(this);
 
         Commands.register(new HelpCommand());

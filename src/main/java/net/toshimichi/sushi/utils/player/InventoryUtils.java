@@ -13,12 +13,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.CPacketClickWindow;
+import net.minecraft.network.play.client.CPacketHeldItemChange;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.function.Predicate;
 
 public class InventoryUtils {
+
+    private static volatile boolean switching;
+    private static volatile int hotbarSlot;
+
+    public static boolean isSwitching() {
+        return switching;
+    }
+
+    public static int getHotbarSlot() {
+        return hotbarSlot;
+    }
 
     public static void moveHotbar(int slot) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -50,6 +62,29 @@ public class InventoryUtils {
         if (switchBack) {
             InventoryUtils.moveHotbar(currentSlot.getIndex());
         }
+    }
+
+    public static synchronized void silentSwitch(boolean b, int slot, Runnable r) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
+        if (slot < 0 || slot > 9) {
+            r.run();
+            return;
+        }
+        if (!b || player == null || connection == null) {
+            if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+                InventoryUtils.moveHotbar(slot);
+            }
+            r.run();
+            return;
+        }
+        hotbarSlot = slot;
+        switching = true;
+        int current = ItemSlot.current().getIndex();
+        connection.sendPacket(new CPacketHeldItemChange(slot));
+        r.run();
+        connection.sendPacket(new CPacketHeldItemChange(current));
+        switching = false;
     }
 
     public static ItemSlot[] find(Predicate<ItemSlot> predicate, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {

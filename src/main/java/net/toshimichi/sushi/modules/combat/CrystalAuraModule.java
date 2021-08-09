@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
-import net.minecraft.network.play.server.SPacketHeldItemChange;
 import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -80,7 +79,6 @@ public class CrystalAuraModule extends BaseModule {
     private volatile CrystalAttack nearbyCrystalAttack;
 
     private volatile ItemSlot crystalSlot;
-    private volatile ItemSlot currentSlot;
 
     private volatile long lastPlaceTick;
     private volatile long lastBreakTick;
@@ -346,23 +344,18 @@ public class CrystalAuraModule extends BaseModule {
         try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
             PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
         }
-        boolean switchBack = false;
-        if (silentSwitch.getValue() && crystalSlot.getInventoryType() != InventoryType.OFFHAND) {
-            InventoryUtils.moveHotbar(crystalSlot.getIndex());
-            switchBack = true;
-        }
-        boolean offhand = crystalSlot.getInventoryType() == InventoryType.OFFHAND;
-        if (y255Attack.getValue()) {
-            getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
-                    EnumFacing.DOWN, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
-        } else {
-            getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
-                    EnumFacing.UP, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 1, 0.5F));
-        }
-
-        if (switchBack) {
-            InventoryUtils.moveHotbar(currentSlot.getIndex());
-        }
+        ItemSlot copy = crystalSlot;
+        InventoryUtils.silentSwitch(silentSwitch.getValue() && copy.getInventoryType() != InventoryType.OFFHAND,
+                copy.getIndex(), () -> {
+                    boolean offhand = copy.getInventoryType() == InventoryType.OFFHAND;
+                    if (y255Attack.getValue()) {
+                        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
+                                EnumFacing.DOWN, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+                    } else {
+                        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
+                                EnumFacing.UP, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 1, 0.5F));
+                    }
+                });
     }
 
     @EventHandler(timing = EventTiming.POST)
@@ -371,8 +364,7 @@ public class CrystalAuraModule extends BaseModule {
         if (updateRecalculationCounter()) refreshCrystalAttack();
         if (crystalAttack == null && nearbyCrystalAttack == null) return;
         crystalSlot = InventoryUtils.findItemSlot(Items.END_CRYSTAL, getPlayer(), InventoryType.HOTBAR, InventoryType.OFFHAND);
-        currentSlot = ItemSlot.current();
-        if (crystalSlot == null || (currentSlot.equals(crystalSlot) && !silentSwitch.getValue())) {
+        if (crystalSlot == null || (ItemSlot.current().equals(crystalSlot) && !silentSwitch.getValue())) {
             TaskExecutor.newTaskChain()
                     .supply(Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, switchMode.getValue()))
@@ -410,13 +402,6 @@ public class CrystalAuraModule extends BaseModule {
             enderCrystals.add(new EnderCrystalInfo(packet.getEntityID(), pos, box));
         }
         breakCrystal();
-    }
-
-    // swap suppress
-    @EventHandler(timing = EventTiming.PRE, priority = 1000)
-    public void onPacketReceive2(PacketReceiveEvent e) {
-        if (!(e.getPacket() instanceof SPacketHeldItemChange)) return;
-        e.setCancelled(true);
     }
 
     @Override
