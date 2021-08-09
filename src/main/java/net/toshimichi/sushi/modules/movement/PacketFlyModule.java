@@ -15,6 +15,7 @@ import net.toshimichi.sushi.events.packet.PacketReceiveEvent;
 import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.player.MovementUtils;
 
 public class PacketFlyModule extends BaseModule {
@@ -46,13 +47,9 @@ public class PacketFlyModule extends BaseModule {
         EventHandlers.unregister(this);
     }
 
-    private boolean isInsideBlock() {
-        return getPlayer().world.collidesWithAnyBlock(getPlayer().getEntityBoundingBox());
-    }
-
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerTravel(PlayerTravelEvent e) {
-        getPlayer().noClip = isInsideBlock();
+        getPlayer().noClip = EntityUtils.isInsideBlock(getPlayer());
     }
 
     @EventHandler(timing = EventTiming.PRE)

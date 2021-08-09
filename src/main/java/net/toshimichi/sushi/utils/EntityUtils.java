@@ -38,6 +38,9 @@ public class EntityUtils {
         return player.getPositionVector().squareDistanceTo(target) < reach * reach;
     }
 
+    public static boolean isInsideBlock(EntityPlayer player) {
+        return player.world.collidesWithAnyBlock(player.getEntityBoundingBox());
+    }
 
     public static boolean canInteract(Entity entity, double reach, double wall) {
         return canInteract(entity.getPositionVector().add(0, entity.getEyeHeight(), 0), reach, wall);

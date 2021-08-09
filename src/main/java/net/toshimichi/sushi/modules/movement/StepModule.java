@@ -12,6 +12,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerMoveEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.PositionUtils;
 import net.toshimichi.sushi.utils.render.hole.HoleUtils;
@@ -81,7 +82,7 @@ public class StepModule extends BaseModule {
         }
     }
 
-    @EventHandler(timing = EventTiming.PRE)
+    @EventHandler(timing = EventTiming.PRE, priority = 50000)
     public void onPrePlayerMove(PlayerMoveEvent e) {
         motionX = getPlayer().motionX;
         motionZ = getPlayer().motionZ;
@@ -89,6 +90,7 @@ public class StepModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onPostPlayerMove(PlayerMoveEvent e) {
+        if (EntityUtils.isInsideBlock(getPlayer())) return;
         BlockPos floorPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         if (pauseInHole.getValue() && HoleUtils.getHoleInfo(getWorld(), floorPos, false) != null ||
                 pauseOnSneak.getValue() && getPlayer().isSneaking()) {

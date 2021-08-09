@@ -14,6 +14,7 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.player.PlayerPacketEvent;
 import net.toshimichi.sushi.events.player.PlayerTravelEvent;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.EntityUtils;
 import net.toshimichi.sushi.utils.TpsUtils;
 import net.toshimichi.sushi.utils.player.DesyncMode;
 import net.toshimichi.sushi.utils.player.MovementUtils;
@@ -58,7 +59,7 @@ public class PhaseFlyModule extends BaseModule {
         player.motionY = 0;
         player.motionZ = 0;
         if (stage != 0) return;
-        player.noClip = isInsideBlock();
+        player.noClip = EntityUtils.isInsideBlock(getPlayer());
         player.fallDistance = 0;
         player.onGround = false;
 
@@ -104,16 +105,13 @@ public class PhaseFlyModule extends BaseModule {
         return getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, 0.01, 0));
     }
 
-    private boolean isInsideBlock() {
-        return getPlayer().world.collidesWithAnyBlock(getPlayer().getEntityBoundingBox());
-    }
-
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerPacket(PlayerPacketEvent e) {
         if (!auto.getValue()) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (stage == 0 &&
-                (getPlayer().movementInput.sneak || isInsideBlock() || !isInsideBlock() && !isHittingRoof())) return;
+                (getPlayer().movementInput.sneak || EntityUtils.isInsideBlock(getPlayer()) ||
+                        !EntityUtils.isInsideBlock(getPlayer()) && !isHittingRoof())) return;
         if (stage == 0 || stage == 1) {
             player.movementInput.sneak = true;
             stage++;
