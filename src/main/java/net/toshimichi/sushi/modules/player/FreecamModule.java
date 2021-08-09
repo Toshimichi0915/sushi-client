@@ -11,6 +11,7 @@ import net.toshimichi.sushi.events.input.InputUpdateEvent;
 import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import net.toshimichi.sushi.events.player.PlayerAttackEvent;
 import net.toshimichi.sushi.events.player.UserCheckEvent;
+import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -37,6 +38,11 @@ public class FreecamModule extends BaseModule {
         getWorld().removeEntityFromWorld(freecamPlayer.getEntityId());
         Minecraft.getMinecraft().setRenderViewEntity(Minecraft.getMinecraft().player);
         freecamPlayer = null;
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onClientTick(ClientTickEvent e) {
+        if (getPlayer().isDead) setEnabled(false);
     }
 
     @EventHandler(timing = EventTiming.POST)
