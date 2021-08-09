@@ -30,6 +30,7 @@ import net.toshimichi.sushi.utils.render.TextPreview;
 import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -111,7 +112,9 @@ public class NameTagsModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onOverlayRender(OverlayRenderEvent e) {
-        for (Entity entity : getWorld().loadedEntityList) {
+        ArrayList<Entity> entityList = new ArrayList<>(getWorld().loadedEntityList);
+        entityList.sort(Comparator.comparingDouble(it -> Double.MAX_VALUE - it.getDistanceSq(getPlayer())));
+        for (Entity entity : entityList) {
             if (!(entity instanceof EntityLivingBase)) continue;
             EntityLivingBase entityLiving = (EntityLivingBase) entity;
             if (!canShow(entityLiving)) continue;
