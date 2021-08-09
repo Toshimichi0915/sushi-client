@@ -8,7 +8,6 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.server.SPacketBlockChange;
-import net.minecraft.network.play.server.SPacketHeldItemChange;
 import net.minecraft.network.play.server.SPacketSpawnObject;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -46,9 +45,7 @@ public class AntiPistonAuraModule extends BaseModule {
     private final Configuration<IntRange> placeCoolTime;
     private long lastPlaceTick;
     private ItemSlot obsidianSlot;
-    private ItemSlot currentSlot;
     private long when;
-    private boolean switching;
 
     public AntiPistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -123,19 +120,17 @@ public class AntiPistonAuraModule extends BaseModule {
 
     private synchronized void placeObsidian() {
         if (spam.isEmpty()) return;
-        ItemSlot finalObsidianSlot = obsidianSlot;
-        if (finalObsidianSlot == null) return;
+        ItemSlot copy = obsidianSlot;
+        if (copy == null) return;
         if (!updatePlaceCounter()) return;
-        switching = true;
-        InventoryUtils.moveHotbar(finalObsidianSlot.getIndex());
-        for (BlockPlaceInfo info : new ArrayList<>(spam)) {
-            if (info == null) continue;
-            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-                BlockUtils.place(info, true);
+        InventoryUtils.silentSwitch(true, copy.getIndex(), () -> {
+            for (BlockPlaceInfo info : new ArrayList<>(spam)) {
+                if (info == null) continue;
+                try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
+                    BlockUtils.place(info, true);
+                }
             }
-        }
-        InventoryUtils.moveHotbar(currentSlot.getIndex());
-        switching = false;
+        });
     }
 
     private void preventPistonAura() {
@@ -182,12 +177,15 @@ public class AntiPistonAuraModule extends BaseModule {
             return block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION && block != Blocks.AIR ||
                     System.currentTimeMillis() - when > 1000;
         });
-        obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), getPlayer(), InventoryType.values());
-        ItemSlot finalObsidianSlot = obsidianSlot;
-        if (finalObsidianSlot != null && !switching && obsidianSlot.getInventoryType() != InventoryType.HOTBAR) {
-            obsidianSlot = InventoryUtils.moveToHotbar(finalObsidianSlot);
+        ItemSlot obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), getPlayer(), InventoryType.values());
+        if (obsidianSlot != null && obsidianSlot.getInventoryType() != InventoryType.HOTBAR) {
+            if (!spam.isEmpty()) {
+                obsidianSlot = InventoryUtils.moveToHotbar(obsidianSlot);
+            } else {
+                obsidianSlot = null;
+            }
         }
-        currentSlot = ItemSlot.current();
+        this.obsidianSlot = obsidianSlot;
         preventPistonAura();
     }
 
@@ -215,13 +213,6 @@ public class AntiPistonAuraModule extends BaseModule {
             pistons.add(new PistonInfo(packet.getBlockPosition(), enumFacing));
         }
         preventPistonAura();
-    }
-
-    @EventHandler(timing = EventTiming.PRE)
-    public void onPacketReceive3(PacketReceiveEvent e) {
-        if (!switching) return;
-        if (!(e.getPacket() instanceof SPacketHeldItemChange)) return;
-        e.setCancelled(true);
     }
 
     @EventHandler(timing = EventTiming.POST)
