@@ -119,7 +119,7 @@ public class NameTagsModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onOverlayRender(OverlayRenderEvent e) {
         ArrayList<Entity> entityList = new ArrayList<>(getWorld().loadedEntityList);
-        entityList.sort(Comparator.comparingDouble(it -> Double.MAX_VALUE - it.getDistanceSq(getPlayer())));
+        entityList.sort(Comparator.comparingDouble(it -> it.getDistanceSq(getPlayer())));
         for (Entity entity : entityList) {
             if (!(entity instanceof EntityLivingBase)) continue;
             EntityLivingBase entityLiving = (EntityLivingBase) entity;
