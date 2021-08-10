@@ -51,16 +51,9 @@ public class InventoryUtils {
             r.run();
             return;
         }
-        ItemSlot currentSlot = ItemSlot.current();
         ItemSlot swordSlot = InventoryUtils.findAnyTool(player);
-        boolean switchBack = false;
         if (swordSlot != null && player.getActivePotionEffect(MobEffects.WEAKNESS) != null) {
-            InventoryUtils.moveHotbar(swordSlot.getIndex());
-            switchBack = true;
-        }
-        r.run();
-        if (switchBack) {
-            InventoryUtils.moveHotbar(currentSlot.getIndex());
+            InventoryUtils.silentSwitch(true, swordSlot.getIndex(), r);
         }
     }
 
