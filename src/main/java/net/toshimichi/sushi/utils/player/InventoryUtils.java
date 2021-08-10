@@ -54,6 +54,8 @@ public class InventoryUtils {
         ItemSlot swordSlot = InventoryUtils.findAnyTool(player);
         if (swordSlot != null && player.getActivePotionEffect(MobEffects.WEAKNESS) != null) {
             InventoryUtils.silentSwitch(true, swordSlot.getIndex(), r);
+        } else {
+            r.run();
         }
     }
 

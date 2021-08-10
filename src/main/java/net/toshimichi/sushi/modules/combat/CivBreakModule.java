@@ -15,13 +15,17 @@ import net.toshimichi.sushi.config.data.IntRange;
 import net.toshimichi.sushi.events.EventHandler;
 import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
-import net.toshimichi.sushi.events.tick.ClientTickEvent;
+import net.toshimichi.sushi.events.tick.GameTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
+import net.toshimichi.sushi.task.tasks.ItemSlotSwitchTask;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
+import net.toshimichi.sushi.utils.TickUtils;
 import net.toshimichi.sushi.utils.combat.CivBreakAttack;
 import net.toshimichi.sushi.utils.combat.CivBreakUtils;
 import net.toshimichi.sushi.utils.player.InventoryUtils;
+import net.toshimichi.sushi.utils.player.ItemSlot;
+import net.toshimichi.sushi.utils.player.ItemUtils;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 
@@ -58,7 +62,7 @@ public class CivBreakModule extends BaseModule {
     }
 
     @EventHandler(timing = EventTiming.POST)
-    public void onClientTick(ClientTickEvent e) {
+    public void onGameTick(GameTickEvent e) {
         List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer(), damage.getValue().getCurrent(), selfDamage.getValue().getCurrent());
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
@@ -86,21 +90,27 @@ public class CivBreakModule extends BaseModule {
                     .abortIfFalse()
                     .then(() -> placeCrystal(attack))
                     .execute();
-        } else {
+        } else { // attack.isCrystalPlaced() && attack.isObsidianPlaced()
             if (!attack.getObsidianPos().equals(breakingBlock)) {
                 breakingBlock = attack.getObsidianPos();
             }
+            int waitTime = TickUtils.current() - BlockUtils.getBreakingTime();
+            ItemSlot pickaxe = InventoryUtils.findBestTool(true, false, Blocks.OBSIDIAN.getDefaultState());
+            if (pickaxe.getItemStack().getItem() != Items.DIAMOND_PICKAXE) return;
             if (breakingBlock != BlockUtils.getBreakingBlockPos()) {
                 TaskExecutor.newTaskChain()
-                        .supply(Items.DIAMOND_PICKAXE)
-                        .then(new ItemSwitchTask(null, true))
+                        .supply(pickaxe)
+                        .then(new ItemSlotSwitchTask())
                         .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN)))
                         .execute();
-            } else {
+            } else if (waitTime > ItemUtils.getDestroyTime(attack.getObsidianPos(), pickaxe.getItemStack())) {
                 TaskExecutor.newTaskChain()
-                        .supply(Items.DIAMOND_PICKAXE)
-                        .then(new ItemSwitchTask(null, true))
-                        .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN)))
+                        .supply(pickaxe)
+                        .then(new ItemSlotSwitchTask())
+                        .then(() -> {
+                            getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN));
+                            InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal())));
+                        })
                         .execute();
             }
         }
