@@ -363,7 +363,7 @@ public class CrystalAuraModule extends BaseModule {
         refreshEnderCrystals();
         if (updateRecalculationCounter()) refreshCrystalAttack();
         if (crystalAttack == null && nearbyCrystalAttack == null) return;
-        crystalSlot = InventoryUtils.findItemSlot(Items.END_CRYSTAL, getPlayer(), InventoryType.HOTBAR, InventoryType.OFFHAND);
+        crystalSlot = InventoryUtils.findItemSlot(Items.END_CRYSTAL, InventoryType.HOTBAR, InventoryType.OFFHAND);
         if (crystalSlot == null || (ItemSlot.current().equals(crystalSlot) && !silentSwitch.getValue() &&
                 ItemSlot.offhand().getItemStack().getItem() != Items.END_CRYSTAL)) {
             TaskExecutor.newTaskChain()

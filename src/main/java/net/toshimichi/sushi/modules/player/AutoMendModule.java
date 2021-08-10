@@ -73,7 +73,7 @@ public class AutoMendModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
         if (lastDelayTicks-- > 0) return;
-        ItemSlot expBottle = InventoryUtils.findItemSlot(Items.EXPERIENCE_BOTTLE, getPlayer(), InventoryType.values());
+        ItemSlot expBottle = InventoryUtils.findItemSlot(Items.EXPERIENCE_BOTTLE, InventoryType.values());
         List<EntityInfo<EntityEnderCrystal>> crystals = EntityUtils.getNearbyEntities(getPlayer().getPositionVector(), EntityEnderCrystal.class);
         double crystalDamage;
         if (!crystalCheck.getValue() || crystals.isEmpty()) {
@@ -116,7 +116,7 @@ public class AutoMendModule extends BaseModule {
                 }
 
                 // find empty slots
-                ItemSlot emptySlot = InventoryUtils.findItemSlot(Items.AIR, getPlayer(), InventoryType.MAIN);
+                ItemSlot emptySlot = InventoryUtils.findItemSlot(Items.AIR, InventoryType.MAIN);
                 if (!switching && itemSlot.getItemStack().getItem() != Items.AIR && emptySlot != null) {
                     InventoryUtils.moveTo(itemSlot, emptySlot);
                 }

@@ -111,6 +111,7 @@ public class GsonModules implements Modules {
         addModuleFactory("inventory_manager", InventoryManagerModule::new, true);
         addModuleFactory("hole_fill", HoleFillModule::new, true);
         addModuleFactory("blink", BlinkModule::new, true);
+        addModuleFactory("anvil_miner", AnvilMinerModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

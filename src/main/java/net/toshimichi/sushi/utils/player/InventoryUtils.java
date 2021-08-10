@@ -88,31 +88,31 @@ public class InventoryUtils {
         switching = false;
     }
 
-    public static ItemSlot[] find(Predicate<ItemSlot> predicate, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
+    public static ItemSlot[] find(Predicate<ItemSlot> predicate, Comparator<ItemSlot> comparator, InventoryType... allowed) {
         ArrayList<ItemSlot> list = new ArrayList<>();
         for (InventoryType type : allowed) {
             for (int i = 0; i < type.getSize(); i++) {
                 int index = i + type.getIndex();
                 if (predicate.test(new ItemSlot(i + type.getIndex())))
-                    list.add(new ItemSlot(index, player));
+                    list.add(new ItemSlot(index, Minecraft.getMinecraft().player));
             }
         }
         list.sort(comparator);
         return list.toArray(new ItemSlot[0]);
     }
 
-    public static ItemSlot[] findItemSlots(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
-        return find(it -> it.getItemStack().getItem() == searching, player, comparator, allowed);
+    public static ItemSlot[] findItemSlots(Item searching, Comparator<ItemSlot> comparator, InventoryType... allowed) {
+        return find(it -> it.getItemStack().getItem() == searching, comparator, allowed);
     }
 
-    public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, Comparator<ItemSlot> comparator, InventoryType... allowed) {
-        ItemSlot[] array = findItemSlots(searching, player, comparator, allowed);
+    public static ItemSlot findItemSlot(Item searching, Comparator<ItemSlot> comparator, InventoryType... allowed) {
+        ItemSlot[] array = findItemSlots(searching, comparator, allowed);
         if (array.length == 0) return null;
         else return array[0];
     }
 
-    public static ItemSlot findItemSlot(Item searching, EntityPlayerSP player, InventoryType... allowed) {
-        return findItemSlot(searching, player, null, allowed);
+    public static ItemSlot findItemSlot(Item searching, InventoryType... allowed) {
+        return findItemSlot(searching, null, allowed);
     }
 
     public static short clickItemSlot(ItemSlot slot, ClickType type, int button) {
@@ -129,7 +129,7 @@ public class InventoryUtils {
     public static ItemSlot moveToHotbar(ItemSlot itemSlot) {
         if (itemSlot.getInventoryType() == InventoryType.HOTBAR) return itemSlot;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        ItemSlot emptyHotbar = InventoryUtils.findItemSlot(null, player, InventoryType.HOTBAR);
+        ItemSlot emptyHotbar = InventoryUtils.findItemSlot(null, InventoryType.HOTBAR);
         if (emptyHotbar == null) {
             InventoryUtils.clickItemSlot(itemSlot, ClickType.SWAP, player.inventory.currentItem);
             return new ItemSlot(player.inventory.currentItem);

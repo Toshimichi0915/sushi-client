@@ -125,7 +125,7 @@ public class InventoryManagerModule extends BaseModule {
         for (SwitchInfo info : all) {
             if (info.checkInv() <= 0) continue;
             InventoryType[] types = hotbar.getValue() ? new InventoryType[]{InventoryType.MAIN, InventoryType.HOTBAR} : new InventoryType[]{InventoryType.MAIN};
-            ItemSlot[] itemSlots = InventoryUtils.find(it -> info.getPredicate().test(it.getItemStack()), getPlayer(), null, types);
+            ItemSlot[] itemSlots = InventoryUtils.find(it -> info.getPredicate().test(it.getItemStack()), null, types);
             if (info.checkInv() <= 0) return;
             for (ItemSlot itemSlot : itemSlots) {
                 if (current <= 0) return;

@@ -177,7 +177,7 @@ public class AntiPistonAuraModule extends BaseModule {
             return block != Blocks.PISTON && block != Blocks.PISTON_HEAD && block != Blocks.PISTON_EXTENSION && block != Blocks.AIR ||
                     System.currentTimeMillis() - when > 1000;
         });
-        ItemSlot obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), getPlayer(), InventoryType.values());
+        ItemSlot obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), InventoryType.values());
         if (obsidianSlot != null && obsidianSlot.getInventoryType() != InventoryType.HOTBAR) {
             if (!spam.isEmpty()) {
                 obsidianSlot = InventoryUtils.moveToHotbar(obsidianSlot);

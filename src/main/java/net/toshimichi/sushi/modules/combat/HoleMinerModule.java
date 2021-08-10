@@ -79,9 +79,8 @@ public class HoleMinerModule extends BaseModule {
         int waitTime = ItemUtils.getDestroyTime(surroundPos, pickaxe.getItemStack());
         if (!surroundPos.equals(BlockUtils.getBreakingBlockPos())) {
             getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN));
-            waitTime -= TickUtils.current() - BlockUtils.getBreakingTime();
         } else {
-            waitTime = 0;
+            waitTime -= Math.min(TickUtils.current() - BlockUtils.getBreakingTime(), waitTime);
         }
 
         Task finishTask = () -> {

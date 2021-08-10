@@ -19,11 +19,8 @@ import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.BlockPlaceTask;
-import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
-import net.toshimichi.sushi.utils.player.DesyncCloseable;
-import net.toshimichi.sushi.utils.player.DesyncMode;
-import net.toshimichi.sushi.utils.player.PositionUtils;
+import net.toshimichi.sushi.utils.player.*;
 import net.toshimichi.sushi.utils.world.BlockPlaceInfo;
 import net.toshimichi.sushi.utils.world.BlockUtils;
 import net.toshimichi.sushi.utils.world.PlaceOptions;
@@ -34,6 +31,9 @@ public class AntiCivBreakModule extends BaseModule {
 
     @Config(id = "extra_safe", name = "Extra Safe")
     public Boolean extraSafe = false;
+
+    @Config(id = "silent_switch", name = "Silent Switch")
+    public Boolean silentSwitch = true;
 
     @Config(id = "damage", name = "Damage")
     public IntRange damage = new IntRange(30, 100, 10, 1);
@@ -51,6 +51,18 @@ public class AntiCivBreakModule extends BaseModule {
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
+    }
+
+    private void placeObsidian(BlockPlaceInfo info) {
+        ItemSlot obsidian = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), null, InventoryType.values());
+        if (obsidian == null) return;
+        obsidian = InventoryUtils.moveToHotbar(obsidian);
+        InventoryUtils.silentSwitch(silentSwitch, obsidian.getIndex(), () -> {
+            TaskExecutor.newTaskChain()
+                    .supply(Collections.singletonList(info))
+                    .then(new BlockPlaceTask(true, true, true, PlaceOptions.IGNORE_ENTITY))
+                    .execute();
+        });
     }
 
     @EventHandler(timing = EventTiming.POST)
@@ -77,11 +89,7 @@ public class AntiCivBreakModule extends BaseModule {
             if (face == null) continue;
             TaskExecutor.newTaskChain()
                     .delay(1)
-                    .supply(Item.getItemFromBlock(Blocks.OBSIDIAN))
-                    .then(new ItemSwitchTask(null, false))
-                    .abortIfFalse()
-                    .supply(Collections.singletonList(face))
-                    .then(new BlockPlaceTask(true, true, PlaceOptions.IGNORE_ENTITY))
+                    .then(() -> placeObsidian(face))
                     .execute();
         }
     }
@@ -94,15 +102,7 @@ public class AntiCivBreakModule extends BaseModule {
         BlockPos targetPos = headPos.add(0, 1, 0);
         BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), targetPos);
         if (info == null) return;
-        TaskExecutor.newTaskChain()
-                .supply(Item.getItemFromBlock(Blocks.OBSIDIAN))
-                .then(new ItemSwitchTask(null, true))
-                .abortIfFalse()
-                .supply(Collections.singletonList(info))
-                .then(new BlockPlaceTask(true, true))
-                .delay(5)
-                .then(() -> BlockUtils.checkGhostBlock(targetPos))
-                .execute();
+        placeObsidian(info);
     }
 
     @Override

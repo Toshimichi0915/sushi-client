@@ -39,7 +39,7 @@ public class AutoTotemModule extends BaseModule {
         if (lastUpdate > TickUtils.current() + delay.getValue().getCurrent()) return;
         ItemSlot offhand = ItemSlot.offhand();
         if (offhand.getItemStack().getItem().equals(Items.TOTEM_OF_UNDYING)) return;
-        ItemSlot itemSlot = InventoryUtils.findItemSlot(Items.TOTEM_OF_UNDYING, getPlayer(), InventoryType.values());
+        ItemSlot itemSlot = InventoryUtils.findItemSlot(Items.TOTEM_OF_UNDYING, InventoryType.values());
         if (itemSlot == null) return;
         lastUpdate = TickUtils.current();
         InventoryUtils.moveTo(itemSlot, InventoryType.OFFHAND.getAll()[0]);

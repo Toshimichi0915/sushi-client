@@ -13,9 +13,9 @@ public class BlockBreakHandler {
         if (!(e.getPacket() instanceof CPacketPlayerDigging)) return;
         CPacketPlayerDigging packet = (CPacketPlayerDigging) e.getPacket();
         if (packet.getAction() == CPacketPlayerDigging.Action.START_DESTROY_BLOCK) {
-            BlockUtils.setBreakingBlockPos(packet.getPosition(), TickUtils.current());
+            BlockUtils.setBreakingBlock(packet.getPosition(), TickUtils.current());
         } else if (packet.getAction() == CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK) {
-            BlockUtils.setBreakingBlockPos(null, TickUtils.current());
+            BlockUtils.setBreakingBlock(null, TickUtils.current());
         }
     }
 }

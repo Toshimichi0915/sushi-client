@@ -86,7 +86,7 @@ public class SurroundModule extends BaseModule {
             return false;
         });
         if (placeList.isEmpty()) return;
-        ItemSlot obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), getPlayer(), InventoryType.values());
+        ItemSlot obsidianSlot = InventoryUtils.findItemSlot(Item.getItemFromBlock(Blocks.OBSIDIAN), InventoryType.values());
         if (obsidianSlot == null) return;
         if (pull.getValue()) {
             PositionUtils.move(pos.getX() + 0.5, getPlayer().posY, pos.getZ() + 0.5,

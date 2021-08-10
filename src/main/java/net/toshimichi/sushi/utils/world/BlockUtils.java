@@ -31,7 +31,7 @@ public class BlockUtils {
         return breakingTime;
     }
 
-    public static void setBreakingBlockPos(BlockPos pos, int time) {
+    public static void setBreakingBlock(BlockPos pos, int time) {
         breakingBlockPos = pos;
         breakingTime = time;
     }

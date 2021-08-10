@@ -88,10 +88,10 @@ public class OffhandModule extends BaseModule {
         if (target == current) return;
         ItemSlot itemSlot = null;
         if (preferInventory.getValue()) {
-            itemSlot = InventoryUtils.findItemSlot(target.getItem(), getPlayer(), InventoryType.MAIN);
+            itemSlot = InventoryUtils.findItemSlot(target.getItem(), InventoryType.MAIN);
         }
         if (itemSlot == null) {
-            itemSlot = InventoryUtils.findItemSlot(target.getItem(), getPlayer(), InventoryType.values());
+            itemSlot = InventoryUtils.findItemSlot(target.getItem(), InventoryType.values());
         }
         if (itemSlot == null) {
             return;

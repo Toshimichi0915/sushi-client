@@ -42,7 +42,7 @@ public class ItemSwitchTask extends TaskAdapter<Item, Boolean> {
             return;
         }
 
-        ItemSlot itemSlot = InventoryUtils.findItemSlot(getInput(), player, comparator, InventoryType.values());
+        ItemSlot itemSlot = InventoryUtils.findItemSlot(getInput(), comparator, InventoryType.values());
         if (itemSlot == null) {
             stop(false);
             return;
