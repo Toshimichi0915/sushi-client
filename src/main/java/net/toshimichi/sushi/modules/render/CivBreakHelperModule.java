@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.modules.render;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -23,8 +24,6 @@ import net.toshimichi.sushi.utils.world.BlockUtils;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class CivBreakHelperModule extends BaseModule {
 
@@ -58,9 +57,9 @@ public class CivBreakHelperModule extends BaseModule {
         BlockPos candidate = attack.getObsidianPos();
         AxisAlignedBB box = getWorld().getBlockState(candidate).getBoundingBox(getWorld(), candidate);
         box = box.offset(candidate).grow(0.002);
-        glDisable(GL_DEPTH_TEST);
+        GlStateManager.disableDepth();
         RenderUtils.drawFilled(box, color.getCurrentColor());
-        glEnable(GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
     }
 
     @EventHandler(timing = EventTiming.POST)

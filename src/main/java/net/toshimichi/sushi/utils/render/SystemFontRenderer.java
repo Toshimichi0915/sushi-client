@@ -10,8 +10,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 
-import static org.lwjgl.opengl.GL11.*;
-
 public class SystemFontRenderer extends SystemFont {
 
     private final FontRenderer fontRenderer;
@@ -133,11 +131,11 @@ public class SystemFontRenderer extends SystemFont {
         }
         GlStateManager.popMatrix();
         for (VanillaChar vc : vanillaChars) {
-            glPushMatrix();
-            glTranslated(vc.x / 2, vc.y / 2, 0);
-            glScaled(font.getSize() / 18D, font.getSize() / 18D, 0);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(vc.x / 2, vc.y / 2, 0);
+            GlStateManager.scale(font.getSize() / 18D, font.getSize() / 18D, 0);
             fontRenderer.drawString(Character.toString(vc.c), 1, 1, vc.color, shadow);
-            glPopMatrix();
+            GlStateManager.popMatrix();
         }
     }
 
@@ -197,10 +195,10 @@ public class SystemFontRenderer extends SystemFont {
     private void drawLine(double x, double y, double x1, double y1, float width) {
         GlStateManager.disableTexture2D();
         GlStateManager.glLineWidth(width);
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glVertex2d(x, y);
-        GL11.glVertex2d(x1, y1);
-        GL11.glEnd();
+        GlStateManager.glBegin(GL11.GL_LINES);
+        GlStateManager.glVertex3f((float) x, (float) y, 0);
+        GlStateManager.glVertex3f((float) x1, (float) y1, 0);
+        GlStateManager.glEnd();
         GlStateManager.enableTexture2D();
     }
 

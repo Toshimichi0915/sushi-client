@@ -1,15 +1,15 @@
 package net.toshimichi.sushi.gui.theme.simple;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.toshimichi.sushi.events.input.ClickType;
 import net.toshimichi.sushi.gui.MouseStatus;
 import net.toshimichi.sushi.gui.base.BaseComponent;
 import net.toshimichi.sushi.gui.theme.ThemeConstants;
 import net.toshimichi.sushi.utils.render.GuiUtils;
 import net.toshimichi.sushi.utils.render.TextPreview;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class SimpleColorPickerComponent extends BaseComponent {
 
@@ -152,14 +152,14 @@ public class SimpleColorPickerComponent extends BaseComponent {
     private void drawCircle(double oX, double oY) {
         GuiUtils.prepare2D();
         GuiUtils.setColor(new Color(255, 255, 255));
-        glBegin(GL_LINE_LOOP);
+        GlStateManager.glBegin(GL11.GL_LINE_LOOP);
         for (int i = 0; i < SEGMENTS; i++) {
             double theta = 2 * Math.PI * i / SEGMENTS;
             double x = R * Math.cos(theta);
             double y = R * Math.sin(theta);
-            glVertex2d(x + oX, y + oY);
+            GlStateManager.glVertex3f((float) (x + oX), (float) (y + oY), 0);
         }
-        glEnd();
+        GlStateManager.glEnd();
         GuiUtils.release2D();
     }
 
@@ -195,6 +195,10 @@ public class SimpleColorPickerComponent extends BaseComponent {
         if (!updateColor(fromX, fromY)) super.onHold(fromX, fromY, toX, toY, type, status);
     }
 
+    private void vertex(double x, double y) {
+        GlStateManager.glVertex3f((float) x, (float) y, 0);
+    }
+
     @Override
     public void onRender() {
         GuiUtils.drawRect(getWindowX(), getWindowY(), getWidth(), getHeight(), constants.outlineColor.getValue());
@@ -205,26 +209,26 @@ public class SimpleColorPickerComponent extends BaseComponent {
         GuiUtils.prepare2D();
         for (int x = 0; x < SEGMENTS_X; x++) {
             for (int y = 0; y < SEGMENTS_Y; y++) {
-                glShadeModel(GL_SMOOTH);
-                glBegin(GL_QUADS);
+                GlStateManager.shadeModel(GL11.GL_SMOOTH);
+                GlStateManager.glBegin(GL11.GL_QUADS);
                 GuiUtils.setColor(getMainColor((double) x / SEGMENTS_X * getMainX(), (double) y / SEGMENTS_Y * getMainY()));
-                glVertex2d((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY());
+                vertex((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY());
                 GuiUtils.setColor(getMainColor((double) (x + 1) / SEGMENTS_X * getMainX(), (double) y / SEGMENTS_Y * getMainY()));
-                glVertex2d((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY());
+                vertex((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY());
                 GuiUtils.setColor(getMainColor((double) (x + 1) / SEGMENTS_X * getMainX(), (double) (y + 1) / SEGMENTS_Y * getMainY()));
-                glVertex2d((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY());
+                vertex((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY());
                 GuiUtils.setColor(getMainColor((double) x / SEGMENTS_X * getMainX(), (double) (y + 1) / SEGMENTS_Y * getMainY()));
-                glVertex2d((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY());
-                glEnd();
+                vertex((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY());
+                GlStateManager.glEnd();
             }
         }
+        GuiUtils.release2D();
 
         // sub
         for (int y = 0; y < getMainY() - 1; y++) {
             double y1 = (double) y / getMainY() * getSubHeight() + getSubStartY();
             GuiUtils.drawRect(getSubStartX(), y1, getSubWidth(), getSubHeight() / getMainY(), getSubColor(y));
         }
-        GuiUtils.release2D();
 
         // circle
         drawCircle(cursorX + getMainStartX(), cursorY + getMainStartY());

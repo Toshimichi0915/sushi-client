@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.modules.render;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
@@ -14,8 +15,6 @@ import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.render.RenderUtils;
 
 import java.awt.Color;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class TracersModule extends BaseModule {
 
@@ -51,12 +50,12 @@ public class TracersModule extends BaseModule {
         for (Entity entity : getWorld().loadedEntityList) {
             if (!(entity instanceof EntityPlayer)) continue;
             if (entity.getName().equals(getPlayer().getName())) continue;
-            glDisable(GL_DEPTH_TEST);
+            GlStateManager.disableDepth();
             Color color = getColor(MathHelper.sqrt(entity.getDistanceSq(getPlayer())));
             Vec3d cameraCenter = relative.getValue() ?
                     RenderUtils.getViewerPos().add(RenderUtils.getCameraPos()).subtract(RenderUtils.getInterpolatedPos()) : RenderUtils.getCameraPos();
             RenderUtils.drawLine(cameraCenter, RenderUtils.getInterpolatedPos(entity), color, 1);
-            glEnable(GL_DEPTH_TEST);
+            GlStateManager.enableDepth();
         }
     }
 

@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -12,12 +13,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.toshimichi.sushi.mixin.AccessorEntityRenderer;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector4f;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 
 public class RenderUtils {
@@ -31,10 +32,10 @@ public class RenderUtils {
     public static void tick() {
         // matrix
         FloatBuffer buffer = GLAllocation.createDirectFloatBuffer(16);
-        glGetFloat(GL_MODELVIEW_MATRIX, buffer);
+        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, buffer);
         modelView.load(buffer);
         buffer.clear();
-        glGetFloat(GL_PROJECTION_MATRIX, buffer);
+        GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, buffer);
         projection.load(buffer);
 
         //interpolated
@@ -74,16 +75,17 @@ public class RenderUtils {
     }
 
     public static void prepare3D() {
-        glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
-        glDisable(GL_TEXTURE_2D);
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_BLEND);
-        glEnable(GL_DEPTH_CLAMP);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableCull();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL_DEPTH_CLAMP);
     }
 
     public static void release3D() {
-        glPopAttrib();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableCull();
+        GL11.glDisable(GL_DEPTH_CLAMP);
     }
 
     public static Vec3d getInterpolatedPos(Entity entity) {
@@ -98,49 +100,53 @@ public class RenderUtils {
         return interpolated;
     }
 
-    public static Vec3d getViewerPos() {
-        return viewerPos;
-    }
-
     public static Vec3d getCameraPos() {
         return cameraPos;
     }
 
+    public static Vec3d getViewerPos() {
+        return viewerPos;
+    }
+
+    private static void vertex(double x, double y, double z) {
+        GlStateManager.glVertex3f((float) x, (float) y, (float) z);
+    }
+
     public static void drawLine(Vec3d from, Vec3d to, Color color, double width) {
-        glLineWidth((float) width);
+        GlStateManager.glLineWidth((float) width);
         GuiUtils.setColor(color);
         prepare3D();
         Vec3d d = getViewerPos();
-        glBegin(GL_LINES);
-        glVertex3d(from.x - d.x, from.y - d.y, from.z - d.z);
-        glVertex3d(to.x - d.x, to.y - d.y, to.z - d.z);
-        glEnd();
+        GlStateManager.glBegin(GL11.GL_LINES);
+        vertex(from.x - d.x, from.y - d.y, from.z - d.z);
+        vertex(to.x - d.x, to.y - d.y, to.z - d.z);
+        GlStateManager.glEnd();
         release3D();
     }
 
     public static void drawOutline(AxisAlignedBB box, Color color, double width) {
-        glLineWidth((float) width);
+        GlStateManager.glLineWidth((float) width);
         GuiUtils.setColor(color);
         prepare3D();
-        glBegin(GL_LINE_STRIP);
+        GlStateManager.glBegin(GL11.GL_LINE_STRIP);
         Vec3d d = getViewerPos();
-        glVertex3d(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
-        glVertex3d(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
-        glVertex3d(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
-        glVertex3d(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
-        glVertex3d(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
-        glVertex3d(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
-        glVertex3d(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        glVertex3d(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
-        glVertex3d(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
-        glVertex3d(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        glVertex3d(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        glVertex3d(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        glVertex3d(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
-        glVertex3d(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
-        glVertex3d(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
-        glVertex3d(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
-        glEnd();
+        vertex(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
+        GlStateManager.glEnd();
         release3D();
     }
 
@@ -148,26 +154,26 @@ public class RenderUtils {
         GuiUtils.setColor(color);
         prepare3D();
         Vec3d d = getViewerPos();
-        glBegin(GL_QUAD_STRIP);
-        glVertex3d(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        glVertex3d(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
-        glVertex3d(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        glVertex3d(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
-        glVertex3d(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
-        glVertex3d(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
-        glVertex3d(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
-        glVertex3d(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
-        glEnd();
-        glBegin(GL_QUAD_STRIP);
-        glVertex3d(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
-        glVertex3d(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
-        glVertex3d(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
-        glVertex3d(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
-        glVertex3d(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
-        glVertex3d(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        glVertex3d(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
-        glVertex3d(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        glEnd();
+        GlStateManager.glBegin(GL11.GL_QUAD_STRIP);
+        vertex(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
+        GlStateManager.glEnd();
+        GlStateManager.glBegin(GL11.GL_QUAD_STRIP);
+        vertex(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        GlStateManager.glEnd();
         release3D();
     }
 }

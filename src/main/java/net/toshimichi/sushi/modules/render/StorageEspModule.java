@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.modules.render;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -15,7 +16,6 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.world.WorldRenderEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.render.RenderUtils;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -114,7 +114,7 @@ public class StorageEspModule extends BaseModule {
     @EventHandler(timing = EventTiming.POST)
     public void onRender(WorldRenderEvent e) {
         rendered.clear();
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GlStateManager.disableDepth();
         Vec3d interpolated = RenderUtils.getInterpolatedPos();
         frustum.setPosition(interpolated.x, interpolated.y, interpolated.z);
         Vec3d camera = RenderUtils.getCameraPos();
@@ -148,7 +148,7 @@ public class StorageEspModule extends BaseModule {
                 RenderUtils.drawFilled(box, color);
             }
         }
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
     }
 
     @Override

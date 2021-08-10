@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.utils.render;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
 import javax.imageio.ImageIO;
@@ -10,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex2d;
 
 public class SystemFont {
 
@@ -101,17 +101,17 @@ public class SystemFont {
         float renderSRCWidth = srcWidth / imageSize;
         float renderSRCHeight = srcHeight / imageSize;
         glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY);
-        glVertex2d(x + width, y);
+        GlStateManager.glVertex3f(x + width, (float) y, 0);
         glTexCoord2f(renderSRCX, renderSRCY);
-        glVertex2d(x, y);
+        GlStateManager.glVertex3f(x, y, 0);
         glTexCoord2f(renderSRCX, renderSRCY + renderSRCHeight);
-        glVertex2d(x, y + height);
+        GlStateManager.glVertex3f(x, y + height, 0);
         glTexCoord2f(renderSRCX, renderSRCY + renderSRCHeight);
-        glVertex2d(x, y + height);
+        GlStateManager.glVertex3f(x, y + height, 0);
         glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY + renderSRCHeight);
-        glVertex2d(x + width, y + height);
+        GlStateManager.glVertex3f(x + width, y + height, 0);
         glTexCoord2f(renderSRCX + renderSRCWidth, renderSRCY);
-        glVertex2d(x + width, y);
+        GlStateManager.glVertex3f(x + width, y, 0);
     }
 
     public float getHeight() {

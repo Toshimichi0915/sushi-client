@@ -1,5 +1,7 @@
 package net.toshimichi.sushi.modules.render;
 
+import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.enchantment.Enchantment;
@@ -32,8 +34,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class NameTagsModule extends BaseModule {
 
@@ -128,20 +128,21 @@ public class NameTagsModule extends BaseModule {
             Vec2f head = RenderUtils.fromWorld(RenderUtils.getInterpolatedPos(entity).add(0, entity.height, 0));
             if (head == null) continue;
 
-            glEnable(GL_DEPTH_TEST);
-            glEnable(GL_BLEND);
+            GlStateManager.enableDepth();
+            GlStateManager.enableBlend();
 
             // set up matrix
             double scale = RenderUtils.getScale(RenderUtils.getInterpolatedPos(entity)) * scaleMultiplier.getCurrent();
             scale = MathHelper.clamp(scale, minScale.getCurrent() / 100D, maxScale.getCurrent() / 100D);
-            glPushMatrix();
-            glTranslated(head.x, head.y, 0);
-            glScaled(scale, scale, 1);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(head.x, head.y, 0);
+            GlStateManager.scale(scale, scale, 1);
 
             StringBuilder text = new StringBuilder(entity.getName());
-            if (showPing && entity instanceof EntityPlayer) {
+            NetworkPlayerInfo info = getConnection().getPlayerInfo(entity.getUniqueID());
+            if (showPing && entity instanceof EntityPlayer && info != null) {
                 text.append(' ');
-                text.append(getConnection().getPlayerInfo(entity.getUniqueID()).getResponseTime());
+                text.append(info.getResponseTime());
                 text.append("ms");
             }
             if (showHealth) {
@@ -159,11 +160,11 @@ public class NameTagsModule extends BaseModule {
             GuiUtils.drawRect(textX - 5, textY - 1, width + 10, height + 2, new Color(0, 0, 0, 100));
             GuiUtils.drawOutline(textX - 5, textY - 1, width + 10, height + 2, new Color(0, 0, 0), 1);
             preview.draw(textX, textY);
-            glPopMatrix();
-            glPushMatrix();
+            GlStateManager.popMatrix();
+            GlStateManager.pushMatrix();
 
-            glTranslated(head.x, head.y, 0);
-            glScaled(scale * SCALE, scale * SCALE, 0);
+            GlStateManager.translate(head.x, head.y, 0);
+            GlStateManager.scale(scale * SCALE, scale * SCALE, 0);
             RenderItem renderer = getClient().getRenderItem();
             double startX = -MARGIN * SCALE * 3;
             ArrayList<ItemStack> inventory = new ArrayList<>();
@@ -185,20 +186,20 @@ public class NameTagsModule extends BaseModule {
                 renderer.renderItemAndEffectIntoGUI(item, itemX, itemY);
                 renderer.renderItemOverlays(getClient().fontRenderer, item, itemX, itemY);
                 RenderHelper.disableStandardItemLighting();
-                glPushMatrix();
-                glTranslated(itemX, itemY, 0);
-                glScaled(0.3, 0.3, 0);
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(itemX, itemY, 0);
+                GlStateManager.scale(0.3, 0.3, 0);
                 int index2 = 0;
                 for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(item).entrySet()) {
                     String enchName = entry.getKey().getTranslatedName(entry.getValue()).substring(0, 2) + " " + entry.getValue();
                     getClient().fontRenderer.drawString(enchName, 0, index2 * 9, Color.WHITE.getRGB());
                     index2++;
                 }
-                glPopMatrix();
+                GlStateManager.popMatrix();
                 index++;
             }
 
-            glPopMatrix();
+            GlStateManager.popMatrix();
         }
     }
 

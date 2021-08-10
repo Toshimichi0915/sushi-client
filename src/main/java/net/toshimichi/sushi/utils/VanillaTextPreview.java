@@ -2,10 +2,10 @@ package net.toshimichi.sushi.utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.utils.render.TextPreview;
-
-import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.opengl.GL11;
 
 public class VanillaTextPreview implements TextPreview {
 
@@ -36,16 +36,14 @@ public class VanillaTextPreview implements TextPreview {
     @Override
     public void draw(double x, double y) {
         renderer.FONT_HEIGHT = pts;
-        glPushMatrix();
-        glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
-        glTranslated(x, y, 0);
-        glScaled(pts / 9D, pts / 9D, 0);
-        glEnable(GL_BLEND);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, 0);
+        GlStateManager.scale(pts / 9D, pts / 9D, 0);
+        GlStateManager.enableBlend();
         if (pts % 9 != 0 && pts < 20) {
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         }
         renderer.drawString(text, 0, 0, color.getColor(y).getRGB(), shadow);
-        glPopMatrix();
-        glPopAttrib();
+        GlStateManager.popMatrix();
     }
 }

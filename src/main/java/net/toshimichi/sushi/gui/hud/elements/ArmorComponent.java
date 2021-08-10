@@ -2,6 +2,7 @@ package net.toshimichi.sushi.gui.hud.elements;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
@@ -11,8 +12,6 @@ import net.toshimichi.sushi.config.data.DoubleRange;
 import net.toshimichi.sushi.gui.hud.BaseHudElementComponent;
 
 import java.util.ArrayList;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class ArmorComponent extends BaseHudElementComponent {
 
@@ -40,11 +39,11 @@ public class ArmorComponent extends BaseHudElementComponent {
         RenderItem renderer = Minecraft.getMinecraft().getRenderItem();
         double s = scale.getValue().getCurrent();
 
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glPushMatrix();
-        glTranslated(getWindowX(), getWindowY(), 0);
-        glScaled(s, s, 0);
+        GlStateManager.enableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(getWindowX(), getWindowY(), 0);
+        GlStateManager.scale(s, s, 0);
         double x = 0;
         double y = 0;
         for (ItemStack item : items) {
@@ -55,7 +54,7 @@ public class ArmorComponent extends BaseHudElementComponent {
             if (vertical.getValue()) y += MARGIN;
             else x += MARGIN;
         }
-        glPopMatrix();
+        GlStateManager.popMatrix();
     }
 
     @Override

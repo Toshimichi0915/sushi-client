@@ -2,6 +2,7 @@ package net.toshimichi.sushi.modules.combat;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,7 +37,6 @@ import net.toshimichi.sushi.utils.combat.DamageUtils;
 import net.toshimichi.sushi.utils.player.*;
 import net.toshimichi.sushi.utils.render.RenderUtils;
 import net.toshimichi.sushi.utils.world.BlockUtils;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.*;
@@ -385,10 +385,10 @@ public class CrystalAuraModule extends BaseModule {
         if (crystalAttack == null) return;
         BlockPos pos = BlockUtils.toBlockPos(crystalAttack.info.getPos().subtract(0, 1, 0));
         AxisAlignedBB box = getWorld().getBlockState(pos).getBoundingBox(getWorld(), pos).offset(pos).grow(0.002);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GlStateManager.disableDepth();
         if (outline.getValue()) RenderUtils.drawOutline(box, outlineColor.getValue().getCurrentColor(), 1);
         if (fill.getValue()) RenderUtils.drawFilled(box, fillColor.getValue().getCurrentColor());
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
     }
 
     // break crystal

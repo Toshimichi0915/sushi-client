@@ -2,6 +2,7 @@ package net.toshimichi.sushi.modules.render;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -16,7 +17,6 @@ import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.world.BlockHighlightEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.render.RenderUtils;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
@@ -60,14 +60,14 @@ public class BlockHighlightModule extends BaseModule {
         IBlockState state = getWorld().getBlockState(pos);
         if (state.getMaterial() == Material.AIR) return;
         AxisAlignedBB box = state.getBoundingBox(getWorld(), pos).offset(pos).grow(0.002);
-        if (renderMode.getValue() == RenderMode.FULL) GL11.glDisable(GL11.GL_DEPTH_TEST);
+        if (renderMode.getValue() == RenderMode.FULL) GlStateManager.disableDepth();
         if (outline.getValue()) {
             RenderUtils.drawOutline(box, outlineColor.getValue().getCurrentColor(), outlineWidth.getValue().getCurrent());
         }
         if (fill.getValue()) {
             RenderUtils.drawFilled(box, fillColor.getValue().getCurrentColor());
         }
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
     }
 
     @Override

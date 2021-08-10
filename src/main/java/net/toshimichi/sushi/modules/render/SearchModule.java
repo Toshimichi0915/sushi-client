@@ -1,5 +1,6 @@
 package net.toshimichi.sushi.modules.render;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -20,8 +21,6 @@ import net.toshimichi.sushi.utils.render.SearchMap;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class SearchModule extends BaseModule {
 
@@ -71,7 +70,7 @@ public class SearchModule extends BaseModule {
     public void onWorldRender(WorldRenderEvent e) {
         Vec3d interpolated = RenderUtils.getInterpolatedPos();
         frustum.setPosition(interpolated.x, interpolated.y, interpolated.z);
-        glDisable(GL_DEPTH_TEST);
+        GlStateManager.disableDepth();
         for (BlockPos pos : searchMap.getResult()) {
             AxisAlignedBB box = getWorld().getBlockState(pos).getBoundingBox(getWorld(), pos).offset(pos);
             if (tracers) {
@@ -85,7 +84,7 @@ public class SearchModule extends BaseModule {
                 RenderUtils.drawFilled(box, fillColor.getCurrentColor());
             }
         }
-        glEnable(GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
     }
 
     @Override

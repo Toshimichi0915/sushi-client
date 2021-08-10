@@ -7,11 +7,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.gui.Component;
 import net.toshimichi.sushi.utils.VanillaTextPreview;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.Stack;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class GuiUtils {
 
@@ -65,8 +64,8 @@ public class GuiUtils {
     }
 
     public static void prepareArea(Component component) {
-        glPushAttrib(GL_SCISSOR_BIT);
-        glEnable(GL_SCISSOR_TEST);
+        GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
         Scissor scissor = new Scissor(component);
         if (!scissorStack.isEmpty())
             scissor = scissor.clip(scissorStack.peek());
@@ -75,8 +74,8 @@ public class GuiUtils {
     }
 
     public static void prepareArea(double x, double y, double width, double height) {
-        glPushAttrib(GL_SCISSOR_BIT);
-        glEnable(GL_SCISSOR_TEST);
+        GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
         y = Math.max(GuiUtils.getWindowHeight() - GuiUtils.toWindowY(y + height), 0);
         Scissor scissor = new Scissor(GuiUtils.toWindowX(x), y, GuiUtils.toWindowX(width), GuiUtils.toWindowY(height));
         if (!scissorStack.isEmpty())
@@ -86,7 +85,7 @@ public class GuiUtils {
     }
 
     public static void releaseArea() {
-        glPopAttrib();
+        GL11.glPopAttrib();
         scissorStack.pop();
     }
 
@@ -107,18 +106,17 @@ public class GuiUtils {
     }
 
     public static void prepare2D() {
-        glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_ALPHA_TEST);
-        glEnable(GL_LINE_SMOOTH);
-        glDisable(GL_TEXTURE_2D);
-        glDisable(GL_CULL_FACE);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableAlpha();
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableCull();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
     }
 
     public static void release2D() {
-        glPopAttrib();
+        GlStateManager.enableTexture2D();
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
     }
 
     public static void setColor(Color color) {
@@ -151,12 +149,12 @@ public class GuiUtils {
     public static void drawLine(double x1, double y1, double x2, double y2, Color color, double width) {
         prepare2D();
 
-        glLineWidth((float) width);
+        GlStateManager.glLineWidth((float) width);
         setColor(color);
-        glBegin(GL_LINES);
-        glVertex2d(x1, y1);
-        glVertex2d(x2, y2);
-        glEnd();
+        GlStateManager.glBegin(GL11.GL_LINES);
+        GlStateManager.glVertex3f((float) x1, (float) y1, 0);
+        GlStateManager.glVertex3f((float) x2, (float) y2, 0);
+        GlStateManager.glEnd();
 
         release2D();
     }
@@ -165,7 +163,7 @@ public class GuiUtils {
         prepare2D();
 
         setColor(color);
-        glRectd(x, y, x + width, y + height);
+        GL11.glRectd(x, y, x + width, y + height);
 
         release2D();
     }
@@ -173,15 +171,15 @@ public class GuiUtils {
     public static void drawOutline(double x, double y, double width, double height, Color color, double pts) {
         prepare2D();
 
-        glDisable(GL_LINE_SMOOTH);
-        glLineWidth((float) pts);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        GlStateManager.glLineWidth((float) pts);
         setColor(color);
-        glBegin(GL_LINE_LOOP);
-        glVertex2d(x, y);
-        glVertex2d(x + width, y);
-        glVertex2d(x + width, y + height);
-        glVertex2d(x, y + height);
-        glEnd();
+        GlStateManager.glBegin(GL11.GL_LINE_LOOP);
+        GlStateManager.glVertex3f((float) x, (float) y, 0);
+        GlStateManager.glVertex3f((float) (x + width), (float) y, 0);
+        GlStateManager.glVertex3f((float) (x + width), (float) (y + height), 0);
+        GlStateManager.glVertex3f((float) x, (float) (y + height), 0);
+        GlStateManager.glEnd();
 
         release2D();
     }
@@ -215,7 +213,7 @@ public class GuiUtils {
         }
 
         void scissor() {
-            glScissor((int) x, (int) y, (int) width, (int) height);
+            GL11.glScissor((int) x, (int) y, (int) width, (int) height);
         }
     }
 }

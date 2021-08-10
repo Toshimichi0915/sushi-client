@@ -1,13 +1,12 @@
 package net.toshimichi.sushi.modules.combat;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.toshimichi.sushi.config.data.EspColor;
 import net.toshimichi.sushi.modules.render.RenderMode;
 import net.toshimichi.sushi.utils.render.RenderUtils;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class HoleMineInfo {
     private final BlockPos surroundPos;
@@ -36,8 +35,8 @@ public class HoleMineInfo {
         BlockPos breakingBlock = getSurroundPos();
         AxisAlignedBB box = world.getBlockState(breakingBlock).getBoundingBox(world, breakingBlock)
                 .offset(breakingBlock).grow(0.002);
-        if (mode == RenderMode.FULL) glDisable(GL_DEPTH_TEST);
+        if (mode == RenderMode.FULL) GlStateManager.disableDepth();
         RenderUtils.drawFilled(box, color.getCurrentColor());
-        glEnable(GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
     }
 }
