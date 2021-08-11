@@ -15,8 +15,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.toshimichi.sushi.mixin.AccessorItemTool;
 
-import javax.annotation.Nonnull;
-
 public class ItemUtils {
 
     public static float getAttackDamage(ItemStack itemStack) {
@@ -52,11 +50,12 @@ public class ItemUtils {
         return destroySpeed;
     }
 
-    public static boolean canToolHarvestBlock(IBlockAccess world, BlockPos pos, @Nonnull ItemStack stack) {
+    public static boolean canToolHarvestBlock(IBlockAccess world, BlockPos pos, ItemStack stack) {
         IBlockState state = world.getBlockState(pos);
         state = state.getBlock().getActualState(state, world, pos);
         String tool = state.getBlock().getHarvestTool(state);
-        if (stack.isEmpty() || tool == null) return false;
+        if (tool == null) return true;
+        if (stack.isEmpty()) return false;
         return stack.getItem().getHarvestLevel(stack, tool, null, null) >= state.getBlock().getHarvestLevel(state);
     }
 
