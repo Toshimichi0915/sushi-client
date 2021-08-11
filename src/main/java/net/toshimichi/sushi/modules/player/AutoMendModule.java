@@ -102,19 +102,20 @@ public class AutoMendModule extends BaseModule {
 
             boolean switching = false;
             if (ItemUtils.getEnchantmentLevel(itemSlot.getItemStack(), Enchantments.MENDING) == 0 ||
-                    (repairAll.getValue() && itemSlot.getItemStack().getItemDamage() == 0)) {
-                // find alternatives
-                for (ItemSlot armor : InventoryType.MAIN) {
-                    ItemStack armorItem = armor.getItemStack();
-                    if (!(armorItem.getItem() instanceof ItemArmor)) continue;
-                    if (EntityLiving.getSlotForItemStack(armorItem) != getEntityEquipmentSlot(itemSlot)) continue;
-                    if (ItemUtils.getEnchantmentLevel(armorItem, Enchantments.MENDING) == 0) continue;
-                    if (itemSlot.getItemStack().getItemDamage() == 0) continue;
-                    InventoryUtils.moveTo(armor, itemSlot);
-                    itemSlot = armor;
-                    switching = true;
-                    canRepair = true;
-                    break;
+                    itemSlot.getItemStack().getItemDamage() == 0) {
+                if (repairAll.getValue()) {
+                    // find alternatives
+                    for (ItemSlot armor : InventoryType.MAIN) {
+                        ItemStack armorItem = armor.getItemStack();
+                        if (!(armorItem.getItem() instanceof ItemArmor)) continue;
+                        if (EntityLiving.getSlotForItemStack(armorItem) != getEntityEquipmentSlot(itemSlot)) continue;
+                        if (ItemUtils.getEnchantmentLevel(armorItem, Enchantments.MENDING) == 0) continue;
+                        if (armorItem.getItemDamage() == 0) continue;
+                        InventoryUtils.moveTo(armor, itemSlot);
+                        switching = true;
+                        canRepair = true;
+                        break;
+                    }
                 }
 
                 // find empty slots
