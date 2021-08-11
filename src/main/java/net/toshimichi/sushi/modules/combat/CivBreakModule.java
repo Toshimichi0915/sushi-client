@@ -21,6 +21,7 @@ import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.ItemSlotSwitchTask;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.TickUtils;
+import net.toshimichi.sushi.utils.UpdateTimer;
 import net.toshimichi.sushi.utils.combat.CivBreakAttack;
 import net.toshimichi.sushi.utils.combat.CivBreakUtils;
 import net.toshimichi.sushi.utils.player.InventoryUtils;
@@ -37,6 +38,7 @@ public class CivBreakModule extends BaseModule {
     private final Configuration<Boolean> antiWeakness;
     private final Configuration<IntRange> damage;
     private final Configuration<IntRange> selfDamage;
+    private final UpdateTimer breakTimer;
     private BlockPos breakingBlock;
 
     public CivBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
@@ -44,6 +46,7 @@ public class CivBreakModule extends BaseModule {
         antiWeakness = provider.get("anti_weakness", "Anti Weakness", null, Boolean.class, true);
         damage = provider.get("damage", "Damage", null, IntRange.class, new IntRange(40, 100, 10, 1));
         selfDamage = provider.get("self_damage", "Self Damage", null, IntRange.class, new IntRange(40, 100, 10, 1));
+        breakTimer = new UpdateTimer(false, 1);
     }
 
     @Override
@@ -103,7 +106,7 @@ public class CivBreakModule extends BaseModule {
                         .then(new ItemSlotSwitchTask())
                         .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN)))
                         .execute();
-            } else if (waitTime > ItemUtils.getDestroyTime(attack.getObsidianPos(), pickaxe.getItemStack())) {
+            } else if (waitTime > ItemUtils.getDestroyTime(attack.getObsidianPos(), pickaxe.getItemStack()) && breakTimer.update()) {
                 TaskExecutor.newTaskChain()
                         .supply(pickaxe)
                         .then(new ItemSlotSwitchTask())

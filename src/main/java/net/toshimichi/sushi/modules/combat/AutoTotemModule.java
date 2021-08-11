@@ -9,7 +9,7 @@ import net.toshimichi.sushi.events.EventHandlers;
 import net.toshimichi.sushi.events.EventTiming;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
-import net.toshimichi.sushi.utils.TickUtils;
+import net.toshimichi.sushi.utils.UpdateTimer;
 import net.toshimichi.sushi.utils.player.InventoryType;
 import net.toshimichi.sushi.utils.player.InventoryUtils;
 import net.toshimichi.sushi.utils.player.ItemSlot;
@@ -17,11 +17,12 @@ import net.toshimichi.sushi.utils.player.ItemSlot;
 public class AutoTotemModule extends BaseModule {
 
     private final Configuration<IntRange> delay;
-    private int lastUpdate;
+    private final UpdateTimer timer;
 
     public AutoTotemModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         delay = provider.get("delay", "Delay", null, IntRange.class, new IntRange(1, 10, 0, 1));
+        timer = new UpdateTimer(false, delay);
     }
 
     @Override
@@ -36,12 +37,11 @@ public class AutoTotemModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
-        if (lastUpdate > TickUtils.current() + delay.getValue().getCurrent()) return;
         ItemSlot offhand = ItemSlot.offhand();
         if (offhand.getItemStack().getItem().equals(Items.TOTEM_OF_UNDYING)) return;
         ItemSlot itemSlot = InventoryUtils.findItemSlot(Items.TOTEM_OF_UNDYING, InventoryType.values());
         if (itemSlot == null) return;
-        lastUpdate = TickUtils.current();
+        if (!timer.update()) return;
         InventoryUtils.moveTo(itemSlot, InventoryType.OFFHAND.getAll()[0]);
     }
 

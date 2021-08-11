@@ -21,6 +21,7 @@ import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.EntityInfo;
 import net.toshimichi.sushi.utils.EntityUtils;
+import net.toshimichi.sushi.utils.UpdateTimer;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
 import net.toshimichi.sushi.utils.player.*;
 
@@ -33,7 +34,7 @@ public class AutoMendModule extends BaseModule {
     private final Configuration<Boolean> autoDisable;
     private final Configuration<Boolean> crystalCheck;
     private final Configuration<IntRange> selfHp;
-    private int lastDelayTicks;
+    private final UpdateTimer timer;
 
     private static final EntityEquipmentSlot[] SLOTS = {
             EntityEquipmentSlot.FEET,
@@ -49,6 +50,7 @@ public class AutoMendModule extends BaseModule {
         autoDisable = provider.get("auto_disable", "Auto Disable", null, Boolean.class, true);
         crystalCheck = provider.get("crystal_check", "Crystal Check", null, Boolean.class, true);
         selfHp = provider.get("slef_hp", "Self HP", null, IntRange.class, new IntRange(6, 20, 0, 1));
+        timer = new UpdateTimer(false, delay);
     }
 
     @Override
@@ -72,7 +74,7 @@ public class AutoMendModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
-        if (lastDelayTicks-- > 0) return;
+        if (!timer.peek()) return;
         ItemSlot expBottle = InventoryUtils.findItemSlot(Items.EXPERIENCE_BOTTLE, InventoryType.values());
         List<EntityInfo<EntityEnderCrystal>> crystals = EntityUtils.getNearbyEntities(getPlayer().getPositionVector(), EntityEnderCrystal.class);
         double crystalDamage;
@@ -131,7 +133,7 @@ public class AutoMendModule extends BaseModule {
             return;
         }
 
-        lastDelayTicks = delay.getValue().getCurrent();
+        timer.update();
         InventoryUtils.moveToHotbar(expBottle);
         try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
             PositionUtils.move(Vec3d.ZERO, getPlayer().rotationYaw, -90, false, true, DesyncMode.LOOK);

@@ -33,6 +33,7 @@ import net.toshimichi.sushi.task.forge.TaskExecutor;
 import net.toshimichi.sushi.task.tasks.ItemSwitchMode;
 import net.toshimichi.sushi.task.tasks.ItemSwitchTask;
 import net.toshimichi.sushi.utils.EntityUtils;
+import net.toshimichi.sushi.utils.UpdateTimer;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
 import net.toshimichi.sushi.utils.player.*;
 import net.toshimichi.sushi.utils.render.RenderUtils;
@@ -75,14 +76,14 @@ public class CrystalAuraModule extends BaseModule {
     private final Configuration<EspColor> fillColor;
 
     private final Set<EnderCrystalInfo> enderCrystals = new HashSet<>();
+
+    private final UpdateTimer breakTimer;
+    private final UpdateTimer placeTimer;
+    private final UpdateTimer recalculationTimer;
+
     private volatile CrystalAttack crystalAttack;
     private volatile CrystalAttack nearbyCrystalAttack;
-
     private volatile ItemSlot crystalSlot;
-
-    private volatile long lastPlaceTick;
-    private volatile long lastBreakTick;
-    private volatile long lastRecalculationTick;
 
     public CrystalAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -128,6 +129,11 @@ public class CrystalAuraModule extends BaseModule {
         outlineColor = render.get("outline_color", "Outline Color", null, EspColor.class, new EspColor(Color.WHITE, false, true), outline::isValid, false, 0);
         fill = render.get("fill", "Fill", null, Boolean.class, true);
         fillColor = render.get("fill_color", "Fill Color", null, EspColor.class, new EspColor(Color.PINK, false, true).setAlpha(50), fill::isValid, false, 0);
+
+        // timer
+        placeTimer = new UpdateTimer(true, placeCoolTime);
+        breakTimer = new UpdateTimer(true, breakCoolTime);
+        recalculationTimer = new UpdateTimer(true, recalculationCoolTime);
     }
 
     @Override
@@ -140,9 +146,6 @@ public class CrystalAuraModule extends BaseModule {
         EventHandlers.unregister(this);
         crystalAttack = null;
         nearbyCrystalAttack = null;
-        lastBreakTick = 0;
-        lastPlaceTick = 0;
-        lastRecalculationTick = 0;
     }
 
     private double getDamage(Vec3d pos, EntityPlayer player, Vec3d offset) {
@@ -288,30 +291,6 @@ public class CrystalAuraModule extends BaseModule {
         return null;
     }
 
-    private boolean updateBreakCounter() {
-        if (System.currentTimeMillis() - lastBreakTick >= breakCoolTime.getValue().getCurrent()) {
-            lastBreakTick = System.currentTimeMillis();
-            return true;
-        }
-        return false;
-    }
-
-    private boolean updatePlaceCounter() {
-        if (System.currentTimeMillis() - lastPlaceTick >= placeCoolTime.getValue().getCurrent()) {
-            lastPlaceTick = System.currentTimeMillis();
-            return true;
-        }
-        return false;
-    }
-
-    private boolean updateRecalculationCounter() {
-        if (System.currentTimeMillis() - lastRecalculationTick >= recalculationCoolTime.getValue().getCurrent()) {
-            lastRecalculationTick = System.currentTimeMillis();
-            return true;
-        }
-        return false;
-    }
-
     private void breakEnderCrystal(EnderCrystalInfo enderCrystal) {
         InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> {
             try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
@@ -326,7 +305,7 @@ public class CrystalAuraModule extends BaseModule {
         CrystalAttack nearbyCrystalAttack = this.nearbyCrystalAttack;
 
         // break
-        if (nearbyCrystalAttack != null && updateBreakCounter()) breakEnderCrystal(nearbyCrystalAttack.info);
+        if (nearbyCrystalAttack != null && breakTimer.update()) breakEnderCrystal(nearbyCrystalAttack.info);
         this.nearbyCrystalAttack = null;
     }
 
@@ -337,10 +316,10 @@ public class CrystalAuraModule extends BaseModule {
         // place
         if (crystalAttack == null) return;
         if (crystalSlot == null) return;
-        if (!updatePlaceCounter()) return;
+        if (!placeTimer.update()) return;
         Vec3d crystalPos = crystalAttack.info.getPos();
         EnderCrystalInfo colliding = getCollidingEnderCrystal(crystalAttack.info.getBox());
-        if (colliding != null && updateBreakCounter()) breakEnderCrystal(colliding);
+        if (colliding != null && breakTimer.update()) breakEnderCrystal(colliding);
         try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
             PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
         }
@@ -361,7 +340,7 @@ public class CrystalAuraModule extends BaseModule {
     @EventHandler(timing = EventTiming.POST)
     public void onClientTick(ClientTickEvent e) {
         refreshEnderCrystals();
-        if (updateRecalculationCounter()) refreshCrystalAttack();
+        if (recalculationTimer.update()) refreshCrystalAttack();
         if (crystalAttack == null && nearbyCrystalAttack == null) return;
         crystalSlot = InventoryUtils.findItemSlot(Items.END_CRYSTAL, InventoryType.HOTBAR, InventoryType.OFFHAND);
         if (crystalSlot == null || (ItemSlot.current().equals(crystalSlot) && !silentSwitch.getValue() &&

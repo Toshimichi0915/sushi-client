@@ -25,6 +25,7 @@ import net.toshimichi.sushi.events.tick.GameTickEvent;
 import net.toshimichi.sushi.modules.*;
 import net.toshimichi.sushi.utils.EntityInfo;
 import net.toshimichi.sushi.utils.EntityUtils;
+import net.toshimichi.sushi.utils.UpdateTimer;
 import net.toshimichi.sushi.utils.combat.DamageUtils;
 import net.toshimichi.sushi.utils.player.*;
 import net.toshimichi.sushi.utils.world.BlockFace;
@@ -43,21 +44,14 @@ public class AntiPistonAuraModule extends BaseModule {
     private final HashSet<PistonInfo> pistons = new HashSet<>();
     private final HashSet<EnderCrystalInfo> crystals = new HashSet<>();
     private final Configuration<IntRange> placeCoolTime;
-    private long lastPlaceTick;
+    private final UpdateTimer placeTimer;
     private ItemSlot obsidianSlot;
     private long when;
 
     public AntiPistonAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         placeCoolTime = provider.get("place_cool_time", "Place Cool Time", null, IntRange.class, new IntRange(20, 1000, 10, 10));
-    }
-
-    private boolean updatePlaceCounter() {
-        if (System.currentTimeMillis() - lastPlaceTick >= placeCoolTime.getValue().getCurrent()) {
-            lastPlaceTick = System.currentTimeMillis();
-            return true;
-        }
-        return false;
+        placeTimer = new UpdateTimer(true, placeCoolTime);
     }
 
     @Override
@@ -122,7 +116,7 @@ public class AntiPistonAuraModule extends BaseModule {
         if (spam.isEmpty()) return;
         ItemSlot copy = obsidianSlot;
         if (copy == null) return;
-        if (!updatePlaceCounter()) return;
+        if (!placeTimer.update()) return;
         InventoryUtils.silentSwitch(true, copy.getIndex(), () -> {
             for (BlockPlaceInfo info : new ArrayList<>(spam)) {
                 if (info == null) continue;

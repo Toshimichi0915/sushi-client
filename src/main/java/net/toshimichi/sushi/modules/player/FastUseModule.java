@@ -17,6 +17,7 @@ import net.toshimichi.sushi.events.packet.PacketSendEvent;
 import net.toshimichi.sushi.events.tick.ClientTickEvent;
 import net.toshimichi.sushi.mixin.AccessorMinecraft;
 import net.toshimichi.sushi.modules.*;
+import net.toshimichi.sushi.utils.UpdateTimer;
 import net.toshimichi.sushi.utils.player.ItemSlot;
 
 public class FastUseModule extends BaseModule {
@@ -40,10 +41,11 @@ public class FastUseModule extends BaseModule {
     public Boolean fireworks = true;
 
     private EnumHand usedHand;
-    private int lastDelayTicks;
+    private final UpdateTimer timer;
 
     public FastUseModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        timer = new UpdateTimer(false, () -> delay.getCurrent());
         new ConfigInjector(provider).inject(this);
     }
 
@@ -59,9 +61,8 @@ public class FastUseModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
-        if (lastDelayTicks-- > 0) return;
         if (!passItemCheck(ItemSlot.hand(usedHand).getItemStack().getItem())) return;
-        lastDelayTicks = delay.getCurrent();
+        if (!timer.update()) return;
         ((AccessorMinecraft) getClient()).setRightClickDelayTimer(0);
     }
 
