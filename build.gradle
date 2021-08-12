@@ -22,7 +22,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-            property 'fml.coreMods.load', 'net.toshimichi.sushi.MixinLoaderForge'
+            property 'fml.coreMods.load', 'net.sushiclient.client.MixinLoaderForge'
             property 'mixin.env.disableRefMap', 'true'
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
@@ -38,6 +38,7 @@ repositories {
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     maven { url = 'https://impactdevelopment.github.io/maven/' }
     maven { url = 'https://jitpack.io' }
+    mavenLocal()
 }
 
 dependencies {
@@ -55,9 +56,9 @@ dependencies {
     included 'org.jsoup:jsoup:1.14.1'
 
     // Protection
-    included(project(':hwid-generator')) { exclude module: 'commons-io' }
-    implementation(project(':hwid-annotations')) { transitive = false }
-    annotationProcessor project(':hwid-annotations')
+    included('net.sushiclient:protection:1.0') { exclude module: 'commons-io' }
+    implementation 'net.sushiclient:annotations:1.0'
+    annotationProcessor 'net.sushiclient:annotations:1.0'
 
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
     implementation configurations.included
@@ -88,7 +89,7 @@ jar {
             'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
             'TweakOrder': 0,
             'FMLCorePluginContainsFMLMod': 'true',
-            'FMLCorePlugin': 'net.toshimichi.sushi.MixinLoaderForge',
+            'FMLCorePlugin': 'net.sushiclient.client.MixinLoaderForge',
             'ForceLoadAsMod': 'true'
     )
     from {

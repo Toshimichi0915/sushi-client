@@ -1,3 +1,0 @@
-include ':hwid-annotations', ':hwid-generator'
-project(':hwid-annotations').projectDir = file('../hwid-annotations')
-project(':hwid-generator').projectDir = file('../hwid-generator')
