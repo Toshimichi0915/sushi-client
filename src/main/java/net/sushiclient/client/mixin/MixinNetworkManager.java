@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.sushiclient.client.events.EventHandlers;
+import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.client.ExceptionCatchEvent;
 import net.sushiclient.client.events.packet.PacketReceiveEvent;
 import net.sushiclient.client.events.packet.PacketSendEvent;
@@ -18,15 +19,21 @@ public abstract class MixinNetworkManager {
 
     @ModifyVariable(at = @At(value = "HEAD", ordinal = 0), method = "sendPacket(Lnet/minecraft/network/Packet;)V")
     public Packet<?> onModifySendPacket(Packet<?> packet) {
-        PacketSendEvent event = new PacketSendEvent(packet);
+        PacketSendEvent event = new PacketSendEvent(EventTiming.PRE, packet);
         EventHandlers.callEvent(event);
         if (event.isCancelled()) return null;
         else return event.getPacket();
     }
 
     @Inject(at = @At("HEAD"), method = "sendPacket(Lnet/minecraft/network/Packet;)V", cancellable = true)
-    public void onSendPacket(Packet<?> packet, CallbackInfo info) {
+    public void onPreSendPacket(Packet<?> packet, CallbackInfo info) {
         if (packet == null) info.cancel();
+    }
+
+    @Inject(at = @At("TAIL"), method = "sendPacket(Lnet/minecraft/network/Packet;)V")
+    public void onPostSendPacket(Packet<?> packet, CallbackInfo info) {
+        PacketSendEvent event = new PacketSendEvent(EventTiming.POST, packet);
+        EventHandlers.callEvent(event);
     }
 
     @Inject(at = @At("HEAD"), method = "exceptionCaught", cancellable = true)
@@ -38,14 +45,19 @@ public abstract class MixinNetworkManager {
 
     @ModifyVariable(at = @At(value = "HEAD", ordinal = 0), method = "channelRead0")
     public Packet<?> onModifyChannel0(Packet<?> packetIn) {
-        PacketReceiveEvent event = new PacketReceiveEvent(packetIn);
+        PacketReceiveEvent event = new PacketReceiveEvent(EventTiming.PRE, packetIn);
         EventHandlers.callEvent(event);
         return event.isCancelled() ? null : event.getPacket();
     }
 
     @Inject(at = @At("HEAD"), method = "channelRead0", cancellable = true)
-    public void onChannelRead0(ChannelHandlerContext context, Packet<?> packetIn, CallbackInfo ci) {
+    public void onPreChannelRead0(ChannelHandlerContext context, Packet<?> packetIn, CallbackInfo ci) {
         if (packetIn == null) ci.cancel();
     }
 
+    @Inject(at = @At("TAIL"), method = "channelRead0")
+    public void onPostChannelRead0(ChannelHandlerContext context, Packet<?> packetIn, CallbackInfo ci) {
+        PacketReceiveEvent event = new PacketReceiveEvent(EventTiming.POST, packetIn);
+        EventHandlers.callEvent(event);
+    }
 }

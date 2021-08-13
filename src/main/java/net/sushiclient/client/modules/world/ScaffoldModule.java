@@ -11,6 +11,7 @@ import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.player.PlayerTravelEvent;
+import net.sushiclient.client.events.player.PlayerUpdateEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
 import net.sushiclient.client.task.forge.TaskExecutor;
@@ -57,9 +58,14 @@ public class ScaffoldModule extends BaseModule {
         BlockPos floor = BlockUtils.toBlockPos(getPlayer().getPositionVector()).add(0, -1, 0);
         if (BlockUtils.isAir(getWorld(), floor)) return;
 
-        if (getPlayer().movementInput.jump && hasBlock && getPlayer().motionY < 0.21) {
+        if (getPlayer().movementInput.jump && hasBlock && getPlayer().motionY < 0.1) {
             getPlayer().motionY = 0.42;
         }
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onUpdate(PlayerUpdateEvent e) {
+
     }
 
     @EventHandler(timing = EventTiming.PRE)

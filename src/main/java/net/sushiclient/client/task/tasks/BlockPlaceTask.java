@@ -2,6 +2,9 @@ package net.sushiclient.client.task.tasks;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.network.play.client.CPacketAnimation;
+import net.minecraft.util.EnumHand;
 import net.sushiclient.client.task.TaskAdapter;
 import net.sushiclient.client.utils.player.DesyncCloseable;
 import net.sushiclient.client.utils.player.DesyncMode;
@@ -18,21 +21,32 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
 
     private final boolean rotate;
     private final boolean desync;
+    private final boolean swing;
     private final boolean packet;
     private final PlaceOptions[] option;
     private final WorldClient world;
+    private DesyncCloseable closeable;
 
     public BlockPlaceTask(boolean rotate, boolean desync, PlaceOptions... option) {
-        this(rotate, desync, false, option);
+        this(rotate, desync, false, true, option);
     }
 
-    public BlockPlaceTask(boolean rotate, boolean desync, boolean packet, PlaceOptions... option) {
+    public BlockPlaceTask(boolean rotate, boolean desync, boolean packet, boolean swing, PlaceOptions... option) {
         this.rotate = rotate;
         this.desync = desync;
         this.packet = packet;
+        this.swing = swing;
         this.option = option;
         Minecraft minecraft = Minecraft.getMinecraft();
         world = minecraft.world;
+    }
+
+    @Override
+    public void start(List<BlockPlaceInfo> input) throws Exception {
+        super.start(input);
+        if (rotate) {
+            closeable = PositionUtils.desync(DesyncMode.LOOK);
+        }
     }
 
     @Override
@@ -51,11 +65,21 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
             return;
         }
         if (rotate) {
-            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-                PositionUtils.lookAt(info, desync ? DesyncMode.LOOK : DesyncMode.NONE);
-            }
+            PositionUtils.lookAt(info, desync ? DesyncMode.LOOK : DesyncMode.NONE);
+        }
+        NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
+        if (swing && connection != null) {
+            connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
         }
         BlockUtils.place(info, packet);
         if (index >= getInput().size()) stop(null);
+    }
+
+    @Override
+    public void stop(Object result) {
+        super.stop(result);
+        if (closeable != null) {
+            closeable.close();
+        }
     }
 }

@@ -7,10 +7,7 @@ import com.google.gson.JsonPrimitive;
 import net.sushiclient.client.config.GsonConfigurations;
 import net.sushiclient.client.config.GsonRootConfigurations;
 import net.sushiclient.client.config.RootConfigurations;
-import net.sushiclient.client.modules.client.AntiErrorKickModule;
-import net.sushiclient.client.modules.client.AutoVoteModule;
-import net.sushiclient.client.modules.client.ClickGuiModule;
-import net.sushiclient.client.modules.client.HudModule;
+import net.sushiclient.client.modules.client.*;
 import net.sushiclient.client.modules.combat.*;
 import net.sushiclient.client.modules.movement.*;
 import net.sushiclient.client.modules.player.*;
@@ -113,6 +110,7 @@ public class GsonModules implements Modules {
         addModuleFactory("blink", BlinkModule::new, true);
         addModuleFactory("anvil_miner", AnvilMinerModule::new, true);
         addModuleFactory("virtual_tp", VirtualTpModule::new, false);
+        addModuleFactory("rotation_view", RotationViewModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

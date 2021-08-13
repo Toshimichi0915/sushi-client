@@ -98,7 +98,7 @@ public class SurroundModule extends BaseModule {
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
                 .supply(placeList)
-                .then(new BlockPlaceTask(true, true, packetPlace.getValue()))
+                .then(new BlockPlaceTask(true, true, packetPlace.getValue(), true))
                 .last(() -> running = false)
                 .execute();
     }
