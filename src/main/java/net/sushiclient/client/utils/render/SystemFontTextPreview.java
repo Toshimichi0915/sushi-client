@@ -69,7 +69,7 @@ public class SystemFontTextPreview implements TextPreview {
         if (font == null) return null;
 
         // load TTF
-        SystemFontRenderer renderer = new SystemFontRenderer(font, true, true);
+        SystemFontRenderer renderer = new SystemFontRenderer(font);
         cachedFonts.add(new FontData(fontName, renderer, pts));
         return new SystemFontTextPreview(text, renderer, color, shadow);
     }

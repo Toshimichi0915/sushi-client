@@ -3,7 +3,6 @@ package net.sushiclient.client.utils.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -13,20 +12,13 @@ import java.util.ArrayList;
 public class SystemFontRenderer extends SystemFont {
 
     private final FontRenderer fontRenderer;
-    protected final CharData[] boldChars = new CharData[256];
-    protected final CharData[] italicChars = new CharData[256];
-    protected final CharData[] boldItalicChars = new CharData[256];
-    protected DynamicTexture texBold;
-    protected DynamicTexture texItalic;
-    protected DynamicTexture texItalicBold;
 
     private final int[] colorCodes = new int[32];
 
-    public SystemFontRenderer(Font font, boolean antiAlias, boolean fractionalMetrics) {
-        super(font, antiAlias, fractionalMetrics);
+    public SystemFontRenderer(Font font) {
+        super(font);
         fontRenderer = Minecraft.getMinecraft().fontRenderer;
         setUpColorCodes();
-        setUpDecoratedChars();
     }
 
     public void drawString(String text, double x, double y, Color color, boolean shadow) {
@@ -40,10 +32,6 @@ public class SystemFontRenderer extends SystemFont {
         if (shadow)
             color = new Color(color.getRed() / 4, color.getGreen() / 4, color.getBlue() / 4, color.getAlpha());
 
-        CharData[] currentData = this.charData;
-        boolean randomCase = false;
-        boolean bold = false;
-        boolean italic = false;
         boolean strikethrough = false;
         boolean underline = false;
         x *= 2.0D;
@@ -55,10 +43,11 @@ public class SystemFontRenderer extends SystemFont {
         GlStateManager.color(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
         GlStateManager.enableTexture2D();
         GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_DONT_CARE);
-        GlStateManager.bindTexture(tex.getGlTextureId());
+        GlStateManager.bindTexture(getTexture().getGlTextureId());
         ArrayList<VanillaChar> vanillaChars = new ArrayList<>();
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
+            CharData charData = getCharData(c);
             if (c == '\u00A7') {
                 int colorIndex = 21;
                 try {
@@ -67,73 +56,44 @@ public class SystemFontRenderer extends SystemFont {
                     // invalid color code
                 }
                 if (colorIndex < 16) {
-                    bold = false;
-                    italic = false;
-                    randomCase = false;
                     underline = false;
                     strikethrough = false;
-                    GlStateManager.bindTexture(tex.getGlTextureId());
-                    currentData = this.charData;
+                    GlStateManager.bindTexture(getTexture().getGlTextureId());
                     if (colorIndex < 0) colorIndex = 15;
                     if (shadow) colorIndex += 16;
                     int colorCode = this.colorCodes[colorIndex];
                     color = new Color((colorCode >> 16 & 0xFF), (colorCode >> 8 & 0xFF), (colorCode & 0xFF), color.getAlpha());
                     GlStateManager.color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, color.getAlpha() / 255F);
-                } else if (colorIndex == 16) {
-                    randomCase = true;
-                    // not implemented
-                } else if (colorIndex == 17) {
-                    bold = true;
-                    if (italic) {
-                        GlStateManager.bindTexture(texItalicBold.getGlTextureId());
-                        currentData = this.boldItalicChars;
-                    } else {
-                        GlStateManager.bindTexture(texBold.getGlTextureId());
-                        currentData = this.boldChars;
-                    }
                 } else if (colorIndex == 18) {
                     strikethrough = true;
                 } else if (colorIndex == 19) {
                     underline = true;
-                } else if (colorIndex == 20) {
-                    italic = true;
-                    if (bold) {
-                        GlStateManager.bindTexture(texItalicBold.getGlTextureId());
-                        currentData = this.boldItalicChars;
-                    } else {
-                        GlStateManager.bindTexture(texItalic.getGlTextureId());
-                        currentData = this.italicChars;
-                    }
-                } else {
-                    bold = false;
-                    italic = false;
-                    randomCase = false;
+                } else if (colorIndex == 21) {
                     underline = false;
                     strikethrough = false;
                     GlStateManager.color(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
-                    GlStateManager.bindTexture(tex.getGlTextureId());
-                    currentData = this.charData;
+                    GlStateManager.bindTexture(getTexture().getGlTextureId());
                 }
                 i++;
-            } else if (c < currentData.length) {
+            } else if (charData != null) {
                 GlStateManager.glBegin(GL11.GL_TRIANGLES);
-                drawChar(currentData, c, (float) x, (float) y);
+                drawChar(charData, (float) x, (float) y);
                 GlStateManager.glEnd();
                 if (strikethrough)
-                    drawLine(x, y + (double) currentData[c].height / 2, x + currentData[c].width - paddingWidth, y + (double) currentData[c].height / 2, 1.0F);
+                    drawLine(x, y + (double) charData.height / 2, x + charData.width - getPaddingWidth(), y + (double) charData.height / 2, 1.0F);
                 if (underline)
-                    drawLine(x, y + currentData[c].height - 2.0D, x + currentData[c].width - paddingWidth, y + currentData[c].height - 2.0D, 1.0F);
-                x += currentData[c].width - paddingWidth + this.charOffset;
+                    drawLine(x, y + charData.height - 2.0D, x + charData.width - getPaddingWidth(), y + charData.height - 2.0D, 1.0F);
+                x += charData.width - getPaddingWidth();
             } else {
                 vanillaChars.add(new VanillaChar(x, y, c, color.getRGB()));
-                x += fontRenderer.getStringWidth(Character.toString(c)) * 2;
+                x += (fontRenderer.getStringWidth(Character.toString(c)) + getPaddingWidth()) * getFont().getSize() / 18D;
             }
         }
         GlStateManager.popMatrix();
         for (VanillaChar vc : vanillaChars) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(vc.x / 2, vc.y / 2, 0);
-            GlStateManager.scale(font.getSize() / 18D, font.getSize() / 18D, 0);
+            GlStateManager.scale(getFont().getSize() / 18D, getFont().getSize() / 18D, 0);
             fontRenderer.drawString(Character.toString(vc.c), 1, 1, vc.color, shadow);
             GlStateManager.popMatrix();
         }
@@ -141,51 +101,18 @@ public class SystemFontRenderer extends SystemFont {
 
     @Override
     public double getStringWidth(String text) {
-        if (text == null) {
-            return 0;
-        }
+        if (text == null) return 0;
         double width = 0;
-        CharData[] currentData = this.charData;
-        boolean bold = false;
-        boolean italic = false;
-        int size = text.length();
 
-        for (int i = 0; i < size; i++) {
-            char character = text.charAt(i);
-            if (character == '\u00A7') {
-                int colorIndex = 21;
-                try {
-                    colorIndex = "0123456789abcdefklmnor".indexOf(text.charAt(i + 1));
-                } catch (IndexOutOfBoundsException e) {
-                    // skip
-                }
-                if (colorIndex < 16) {
-                    bold = false;
-                    italic = false;
-                } else if (colorIndex == 17) {
-                    bold = true;
-                    if (italic) {
-                        currentData = this.boldItalicChars;
-                    } else {
-                        currentData = this.boldChars;
-                    }
-                } else if (colorIndex == 20) {
-                    italic = true;
-                    if (bold) {
-                        currentData = this.boldItalicChars;
-                    } else {
-                        currentData = this.italicChars;
-                    }
-                } else if (colorIndex == 21) {
-                    bold = false;
-                    italic = false;
-                    currentData = this.charData;
-                }
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            CharData charData = getCharData(c);
+            if (c == '\u00A7') {
                 i++;
-            } else if (character < currentData.length) {
-                width += currentData[character].width - paddingWidth + this.charOffset;
+            } else if (charData != null) {
+                width += charData.width - getPaddingWidth();
             } else {
-                width += fontRenderer.getStringWidth(Character.toString(character)) * 2;
+                width += (fontRenderer.getStringWidth(Character.toString(c)) + getPaddingWidth()) * getFont().getSize() / 18D;
             }
         }
         return width / 2;
@@ -202,18 +129,12 @@ public class SystemFontRenderer extends SystemFont {
         GlStateManager.enableTexture2D();
     }
 
-    private void setUpDecoratedChars() {
-        this.texBold = setupTexture(this.font.deriveFont(Font.BOLD), this.antiAlias, this.fractionalMetrics, this.boldChars);
-        this.texItalic = setupTexture(this.font.deriveFont(Font.ITALIC), this.antiAlias, this.fractionalMetrics, this.italicChars);
-        this.texItalicBold = setupTexture(this.font.deriveFont(Font.BOLD | Font.ITALIC), this.antiAlias, this.fractionalMetrics, this.boldItalicChars);
-    }
-
     private void setUpColorCodes() {
         for (int index = 0; index < 32; index++) {
-            int noClue = (index >> 3 & 0x1) * 85;
-            int red = (index >> 2 & 0x1) * 170 + noClue;
-            int green = (index >> 1 & 0x1) * 170 + noClue;
-            int blue = (index >> 0 & 0x1) * 170 + noClue;
+            int brightness = (index >> 3 & 0x1) * 85;
+            int red = (index >> 2 & 0x1) * 170 + brightness;
+            int green = (index >> 1 & 0x1) * 170 + brightness;
+            int blue = (index >> 0 & 0x1) * 170 + brightness;
 
             if (index == 6) {
                 red += 85;
@@ -233,7 +154,7 @@ public class SystemFontRenderer extends SystemFont {
         char c;
         int color;
 
-        public VanillaChar(double x, double y, char c, int color) {
+        VanillaChar(double x, double y, char c, int color) {
             this.x = x;
             this.y = y;
             this.c = c;

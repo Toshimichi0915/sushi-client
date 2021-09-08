@@ -25,7 +25,6 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
     private final boolean packet;
     private final PlaceOptions[] option;
     private final WorldClient world;
-    private DesyncCloseable closeable;
 
     public BlockPlaceTask(boolean rotate, boolean desync, PlaceOptions... option) {
         this(rotate, desync, false, true, option);
@@ -39,14 +38,6 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
         this.option = option;
         Minecraft minecraft = Minecraft.getMinecraft();
         world = minecraft.world;
-    }
-
-    @Override
-    public void start(List<BlockPlaceInfo> input) throws Exception {
-        super.start(input);
-        if (rotate) {
-            closeable = PositionUtils.desync(DesyncMode.LOOK);
-        }
     }
 
     @Override
@@ -65,7 +56,9 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
             return;
         }
         if (rotate) {
-            PositionUtils.lookAt(info, desync ? DesyncMode.LOOK : DesyncMode.NONE);
+            try (DesyncCloseable closable = PositionUtils.desync(DesyncMode.LOOK)) {
+                PositionUtils.lookAt(info, desync ? DesyncMode.LOOK : DesyncMode.NONE);
+            }
         }
         NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
         if (swing && connection != null) {
@@ -73,13 +66,5 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
         }
         BlockUtils.place(info, packet);
         if (index >= getInput().size()) stop(null);
-    }
-
-    @Override
-    public void stop(Object result) {
-        super.stop(result);
-        if (closeable != null) {
-            closeable.close();
-        }
     }
 }
