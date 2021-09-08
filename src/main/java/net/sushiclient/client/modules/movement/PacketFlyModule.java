@@ -65,7 +65,7 @@ public class PacketFlyModule extends BaseModule {
             getConnection().sendPacket(new CPacketConfirmTeleport(teleportId2));
         }
         teleportId2++;
-        getConnection().sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY, getPlayer().posZ, true));
+        getConnection().sendPacket(new CPacketPlayer.PositionRotation(getPlayer().posX, getPlayer().posY, getPlayer().posZ, getPlayer().rotationYaw, getPlayer().rotationPitch, true));
 
         Vec3d movement = MovementUtils.getMoveInputs(getPlayer()).normalize();
         Vec2f delta = MovementUtils.toWorld(new Vec2f((float) movement.x, (float) movement.z), getPlayer().rotationYaw);
