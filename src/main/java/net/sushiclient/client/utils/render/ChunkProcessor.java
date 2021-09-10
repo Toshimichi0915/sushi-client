@@ -8,7 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.sushiclient.annotations.Protect;
 import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
@@ -70,7 +69,6 @@ abstract public class ChunkProcessor implements Closeable {
         queued.add(e.getChunk());
     }
 
-    @Protect
     @EventHandler(timing = EventTiming.POST)
     public void onWorldLoad(WorldLoadEvent e) {
         if (world != null) world.removeEventListener(listener);

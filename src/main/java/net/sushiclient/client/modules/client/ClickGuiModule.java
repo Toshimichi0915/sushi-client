@@ -1,7 +1,6 @@
 package net.sushiclient.client.modules.client;
 
 import net.minecraft.client.Minecraft;
-import net.sushiclient.annotations.Protect;
 import net.sushiclient.client.Sushi;
 import net.sushiclient.client.config.Configuration;
 import net.sushiclient.client.config.RootConfigurations;
@@ -42,7 +41,6 @@ public class ClickGuiModule extends BaseModule {
         return fallbackTheme;
     }
 
-    @Protect
     @Override
     public void onEnable() {
         Component component = getTheme().newClickGui(this);

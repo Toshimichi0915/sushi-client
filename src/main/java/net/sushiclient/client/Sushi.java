@@ -1,6 +1,5 @@
 package net.sushiclient.client;
 
-import net.sushiclient.annotations.Protect;
 import net.sushiclient.client.gui.theme.Theme;
 
 import java.util.ArrayList;
@@ -44,7 +43,6 @@ public class Sushi {
         return new ArrayList<>(themes);
     }
 
-    @Protect
     public static void setThemes(List<Theme> themes) {
         Sushi.themes.clear();
         Sushi.themes.addAll(themes);

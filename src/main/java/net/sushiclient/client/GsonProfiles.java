@@ -1,7 +1,6 @@
 package net.sushiclient.client;
 
 import com.google.gson.Gson;
-import net.sushiclient.annotations.Protect;
 import net.sushiclient.client.command.ChatLogger;
 import net.sushiclient.client.command.Logger;
 import net.sushiclient.client.modules.Categories;
@@ -94,7 +93,6 @@ public class GsonProfiles implements Profiles {
             return new ChatLogger();
         }
 
-        @Protect
         @Override
         public void load() {
             config.load(gson, configFile);
@@ -102,7 +100,6 @@ public class GsonProfiles implements Profiles {
             modules.load();
         }
 
-        @Protect
         @Override
         public void save() {
             config.save(gson, configFile);

@@ -39,6 +39,7 @@ repositories {
     maven { url = 'https://impactdevelopment.github.io/maven/' }
     maven { url = 'https://jitpack.io' }
     mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
@@ -53,12 +54,7 @@ dependencies {
     annotationProcessor('org.spongepowered:mixin:0.8.2:processor') { exclude module: 'gson' }
 
     // Libraries
-    included 'org.jsoup:jsoup:1.14.1'
-
-    // Protection
-    included('net.sushiclient:protection:1.0') { exclude module: 'commons-io' }
-    implementation('net.sushiclient:annotations:1.0') { exclude module: 'auto-service' }
-//    annotationProcessor 'net.sushiclient:annotations:1.0'
+    included 'org.jsoup:jsoup:1.14.2'
 
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
     implementation configurations.included

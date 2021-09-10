@@ -1,6 +1,5 @@
 package net.sushiclient.client.gui.theme.simple;
 
-import net.sushiclient.annotations.Protect;
 import net.sushiclient.client.config.Configuration;
 import net.sushiclient.client.config.Configurations;
 import net.sushiclient.client.config.data.DoubleRange;
@@ -54,7 +53,6 @@ public class SimpleTheme implements Theme {
         return "simple";
     }
 
-    @Protect
     @Override
     public BasePanelComponent<?> newClickGui(Module caller) {
         return new SimpleClickGuiComponent(constants, this, configurations, caller);

@@ -1,7 +1,6 @@
 package net.sushiclient.client.task.forge;
 
 import net.minecraft.client.Minecraft;
-import net.sushiclient.annotations.Protect;
 import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
@@ -148,7 +147,6 @@ public class TaskExecutor {
         updateTask();
     }
 
-    @Protect
     @EventHandler(timing = EventTiming.PRE)
     public void onWorldLoad(WorldLoadEvent e) {
         if (e.getClient() != null) return;

@@ -1,6 +1,5 @@
 package net.sushiclient.client.command;
 
-import net.sushiclient.annotations.Protect;
 import net.sushiclient.client.command.annotation.AnnotationCommand;
 import net.sushiclient.client.command.parser.*;
 
@@ -119,7 +118,6 @@ public class Commands {
         return builder.toString();
     }
 
-    @Protect
     public static boolean execute(Logger out, String name, List<String> args) {
         CommandMap map = getCommandMap(name);
         if (map != null) {

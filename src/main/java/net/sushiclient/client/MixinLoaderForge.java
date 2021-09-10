@@ -1,7 +1,6 @@
 package net.sushiclient.client;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-import net.sushiclient.client.utils.MixinGenerator;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
@@ -15,7 +14,6 @@ public class MixinLoaderForge implements IFMLLoadingPlugin {
     private static boolean isObfuscatedEnvironment = false;
 
     public MixinLoaderForge() {
-        MixinGenerator.loadResources(this);
         MixinBootstrap.init();
         Mixins.addConfigurations("mixins.sushi.json");
         MixinEnvironment.getDefaultEnvironment().setObfuscationContext("searge");

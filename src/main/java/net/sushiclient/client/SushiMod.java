@@ -8,8 +8,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.sushiclient.annotations.Authentication;
-import net.sushiclient.annotations.Protect;
 import net.sushiclient.client.command.Commands;
 import net.sushiclient.client.command.client.*;
 import net.sushiclient.client.config.Configurations;
@@ -71,7 +69,6 @@ public class SushiMod {
         return func.apply(conf);
     }
 
-    @Authentication
     @EventHandler
     public void init(FMLInitializationEvent event) {
         // load config
@@ -141,7 +138,6 @@ public class SushiMod {
         Commands.register(this, new SetCommand());
     }
 
-    @Protect
     @net.sushiclient.client.events.EventHandler(timing = EventTiming.PRE)
     public void onWorldLoad(WorldLoadEvent e) {
         if (e.getClient() != null) return;
