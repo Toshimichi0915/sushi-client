@@ -102,7 +102,7 @@ public interface Component {
 
     void addHandler(ComponentHandler handler);
 
-    void removeHandler(ComponentHandler handler);
+    boolean removeHandler(ComponentHandler handler);
 
     List<ComponentHandler> getHandlers();
 }

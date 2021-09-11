@@ -3,6 +3,8 @@ package net.sushiclient.client.modules;
 import net.sushiclient.client.config.RootConfigurations;
 import net.sushiclient.client.gui.hud.ElementFactory;
 
+import java.util.List;
+
 public interface Module {
 
     String getId();
@@ -38,4 +40,10 @@ public interface Module {
     ModuleFactory getModuleFactory();
 
     ElementFactory[] getElementFactories();
+
+    void addHandler(ModuleHandler handler);
+
+    boolean removeHandler(ModuleHandler handler);
+
+    List<ModuleHandler> getHandlers();
 }

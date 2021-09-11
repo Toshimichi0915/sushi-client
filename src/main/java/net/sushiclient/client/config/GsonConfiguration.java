@@ -12,21 +12,21 @@ public class GsonConfiguration<T> implements Configuration<T> {
     private final Class<T> tClass;
     private final T defaultValue;
     private final GsonRootConfigurations provider;
-    private final Supplier<Boolean> isValid;
+    private Supplier<Boolean> valid;
     private final int priority;
     private final ConfigurationCategory category;
     private final boolean temporary;
     private final ArrayList<ConfigurationHandler<T>> handlers = new ArrayList<>();
     private final ArrayList<Consumer<T>> consumers = new ArrayList<>();
 
-    public GsonConfiguration(String id, String name, String description, Class<T> tClass, T defaultValue, GsonRootConfigurations provider, Supplier<Boolean> isValid, ConfigurationCategory category, boolean temporary, int priority) {
+    public GsonConfiguration(String id, String name, String description, Class<T> tClass, T defaultValue, GsonRootConfigurations provider, Supplier<Boolean> valid, ConfigurationCategory category, boolean temporary, int priority) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.tClass = tClass;
         this.defaultValue = defaultValue;
         this.provider = provider;
-        this.isValid = isValid;
+        this.valid = valid;
         this.category = category;
         this.temporary = temporary;
         this.priority = priority;
@@ -74,7 +74,7 @@ public class GsonConfiguration<T> implements Configuration<T> {
 
     @Override
     public boolean isValid() {
-        return isValid.get();
+        return valid.get();
     }
 
     @Override

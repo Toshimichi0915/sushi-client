@@ -38,6 +38,7 @@ public class GsonModules implements Modules {
     private final HashSet<GsonModuleFactory> factories = new HashSet<>();
     private final ArrayList<Module> modules = new ArrayList<>();
     private final ArrayList<DefaultModule> defaults = new ArrayList<>();
+    private final ArrayList<ModulesHandler> handlers = new ArrayList<>();
     private JsonObject root = new JsonObject();
     private boolean enabled;
 
@@ -152,6 +153,7 @@ public class GsonModules implements Modules {
         provider.load(object);
         Module module = factory.getConstructor().newModule(id, this, categories, provider, factory);
         modules.add(module);
+        handlers.forEach(it -> it.addModule(module));
         return module;
     }
 
@@ -171,10 +173,12 @@ public class GsonModules implements Modules {
         if (module == null) return;
         modules.remove(module);
         root.remove(module.getId());
+        handlers.forEach(it -> it.removeModule(module));
     }
 
     @Override
     public void save() {
+        handlers.forEach(ModulesHandler::save);
         try {
             JsonObject savedRoot = new JsonObject();
             for (Module module : modules) {
@@ -200,6 +204,7 @@ public class GsonModules implements Modules {
 
     @Override
     public void load() {
+        handlers.forEach(ModulesHandler::load);
         try {
             modules.clear();
             if (!conf.exists()) {
@@ -227,6 +232,7 @@ public class GsonModules implements Modules {
     @Override
     public void enable() {
         if (enabled) return;
+        handlers.forEach(ModulesHandler::enable);
         enabled = true;
         for (Module module : modules) {
             if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
@@ -240,6 +246,7 @@ public class GsonModules implements Modules {
     @Override
     public void disable() {
         if (!enabled) return;
+        handlers.forEach(ModulesHandler::disable);
         enabled = false;
         for (Module module : modules) {
             if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
@@ -251,12 +258,18 @@ public class GsonModules implements Modules {
     }
 
     @Override
-    public void reload() {
-        for (Module module : modules) {
-            if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
-            JsonObject object = ((GsonRootConfigurations) module.getConfigurations()).save();
-            object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
-        }
+    public void addHandler(ModulesHandler handler) {
+        handlers.add(handler);
+    }
+
+    @Override
+    public boolean removeHandler(ModulesHandler handler) {
+        return handlers.remove(handler);
+    }
+
+    @Override
+    public ArrayList<ModulesHandler> getHandlers() {
+        return new ArrayList<>(handlers);
     }
 
     private JsonObject loadJson(String id) {

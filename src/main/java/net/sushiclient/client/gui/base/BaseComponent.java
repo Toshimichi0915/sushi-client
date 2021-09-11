@@ -224,8 +224,8 @@ public class BaseComponent implements Component {
     }
 
     @Override
-    public void removeHandler(ComponentHandler handler) {
-        handlers.remove(handler);
+    public boolean removeHandler(ComponentHandler handler) {
+        return handlers.remove(handler);
     }
 
     @Override

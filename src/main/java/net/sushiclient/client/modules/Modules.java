@@ -34,5 +34,9 @@ public interface Modules {
 
     void disable();
 
-    void reload();
+    void addHandler(ModulesHandler handler);
+
+    boolean removeHandler(ModulesHandler handler);
+
+    List<ModulesHandler> getHandlers();
 }

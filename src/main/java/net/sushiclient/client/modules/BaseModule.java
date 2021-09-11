@@ -30,6 +30,8 @@ abstract public class BaseModule implements Module {
     private final Configuration<Boolean> toggleNotification;
     private final ModuleFactory factory;
     private final ArrayList<ElementFactory> hudElementFactories;
+    private final ArrayList<ModuleHandler> handlers;
+    private Category currentCategory;
     private boolean enabled;
     private boolean paused;
 
@@ -47,7 +49,19 @@ abstract public class BaseModule implements Module {
         this.temporary = commonCategory.get("temporary", "Temporary Module", null, Boolean.class, isTemporaryByDefault(), () -> true, false, 84000);
         this.visible = commonCategory.get("visible", "Visible", null, Boolean.class, isVisibleByDefault(), () -> true, false, 85000);
         this.toggleNotification = commonCategory.get("toggle_notification", "Toggle Notification", null, Boolean.class, false, () -> true, false, 86000);
+        this.handlers = new ArrayList<>();
         commonCategory.get("reset", "Reset Settings", null, Runnable.class, provider::reset, () -> true, true, 86000);
+        currentCategory = categories.getModuleCategory(category.getValue());
+        if (currentCategory == null) currentCategory = getDefaultCategory();
+        category.addHandler(it -> {
+            Category newCategory = categories.getModuleCategory(it);
+            if (newCategory == null) newCategory = getDefaultCategory();
+            if (!newCategory.equals(currentCategory)) {
+                Category f = newCategory;
+                handlers.forEach(it2 -> it2.setCategory(f));
+                currentCategory = f;
+            }
+        });
 
         hudElementFactories = new ArrayList<>();
     }
@@ -87,11 +101,13 @@ abstract public class BaseModule implements Module {
         if (!paused) {
             Logger handler = Sushi.getProfile().getLogger();
             if (!this.enabled && enabled) {
+                handlers.forEach(it -> it.setEnabled(true));
                 onEnable();
                 if (toggleNotification.getValue()) {
                     handler.send(LogLevel.INFO, "Enabled " + getName());
                 }
             } else if (this.enabled && !enabled) {
+                handlers.forEach(it -> it.setEnabled(false));
                 onDisable();
                 if (toggleNotification.getValue()) {
                     handler.send(LogLevel.INFO, "Disabled " + getName());
@@ -109,8 +125,10 @@ abstract public class BaseModule implements Module {
     @Override
     public void setPaused(boolean paused) {
         if (!this.paused && paused && enabled) {
+            handlers.forEach(it -> it.setPaused(true));
             onDisable();
         } else if (this.paused && !paused && enabled) {
+            handlers.forEach(it -> it.setPaused(false));
             onEnable();
         }
         this.paused = paused;
@@ -134,9 +152,7 @@ abstract public class BaseModule implements Module {
 
     @Override
     public Category getCategory() {
-        Category result = categories.getModuleCategory(category.getValue());
-        if (result != null) return result;
-        return getDefaultCategory();
+        return currentCategory;
     }
 
     @Override
@@ -151,6 +167,7 @@ abstract public class BaseModule implements Module {
 
     @Override
     public void setKeybind(Keybind bind) {
+        handlers.forEach(it -> it.setKeybind(bind));
         keybind.setValue(bind);
     }
 
@@ -202,6 +219,21 @@ abstract public class BaseModule implements Module {
 
     protected NetHandlerPlayClient getConnection() {
         return getPlayer().connection;
+    }
+
+    @Override
+    public void addHandler(ModuleHandler handler) {
+        handlers.add(handler);
+    }
+
+    @Override
+    public boolean removeHandler(ModuleHandler handler) {
+        return handlers.remove(handler);
+    }
+
+    @Override
+    public ArrayList<ModuleHandler> getHandlers() {
+        return new ArrayList<>(handlers);
     }
 
     private static class BaseElementFactory implements ElementFactory {

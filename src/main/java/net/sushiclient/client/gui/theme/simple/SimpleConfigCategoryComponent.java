@@ -9,6 +9,7 @@ import net.sushiclient.client.gui.Insets;
 import net.sushiclient.client.gui.layout.FlowDirection;
 import net.sushiclient.client.gui.layout.FlowLayout;
 import net.sushiclient.client.gui.theme.Theme;
+import org.apache.commons.lang3.RandomUtils;
 
 import java.util.ArrayList;
 
@@ -16,7 +17,7 @@ public class SimpleConfigCategoryComponent extends AnyPanelComponent {
 
     private final Theme theme;
     private final Configurations configurations;
-    private long lastUpdate;
+    private long nextUpdate;
 
     public SimpleConfigCategoryComponent(Theme theme, Configurations configurations) {
         this.theme = theme;
@@ -61,8 +62,8 @@ public class SimpleConfigCategoryComponent extends AnyPanelComponent {
 
     @Override
     public void onRelocate() {
-        if (System.currentTimeMillis() - lastUpdate > 1000) {
-            lastUpdate = System.currentTimeMillis();
+        if (System.currentTimeMillis() > nextUpdate) {
+            nextUpdate = System.currentTimeMillis() + RandomUtils.nextInt(500, 1000);
             update();
         }
         super.onRelocate();

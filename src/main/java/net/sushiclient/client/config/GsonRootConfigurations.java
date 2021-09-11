@@ -95,6 +95,11 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
     public ConfigurationCategory getCategory(String id, String name, String description) {
         GsonConfigurationCategory category = new GsonConfigurationCategory(this, id, name, description);
         categories.add(category);
+        getHandlers().forEach(it -> {
+            if (it instanceof RootConfigurationsHandler) {
+                ((RootConfigurationsHandler) it).getCategory(category);
+            }
+        });
         return category;
     }
 
