@@ -38,10 +38,26 @@ public class SimpleColorPickerComponent extends BaseComponent {
     private double oldWidth;
     private double oldHeight;
 
+    private double windowX;
+    private double windowY;
+    private boolean updating;
+
     public SimpleColorPickerComponent(ThemeConstants constants, String name, Color color) {
         this.constants = constants;
         this.name = name;
         this.color = color;
+    }
+
+    @Override
+    public double getWindowX() {
+        if (updating) return super.getWindowX();
+        else return windowX;
+    }
+
+    @Override
+    public double getWindowY() {
+        if (updating) return super.getWindowY();
+        else return windowY;
     }
 
     public double getMarginTop() {
@@ -241,6 +257,12 @@ public class SimpleColorPickerComponent extends BaseComponent {
 
     @Override
     public void onRelocate() {
+        // calculation optimization
+        updating = true;
+        windowX = getWindowX();
+        windowY = getWindowY();
+        updating = false;
+
         resize();
         if (oldX != getX() || oldY != getY() || oldWidth != getWidth() || oldHeight != getHeight()) {
             oldX = getX();
@@ -252,7 +274,6 @@ public class SimpleColorPickerComponent extends BaseComponent {
     }
 
     protected void onChange(Color color) {}
-
 
     public void setColor(Color color) {
         this.color = color;
