@@ -15,6 +15,7 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
     private final Gson gson;
     private final ArrayList<ConfigurationCategory> categories = new ArrayList<>();
     private final HashMap<String, Object> defaults = new HashMap<>();
+    private final HashMap<String, Object> objects = new HashMap<>();
     private JsonObject root;
 
     public GsonRootConfigurations(Gson gson) {
@@ -27,6 +28,10 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
 
     public JsonObject save() {
         getAll(true).forEach(it -> ((GsonConfiguration<?>) it).save());
+        for (Map.Entry<String, Object> entry : objects.entrySet()) {
+            setRawValue(root, entry.getKey(), entry.getValue(), true);
+        }
+
         for (Map.Entry<String, Object> entry : defaults.entrySet()) {
             setRawValue(root, entry.getKey(), entry.getValue(), false);
         }
@@ -70,16 +75,22 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
 
     @SuppressWarnings("unchecked")
     protected <T> T getRawValue(String id, Class<T> tClass) {
-        T rawValue = getRawValue(root, id, tClass);
-        if (rawValue != null) return rawValue;
+        Object result = objects.get(id);
+        if (result != null && tClass.isAssignableFrom(result.getClass())) return (T) result;
 
-        Object result = defaults.get(id);
+        T rawValue = getRawValue(root, id, tClass);
+        if (rawValue != null) {
+            objects.put(id, rawValue);
+            return rawValue;
+        }
+
+        result = defaults.get(id);
         if (result != null && tClass.isAssignableFrom(result.getClass())) return (T) result;
         else return null;
     }
 
     protected void setRawValue(String id, Object o) {
-        setRawValue(root, id, o, true);
+        objects.put(id, o);
     }
 
     protected void putDefault(String id, Object obj) {
