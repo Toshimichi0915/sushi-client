@@ -2,11 +2,9 @@ package net.sushiclient.client.utils.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -108,8 +106,8 @@ public class RenderUtils {
         return viewerPos;
     }
 
-    private static void vertex(double x, double y, double z) {
-        GlStateManager.glVertex3f((float) x, (float) y, (float) z);
+    private static void vertex(BufferBuilder builder, double x, double y, double z) {
+        builder.pos(x, y, z).endVertex();
     }
 
     public static void drawLine(Vec3d from, Vec3d to, Color color, double width) {
@@ -117,10 +115,12 @@ public class RenderUtils {
         GuiUtils.setColor(color);
         prepare3D();
         Vec3d d = getViewerPos();
-        GlStateManager.glBegin(GL11.GL_LINES);
-        vertex(from.x - d.x, from.y - d.y, from.z - d.z);
-        vertex(to.x - d.x, to.y - d.y, to.z - d.z);
-        GlStateManager.glEnd();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        vertex(builder, from.x - d.x, from.y - d.y, from.z - d.z);
+        vertex(builder, to.x - d.x, to.y - d.y, to.z - d.z);
+        tessellator.draw();
         release3D();
     }
 
@@ -128,25 +128,27 @@ public class RenderUtils {
         GlStateManager.glLineWidth((float) width);
         GuiUtils.setColor(color);
         prepare3D();
-        GlStateManager.glBegin(GL11.GL_LINE_STRIP);
         Vec3d d = getViewerPos();
-        vertex(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
-        vertex(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
-        vertex(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
-        vertex(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
-        vertex(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
-        vertex(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
-        vertex(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        vertex(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
-        vertex(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
-        vertex(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        vertex(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        vertex(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        vertex(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
-        vertex(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
-        vertex(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
-        vertex(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
-        GlStateManager.glEnd();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+        vertex(builder, box.minX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(builder, box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(builder, box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(builder, box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(builder, box.minX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(builder, box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(builder, box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(builder, box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(builder, box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(builder, box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(builder, box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(builder, box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(builder, box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(builder, box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(builder, box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(builder, box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
+        tessellator.draw();
         release3D();
     }
 
@@ -154,26 +156,28 @@ public class RenderUtils {
         GuiUtils.setColor(color);
         prepare3D();
         Vec3d d = getViewerPos();
-        GlStateManager.glBegin(GL11.GL_QUAD_STRIP);
-        vertex(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        vertex(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
-        vertex(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        vertex(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
-        vertex(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
-        vertex(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
-        vertex(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
-        vertex(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
-        GlStateManager.glEnd();
-        GlStateManager.glBegin(GL11.GL_QUAD_STRIP);
-        vertex(box.minX - d.x, box.minY - d.y, box.minZ - d.z);
-        vertex(box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
-        vertex(box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
-        vertex(box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
-        vertex(box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
-        vertex(box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        vertex(box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
-        vertex(box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
-        GlStateManager.glEnd();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
+        vertex(builder, box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(builder, box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(builder, box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(builder, box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(builder, box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(builder, box.minX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(builder, box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(builder, box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
+        tessellator.draw();
+        builder.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
+        vertex(builder, box.minX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(builder, box.minX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(builder, box.maxX - d.x, box.minY - d.y, box.minZ - d.z);
+        vertex(builder, box.maxX - d.x, box.maxY - d.y, box.minZ - d.z);
+        vertex(builder, box.maxX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(builder, box.maxX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        vertex(builder, box.minX - d.x, box.minY - d.y, box.maxZ - d.z);
+        vertex(builder, box.minX - d.x, box.maxY - d.y, box.maxZ - d.z);
+        tessellator.draw();
         release3D();
     }
 }

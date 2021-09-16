@@ -1,7 +1,10 @@
 package net.sushiclient.client.utils.render;
 
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -90,18 +93,16 @@ public class SystemFont {
         float imgY = c.y / size;
         float imgWidth = c.width / size;
         float imgHeight = c.height / size;
-        GlStateManager.glTexCoord2f(imgX + imgWidth, imgY);
-        GlStateManager.glVertex3f(x + c.width, y, 0);
-        GlStateManager.glTexCoord2f(imgX, imgY);
-        GlStateManager.glVertex3f(x, y, 0);
-        GlStateManager.glTexCoord2f(imgX, imgY + imgHeight);
-        GlStateManager.glVertex3f(x, y + c.height, 0);
-        GlStateManager.glTexCoord2f(imgX, imgY + imgHeight);
-        GlStateManager.glVertex3f(x, y + c.height, 0);
-        GlStateManager.glTexCoord2f(imgX + imgWidth, imgY + imgHeight);
-        GlStateManager.glVertex3f(x + c.width, y + c.height, 0);
-        GlStateManager.glTexCoord2f(imgX + imgWidth, imgY);
-        GlStateManager.glVertex3f(x + c.width, y, 0);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_TEX);
+        builder.pos(x + c.width, y, 0).tex(imgX + imgWidth, imgY).endVertex();
+        builder.pos(x, y, 0).tex(imgX, imgY).endVertex();
+        builder.pos(x, y + c.height, 0).tex(imgX, imgY + imgHeight).endVertex();
+        builder.pos(x, y + c.height, 0).tex(imgX, imgY + imgHeight).endVertex();
+        builder.pos(x + c.width, y + c.height, 0).tex(imgX + imgWidth, imgY + imgHeight).endVertex();
+        builder.pos(x + c.width, y, 0).tex(imgX + imgWidth, imgY).endVertex();
+        tessellator.draw();
     }
 
     public CharData getCharData(char c) {

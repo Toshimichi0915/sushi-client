@@ -76,13 +76,11 @@ public class SystemFontRenderer extends SystemFont {
                 }
                 i++;
             } else if (charData != null) {
-                GlStateManager.glBegin(GL11.GL_TRIANGLES);
                 drawChar(charData, (float) x, (float) y);
-                GlStateManager.glEnd();
                 if (strikethrough)
-                    drawLine(x, y + (double) charData.height / 2, x + charData.width - getPaddingWidth(), y + (double) charData.height / 2, 1.0F);
+                    GuiUtils.drawLine(x, y + (double) charData.height / 2, x + charData.width - getPaddingWidth(), y + (double) charData.height / 2, color, 1.0F);
                 if (underline)
-                    drawLine(x, y + charData.height - 2.0D, x + charData.width - getPaddingWidth(), y + charData.height - 2.0D, 1.0F);
+                    GuiUtils.drawLine(x, y + charData.height - 2.0D, x + charData.width - getPaddingWidth(), y + charData.height - 2.0D, color, 1.0F);
                 x += charData.width - getPaddingWidth();
             } else {
                 vanillaChars.add(new VanillaChar(x, y, c, color.getRGB()));
@@ -118,16 +116,6 @@ public class SystemFontRenderer extends SystemFont {
         return width / 2;
     }
 
-
-    private void drawLine(double x, double y, double x1, double y1, float width) {
-        GlStateManager.disableTexture2D();
-        GlStateManager.glLineWidth(width);
-        GlStateManager.glBegin(GL11.GL_LINES);
-        GlStateManager.glVertex3f((float) x, (float) y, 0);
-        GlStateManager.glVertex3f((float) x1, (float) y1, 0);
-        GlStateManager.glEnd();
-        GlStateManager.enableTexture2D();
-    }
 
     private void setUpColorCodes() {
         for (int index = 0; index < 32; index++) {

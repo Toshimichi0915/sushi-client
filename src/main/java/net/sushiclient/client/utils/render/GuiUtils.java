@@ -3,7 +3,10 @@ package net.sushiclient.client.utils.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.sushiclient.client.config.data.EspColor;
 import net.sushiclient.client.gui.Component;
 import net.sushiclient.client.utils.VanillaTextPreview;
@@ -151,37 +154,40 @@ public class GuiUtils {
 
         GlStateManager.glLineWidth((float) width);
         setColor(color);
-        GlStateManager.glBegin(GL11.GL_LINES);
-        GlStateManager.glVertex3f((float) x1, (float) y1, 0);
-        GlStateManager.glVertex3f((float) x2, (float) y2, 0);
-        GlStateManager.glEnd();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        builder.pos(x1, y1, 0).endVertex();
+        builder.pos(x2, y2, 0).endVertex();
+        tessellator.draw();
+
+        release2D();
+    }
+
+    private static void drawRect(int mode, double x, double y, double width, double height, Color color) {
+        prepare2D();
+
+        setColor(color);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(mode, DefaultVertexFormats.POSITION);
+        builder.pos(x, y, 0).endVertex();
+        builder.pos(x + width, y, 0).endVertex();
+        builder.pos(x + width, y + height, 0).endVertex();
+        builder.pos(x, y + height, 0).endVertex();
+        tessellator.draw();
 
         release2D();
     }
 
     public static void drawRect(double x, double y, double width, double height, Color color) {
-        prepare2D();
-
-        setColor(color);
-        GL11.glRectd(x, y, x + width, y + height);
-
-        release2D();
+        drawRect(GL11.GL_QUADS, x, y, width, height, color);
     }
 
     public static void drawOutline(double x, double y, double width, double height, Color color, double pts) {
-        prepare2D();
-
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
         GlStateManager.glLineWidth((float) pts);
-        setColor(color);
-        GlStateManager.glBegin(GL11.GL_LINE_LOOP);
-        GlStateManager.glVertex3f((float) x, (float) y, 0);
-        GlStateManager.glVertex3f((float) (x + width), (float) y, 0);
-        GlStateManager.glVertex3f((float) (x + width), (float) (y + height), 0);
-        GlStateManager.glVertex3f((float) x, (float) (y + height), 0);
-        GlStateManager.glEnd();
-
-        release2D();
+        drawRect(GL11.GL_LINE_LOOP, x, y, width, height, color);
     }
 
     private static class Scissor {
