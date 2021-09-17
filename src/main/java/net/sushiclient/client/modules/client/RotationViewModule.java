@@ -16,9 +16,15 @@ public class RotationViewModule extends BaseModule {
 
     private volatile float packetYaw;
     private volatile float packetPitch;
+    private volatile float lastPacketYaw;
+    private volatile float lastPacketPitch;
     private float yaw;
+    private float yawHead;
+    private float yawOffset;
     private float pitch;
     private float lastYaw;
+    private float lastYawHead;
+    private float lastYawOffset;
     private float lastPitch;
 
     public RotationViewModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
@@ -39,8 +45,10 @@ public class RotationViewModule extends BaseModule {
     public void onPacketSend(PacketSendEvent e) {
         if (!(e.getPacket() instanceof CPacketPlayer)) return;
         CPacketPlayer packet = (CPacketPlayer) e.getPacket();
-        this.packetYaw = packet.getYaw(getPlayer().rotationYaw);
-        this.packetPitch = packet.getPitch(getPlayer().rotationPitch);
+        lastPacketYaw = packetYaw;
+        lastPacketPitch = packetPitch;
+        packetYaw = packet.getYaw(getPlayer().rotationYaw);
+        packetPitch = packet.getPitch(getPlayer().rotationPitch);
     }
 
     @EventHandler(timing = EventTiming.PRE)
@@ -48,14 +56,26 @@ public class RotationViewModule extends BaseModule {
         if (!PositionUtils.getDesyncMode().isRotationDesync()) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (e.getEntityIn() != player) return;
+
         yaw = player.rotationYaw;
+        yawHead = player.rotationYawHead;
+        yawOffset = player.renderYawOffset;
         pitch = player.rotationPitch;
+
         lastYaw = player.prevRotationYaw;
+        lastYawHead = player.prevRotationYawHead;
+        lastYawOffset = player.prevRenderYawOffset;
         lastPitch = player.prevRotationPitch;
+
         player.rotationYaw = packetYaw;
+        player.rotationYawHead = packetYaw;
+        player.renderYawOffset = packetYaw;
         player.rotationPitch = packetPitch;
-        player.prevRotationYaw = packetYaw;
-        player.prevRotationPitch = packetPitch;
+
+        player.prevRotationYaw = lastPacketYaw;
+        player.prevRotationYawHead = lastPacketYaw;
+        player.prevRenderYawOffset = lastPacketYaw;
+        player.prevRotationPitch = lastPacketPitch;
     }
 
     @EventHandler(timing = EventTiming.POST)
@@ -64,8 +84,13 @@ public class RotationViewModule extends BaseModule {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (e.getEntityIn() != player) return;
         player.rotationYaw = yaw;
+        player.rotationYawHead = yawHead;
+        player.renderYawOffset = yawOffset;
         player.rotationPitch = pitch;
+
         player.prevRotationYaw = lastYaw;
+        player.prevRotationYawHead = lastYawHead;
+        player.prevRenderYawOffset = lastYawOffset;
         player.prevRotationPitch = lastPitch;
     }
 
