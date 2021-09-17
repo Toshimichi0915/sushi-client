@@ -89,7 +89,7 @@ public class NoRenderModule extends BaseModule {
 
     @Override
     public Category getDefaultCategory() {
-        return Category.PLAYER;
+        return Category.RENDER;
     }
 
     @EventHandler(timing = EventTiming.PRE)
