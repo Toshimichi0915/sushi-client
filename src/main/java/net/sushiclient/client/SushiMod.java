@@ -8,6 +8,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.sushiclient.client.account.EncryptedMojangAccounts;
+import net.sushiclient.client.account.MojangAccounts;
 import net.sushiclient.client.command.Commands;
 import net.sushiclient.client.command.client.*;
 import net.sushiclient.client.config.Configurations;
@@ -99,6 +101,12 @@ public class SushiMod {
         Sushi.setProfiles(profiles);
         Sushi.setProfile(profile);
         profile.load();
+
+        // set accounts
+        MojangAccounts accounts = new EncryptedMojangAccounts(new File(baseDir, "accounts.txt"));
+        Sushi.setMojangAccounts(accounts);
+        accounts.refreshAll();
+        accounts.load();
 
         // register events
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());

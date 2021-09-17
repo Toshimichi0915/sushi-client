@@ -1,15 +1,17 @@
 package net.sushiclient.client;
 
+import net.sushiclient.client.account.MojangAccounts;
 import net.sushiclient.client.gui.theme.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Sushi {
-    private static final List<Theme> themes = new ArrayList<>();
-    private static Theme defaultTheme;
     private static Profile profile;
     private static Profiles profiles;
+    private static Theme defaultTheme;
+    private static final List<Theme> themes = new ArrayList<>();
+    private static MojangAccounts mojangAccounts;
 
     public static int getVersion() {
         return 0;
@@ -46,5 +48,13 @@ public class Sushi {
     public static void setThemes(List<Theme> themes) {
         Sushi.themes.clear();
         Sushi.themes.addAll(themes);
+    }
+
+    public static MojangAccounts getMojangAccounts() {
+        return mojangAccounts;
+    }
+
+    public static void setMojangAccounts(MojangAccounts mojangAccounts) {
+        Sushi.mojangAccounts = mojangAccounts;
     }
 }

@@ -23,6 +23,7 @@
     "MixinGameSettings",
     "MixinGuiChat",
     "MixinGuiIngameForge",
+    "MixinGuiMainMenu",
     "MixinKeyBinding",
     "MixinMinecraft",
     "MixinMovementInputFromOptions",

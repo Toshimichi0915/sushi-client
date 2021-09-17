@@ -1,6 +1,9 @@
 package net.sushiclient.client.gui.theme.simple;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.sushiclient.client.events.input.ClickType;
 import net.sushiclient.client.gui.MouseStatus;
 import net.sushiclient.client.gui.base.BaseComponent;
@@ -167,15 +170,17 @@ public class SimpleColorPickerComponent extends BaseComponent {
 
     private void drawCircle(double oX, double oY) {
         GuiUtils.prepare2D();
-        GuiUtils.setColor(new Color(255, 255, 255));
-        GlStateManager.glBegin(GL11.GL_LINE_LOOP);
+        GuiUtils.setColor(Color.WHITE);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         for (int i = 0; i < SEGMENTS; i++) {
             double theta = 2 * Math.PI * i / SEGMENTS;
             double x = R * Math.cos(theta);
             double y = R * Math.sin(theta);
-            GlStateManager.glVertex3f((float) (x + oX), (float) (y + oY), 0);
+            builder.pos(x + oX, y + oY, 0).endVertex();
         }
-        GlStateManager.glEnd();
+        tessellator.draw();
         GuiUtils.release2D();
     }
 
@@ -211,8 +216,8 @@ public class SimpleColorPickerComponent extends BaseComponent {
         if (!updateColor(fromX, fromY)) super.onHold(fromX, fromY, toX, toY, type, status);
     }
 
-    private void vertex(double x, double y) {
-        GlStateManager.glVertex3f((float) x, (float) y, 0);
+    private void vertex(BufferBuilder builder, double x, double y) {
+        builder.pos(x, y, 0).endVertex();
     }
 
     @Override
@@ -226,16 +231,22 @@ public class SimpleColorPickerComponent extends BaseComponent {
         for (int x = 0; x < SEGMENTS_X; x++) {
             for (int y = 0; y < SEGMENTS_Y; y++) {
                 GlStateManager.shadeModel(GL11.GL_SMOOTH);
-                GlStateManager.glBegin(GL11.GL_QUADS);
-                GuiUtils.setColor(getMainColor((double) x / SEGMENTS_X * getMainX(), (double) y / SEGMENTS_Y * getMainY()));
-                vertex((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY());
-                GuiUtils.setColor(getMainColor((double) (x + 1) / SEGMENTS_X * getMainX(), (double) y / SEGMENTS_Y * getMainY()));
-                vertex((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY());
-                GuiUtils.setColor(getMainColor((double) (x + 1) / SEGMENTS_X * getMainX(), (double) (y + 1) / SEGMENTS_Y * getMainY()));
-                vertex((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY());
-                GuiUtils.setColor(getMainColor((double) x / SEGMENTS_X * getMainX(), (double) (y + 1) / SEGMENTS_Y * getMainY()));
-                vertex((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY());
-                GlStateManager.glEnd();
+                Tessellator tessellator = Tessellator.getInstance();
+                BufferBuilder builder = tessellator.getBuffer();
+                builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+                Color c = getMainColor((double) x / SEGMENTS_X * getMainX(), (double) y / SEGMENTS_Y * getMainY());
+                builder.pos((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY(), 0)
+                        .color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+                c = getMainColor((double) (x + 1) / SEGMENTS_X * getMainX(), (double) y / SEGMENTS_Y * getMainY());
+                builder.pos((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) y / SEGMENTS_Y * getMainHeight() + getMainStartY(), 0)
+                        .color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+                c = getMainColor((double) (x + 1) / SEGMENTS_X * getMainX(), (double) (y + 1) / SEGMENTS_Y * getMainY());
+                builder.pos((double) (x + 1) / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY(), 0)
+                        .color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+                c = getMainColor((double) x / SEGMENTS_X * getMainX(), (double) (y + 1) / SEGMENTS_Y * getMainY());
+                builder.pos((double) x / SEGMENTS_X * getMainWidth() + getMainStartX(), (double) (y + 1) / SEGMENTS_Y * getMainHeight() + getMainStartY(), 0)
+                        .color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+                tessellator.draw();
             }
         }
         GuiUtils.release2D();
