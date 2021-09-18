@@ -23,8 +23,7 @@ import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.render.LivingLabelRenderEvent;
 import net.sushiclient.client.events.render.OverlayRenderEvent;
 import net.sushiclient.client.modules.*;
-import net.sushiclient.client.utils.EntityState;
-import net.sushiclient.client.utils.EntityUtils;
+import net.sushiclient.client.utils.EntityType;
 import net.sushiclient.client.utils.render.GuiUtils;
 import net.sushiclient.client.utils.render.RenderUtils;
 import net.sushiclient.client.utils.render.TextPreview;
@@ -97,25 +96,6 @@ public class NameTagsModule extends BaseModule {
         EventHandlers.unregister(this);
     }
 
-    private boolean canShow(EntityLivingBase entity) {
-        if (entity instanceof EntityPlayer) {
-            if (entity.getName().equals(getPlayer().getName())) return self;
-            else return player;
-        }
-        if (!mob) return false;
-        EntityState state = EntityUtils.getEntityType(entity);
-        switch (state) {
-            case PASSIVE:
-                return passive;
-            case NEUTRAL:
-                return neutral;
-            case HOSTILE:
-                return hostile;
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
-
     @EventHandler(timing = EventTiming.PRE)
     public void onOverlayRender(OverlayRenderEvent e) {
         ArrayList<Entity> entityList = new ArrayList<>(getWorld().loadedEntityList);
@@ -123,7 +103,7 @@ public class NameTagsModule extends BaseModule {
         for (Entity entity : entityList) {
             if (!(entity instanceof EntityLivingBase)) continue;
             EntityLivingBase entityLiving = (EntityLivingBase) entity;
-            if (!canShow(entityLiving)) continue;
+            if (!EntityType.match(entityLiving, player, self, mob, passive, neutral, hostile)) continue;
 
             Vec2f head = RenderUtils.fromWorld(RenderUtils.getInterpolatedPos(entity).add(0, entity.height, 0));
             if (head == null) continue;
@@ -191,7 +171,10 @@ public class NameTagsModule extends BaseModule {
                 GlStateManager.scale(0.3, 0.3, 0);
                 int index2 = 0;
                 for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(item).entrySet()) {
-                    String enchName = entry.getKey().getTranslatedName(entry.getValue()).substring(0, 2) + " " + entry.getValue();
+                    // Enchantment can be null when illegal enchant is used
+                    if (entry.getKey() == null || entry.getValue() == null) continue;
+                    String translated = entry.getKey().getTranslatedName(entry.getValue());
+                    String enchName = translated.substring(0, 2) + " " + entry.getValue();
                     getClient().fontRenderer.drawString(enchName, 0, index2 * 9, Color.WHITE.getRGB());
                     index2++;
                 }
@@ -206,7 +189,7 @@ public class NameTagsModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onLivingLabelRender(LivingLabelRenderEvent e) {
         if (!(e.getEntity() instanceof EntityLivingBase)) return;
-        if (!canShow((EntityLivingBase) e.getEntity())) return;
+        if (!EntityType.match((EntityLivingBase) e.getEntity(), player, self, mob, passive, neutral, hostile)) return;
         e.setCancelled(true);
     }
 
