@@ -29,13 +29,33 @@ public class EntityUtils {
 
     private static final double WALK_SPEED = 0.0275;
 
-    public static boolean canInteract(Vec3d vec, Vec3d target, double reach, double wall) {
+    public static boolean canInteract(Vec3d vec, Vec3d target, double reach, double wall, ReachType type) {
+        // vanilla interact check
+        double vanillaReach = 6;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         WorldClient world = Minecraft.getMinecraft().world;
         if (player == null) return false;
         RayTraceResult result = world.rayTraceBlocks(vec, target, false, true, false);
-        if (result != null) reach = wall;
-        return player.getPositionVector().squareDistanceTo(target) < reach * reach;
+        if (result != null) {
+            vanillaReach = 3;
+            reach = wall;
+        }
+        Vec3d floor = player.getPositionVector()
+                .add(0, player.getEyeHeight(), 0)
+                .subtract(vec)
+                .add(player.getPositionVector());
+        if (floor.squareDistanceTo(target) > vanillaReach * vanillaReach) return false;
+
+        // anti-cheat interact check
+        if (type == ReachType.LEGIT &&
+                vec.squareDistanceTo(target) > reach * reach) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean canInteract(Vec3d vec, Vec3d target, double reach, double wall) {
+        return canInteract(vec, target, reach, wall, ReachType.VANILLA);
     }
 
     public static boolean isInsideBlock(EntityPlayer player) {
@@ -110,13 +130,13 @@ public class EntityUtils {
         }
     }
 
-    public static EntityState getEntityType(EntityLivingBase entity) {
+    public static EntityType getEntityType(EntityLivingBase entity) {
         if (entity instanceof EntityAgeable || entity instanceof EntityAmbientCreature || entity instanceof EntitySquid) {
-            return EntityState.PASSIVE;
+            return EntityType.PASSIVE;
         } else if (isAggressive(entity)) {
-            return EntityState.HOSTILE;
+            return EntityType.HOSTILE;
         } else {
-            return EntityState.NEUTRAL;
+            return EntityType.NEUTRAL;
         }
     }
 }

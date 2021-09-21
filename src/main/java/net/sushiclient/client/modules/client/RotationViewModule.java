@@ -53,9 +53,9 @@ public class RotationViewModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onPreRender(EntityRenderEvent e) {
-        if (!PositionUtils.getDesyncMode().isRotationDesync()) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (e.getEntityIn() != player) return;
+        if (!PositionUtils.getDesyncMode().isRotationDesync()) return;
 
         yaw = player.rotationYaw;
         yawHead = player.rotationYawHead;

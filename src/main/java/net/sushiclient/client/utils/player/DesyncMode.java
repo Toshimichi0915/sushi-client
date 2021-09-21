@@ -6,6 +6,7 @@ public class DesyncMode {
     public static DesyncMode ALL = new DesyncMode(true, true, true);
     public static DesyncMode POSITION = new DesyncMode(true, false, false);
     public static DesyncMode LOOK = new DesyncMode(false, true, false);
+    public static DesyncMode POSITION_LOOK = new DesyncMode(true, true, false);
     public static DesyncMode ON_GROUND = new DesyncMode(false, false, true);
     public static DesyncMode NONE = new DesyncMode(false, false, false);
 

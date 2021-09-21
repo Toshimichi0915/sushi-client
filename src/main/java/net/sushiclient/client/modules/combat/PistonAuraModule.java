@@ -5,6 +5,7 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.EnumFacing;
@@ -27,10 +28,7 @@ import net.sushiclient.client.task.tasks.ItemSwitchTask;
 import net.sushiclient.client.utils.UpdateTimer;
 import net.sushiclient.client.utils.combat.PistonAuraAttack;
 import net.sushiclient.client.utils.combat.PistonAuraUtils;
-import net.sushiclient.client.utils.player.DesyncCloseable;
-import net.sushiclient.client.utils.player.DesyncMode;
-import net.sushiclient.client.utils.player.InventoryUtils;
-import net.sushiclient.client.utils.player.PositionUtils;
+import net.sushiclient.client.utils.player.*;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockUtils;
 
@@ -52,10 +50,11 @@ public class PistonAuraModule extends BaseModule {
     private final UpdateTimer recalculationTimer;
     private final UpdateTimer obsidianTimer;
     private final UpdateTimer explosionTimer;
+    private int timeout;
 
     private PistonAuraAttack attack;
     private EntityEnderCrystal exploded;
-    private DesyncCloseable closeable;
+    private DesyncOperator operator;
     private boolean running;
     private int repeatCounter;
 
@@ -84,6 +83,7 @@ public class PistonAuraModule extends BaseModule {
     @Override
     public void onEnable() {
         EventHandlers.register(this);
+        timeout = 5;
     }
 
     @Override
@@ -91,6 +91,8 @@ public class PistonAuraModule extends BaseModule {
         EventHandlers.unregister(this);
         exploded = null;
         attack = null;
+        PositionUtils.close(operator);
+        operator = null;
         stop();
     }
 
@@ -106,10 +108,6 @@ public class PistonAuraModule extends BaseModule {
 
     private void stop() {
         running = false;
-        if (closeable != null) {
-            closeable.close();
-            closeable = null;
-        }
     }
 
     public void update() {
@@ -129,11 +127,16 @@ public class PistonAuraModule extends BaseModule {
         if (attack == null) return;
         if (exploded != null && !exploded.isDead && !explosionTimer.peek()) return;
         running = true;
-        if (closeable == null) {
-            closeable = PositionUtils.desync(DesyncMode.LOOK);
+        Vec3d lookAt = getPlayer().getPositionVector()
+                .add(0, getPlayer().eyeHeight, 0)
+                .add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
+        if (operator == null) {
+            AutoDesyncOperator fake = new AutoDesyncOperator();
+            fake.desyncMode(DesyncMode.LOOK).lookAt(lookAt);
+            getConnection().sendPacket(new CPacketPlayer.Rotation(fake.getYaw(), fake.getPitch(), getPlayer().onGround));
+            operator = PositionUtils.desync().desyncMode(DesyncMode.LOOK);
         }
-        Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
-        PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
+        operator.lookAt(lookAt);
         final PistonAuraAttack attack = this.attack;
         if (!attack.isCrystalPlaced()) {
             TaskExecutor.newTaskChain()
@@ -236,6 +239,13 @@ public class PistonAuraModule extends BaseModule {
         }
         repeatCounter = 0;
         update();
+        if (attack == null && timeout-- < 0) {
+            PositionUtils.close(operator);
+            operator = null;
+        }
+        if (attack != null) {
+            timeout = 5;
+        }
     }
 
     @Override

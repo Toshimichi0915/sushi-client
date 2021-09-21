@@ -13,6 +13,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.sushiclient.client.utils.player.InventoryType;
 import net.sushiclient.client.utils.player.InventoryUtils;
@@ -40,7 +41,7 @@ public class BlockUtils {
         return new BlockPos(vec.x, vec.y, vec.z);
     }
 
-    public static Vec3d toVec3d(BlockPos pos) {
+    public static Vec3d toVec3d(Vec3i pos) {
         return new Vec3d(pos.getX(), pos.getY(), pos.getZ());
     }
 
@@ -82,11 +83,12 @@ public class BlockUtils {
         WorldClient world = minecraft.world;
         if (controller == null || player == null || world == null) return;
         BlockPos pos = info.getBlockPos();
-        Vec3d vec = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+        Vec3d vec = BlockUtils.toVec3d(pos);
         BlockFace face = info.getBlockFace();
         NetHandlerPlayClient connection = minecraft.getConnection();
         if (!packet || connection == null) {
-            controller.processRightClickBlock(player, world, pos.offset(face.getFacing().getOpposite()), face.getFacing(), face.getPos().add(vec), EnumHand.MAIN_HAND);
+            controller.processRightClickBlock(player, world, pos.offset(face.getFacing().getOpposite()), face.getFacing(),
+                    face.getPos().add(vec).add(BlockUtils.toVec3d(info.getBlockFace().getFacing().getOpposite().getDirectionVec())), EnumHand.MAIN_HAND);
         } else {
             BlockPos placePos = pos.offset(face.getFacing().getOpposite());
             Vec3d placeVec = face.getPos().add(vec);

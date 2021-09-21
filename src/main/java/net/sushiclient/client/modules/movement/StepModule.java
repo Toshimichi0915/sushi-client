@@ -1,5 +1,6 @@
 package net.sushiclient.client.modules.movement;
 
+import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -10,19 +11,20 @@ import net.sushiclient.client.config.data.IntRange;
 import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
+import net.sushiclient.client.events.packet.PacketSendEvent;
 import net.sushiclient.client.events.player.PlayerMoveEvent;
+import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
 import net.sushiclient.client.utils.EntityUtils;
-import net.sushiclient.client.utils.player.DesyncMode;
-import net.sushiclient.client.utils.player.PositionUtils;
+import net.sushiclient.client.utils.UpdateTimer;
 import net.sushiclient.client.utils.render.hole.HoleUtils;
 import net.sushiclient.client.utils.world.BlockUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StepModule extends BaseModule {
 
+    private final Configuration<StepMode> stepMode;
     private final Configuration<Boolean> phase;
     private final Configuration<Boolean> normal;
     private final Configuration<IntRange> height;
@@ -34,11 +36,17 @@ public class StepModule extends BaseModule {
 
     private final Configuration<Boolean> pauseInHole;
     private final Configuration<Boolean> pauseOnSneak;
+    private final Configuration<IntRange> packetCapacity;
+    private final Configuration<IntRange> packetLimit;
     private double motionX;
     private double motionZ;
+    private double groundY;
+    private int packetCount;
+    private UpdateTimer packetTimer;
 
     public StepModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        stepMode = provider.get("mode", "Mode", null, StepMode.class, StepMode.TIMER);
         phase = provider.get("phase", "Phase", null, Boolean.class, true);
         normal = provider.get("normal", "Normal", null, Boolean.class, true);
         height = provider.get("height", "Height", null, IntRange.class, new IntRange(2, 8, 1, 1), normal::getValue, false, 0);
@@ -50,6 +58,9 @@ public class StepModule extends BaseModule {
 
         pauseInHole = provider.get("pause_in_hole", "Pause In Hole", null, Boolean.class, true);
         pauseOnSneak = provider.get("pause_on_sneak", "Pause On Sneak", null, Boolean.class, true);
+        packetCapacity = provider.get("packet_capacity", "Packet Capacity", null, IntRange.class, new IntRange(40, 100, 20, 1));
+        packetLimit = provider.get("packet_limit", "Packet Limit", null, IntRange.class, new IntRange(22, 100, 20, 1));
+        packetTimer = new UpdateTimer(true, 1000);
     }
 
     @Override
@@ -76,83 +87,79 @@ public class StepModule extends BaseModule {
         return updated ? maxY : Double.NaN;
     }
 
-    private void sendAll(List<Vec3d> packets) {
-        for (Vec3d vec : packets) {
-            PositionUtils.move(vec.x, vec.y, vec.z, 0, 0, true, false, DesyncMode.NONE);
-        }
-    }
-
     @EventHandler(timing = EventTiming.PRE, priority = 50000)
     public void onPrePlayerMove(PlayerMoveEvent e) {
         motionX = getPlayer().motionX;
         motionZ = getPlayer().motionZ;
+        if (getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, -0.01, 0))) {
+            groundY = getPlayer().posY;
+        }
     }
 
     @EventHandler(timing = EventTiming.POST)
     public void onPostPlayerMove(PlayerMoveEvent e) {
+        if (packetCount > packetCapacity.getValue().getCurrent()) return;
         if (EntityUtils.isInsideBlock(getPlayer())) return;
+        if (getPlayer().posY > groundY) return;
+        if (getPlayer().fallDistance > 0.1) return;
+        if (getPlayer().movementInput.jump) return;
+        if (getPlayer().isInWater()) return;
+        if (getPlayer().isInLava()) return;
+        if (getPlayer().isOnLadder()) return;
         BlockPos floorPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         if (pauseInHole.getValue() && HoleUtils.getHoleInfo(getWorld(), floorPos, false) != null ||
                 pauseOnSneak.getValue() && getPlayer().isSneaking()) {
             return;
         }
-        Vec3d direction = new Vec3d(motionX, 0, motionZ).normalize();
-        Vec3d scaled = direction.scale(delta.getValue().getCurrent());
+        Vec3d direction = new Vec3d(motionX, 0, motionZ).normalize().scale(delta.getValue().getCurrent());
+
         if (reverse.getValue()) {
-            for (int y = -reverseHeight.getValue().getCurrent(); y <= 0; y++) {
-                Vec3d pos = direction.scale(0.01).add(0, y, 0);
-                AxisAlignedBB box = getPlayer().getEntityBoundingBox().offset(pos);
+            for (int y = -reverseHeight.getValue().getCurrent(); y < 0; y++) {
+                AxisAlignedBB box = getPlayer().getEntityBoundingBox()
+                        .offset(direction)
+                        .offset(0, y + 0.99, 0);
                 if (getWorld().collidesWithAnyBlock(box)) continue;
-                Vec3d resultPos = getPlayer().getPositionVector().add(pos);
                 double height = getMaxHeight(box);
-                if (getPlayer().posY - height < reverseMinHeight.getValue().getCurrent()) continue;
+                double dY = height - getPlayer().posY;
                 if (Double.isNaN(height)) continue;
-                if (getPlayer().movementInput.jump) continue;
-                ArrayList<Vec3d> packets = new ArrayList<>();
-                for (int i = 1; i < getPlayer().posY - height; i++) {
-                    if (getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, -i, 0))) {
-                        if (!phase.getValue()) {
-                            return;
-                        }
-                    } else {
-                        packets.add(new Vec3d(getPlayer().posX, getPlayer().posY - i, getPlayer().posZ));
-                    }
-                }
-                sendAll(packets);
-                PositionUtils.move(resultPos.x, height, resultPos.z, 0, 0, true, false, DesyncMode.NONE);
-                getPlayer().motionX = motionX;
-                getPlayer().motionY = 0;
-                getPlayer().motionZ = motionZ;
-                return;
+                if (dY < y) continue;
+                if (-dY < reverseMinHeight.getValue().getCurrent()) continue;
+                StepMode mode = stepMode.getValue();
+                if (mode.reverse(direction.x, dY, direction.z, height, phase.getValue())) return;
             }
         }
-        if (!getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(direction.scale(0.01)))) return;
+
         if (normal.getValue()) {
-            for (int y = 0; y <= height.getValue().getCurrent(); y++) {
-                Vec3d pos = direction.scale(0.01).add(0, y, 0);
-                AxisAlignedBB box = getPlayer().getEntityBoundingBox().offset(pos);
-                AxisAlignedBB box2 = getPlayer().getEntityBoundingBox().offset(scaled).offset(pos);
-                if (getWorld().collidesWithAnyBlock(box2)) continue;
-                Vec3d resultPos = getPlayer().getPositionVector().add(scaled).add(pos);
+            for (int y = height.getValue().getCurrent(); y > 0; y--) {
+                AxisAlignedBB box = getPlayer().getEntityBoundingBox()
+                        .offset(direction)
+                        .offset(0, y, 0);
+                if (getWorld().collidesWithAnyBlock(box)) continue;
                 double height = getMaxHeight(box);
-                ArrayList<Vec3d> packets = new ArrayList<>();
-                for (int i = 1; i < height - getPlayer().posY; i++) {
-                    if (getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, -i, 0))) {
-                        if (!phase.getValue()) {
-                            return;
-                        }
-                    } else {
-                        packets.add(new Vec3d(getPlayer().posX, getPlayer().posY + i, getPlayer().posZ));
-                    }
+                double dY = height - getPlayer().posY;
+                if (Double.isNaN(height)) continue;
+                if (dY > y) continue;
+                StepMode mode = stepMode.getValue();
+                if (mode.step(direction.x, dY, direction.z, height, phase.getValue())) {
+                    getPlayer().motionX = motionX;
+                    getPlayer().motionZ = motionZ;
+                    return;
                 }
-                sendAll(packets);
-                PositionUtils.move(resultPos.x, height, resultPos.z, 0, 0, true, false, DesyncMode.NONE);
-                getPlayer().motionX = motionX;
-                getPlayer().motionY = 0;
-                getPlayer().motionZ = motionZ;
-                return;
             }
         }
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void sendPacket(PacketSendEvent packet) {
+        if (packet.getPacket() instanceof CPacketPlayer) packetCount++;
+    }
+
+    @EventHandler(timing = EventTiming.POST)
+    public void onClientTick(ClientTickEvent e) {
+        if (packetTimer.update()) {
+            packetCount -= packetLimit.getValue().getCurrent();
+        }
+        if (packetCount < 0) packetCount = 0;
     }
 
     @Override
@@ -164,4 +171,5 @@ public class StepModule extends BaseModule {
     public Category getDefaultCategory() {
         return Category.MOVEMENT;
     }
+
 }

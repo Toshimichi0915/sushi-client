@@ -27,7 +27,9 @@ import net.sushiclient.client.utils.EntityInfo;
 import net.sushiclient.client.utils.EntityUtils;
 import net.sushiclient.client.utils.UpdateTimer;
 import net.sushiclient.client.utils.combat.DamageUtils;
-import net.sushiclient.client.utils.player.*;
+import net.sushiclient.client.utils.player.InventoryType;
+import net.sushiclient.client.utils.player.InventoryUtils;
+import net.sushiclient.client.utils.player.ItemSlot;
 import net.sushiclient.client.utils.world.BlockFace;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockUtils;
@@ -112,7 +114,7 @@ public class AntiPistonAuraModule extends BaseModule {
         }
     }
 
-    private synchronized void placeObsidian() {
+    private void placeObsidian() {
         if (spam.isEmpty()) return;
         ItemSlot copy = obsidianSlot;
         if (copy == null) return;
@@ -120,9 +122,7 @@ public class AntiPistonAuraModule extends BaseModule {
         InventoryUtils.silentSwitch(true, copy.getIndex(), () -> {
             for (BlockPlaceInfo info : new ArrayList<>(spam)) {
                 if (info == null) continue;
-                try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-                    BlockUtils.place(info, true);
-                }
+                BlockUtils.place(info, true);
             }
         });
     }
@@ -141,11 +141,7 @@ public class AntiPistonAuraModule extends BaseModule {
                 spam.add(findBlockPlaceInfo(getWorld(), pos.offset(enumFacing)));
             }
             when = System.currentTimeMillis();
-            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.ALL)) {
-                PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.2, getPlayer().posZ, 0, 0, true, false, DesyncMode.POSITION);
-                PositionUtils.lookAt(crystal.getPos(), DesyncMode.LOOK);
-                getConnection().sendPacket(crystal.newAttackPacket());
-            }
+            getConnection().sendPacket(crystal.newAttackPacket());
         });
         placeObsidian();
     }

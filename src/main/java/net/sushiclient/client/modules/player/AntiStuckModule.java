@@ -32,7 +32,7 @@ public class AntiStuckModule extends BaseModule {
         SPacketEntityTeleport packet = (SPacketEntityTeleport) e.getPacket();
         if (getPlayer().getEntityId() != packet.getEntityId()) return;
         getClient().addScheduledTask(() -> {
-            PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.1, getPlayer().posZ, 0, 0, true, false, DesyncMode.NONE);
+            PositionUtils.move(getPlayer().posX, getPlayer().posY + 0.1, getPlayer().posZ, 0, 0, false, DesyncMode.POSITION);
         });
     }
 

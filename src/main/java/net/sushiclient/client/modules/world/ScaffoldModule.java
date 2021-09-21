@@ -1,6 +1,10 @@
 package net.sushiclient.client.modules.world;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.network.play.client.CPacketAnimation;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.sushiclient.client.config.Config;
@@ -10,15 +14,12 @@ import net.sushiclient.client.config.data.IntRange;
 import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
+import net.sushiclient.client.events.player.PlayerPacketEvent;
 import net.sushiclient.client.events.player.PlayerTravelEvent;
-import net.sushiclient.client.events.player.PlayerUpdateEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
-import net.sushiclient.client.task.forge.TaskExecutor;
-import net.sushiclient.client.task.tasks.BlockPlaceTask;
-import net.sushiclient.client.utils.player.InventoryType;
-import net.sushiclient.client.utils.player.InventoryUtils;
-import net.sushiclient.client.utils.player.ItemSlot;
+import net.sushiclient.client.modules.movement.StepMode;
+import net.sushiclient.client.utils.player.*;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockPlaceUtils;
 import net.sushiclient.client.utils.world.BlockUtils;
@@ -33,10 +34,29 @@ public class ScaffoldModule extends BaseModule {
     @Config(id = "refill", name = "Refill")
     public Boolean refill = true;
 
+    @Config(id = "tower", name = "Tower")
+    public Boolean tower = true;
+
+    @Config(id = "smooth", name = "Smooth")
+    public Boolean smooth = true;
+
+    @Config(id = "delay", name = "Delay")
+    public IntRange delay = new IntRange(1, 20, 1, 1);
+
+    @Config(id = "tower_delay", name = "Tower Delay", when = "tower")
+    public IntRange towerDelay = new IntRange(1, 20, 1, 1);
+
     @Config(id = "threshold", name = "Threshold")
     public IntRange threshold = new IntRange(32, 64, 1, 1);
 
+    private int timeout;
     private boolean hasBlock;
+    private List<BlockPlaceInfo> tasks;
+    private DesyncOperator operator;
+    private boolean buildingUp;
+    private int sleep;
+    private int sprintSleep;
+    private int towerSleep;
 
     public ScaffoldModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -51,6 +71,8 @@ public class ScaffoldModule extends BaseModule {
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
+        PositionUtils.close(operator);
+        operator = null;
     }
 
     @EventHandler(timing = EventTiming.PRE)
@@ -58,22 +80,39 @@ public class ScaffoldModule extends BaseModule {
         BlockPos floor = BlockUtils.toBlockPos(getPlayer().getPositionVector()).add(0, -1, 0);
         if (BlockUtils.isAir(getWorld(), floor)) return;
 
-        if (getPlayer().movementInput.jump && hasBlock && getPlayer().motionY < 0.1) {
-            getPlayer().motionY = 0.42;
+        Vec3d input = MovementUtils.getMoveInputs(getPlayer());
+        if (hasBlock && tower && input.x == 0 && input.y == 1 && input.z == 0 &&
+                getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, -0.01, 0))) {
+            buildingUp = true;
+            e.setCancelled(true);
         }
     }
 
     @EventHandler(timing = EventTiming.PRE)
-    public void onUpdate(PlayerUpdateEvent e) {
+    public void onPlayerPacket1(PlayerPacketEvent e) {
+        sleep--;
+        sprintSleep--;
+        towerSleep--;
+        timeout--;
 
+        if (buildingUp) {
+            buildingUp = false;
+            if (towerSleep > 0) return;
+            StepMode.NCP.step(0, 1, 0, false);
+            getPlayer().motionY = 0;
+            towerSleep = towerDelay.getCurrent();
+        }
     }
 
-    @EventHandler(timing = EventTiming.PRE)
-    public void onClientTick(ClientTickEvent e) {
+    @EventHandler(timing = EventTiming.PRE, priority = 1)
+    public void onPlayerPacket2(PlayerPacketEvent e) {
         Vec3d floor = getPlayer().getPositionVector().add(0, -1, 0);
         BlockPos floorPos = BlockUtils.toBlockPos(floor);
+        tasks = BlockPlaceUtils.search(getWorld(), floorPos, 3);
+        if (tasks == null || tasks.isEmpty()) return;
         hasBlock = false;
-        if (ItemSlot.current().getItemStack().getItem() instanceof ItemBlock) {
+        Item current = ItemSlot.current().getItemStack().getItem();
+        if (current instanceof ItemBlock && current != Item.getItemFromBlock(Blocks.ENDER_CHEST)) {
             hasBlock = true;
             ItemSlot slot = InventoryType.MAIN.findStackable(ItemSlot.current().getItemStack());
             if (refill && ItemSlot.current().getItemStack().getCount() < threshold.getCurrent() && slot != null) {
@@ -83,16 +122,43 @@ public class ScaffoldModule extends BaseModule {
             for (ItemSlot itemSlot : InventoryType.HOTBAR) {
                 if (itemSlot.getItemStack().getItem() instanceof ItemBlock) {
                     InventoryUtils.moveHotbar(itemSlot.getIndex());
-                    hasBlock = true;
                 }
             }
+            tasks = null;
         }
-        List<BlockPlaceInfo> tasks = BlockPlaceUtils.search(getWorld(), floorPos, 3);
-        if (tasks == null) return;
-        TaskExecutor.newTaskChain()
-                .supply(tasks)
-                .then(new BlockPlaceTask(true, true))
-                .execute();
+    }
+
+    @EventHandler(timing = EventTiming.PRE, priority = 2)
+    public void onPlayerPacket3(PlayerPacketEvent e) {
+        if (sleep > 0) return;
+        if (!hasBlock || tasks == null || tasks.isEmpty()) {
+            if (timeout <= 0) {
+                PositionUtils.close(operator);
+                operator = null;
+            }
+            return;
+        }
+        timeout = 5;
+        if (operator == null) {
+            operator = PositionUtils.desync();
+        }
+        sleep = delay.getCurrent();
+        BlockPlaceInfo info = tasks.get(0);
+        tasks.remove(info);
+        operator.desyncMode(DesyncMode.LOOK).lookAt(info);
+        PositionUtils.on(() -> {
+            BlockUtils.place(info, false);
+            getConnection().sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+        });
+    }
+
+    @EventHandler(timing = EventTiming.PRE, priority = 100)
+    public void onPlayerMove(ClientTickEvent e) {
+        if (getPlayer().movementInput.jump) sprintSleep = 5;
+        if (!smooth) return;
+        if (timeout <= 0) return;
+        if (sprintSleep < 0) return;
+        getPlayer().setSprinting(false);
     }
 
     @Override

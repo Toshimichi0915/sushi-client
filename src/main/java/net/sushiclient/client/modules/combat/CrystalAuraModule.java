@@ -36,7 +36,9 @@ import net.sushiclient.client.task.tasks.ItemSwitchTask;
 import net.sushiclient.client.utils.EntityUtils;
 import net.sushiclient.client.utils.UpdateTimer;
 import net.sushiclient.client.utils.combat.DamageUtils;
-import net.sushiclient.client.utils.player.*;
+import net.sushiclient.client.utils.player.InventoryType;
+import net.sushiclient.client.utils.player.InventoryUtils;
+import net.sushiclient.client.utils.player.ItemSlot;
 import net.sushiclient.client.utils.render.RenderUtils;
 import net.sushiclient.client.utils.world.BlockUtils;
 
@@ -300,12 +302,9 @@ public class CrystalAuraModule extends BaseModule {
 
     private void breakEnderCrystal(EnderCrystalInfo enderCrystal) {
         InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> {
-            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-                PositionUtils.lookAt(enderCrystal.getPos(), DesyncMode.LOOK);
-                if (swing.getValue()) {
-                    getConnection().sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
-                }
-                getConnection().sendPacket(enderCrystal.newAttackPacket());
+            getConnection().sendPacket(enderCrystal.newAttackPacket());
+            if (swing.getValue()) {
+                getConnection().sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
             }
         });
     }
@@ -330,9 +329,6 @@ public class CrystalAuraModule extends BaseModule {
         Vec3d crystalPos = crystalAttack.info.getPos();
         EnderCrystalInfo colliding = getCollidingEnderCrystal(crystalAttack.info.getBox());
         if (colliding != null && breakTimer.update()) breakEnderCrystal(colliding);
-        try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-            PositionUtils.lookAt(crystalPos, DesyncMode.LOOK);
-        }
         ItemSlot copy = crystalSlot;
         InventoryUtils.silentSwitch(silentSwitch.getValue() && copy.getInventoryType() != InventoryType.OFFHAND,
                 copy.getIndex(), () -> {

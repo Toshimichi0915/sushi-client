@@ -5,6 +5,7 @@
   "refmap": "mixins.sushi.refmap.json",
   "client": [
     "AccessorChunkProviderClient",
+    "AccessorEntityPlayerSP",
     "AccessorEntityRenderer",
     "AccessorItemTool",
     "AccessorMinecraft",

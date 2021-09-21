@@ -188,8 +188,7 @@ public class NameTagsModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onLivingLabelRender(LivingLabelRenderEvent e) {
-        if (!(e.getEntity() instanceof EntityLivingBase)) return;
-        if (!EntityType.match((EntityLivingBase) e.getEntity(), player, self, mob, passive, neutral, hostile)) return;
+        if (!EntityType.match(e.getEntity(), player, self, mob, passive, neutral, hostile)) return;
         e.setCancelled(true);
     }
 

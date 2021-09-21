@@ -6,7 +6,6 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.util.EnumHand;
 import net.sushiclient.client.task.TaskAdapter;
-import net.sushiclient.client.utils.player.DesyncCloseable;
 import net.sushiclient.client.utils.player.DesyncMode;
 import net.sushiclient.client.utils.player.PositionUtils;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
@@ -56,15 +55,21 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
             return;
         }
         if (rotate) {
-            try (DesyncCloseable closable = PositionUtils.desync(DesyncMode.LOOK)) {
-                PositionUtils.lookAt(info, desync ? DesyncMode.LOOK : DesyncMode.NONE);
+            if (desync) {
+                PositionUtils.require()
+                        .desyncMode(DesyncMode.LOOK)
+                        .lookAt(info);
+            } else {
+                PositionUtils.lookAt(info);
             }
         }
-        NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
-        if (swing && connection != null) {
-            connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
-        }
-        BlockUtils.place(info, packet);
+        PositionUtils.on(() -> {
+            NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
+            BlockUtils.place(info, packet);
+            if (swing && connection != null) {
+                connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+            }
+        });
         if (index >= getInput().size()) stop(null);
     }
 }

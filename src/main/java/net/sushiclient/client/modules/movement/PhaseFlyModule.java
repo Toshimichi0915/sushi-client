@@ -117,7 +117,7 @@ public class PhaseFlyModule extends BaseModule {
             stage++;
         } else if (stage == 2) {
             player.movementInput.sneak = true;
-            PositionUtils.move(player.posX, player.posY + 0.1, player.posZ, 0, 0, true, false, DesyncMode.NONE);
+            PositionUtils.move(player.posX, player.posY + 0.1, player.posZ, 0, 0, false, DesyncMode.POSITION);
             stage++;
         } else if (stage == 3) {
             stage = 0;

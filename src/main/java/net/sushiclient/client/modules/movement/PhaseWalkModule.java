@@ -104,14 +104,14 @@ public class PhaseWalkModule extends BaseModule {
                         maxY = collision.maxY;
                     }
                 }
-                PositionUtils.move(player.posX, maxY - delta.getValue().getCurrent(), player.posZ, 0, 0, true, false, DesyncMode.NONE);
+                PositionUtils.move(player.posX, maxY - delta.getValue().getCurrent(), player.posZ, 0, 0, false, DesyncMode.POSITION);
                 return;
             }
         }
 
         // safe walk
-        PositionUtils.move(player.prevPosX, player.prevPosY, player.prevPosZ, 0, 0, true, false, DesyncMode.NONE);
-        PositionUtils.move(player.prevPosX, PositionUtils.getY(), player.prevPosZ, 0, 0, true, false, DesyncMode.POSITION);
+        PositionUtils.move(player.prevPosX, player.prevPosY, player.prevPosZ, 0, 0, false, DesyncMode.POSITION);
+        PositionUtils.require().desyncMode(DesyncMode.POSITION).pos(player.prevPosX, PositionUtils.getY(), player.prevPosZ);
     }
 
     @EventHandler(timing = EventTiming.PRE)

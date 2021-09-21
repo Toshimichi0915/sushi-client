@@ -9,7 +9,6 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.Vec3d;
 import net.sushiclient.client.Sushi;
 import net.sushiclient.client.config.Configuration;
 import net.sushiclient.client.config.RootConfigurations;
@@ -136,11 +135,13 @@ public class AutoMendModule extends BaseModule {
 
         timer.update();
         InventoryUtils.moveToHotbar(expBottle);
-        try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-            PositionUtils.move(Vec3d.ZERO, getPlayer().rotationYaw, -90, false, true, DesyncMode.LOOK);
-            InventoryUtils.moveHotbar(expBottle.getIndex());
+        InventoryUtils.moveHotbar(expBottle.getIndex());
+        PositionUtils.require()
+                .desyncMode(DesyncMode.LOOK)
+                .rotation(getPlayer().rotationYaw, -90);
+        PositionUtils.on(() -> {
             getConnection().sendPacket(new CPacketPlayerTryUseItem(EnumHand.MAIN_HAND));
-        }
+        });
     }
 
     @Override

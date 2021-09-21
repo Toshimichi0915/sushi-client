@@ -51,7 +51,7 @@ public class LockYawModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
         float pitch = getPlayer().rotationPitch;
-        PositionUtils.lookAt(new Vec3d(x.getValue(), 0, z.getValue()), DesyncMode.NONE);
+        PositionUtils.lookAt(new Vec3d(x.getValue(), 0, z.getValue()), DesyncMode.LOOK);
         getPlayer().rotationPitch = pitch;
     }
 

@@ -38,6 +38,7 @@ public class AntiCivBreakModule extends BaseModule {
     @Config(id = "damage", name = "Damage")
     public IntRange damage = new IntRange(30, 100, 10, 1);
 
+
     public AntiCivBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         new ConfigInjector(provider).inject(this);
@@ -80,17 +81,20 @@ public class AntiCivBreakModule extends BaseModule {
             double damage = DamageUtils.getCrystalDamage(getPlayer(), entity.getPositionVector());
             getWorld().setBlockState(floorPos, floorState);
             if (damage <= this.damage.getCurrent()) continue;
-            try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.POSITION)) {
-                PositionUtils.move(posX, getPlayer().posY + 0.2, posZ, 0, 0, true, false, DesyncMode.POSITION);
-                getConnection().sendPacket(new CPacketUseEntity(entity));
-            }
+            PositionUtils.require()
+                    .desyncMode(DesyncMode.POSITION_LOOK)
+                    .pos(posX, getPlayer().posY + 0.2, posZ)
+                    .lookAt(entity.getPositionVector());
             BlockPlaceInfo face = BlockUtils.findBlockPlaceInfo(getWorld(), BlockUtils.toBlockPos(entity.getPositionVector()),
                     PlaceOptions.IGNORE_ENTITY);
             if (face == null) continue;
-            TaskExecutor.newTaskChain()
-                    .delay(1)
-                    .then(() -> placeObsidian(face))
-                    .execute();
+            PositionUtils.on(() -> {
+                getConnection().sendPacket(new CPacketUseEntity(entity));
+                TaskExecutor.newTaskChain()
+                        .delay(1)
+                        .then(() -> placeObsidian(face))
+                        .execute();
+            });
         }
     }
 

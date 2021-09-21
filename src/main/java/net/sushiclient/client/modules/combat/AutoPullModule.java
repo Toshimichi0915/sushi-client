@@ -20,7 +20,6 @@ import net.sushiclient.client.task.forge.TaskExecutor;
 import net.sushiclient.client.task.tasks.BlockPlaceTask;
 import net.sushiclient.client.task.tasks.ItemSwitchTask;
 import net.sushiclient.client.utils.EntityUtils;
-import net.sushiclient.client.utils.player.DesyncCloseable;
 import net.sushiclient.client.utils.player.DesyncMode;
 import net.sushiclient.client.utils.player.PositionUtils;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
@@ -123,24 +122,23 @@ public class AutoPullModule extends BaseModule {
         if (pistonPlace == null) return;
 
         // rotate
-        try (DesyncCloseable closeable = PositionUtils.desync(DesyncMode.LOOK)) {
-            Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(pistonFacing.getDirectionVec()));
-            PositionUtils.lookAt(lookAt, DesyncMode.LOOK);
+        Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(pistonFacing.getDirectionVec()));
+        PositionUtils.require()
+                .desyncMode(DesyncMode.LOOK)
+                .lookAt(lookAt);
 
-            TaskExecutor.newTaskChain()
-                    .supply(Item.getItemFromBlock(Blocks.PISTON))
-                    .then(new ItemSwitchTask(null, true))
-                    .abortIfFalse()
-                    .supply(Collections.singletonList(pistonPlace))
-                    .then(new BlockPlaceTask(false, false))
-                    .supply(Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
-                    .then(new ItemSwitchTask(null, true))
-                    .abortIfFalse()
-                    .supply(Collections.singletonList(redstonePlace))
-                    .then(new BlockPlaceTask(false, false))
-                    .last(closeable::close)
-                    .execute();
-        }
+        TaskExecutor.newTaskChain()
+                .supply(Item.getItemFromBlock(Blocks.PISTON))
+                .then(new ItemSwitchTask(null, true))
+                .abortIfFalse()
+                .supply(Collections.singletonList(pistonPlace))
+                .then(new BlockPlaceTask(false, false))
+                .supply(Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
+                .then(new ItemSwitchTask(null, true))
+                .abortIfFalse()
+                .supply(Collections.singletonList(redstonePlace))
+                .then(new BlockPlaceTask(false, false))
+                .execute();
         pulledPlayers.put(target, 20);
     }
 

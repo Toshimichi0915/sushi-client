@@ -94,7 +94,7 @@ public class AnchorModule extends BaseModule {
         getPlayer().motionZ = 0;
         BlockPos floorPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         PositionUtils.move(floorPos.getX() + 0.5, posY, floorPos.getZ() + 0.5,
-                0, 0, true, false, DesyncMode.NONE);
+                0, 0, false, DesyncMode.POSITION);
     }
 
     private boolean canAccess(HoleInfo info) {
