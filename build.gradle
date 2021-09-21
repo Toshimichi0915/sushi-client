@@ -65,19 +65,6 @@ mixin {
     add sourceSets.main, 'mixins.sushi.refmap.json'
 }
 
-compileJava {
-    def generatedSrcDir = "${buildDir}/generatedSrc"
-    sourceSets.main.java { srcDir generatedSrcDir }
-    def generatedFile = project.file(generatedSrcDir)
-    generatedFile.mkdirs()
-    options.annotationProcessorGeneratedSourcesDirectory = generatedFile
-    outputs.dir(generatedFile)
-    doFirst {
-        generatedFile.delete()
-        generatedFile.mkdirs()
-    }
-}
-
 jar {
     manifest.attributes(
             'Manifest-Version': 1.0,
