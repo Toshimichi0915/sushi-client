@@ -4,6 +4,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.network.play.client.CPacketAnimation;
+import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -14,6 +15,7 @@ import net.sushiclient.client.config.data.IntRange;
 import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
+import net.sushiclient.client.events.packet.PacketSendEvent;
 import net.sushiclient.client.events.player.PlayerPacketEvent;
 import net.sushiclient.client.events.player.PlayerTravelEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
@@ -28,6 +30,9 @@ import java.util.List;
 
 public class ScaffoldModule extends BaseModule {
 
+    @Config(id = "rotate", name = "Rotate")
+    public ScaffoldMode mode = ScaffoldMode.NCP;
+
     @Config(id = "switch", name = "Switch")
     public Boolean autoSwitch = true;
 
@@ -36,6 +41,9 @@ public class ScaffoldModule extends BaseModule {
 
     @Config(id = "tower", name = "Tower")
     public Boolean tower = true;
+
+    @Config(id = "sprint_spoof", name = "Spring Spoof")
+    public Boolean sprintSpoof = true;
 
     @Config(id = "smooth", name = "Smooth")
     public Boolean smooth = true;
@@ -66,6 +74,9 @@ public class ScaffoldModule extends BaseModule {
     @Override
     public void onEnable() {
         EventHandlers.register(this);
+        if (sprintSpoof) {
+            getConnection().sendPacket(new CPacketEntityAction(getPlayer(), CPacketEntityAction.Action.STOP_SNEAKING));
+        }
     }
 
     @Override
@@ -73,6 +84,15 @@ public class ScaffoldModule extends BaseModule {
         EventHandlers.unregister(this);
         PositionUtils.close(operator);
         operator = null;
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onPacketSend(PacketSendEvent e) {
+        if (!sprintSpoof) return;
+        if (!(e.getPacket() instanceof CPacketEntityAction)) return;
+        CPacketEntityAction packet = (CPacketEntityAction) e.getPacket();
+        if (packet.getAction() != CPacketEntityAction.Action.START_SPRINTING) return;
+        e.setCancelled(true);
     }
 
     @EventHandler(timing = EventTiming.PRE)
@@ -131,7 +151,8 @@ public class ScaffoldModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE, priority = 2)
     public void onPlayerPacket3(PlayerPacketEvent e) {
         if (sleep > 0) return;
-        if (!hasBlock || tasks == null || tasks.isEmpty()) {
+        if (!hasBlock || tasks == null || tasks.isEmpty() ||
+                getPlayer().isInWater() || getPlayer().isInLava()) {
             if (timeout <= 0) {
                 PositionUtils.close(operator);
                 operator = null;
@@ -145,7 +166,7 @@ public class ScaffoldModule extends BaseModule {
         sleep = delay.getCurrent();
         BlockPlaceInfo info = tasks.get(0);
         tasks.remove(info);
-        operator.desyncMode(DesyncMode.LOOK).lookAt(info);
+        ScaffoldMode.NCP.rotate(info, operator);
         PositionUtils.on(() -> {
             BlockUtils.place(info, false);
             getConnection().sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));

@@ -46,7 +46,7 @@ public class StepModule extends BaseModule {
 
     public StepModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
-        stepMode = provider.get("mode", "Mode", null, StepMode.class, StepMode.TIMER);
+        stepMode = provider.get("mode", "Mode", null, StepMode.class, StepMode.NCP);
         phase = provider.get("phase", "Phase", null, Boolean.class, true);
         normal = provider.get("normal", "Normal", null, Boolean.class, true);
         height = provider.get("height", "Height", null, IntRange.class, new IntRange(2, 8, 1, 1), normal::getValue, false, 0);

@@ -54,29 +54,7 @@ public enum StepMode implements Named, Step {
             return true;
         }
     },
-    TIMER("Timer") {
-        @Override
-        public boolean step(double dX, double dY, double dZ, double toY, boolean phase) {
-            return NCP.step(dX, dY, dZ, toY, phase);
-        }
-
-        @Override
-        public boolean reverse(double dX, double dY, double dZ, double toY, boolean phase) {
-            ArrayList<Packet<?>> packets = new ArrayList<>();
-            for (double v : REVERSE_TIMER) {
-                if (v < dY) break;
-                if (collides(dX, v, dZ)) {
-                    if (phase) continue;
-                    else return false;
-                }
-                packets.add(newPacket(dX, v, dZ));
-            }
-            packets.forEach(mc().getConnection()::sendPacket);
-            move(dX, toY, dZ);
-            return true;
-        }
-    },
-    NCP("NCP") {
+    NCP("2B2T") {
         @Override
         public boolean step(double dX, double dY, double dZ, double toY, boolean phase) {
             ArrayList<Packet<?>> packets = new ArrayList<>();
@@ -112,10 +90,32 @@ public enum StepMode implements Named, Step {
 
         @Override
         public boolean reverse(double dX, double dY, double dZ, double toY, boolean phase) {
+            ArrayList<Packet<?>> packets = new ArrayList<>();
+            for (double v : REVERSE_TIMER) {
+                if (v < dY) break;
+                if (collides(dX, v, dZ)) {
+                    if (phase) continue;
+                    else return false;
+                }
+                packets.add(newPacket(dX, v, dZ));
+            }
+            packets.forEach(mc().getConnection()::sendPacket);
+            move(dX, toY, dZ);
+            return true;
+        }
+    },
+    NCP_OLD("NCP") {
+        @Override
+        public boolean step(double dX, double dY, double dZ, double toY, boolean phase) {
+            return NCP.step(dX, dY, dZ, toY, phase);
+        }
+
+        @Override
+        public boolean reverse(double dX, double dY, double dZ, double toY, boolean phase) {
             if (dY > -2) {
                 return VANILLA.reverse(dX, dY, dZ, toY, phase);
             } else {
-                return TIMER.reverse(dX, dY, dZ, toY, phase);
+                return NCP.reverse(dX, dY, dZ, toY, phase);
             }
         }
     };
