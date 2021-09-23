@@ -1,6 +1,5 @@
 package net.sushiclient.client.utils.render;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
@@ -43,8 +42,8 @@ class LockGuiScreen extends GuiScreen {
         return parent;
     }
 
-    public void close() {
-        Minecraft.getMinecraft().displayGuiScreen(parent);
+    @Override
+    public void onGuiClosed() {
         onClose.run();
     }
 }

@@ -4,27 +4,25 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class BlockPlaceUtils {
 
-    private static boolean searchRecursively(World world, BlockPos target, BlockPos current, EnumFacing exclude, int real, int distance,
-                                             HashSet<BlockPos> closed, List<BlockPlaceInfo> result, Function<BlockPos, Boolean> access,
-                                             PlaceOptions[] options) {
-        if (real > distance) return false;
-        if (!BlockUtils.canPlace(world, new BlockPlaceInfo(current, null), options)) return false;
-        if (closed.contains(current)) return false;
-        if (!access.apply(current)) return false;
+    private static void searchRecursively(World world, BlockPos target, BlockPos current, EnumFacing exclude, int real, int distance,
+                                          boolean parent, Collection<List<BlockNode>> contexts, List<BlockNode> context,
+                                          HashSet<BlockPos> closed, List<BlockPlaceInfo> result, Function<BlockPos, Boolean> access,
+                                          PlaceOptions[] options) {
+        if (real > distance) return;
+        if (!BlockUtils.canPlace(world, new BlockPlaceInfo(current, null), options)) return;
+        if (closed.contains(current)) return;
+        if (!access.apply(current)) return;
         closed.add(current);
 
         BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(world, current, options);
         if (info != null) {
             result.add(info);
-            return true;
+            return;
         }
         ArrayList<BlockNode> nodes = new ArrayList<>(5);
         for (EnumFacing facing : EnumFacing.values()) {
@@ -35,19 +33,36 @@ public class BlockPlaceUtils {
         }
         nodes.sort(null);
         for (BlockNode node : nodes) {
-            boolean found = searchRecursively(world, target, node.pos, node.facing.getOpposite(), real + 1, distance, closed, result, access, options);
-            if (found) {
-                result.add(new BlockFace(node.pos, node.facing.getOpposite()).toBlockPlaceInfo(world));
-                return true;
-            }
+            ArrayList<BlockNode> newContext = new ArrayList<>(context);
+            newContext.add(node);
+            contexts.add(newContext);
         }
-        return false;
+
+        if (!parent) return;
+        int count = 0;
+        while (!contexts.isEmpty()) {
+            for (List<BlockNode> ctx : new HashSet<>(contexts)) {
+                contexts.remove(ctx);
+                BlockNode last = ctx.get(ctx.size() - 1);
+                searchRecursively(world, target, last.pos, last.facing.getOpposite(), count, distance, false, contexts, ctx, closed, result, access, options);
+                if (!result.isEmpty()) {
+                    ctx.remove(last);
+                    Collections.reverse(ctx);
+                    for (BlockNode node : ctx) {
+                        result.add(new BlockFace(node.pos, node.facing.getOpposite()).toBlockPlaceInfo(world));
+                    }
+                    return;
+                }
+            }
+            count++;
+        }
     }
 
-    public static List<BlockPlaceInfo> search(World world, BlockPos target, int distance, Set<BlockPos> closed, Function<BlockPos, Boolean> access, PlaceOptions... options) {
+    public static List<BlockPlaceInfo> search(World world, BlockPos target, int distance, Set<
+            BlockPos> closed, Function<BlockPos, Boolean> access, PlaceOptions... options) {
         ArrayList<BlockPlaceInfo> result = new ArrayList<>();
-        boolean found = searchRecursively(world, target, target, null, 0, distance, new HashSet<>(closed), result, access, options);
-        if (found) return result;
+        searchRecursively(world, target, target, null, 0, distance, true, new HashSet<>(), new ArrayList<>(), new HashSet<>(closed), result, access, options);
+        if (!result.isEmpty()) return result;
         else return null;
     }
 

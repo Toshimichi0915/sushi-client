@@ -114,6 +114,7 @@ public class GsonModules implements Modules {
         addModuleFactory("anvil_miner", AnvilMinerModule::new, true);
         addModuleFactory("virtual_tp", VirtualTpModule::new, true);
         addModuleFactory("rotation_view", RotationViewModule::new, true);
+        addModuleFactory("silent_close", SilentCloseModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {

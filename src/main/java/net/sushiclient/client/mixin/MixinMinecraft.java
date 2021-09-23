@@ -1,23 +1,26 @@
 package net.sushiclient.client.mixin;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.Session;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.client.GameFocusEvent;
 import net.sushiclient.client.events.client.WorldLoadEvent;
+import net.sushiclient.client.events.render.GuiScreenCloseEvent;
+import net.sushiclient.client.events.render.GuiScreenDisplayEvent;
 import net.sushiclient.client.events.tick.GameTickEvent;
 import net.sushiclient.client.utils.player.SessionUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Minecraft.class)
 public class MixinMinecraft {
-
 
     private boolean callGameFocusEvent(EventTiming timing, boolean focused) {
         GameFocusEvent event = new GameFocusEvent(timing, focused);
@@ -74,5 +77,23 @@ public class MixinMinecraft {
             cir.setReturnValue(session);
             cir.cancel();
         }
+    }
+
+    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;onGuiClosed()V"), method = "displayGuiScreen")
+    public void onGuiClose(GuiScreen screen) {
+        GuiScreenCloseEvent pre = new GuiScreenCloseEvent(screen, EventTiming.PRE);
+        EventHandlers.callEvent(pre);
+        if (!pre.isCancelled()) {
+            screen.onGuiClosed();
+            GuiScreenCloseEvent post = new GuiScreenCloseEvent(screen, EventTiming.POST);
+            EventHandlers.callEvent(post);
+        }
+    }
+
+
+    @Inject(at = @At("TAIL"), method = "displayGuiScreen")
+    public void onPostDisplayGuiScreen(GuiScreen guiScreenIn, CallbackInfo ci) {
+        GuiScreenDisplayEvent event = new GuiScreenDisplayEvent(guiScreenIn, EventTiming.POST);
+        EventHandlers.callEvent(event);
     }
 }

@@ -36,7 +36,7 @@ public class GuiUtils {
         if (!isGameLocked()) return;
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
         if (screen instanceof LockGuiScreen)
-            ((LockGuiScreen) screen).close();
+            Minecraft.getMinecraft().displayGuiScreen(((LockGuiScreen) screen).getParent());
         if (Minecraft.getMinecraft().currentScreen instanceof LockGuiScreen) return; // still locked!
         locked = false;
         Minecraft.getMinecraft().setIngameFocus();

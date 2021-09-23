@@ -101,12 +101,14 @@ abstract public class BaseModule implements Module {
         if (!paused) {
             Logger handler = Sushi.getProfile().getLogger();
             if (!this.enabled && enabled) {
+                this.enabled = true;
                 handlers.forEach(it -> it.setEnabled(true));
                 onEnable();
                 if (toggleNotification.getValue()) {
                     handler.send(LogLevel.INFO, "Enabled " + getName());
                 }
             } else if (this.enabled && !enabled) {
+                this.enabled = false;
                 handlers.forEach(it -> it.setEnabled(false));
                 onDisable();
                 if (toggleNotification.getValue()) {
@@ -114,7 +116,6 @@ abstract public class BaseModule implements Module {
                 }
             }
         }
-        this.enabled = enabled;
     }
 
     @Override
