@@ -21,11 +21,13 @@ public class ChatSuffix extends BaseModule {
     private static final String ASCII_2 = "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖqʳˢᵗᵘᵛʷˣʸᶻᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾQᴿˢᵀᵁⱽᵂˣʸᶻ";
 
     private final Configuration<String> suffix;
+    private final Configuration<String> commandPrefixes;
     private final Configuration<IntRange> mode;
 
     public ChatSuffix(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         suffix = provider.get("suffix", "Suffix", null, String.class, " | sushi");
+        commandPrefixes = provider.get("command_prefixes", "Command Prefixes", null, String.class, "/ .");
         mode = provider.get("mode", "Mode", null, IntRange.class, new IntRange(0, 2, 0, 1));
     }
 
@@ -69,6 +71,13 @@ public class ChatSuffix extends BaseModule {
         return new String(conv);
     }
 
+    private boolean isCommand(String str) {
+        for (String split : commandPrefixes.getValue().split("\\s+")) {
+            if (str.startsWith(split)) return true;
+        }
+        return false;
+    }
+
     @EventHandler(timing = EventTiming.PRE)
     public void onPacketSend(PacketSendEvent e) throws IOException {
         if (!(e.getPacket() instanceof CPacketChatMessage)) return;
@@ -77,6 +86,7 @@ public class ChatSuffix extends BaseModule {
         PacketBuffer buff = new PacketBuffer(Unpooled.buffer(256));
         packet.writePacketData(buff);
         String text = buff.readString(256);
+        if (isCommand(text)) return;
 
         text += convert(suffix.getValue(), getASCII());
         text = text.substring(0, Math.min(text.length(), 256));
