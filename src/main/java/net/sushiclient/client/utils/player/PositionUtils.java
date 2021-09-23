@@ -186,8 +186,9 @@ public class PositionUtils {
     }
 
     public static void invokeAll() {
-        runnables.forEach(Runnable::run);
+        ArrayList<Runnable> clone = new ArrayList<>(runnables);
         runnables.clear();
+        clone.forEach(Runnable::run);
     }
 
     public static void on(Runnable runnable) {
