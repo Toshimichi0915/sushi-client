@@ -112,7 +112,7 @@ public class GsonModules implements Modules {
         addModuleFactory("hole_fill", HoleFillModule::new, true);
         addModuleFactory("blink", BlinkModule::new, true);
         addModuleFactory("anvil_miner", AnvilMinerModule::new, true);
-        addModuleFactory("virtual_tp", VirtualTpModule::new, false);
+        addModuleFactory("virtual_tp", VirtualTpModule::new, true);
         addModuleFactory("rotation_view", RotationViewModule::new, true);
     }
 
