@@ -16,9 +16,4 @@ public class ChatLogger implements Logger {
         else color = AQUA;
         Minecraft.getMinecraft().ingameGUI.addChatMessage(ChatType.CHAT, new TextComponentString(color + message));
     }
-
-    @Override
-    public void custom(String message) {
-        Minecraft.getMinecraft().ingameGUI.addChatMessage(ChatType.CHAT, new TextComponentString(message));
-    }
 }
