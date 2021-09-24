@@ -53,9 +53,6 @@ dependencies {
     }
     annotationProcessor('org.spongepowered:mixin:0.8.2:processor') { exclude module: 'gson' }
 
-    // Libraries
-    included 'org.jsoup:jsoup:1.14.2'
-
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
     implementation configurations.included
 }
