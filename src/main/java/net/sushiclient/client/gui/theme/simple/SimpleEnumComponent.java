@@ -17,12 +17,14 @@ public class SimpleEnumComponent<T extends Named> extends BaseComponent {
     private final ThemeConstants constants;
     private final String text;
     private final T[] values;
+    private final T init;
     private int counter;
     private boolean hover;
 
     public SimpleEnumComponent(ThemeConstants constants, String text, T init, Class<T> tClass) {
         this.constants = constants;
         this.text = text;
+        this.init = init;
         this.values = values(tClass);
         counter = Arrays.asList(values).indexOf(init);
         setHeight(12);
@@ -71,6 +73,7 @@ public class SimpleEnumComponent<T extends Named> extends BaseComponent {
     }
 
     private T getNamed(int counter) {
+        if (values.length < 1) return init;
         return values[counter % values.length];
     }
 
