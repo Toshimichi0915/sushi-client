@@ -13,7 +13,9 @@ public class ChatLogger implements Logger {
         TextFormatting color;
         if (level == LogLevel.WARN) color = YELLOW;
         else if (level == LogLevel.ERROR) color = RED;
-        else color = AQUA;
-        Minecraft.getMinecraft().ingameGUI.addChatMessage(ChatType.CHAT, new TextComponentString(color + message));
+        else color = WHITE;
+
+        String txt = GRAY + "[" + BLUE + "Sushi" + GRAY + "] " + color + message;
+        Minecraft.getMinecraft().ingameGUI.addChatMessage(ChatType.CHAT, new TextComponentString(txt));
     }
 }
