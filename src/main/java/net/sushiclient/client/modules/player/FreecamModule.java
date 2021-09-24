@@ -10,6 +10,7 @@ import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.input.InputUpdateEvent;
 import net.sushiclient.client.events.packet.PacketSendEvent;
 import net.sushiclient.client.events.player.PlayerAttackEvent;
+import net.sushiclient.client.events.player.PlayerTurnEvent;
 import net.sushiclient.client.events.player.UserCheckEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
@@ -54,6 +55,12 @@ public class FreecamModule extends BaseModule {
         input.rightKeyDown = false;
         input.jump = false;
         input.sneak = false;
+    }
+
+    @EventHandler(timing = EventTiming.PRE)
+    public void onTurn(PlayerTurnEvent e) {
+        freecamPlayer.turn(e.getYaw(), e.getPitch());
+        e.setCancelled(true);
     }
 
     @EventHandler(timing = EventTiming.PRE, priority = 5000)

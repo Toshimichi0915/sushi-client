@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.player.PlayerPushEvent;
+import net.sushiclient.client.events.player.PlayerTurnEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,8 +19,7 @@ public class MixinEntity {
         if (!((Object) this instanceof EntityPlayerSP)) return;
         PlayerPushEvent event = new PlayerPushEvent(EventTiming.PRE, entityIn);
         EventHandlers.callEvent(event);
-        if (event.isCancelled())
-            ci.cancel();
+        if (event.isCancelled()) ci.cancel();
     }
 
 
@@ -27,6 +27,21 @@ public class MixinEntity {
     public void onPostPush(Entity entityIn, CallbackInfo ci) {
         if (!((Object) this instanceof EntityPlayerSP)) return;
         PlayerPushEvent event = new PlayerPushEvent(EventTiming.POST, entityIn);
+        EventHandlers.callEvent(event);
+    }
+
+    @Inject(at = @At("HEAD"), method = "turn", cancellable = true)
+    public void onPreTurn(float yaw, float pitch, CallbackInfo ci) {
+        if (!((Object) this instanceof EntityPlayerSP)) return;
+        PlayerTurnEvent event = new PlayerTurnEvent(EventTiming.PRE, yaw, pitch);
+        EventHandlers.callEvent(event);
+        if (event.isCancelled()) ci.cancel();
+    }
+
+    @Inject(at = @At("TAIL"), method = "turn")
+    public void onPostTurn(float yaw, float pitch, CallbackInfo ci) {
+        if (!((Object) this instanceof EntityPlayerSP)) return;
+        PlayerTurnEvent event = new PlayerTurnEvent(EventTiming.POST, yaw, pitch);
         EventHandlers.callEvent(event);
     }
 }
