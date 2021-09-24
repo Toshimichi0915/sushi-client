@@ -167,6 +167,29 @@ public class GsonModules implements Modules {
     }
 
     @Override
+    public List<Module> restoreAll() {
+        ArrayList<Module> result = new ArrayList<>();
+        for (DefaultModule module : defaults) {
+            Module newModule = restore(module.id);
+            if (newModule != null) {
+                result.add(newModule);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Module restore(String id) {
+        return defaults.stream()
+                .filter(it -> it.id.equals(id))
+                .filter(it -> getModule(id) == null)
+                .map(it -> {
+                    root.add(id, new JsonObject());
+                    return addModule(id, getModuleFactory(it.factory));
+                }).findAny().orElse(null);
+    }
+
+    @Override
     public void removeModule(String id) {
         Module module = getModule(id);
         if (module == null) return;
@@ -193,25 +216,17 @@ public class GsonModules implements Modules {
         }
     }
 
-    private void updateConfig(JsonObject root) {
-        for (DefaultModule module : defaults) {
-            if (root.has(module.id)) continue;
-            root.add(module.id, new JsonObject());
-            addModule(module.id, getModuleFactory(module.factory));
-        }
-    }
-
     @Override
     public void load() {
         handlers.forEach(ModulesHandler::load);
         try {
             modules.clear();
             if (!conf.exists()) {
-                updateConfig(new JsonObject());
+                root = new JsonObject();
+                restoreAll();
             } else {
                 String contents = FileUtils.readFileToString(conf, StandardCharsets.UTF_8);
                 root = gson.fromJson(contents, JsonObject.class);
-                updateConfig(root);
             }
             for (Map.Entry<String, JsonElement> entry : new HashSet<>(root.getAsJsonObject().entrySet())) {
                 JsonObject moduleJson = entry.getValue().getAsJsonObject();

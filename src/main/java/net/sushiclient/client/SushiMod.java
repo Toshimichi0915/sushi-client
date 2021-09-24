@@ -144,6 +144,7 @@ public class SushiMod {
         Commands.register(new DrawCommand());
         Commands.register(new GhostBlockCommand());
         Commands.register(new ChunkLoadCheckCommand());
+        Commands.register(new RestoreCommand());
         Commands.register(this, new SetCommand());
     }
 

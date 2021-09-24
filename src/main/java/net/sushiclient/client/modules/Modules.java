@@ -24,6 +24,10 @@ public interface Modules {
 
     Module cloneModule(String id, String newId);
 
+    List<Module> restoreAll();
+
+    Module restore(String id);
+
     void removeModule(String id);
 
     void save();
