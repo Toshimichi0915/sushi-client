@@ -145,6 +145,8 @@ public class SushiMod {
         Commands.register(new GhostBlockCommand());
         Commands.register(new ChunkLoadCheckCommand());
         Commands.register(new RestoreCommand());
+        Commands.register(new HClipCommand());
+        Commands.register(new VClipCommand());
         Commands.register(this, new SetCommand());
     }
 
