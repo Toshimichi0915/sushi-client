@@ -9,7 +9,7 @@ import net.sushiclient.client.modules.Module;
 
 import java.util.List;
 
-@CommandAlias("restore")
+@CommandAlias(value = "restore", description = "Restore all default modules")
 public class RestoreCommand {
 
     @Default

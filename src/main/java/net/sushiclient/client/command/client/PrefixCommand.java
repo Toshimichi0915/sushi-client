@@ -6,7 +6,7 @@ import net.sushiclient.client.command.Logger;
 import net.sushiclient.client.command.annotation.CommandAlias;
 import net.sushiclient.client.command.annotation.Default;
 
-@CommandAlias("prefix")
+@CommandAlias(value = "prefix", description = "Change prefix of the client")
 public class PrefixCommand {
 
     @Default
