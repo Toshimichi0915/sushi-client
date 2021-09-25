@@ -15,7 +15,7 @@ import net.sushiclient.client.modules.combat.HoleMinerModule;
 
 import java.awt.Color;
 
-public class HoleMinerHelperModule extends BaseModule {
+public class HoleMinerHelperModule extends BaseModule implements ModuleSuffix {
 
     @Config(id = "hole_miner_id", name = "Hole Miner ID")
     public String holeMinerId = "hole_miner";
@@ -60,5 +60,10 @@ public class HoleMinerHelperModule extends BaseModule {
     @Override
     public Category getDefaultCategory() {
         return Category.RENDER;
+    }
+
+    @Override
+    public String getSuffix() {
+        return renderMode.getName();
     }
 }

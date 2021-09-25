@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-public class HoleEspModule extends BaseModule {
+public class HoleEspModule extends BaseModule implements ModuleSuffix {
 
     // use dirty way for performance
     @SuppressWarnings("unchecked")
@@ -119,5 +119,10 @@ public class HoleEspModule extends BaseModule {
     @Override
     public Category getDefaultCategory() {
         return Category.RENDER;
+    }
+
+    @Override
+    public String getSuffix() {
+        return mode.getName();
     }
 }

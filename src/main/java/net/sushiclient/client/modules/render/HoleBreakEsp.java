@@ -17,7 +17,7 @@ import net.sushiclient.client.utils.render.hole.HoleUtils;
 
 import java.awt.Color;
 
-public class HoleBreakEsp extends BaseModule {
+public class HoleBreakEsp extends BaseModule implements ModuleSuffix {
 
     @Config(id = "render_mode", name = "Render Mode")
     public RenderMode renderMode = RenderMode.FULL;
@@ -59,5 +59,10 @@ public class HoleBreakEsp extends BaseModule {
     @Override
     public Category getDefaultCategory() {
         return Category.RENDER;
+    }
+
+    @Override
+    public String getSuffix() {
+        return renderMode.getName();
     }
 }

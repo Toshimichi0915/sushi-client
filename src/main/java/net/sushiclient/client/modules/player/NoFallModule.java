@@ -12,7 +12,7 @@ import net.sushiclient.client.events.player.PlayerPacketEvent;
 import net.sushiclient.client.modules.*;
 import net.sushiclient.client.utils.player.PlayerUtils;
 
-public class NoFallModule extends BaseModule {
+public class NoFallModule extends BaseModule implements ModuleSuffix {
 
     private final Configuration<NoFallMode> noFallMode;
     private final Configuration<DoubleRange> distance;
@@ -78,4 +78,8 @@ public class NoFallModule extends BaseModule {
         return Category.PLAYER;
     }
 
+    @Override
+    public String getSuffix() {
+        return noFallMode.getValue().getName();
+    }
 }

@@ -22,7 +22,7 @@ import net.sushiclient.client.utils.world.BlockUtils;
 
 import java.util.List;
 
-public class StepModule extends BaseModule {
+public class StepModule extends BaseModule implements ModuleSuffix {
 
     private final Configuration<StepMode> stepMode;
     private final Configuration<Boolean> phase;
@@ -172,4 +172,8 @@ public class StepModule extends BaseModule {
         return Category.MOVEMENT;
     }
 
+    @Override
+    public String getSuffix() {
+        return stepMode.getValue().getName();
+    }
 }
