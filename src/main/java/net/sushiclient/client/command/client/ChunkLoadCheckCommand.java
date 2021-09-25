@@ -45,7 +45,7 @@ public class ChunkLoadCheckCommand {
                     EventHandlers.unregister(packetListener);
                     IBlockState result = ref.get();
                     if (result != null) {
-                        Sushi.getProfile().getLogger().send(LogLevel.INFO, "Block Data Retrived: " + result.getBlock().getLocalizedName());
+                        Sushi.getProfile().getLogger().send(LogLevel.INFO, "Block Data Retrieved: " + result.getBlock().getLocalizedName());
                     } else {
                         Sushi.getProfile().getLogger().send(LogLevel.INFO, "Position (" + x + "," + y + "," + z + ") is not loaded");
                     }
