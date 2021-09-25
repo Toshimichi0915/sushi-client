@@ -20,7 +20,7 @@ import net.sushiclient.client.task.forge.TaskExecutor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-@CommandAlias("checkload")
+@CommandAlias(value = "checkload", description = "Checks if a chunk is loaded")
 public class ChunkLoadCheckCommand {
 
     @Default
