@@ -7,4 +7,6 @@ public interface Profiles {
     List<String> getAll();
 
     Profile load(String name);
+
+    String getName(Profile profile);
 }
