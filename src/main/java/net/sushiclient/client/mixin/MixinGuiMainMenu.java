@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(GuiMainMenu.class)
+@Mixin(value = GuiMainMenu.class, priority = 3000)
 public class MixinGuiMainMenu extends GuiScreen {
 
     // random button id

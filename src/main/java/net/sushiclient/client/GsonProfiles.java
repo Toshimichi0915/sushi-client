@@ -9,19 +9,22 @@ import net.sushiclient.client.modules.GsonModules;
 import net.sushiclient.client.modules.Modules;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GsonProfiles implements Profiles {
 
     private final File baseDir;
     private final Gson gson;
+    private final ArrayList<String> loaded = new ArrayList<>();
 
     public GsonProfiles(File baseDir, Gson gson) {
         this.baseDir = baseDir;
         this.gson = gson;
+        baseDir.mkdirs();
+        File[] list = baseDir.listFiles();
+        if (list != null) Arrays.stream(list).map(File::getName).forEach(loaded::add);
     }
 
     private File getFile(String name) {
@@ -30,10 +33,7 @@ public class GsonProfiles implements Profiles {
 
     @Override
     public List<String> getAll() {
-        baseDir.mkdirs();
-        File[] list = baseDir.listFiles();
-        if (list == null) return Collections.emptyList();
-        else return Arrays.stream(list).map(File::getName).collect(Collectors.toList());
+        return new ArrayList<>(loaded);
     }
 
     @Override
@@ -44,18 +44,28 @@ public class GsonProfiles implements Profiles {
         profileConfig.load(gson, configFile);
         GsonCategories categories = new GsonCategories(new File(dir, "categories.json"), gson);
         GsonModules modules = new GsonModules(profileConfig.getVersion(), new File(dir, "modules.json"), categories, gson);
-        return new GsonProfile(gson, configFile, profileConfig, modules, categories);
+        if (!loaded.contains(name)) loaded.add(name);
+        return new GsonProfile(gson, name, configFile, profileConfig, modules, categories);
+    }
+
+    @Override
+    public String getName(Profile profile) {
+        if (!(profile instanceof GsonProfile)) return null;
+        GsonProfile prof = (GsonProfile) profile;
+        return prof.name;
     }
 
     private static class GsonProfile implements Profile {
 
         private final Gson gson;
+        private final String name;
         private final File configFile;
         private final ProfileConfig config;
         private final Modules modules;
         private final GsonCategories categories;
 
-        GsonProfile(Gson gson, File configFile, ProfileConfig config, GsonModules modules, GsonCategories categories) {
+        GsonProfile(Gson gson, String name, File configFile, ProfileConfig config, GsonModules modules, GsonCategories categories) {
+            this.name = name;
             this.gson = gson;
             this.configFile = configFile;
             this.config = config;
