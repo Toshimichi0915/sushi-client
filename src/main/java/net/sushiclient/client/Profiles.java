@@ -8,5 +8,9 @@ public interface Profiles {
 
     Profile load(String name);
 
+    Profile clone(String old, String name);
+
+    boolean remove(String name);
+
     String getName(Profile profile);
 }

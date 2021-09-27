@@ -7,24 +7,28 @@ import net.sushiclient.client.modules.Categories;
 import net.sushiclient.client.modules.GsonCategories;
 import net.sushiclient.client.modules.GsonModules;
 import net.sushiclient.client.modules.Modules;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class GsonProfiles implements Profiles {
 
     private final File baseDir;
     private final Gson gson;
-    private final ArrayList<String> loaded = new ArrayList<>();
+    private final ArrayList<String> keys = new ArrayList<>();
+    private final HashMap<String, GsonProfile> loaded = new HashMap<>();
 
     public GsonProfiles(File baseDir, Gson gson) {
         this.baseDir = baseDir;
         this.gson = gson;
         baseDir.mkdirs();
         File[] list = baseDir.listFiles();
-        if (list != null) Arrays.stream(list).map(File::getName).forEach(loaded::add);
+        if (list != null) Arrays.stream(list).map(File::getName).forEach(keys::add);
     }
 
     private File getFile(String name) {
@@ -33,19 +37,55 @@ public class GsonProfiles implements Profiles {
 
     @Override
     public List<String> getAll() {
-        return new ArrayList<>(loaded);
+        return new ArrayList<>(keys);
     }
 
     @Override
     public Profile load(String name) {
+        if (!keys.contains(name)) keys.add(name);
+        if (loaded.containsKey(name)) {
+            return loaded.get(name);
+        }
         File dir = getFile(name);
         File configFile = new File(getFile(name), "profile.json");
         ProfileConfig profileConfig = new ProfileConfig();
         profileConfig.load(gson, configFile);
         GsonCategories categories = new GsonCategories(new File(dir, "categories.json"), gson);
         GsonModules modules = new GsonModules(profileConfig.getVersion(), new File(dir, "modules.json"), categories, gson);
-        if (!loaded.contains(name)) loaded.add(name);
-        return new GsonProfile(gson, name, configFile, profileConfig, modules, categories);
+        GsonProfile result = new GsonProfile(gson, name, configFile, profileConfig, modules, categories);
+        loaded.put(name, result);
+        return result;
+    }
+
+    @Override
+    public Profile clone(String old, String name) {
+        if (!getFile(old).exists()) return null;
+        if (keys.contains(name)) return null;
+        try {
+            FileUtils.copyDirectory(getFile(old), getFile(name));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return load(name);
+    }
+
+    @Override
+    public boolean remove(String name) {
+        String main = getName(Sushi.getProfile());
+        if (main.equals(name)) return false;
+        keys.remove(name);
+        loaded.remove(name);
+        File f = getFile(name);
+        try {
+            if (f.exists()) {
+                FileUtils.deleteDirectory(getFile(name));
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
     }
 
     @Override
