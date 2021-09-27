@@ -113,7 +113,7 @@ public class Commands {
         for (String s : list) {
             builder.append(s);
             if (matcher.find()) builder.append(matcher.group());
-            builder.append(' ');
+            else builder.append(' ');
         }
         return builder.toString();
     }
