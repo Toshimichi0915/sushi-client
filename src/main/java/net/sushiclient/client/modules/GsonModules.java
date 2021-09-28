@@ -201,6 +201,7 @@ public class GsonModules implements Modules {
     @Override
     public void save() {
         handlers.forEach(ModulesHandler::save);
+        saveEnableTag();
         try {
             JsonObject savedRoot = new JsonObject();
             for (Module module : modules) {
@@ -243,6 +244,15 @@ public class GsonModules implements Modules {
         }
     }
 
+    private void saveEnableTag() {
+        for (Module module : modules) {
+            if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
+            JsonObject object = ((GsonRootConfigurations) module.getConfigurations()).save();
+            if (!module.isTemporary()) object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
+            else object.remove(ENABLED_TAG);
+        }
+    }
+
     @Override
     public void enable() {
         if (enabled) return;
@@ -262,11 +272,8 @@ public class GsonModules implements Modules {
         if (!enabled) return;
         handlers.forEach(ModulesHandler::disable);
         enabled = false;
+        saveEnableTag();
         for (Module module : modules) {
-            if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
-            JsonObject object = ((GsonRootConfigurations) module.getConfigurations()).save();
-            if (!module.isTemporary()) object.add(ENABLED_TAG, new JsonPrimitive(module.isEnabled()));
-            else object.remove(ENABLED_TAG);
             module.setEnabled(false);
         }
     }

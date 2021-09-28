@@ -23,8 +23,9 @@ public class ProfileCommand {
     }
 
     @SubCommand(value = "save", syntax = "<name>")
-    public void onSave() {
+    public void onSave(Logger logger) {
         Sushi.getProfile().save();
+        logger.send(LogLevel.INFO, "The profile has been saved");
     }
 
     @SubCommand(value = "clone", syntax = "<name>")
@@ -34,6 +35,7 @@ public class ProfileCommand {
             logger.send(LogLevel.ERROR, "Current profile could not be cloned");
             return;
         }
+        Sushi.getProfile().save();
         Profile profile = Sushi.getProfiles().clone(old, name);
         if (profile == null) {
             logger.send(LogLevel.INFO, "Could not clone the profile");
