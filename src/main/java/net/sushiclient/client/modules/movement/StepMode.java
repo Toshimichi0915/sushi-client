@@ -1,5 +1,6 @@
 package net.sushiclient.client.modules.movement;
 
+import com.google.gson.annotations.SerializedName;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.CPacketPlayer;
@@ -10,6 +11,7 @@ import net.sushiclient.client.utils.player.PositionUtils;
 import java.util.ArrayList;
 
 public enum StepMode implements Named, Step {
+    @SerializedName("VANILLA")
     VANILLA("Vanilla") {
         @Override
         public boolean step(double dX, double dY, double dZ, double toY, boolean phase) {
@@ -23,6 +25,7 @@ public enum StepMode implements Named, Step {
             return true;
         }
     },
+    @SerializedName("JP2B")
     JP2B("2b2t.jp") {
         @Override
         public boolean step(double dX, double dY, double dZ, double toY, boolean phase) {
@@ -54,6 +57,7 @@ public enum StepMode implements Named, Step {
             return true;
         }
     },
+    @SerializedName("NCP")
     NCP("2B2T") {
         @Override
         public boolean step(double dX, double dY, double dZ, double toY, boolean phase) {
@@ -104,6 +108,7 @@ public enum StepMode implements Named, Step {
             return true;
         }
     },
+    @SerializedName("NCP_OLD")
     NCP_OLD("NCP") {
         @Override
         public boolean step(double dX, double dY, double dZ, double toY, boolean phase) {
