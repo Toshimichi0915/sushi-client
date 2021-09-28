@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.sushiclient.client.config.Config;
@@ -31,6 +32,9 @@ public class NoEntityTraceModule extends BaseModule {
 
     @Config(id = "hoe", name = "Hoe")
     public Boolean hoe = true;
+
+    @Config(id = "gapple", name = "Gapple")
+    public Boolean gapple = true;
 
     @Config(id = "obsidian", name = "Obsidian")
     public Boolean obsidian = true;
@@ -63,6 +67,7 @@ public class NoEntityTraceModule extends BaseModule {
         if (axe && mainHand instanceof ItemAxe) return true;
         if (shovel && mainHand instanceof ItemSpade) return true;
         if (hoe && mainHand instanceof ItemHoe) return true;
+        if (gapple && mainHand instanceof ItemAppleGold) return true;
 
         double reach = getController().getBlockReachDistance();
         float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
@@ -70,7 +75,7 @@ public class NoEntityTraceModule extends BaseModule {
         if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
             IBlockState blockState = getWorld().getBlockState(result.getBlockPos());
             Block block = blockState.getBlock();
-            if (obsidian && block == Block.getBlockById(49)) return true;
+            if (obsidian && block == Blocks.OBSIDIAN) return true;
             if (tileEntity && getWorld().getTileEntity(result.getBlockPos()) != null) return true;
         }
         return false;
