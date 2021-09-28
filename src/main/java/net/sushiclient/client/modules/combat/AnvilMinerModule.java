@@ -56,13 +56,13 @@ public class AnvilMinerModule extends BaseModule {
                         if (playerPos.equals(BlockUtils.getBreakingBlockPos())) {
                             return Math.max(waitTime - (TickUtils.current() - BlockUtils.getBreakingTime()), 0);
                         } else {
-                            getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, playerPos, EnumFacing.DOWN));
+                            sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, playerPos, EnumFacing.DOWN));
                             return waitTime;
                         }
                     })
                     .supply(pickaxe)
                     .then(new ItemSlotSwitchTask())
-                    .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, playerPos, EnumFacing.DOWN)))
+                    .then(() -> sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, playerPos, EnumFacing.DOWN)))
                     .last(() -> running = false)
                     .execute();
             return;

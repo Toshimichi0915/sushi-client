@@ -302,9 +302,9 @@ public class CrystalAuraModule extends BaseModule {
 
     private void breakEnderCrystal(EnderCrystalInfo enderCrystal) {
         InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> {
-            getConnection().sendPacket(enderCrystal.newAttackPacket());
+            sendPacket(enderCrystal.newAttackPacket());
             if (swing.getValue()) {
-                getConnection().sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+                sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
             }
         });
     }
@@ -334,13 +334,13 @@ public class CrystalAuraModule extends BaseModule {
                 copy.getIndex(), () -> {
                     boolean offhand = copy.getInventoryType() == InventoryType.OFFHAND;
                     if (swing.getValue()) {
-                        getConnection().sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+                        sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
                     }
                     if (y255Attack.getValue()) {
-                        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
+                        sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
                                 EnumFacing.DOWN, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                     } else {
-                        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
+                        sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
                                 EnumFacing.UP, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 1, 0.5F));
                     }
                 });

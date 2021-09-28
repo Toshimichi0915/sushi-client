@@ -141,7 +141,7 @@ public class AntiPistonAuraModule extends BaseModule {
                 spam.add(findBlockPlaceInfo(getWorld(), pos.offset(enumFacing)));
             }
             when = System.currentTimeMillis();
-            getConnection().sendPacket(crystal.newAttackPacket());
+            sendPacket(crystal.newAttackPacket());
         });
         placeObsidian();
     }

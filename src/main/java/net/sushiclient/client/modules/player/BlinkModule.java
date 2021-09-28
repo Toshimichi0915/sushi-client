@@ -30,7 +30,7 @@ public class BlinkModule extends BaseModule {
     public void onDisable() {
         EventHandlers.unregister(this);
         for (CPacketPlayer packet : packets) {
-            getConnection().sendPacket(packet);
+            sendPacket(packet);
         }
         packets.clear();
     }

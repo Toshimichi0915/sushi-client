@@ -78,13 +78,13 @@ public class HoleMinerModule extends BaseModule {
         holeMineInfo = info;
         int waitTime = ItemUtils.getDestroyTime(surroundPos, pickaxe.getItemStack());
         if (!surroundPos.equals(BlockUtils.getBreakingBlockPos())) {
-            getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN));
+            sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN));
         } else {
             waitTime -= Math.min(TickUtils.current() - BlockUtils.getBreakingTime(), waitTime);
         }
 
         Task finishTask = () -> {
-            getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN));
+            sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, surroundPos, EnumFacing.DOWN));
             if (!enableCrystalAura) return;
             Module crystalAura = Sushi.getProfile().getModules().getModule(crystalAuraId);
             if (crystalAura == null) return;
@@ -108,7 +108,7 @@ public class HoleMinerModule extends BaseModule {
                     .supply(Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
-                    .then(() -> getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(crystalFloor, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F)))
+                    .then(() -> sendPacket(new CPacketPlayerTryUseItemOnBlock(crystalFloor, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F)))
 
                     .supply(Items.DIAMOND_PICKAXE)
                     .then(new ItemSwitchTask(null, true))

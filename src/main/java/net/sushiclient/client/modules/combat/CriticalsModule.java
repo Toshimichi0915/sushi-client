@@ -29,8 +29,8 @@ public class CriticalsModule extends BaseModule {
         if (!(e.getPacket() instanceof CPacketUseEntity)) return;
         CPacketUseEntity packet = (CPacketUseEntity) e.getPacket();
         if (packet.getAction() != CPacketUseEntity.Action.ATTACK) return;
-        getConnection().sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY + 0.1, getPlayer().posZ, false));
-        getConnection().sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY, getPlayer().posZ, false));
+        sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY + 0.1, getPlayer().posZ, false));
+        sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY, getPlayer().posZ, false));
     }
 
     @Override

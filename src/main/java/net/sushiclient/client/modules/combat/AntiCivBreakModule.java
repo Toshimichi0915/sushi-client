@@ -89,7 +89,7 @@ public class AntiCivBreakModule extends BaseModule {
                     PlaceOptions.IGNORE_ENTITY);
             if (face == null) continue;
             PositionUtils.on(() -> {
-                getConnection().sendPacket(new CPacketUseEntity(entity));
+                sendPacket(new CPacketUseEntity(entity));
                 TaskExecutor.newTaskChain()
                         .delay(1)
                         .then(() -> placeObsidian(face))

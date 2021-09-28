@@ -60,7 +60,7 @@ public class CivBreakModule extends BaseModule {
     }
 
     private void placeCrystal(CivBreakAttack attack) {
-        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getObsidianPos(), EnumFacing.DOWN, EnumHand.MAIN_HAND,
+        sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getObsidianPos(), EnumFacing.DOWN, EnumHand.MAIN_HAND,
                 0.5F, 0, 0.5F));
     }
 
@@ -71,7 +71,7 @@ public class CivBreakModule extends BaseModule {
         Collections.sort(attacks);
         CivBreakAttack attack = attacks.get(0);
         if (attack.isCrystalPlaced() && !attack.isObsidianPlaced()) {
-            InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal())));
+            InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> sendPacket(new CPacketUseEntity(attack.getCrystal())));
         } else if (!attack.isObsidianPlaced()) {
             BlockPlaceInfo info = BlockUtils.findBlockPlaceInfo(getWorld(), attack.getObsidianPos());
             if (info == null) return;
@@ -104,15 +104,15 @@ public class CivBreakModule extends BaseModule {
                 TaskExecutor.newTaskChain()
                         .supply(pickaxe)
                         .then(new ItemSlotSwitchTask())
-                        .then(() -> getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN)))
+                        .then(() -> sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN)))
                         .execute();
             } else if (waitTime > ItemUtils.getDestroyTime(attack.getObsidianPos(), pickaxe.getItemStack()) && breakTimer.update()) {
                 TaskExecutor.newTaskChain()
                         .supply(pickaxe)
                         .then(new ItemSlotSwitchTask())
                         .then(() -> {
-                            getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN));
-                            InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal())));
+                            sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN));
+                            InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> sendPacket(new CPacketUseEntity(attack.getCrystal())));
                         })
                         .execute();
             }

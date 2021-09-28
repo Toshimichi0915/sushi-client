@@ -61,11 +61,11 @@ public class PacketFlyModule extends BaseModule {
             teleportId2 = teleportId + 1;
         }
         if (teleportId2 != 0) {
-            getConnection().sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY - 1337, getPlayer().posZ, true));
-            getConnection().sendPacket(new CPacketConfirmTeleport(teleportId2));
+            sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY - 1337, getPlayer().posZ, true));
+            sendPacket(new CPacketConfirmTeleport(teleportId2));
         }
         teleportId2++;
-        getConnection().sendPacket(new CPacketPlayer.PositionRotation(getPlayer().posX, getPlayer().posY, getPlayer().posZ, getPlayer().rotationYaw, getPlayer().rotationPitch, true));
+        sendPacket(new CPacketPlayer.PositionRotation(getPlayer().posX, getPlayer().posY, getPlayer().posZ, getPlayer().rotationYaw, getPlayer().rotationPitch, true));
 
         Vec3d movement = MovementUtils.getMoveInputs(getPlayer()).normalize();
         Vec2f delta = MovementUtils.toWorld(new Vec2f((float) movement.x, (float) movement.z), getPlayer().rotationYaw);
@@ -75,7 +75,7 @@ public class PacketFlyModule extends BaseModule {
 
         Vec3d posMotion = new Vec3d(delta.x * horizontalPacket.getValue().getCurrent(), movement.y * verticalPacket.getValue().getCurrent(), delta.y * horizontalPacket.getValue().getCurrent());
         for (int i = 0; i < 3; i++) {
-            getConnection().sendPacket(new CPacketPlayer.PositionRotation.Position(getPlayer().posX + posMotion.x, getPlayer().posY + posMotion.y, getPlayer().posZ + posMotion.z, getPlayer().onGround));
+            sendPacket(new CPacketPlayer.PositionRotation.Position(getPlayer().posX + posMotion.x, getPlayer().posY + posMotion.y, getPlayer().posZ + posMotion.z, getPlayer().onGround));
         }
     }
 
@@ -85,10 +85,10 @@ public class PacketFlyModule extends BaseModule {
         if (!(e.getPacket() instanceof SPacketPlayerPosLook)) return;
         SPacketPlayerPosLook packet = (SPacketPlayerPosLook) e.getPacket();
         teleportId = packet.getTeleportId();
-        getConnection().sendPacket(new CPacketConfirmTeleport(teleportId));
+        sendPacket(new CPacketConfirmTeleport(teleportId));
         if (getPlayer().getDistanceSq(packet.getX(), packet.getY(), packet.getZ()) > 4) {
             teleportId2 = teleportId;
-            getConnection().sendPacket(new CPacketPlayer.Position(packet.getX(), packet.getY(), packet.getZ(), getPlayer().onGround));
+            sendPacket(new CPacketPlayer.Position(packet.getX(), packet.getY(), packet.getZ(), getPlayer().onGround));
             getPlayer().setPosition(packet.getX(), packet.getY(), packet.getZ());
         }
         e.setCancelled(true);

@@ -133,7 +133,7 @@ public class PistonAuraModule extends BaseModule {
         if (operator == null) {
             AutoDesyncOperator fake = new AutoDesyncOperator();
             fake.desyncMode(DesyncMode.LOOK).lookAt(lookAt);
-            getConnection().sendPacket(new CPacketPlayer.Rotation(fake.getYaw(), fake.getPitch(), getPlayer().onGround));
+            sendPacket(new CPacketPlayer.Rotation(fake.getYaw(), fake.getPitch(), getPlayer().onGround));
             operator = PositionUtils.desync().desyncMode(DesyncMode.LOOK);
         }
         operator.lookAt(lookAt);
@@ -151,7 +151,7 @@ public class PistonAuraModule extends BaseModule {
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
                     .abortIfFalse()
                     .then(() -> {
-                        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
+                        sendPacket(new CPacketPlayerTryUseItemOnBlock(attack.getCrystalPos().add(0, -1, 0),
                                 EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
                         attack.setCrystalPlaced(true);
                         update(delay1);
@@ -164,7 +164,7 @@ public class PistonAuraModule extends BaseModule {
                     .delay(delay2.getValue().getCurrent())
                     .then(() -> {
                         InventoryUtils.antiWeakness(antiWeakness.getValue(), () ->
-                                getConnection().sendPacket(new CPacketUseEntity(attack.getCrystal())));
+                                sendPacket(new CPacketUseEntity(attack.getCrystal())));
                         exploded = attack.getCrystal();
                         explosionTimer.update();
                         this.attack = null;

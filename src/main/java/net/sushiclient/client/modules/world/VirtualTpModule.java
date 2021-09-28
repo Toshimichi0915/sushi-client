@@ -79,7 +79,7 @@ public class VirtualTpModule extends BaseModule {
             }
         }
         if (sent == null) return;
-        getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(sent, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+        sendPacket(new CPacketPlayerTryUseItemOnBlock(sent, EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
         loaded.add(sent);
     }
 

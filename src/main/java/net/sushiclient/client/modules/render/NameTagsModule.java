@@ -1,5 +1,6 @@
 package net.sushiclient.client.modules.render;
 
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -119,7 +120,9 @@ public class NameTagsModule extends BaseModule {
             GlStateManager.scale(scale, scale, 1);
 
             StringBuilder text = new StringBuilder(entity.getName());
-            NetworkPlayerInfo info = getConnection().getPlayerInfo(entity.getUniqueID());
+            NetHandlerPlayClient connection = getPlayer().connection;
+            if (connection == null) return;
+            NetworkPlayerInfo info = connection.getPlayerInfo(entity.getUniqueID());
             if (showPing && entity instanceof EntityPlayer && info != null) {
                 text.append(' ');
                 text.append(info.getResponseTime());

@@ -140,7 +140,7 @@ public class AutoMendModule extends BaseModule {
                 .desyncMode(DesyncMode.LOOK)
                 .rotation(getPlayer().rotationYaw, -90);
         PositionUtils.on(() -> {
-            getConnection().sendPacket(new CPacketPlayerTryUseItem(EnumHand.MAIN_HAND));
+            sendPacket(new CPacketPlayerTryUseItem(EnumHand.MAIN_HAND));
         });
     }
 

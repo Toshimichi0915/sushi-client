@@ -49,7 +49,7 @@ public class SpeedMineModule extends BaseModule {
 
         // packet mine
         if (packetMine && breakingBlock != null && !BlockUtils.isAir(getWorld(), breakingBlock)) {
-            getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN));
+            sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, breakingBlock, EnumFacing.DOWN));
         }
 
         if (delay.getCurrent() != 5 && ((AccessorPlayerControllerMP) getController()).getBlockHitDelay() == 5) {

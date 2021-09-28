@@ -75,7 +75,7 @@ public class ScaffoldModule extends BaseModule {
     public void onEnable() {
         EventHandlers.register(this);
         if (sprintSpoof) {
-            getConnection().sendPacket(new CPacketEntityAction(getPlayer(), CPacketEntityAction.Action.STOP_SNEAKING));
+            sendPacket(new CPacketEntityAction(getPlayer(), CPacketEntityAction.Action.STOP_SNEAKING));
         }
     }
 
@@ -169,7 +169,7 @@ public class ScaffoldModule extends BaseModule {
         ScaffoldMode.NCP.rotate(info, operator);
         PositionUtils.on(() -> {
             BlockUtils.place(info, false);
-            getConnection().sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+            sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
         });
     }
 

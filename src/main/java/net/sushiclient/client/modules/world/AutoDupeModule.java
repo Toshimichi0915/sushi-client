@@ -91,7 +91,7 @@ public class AutoDupeModule extends BaseModule {
         } else if (state == WAITING_UNLOAD) {
             Entity entity = getWorld().getEntityByID(entityId);
             if (entity != null && getWorld().getChunk(entity.getPosition()).isLoaded()) {
-                getConnection().sendPacket(new CPacketUseEntity(entity, EnumHand.MAIN_HAND));
+                sendPacket(new CPacketUseEntity(entity, EnumHand.MAIN_HAND));
                 state = RIDING;
             }
         } else if (state == RIDING) {

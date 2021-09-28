@@ -5,6 +5,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.network.Packet;
 import net.sushiclient.client.Sushi;
 import net.sushiclient.client.command.LogLevel;
 import net.sushiclient.client.command.Logger;
@@ -218,8 +219,9 @@ abstract public class BaseModule implements Module {
         return getClient().world;
     }
 
-    protected NetHandlerPlayClient getConnection() {
-        return getPlayer().connection;
+    protected void sendPacket(Packet<?> packet) {
+        NetHandlerPlayClient connection = getPlayer().connection;
+        if (connection != null) connection.sendPacket(packet);
     }
 
     @Override
