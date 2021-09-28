@@ -53,7 +53,6 @@ public class GsonModules implements Modules {
         addModuleFactory("packet_canceller", PacketCancellerModule::new, true);
         addModuleFactory("phase_fly", PhaseFlyModule::new, true);
         addModuleFactory("phase_walk", PhaseWalkModule::new, false);
-        addModuleFactory("anti_stuck", AntiStuckModule::new, true);
         addModuleFactory("timer", TimerModule::new, true);
         addModuleFactory("anti_civ_break", AntiCivBreakModule::new, true);
         addModuleFactory("no_swing", NoSwingModule::new, true);
