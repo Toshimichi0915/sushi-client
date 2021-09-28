@@ -3,9 +3,12 @@ package net.sushiclient.client.gui.hud;
 import net.sushiclient.client.Sushi;
 import net.sushiclient.client.config.ConfigurationCategory;
 import net.sushiclient.client.config.RootConfigurations;
+import net.sushiclient.client.gui.Anchor;
+import net.sushiclient.client.gui.Origin;
 import net.sushiclient.client.gui.base.BasePanelComponent;
 import net.sushiclient.client.gui.hud.elements.*;
 import net.sushiclient.client.modules.Module;
+import net.sushiclient.client.utils.TickUtils;
 import net.sushiclient.client.utils.render.GuiUtils;
 
 import java.util.HashSet;
@@ -32,6 +35,21 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
 
     private void addVirtual(VirtualHudElementComponent component) {
         add(component, true);
+    }
+
+    private boolean isOutOfScreen(HudElementComponent c) {
+        double minX = c.getWindowX() + 10;
+        double minY = c.getWindowY() + 10;
+        double maxX = c.getWindowX() + c.getWidth() - 10;
+        double maxY = c.getWindowY() + c.getHeight() - 10;
+        double[][] vertexes = {{minX, minY}, {minX, maxY}, {maxX, minY}, {maxX, maxY}};
+        for (double[] vertex : vertexes) {
+            double x = vertex[0];
+            double y = vertex[1];
+            if (x > 0 && x < GuiUtils.getWidth() &&
+                    y > 0 && y < GuiUtils.getHeight()) return false;
+        }
+        return true;
     }
 
     private void addElement(ElementConstructor constructor, String id, String name) {
@@ -85,6 +103,13 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
         setWidth(GuiUtils.getWidth());
         setHeight(GuiUtils.getHeight());
         super.onRelocate();
+        HudElementComponent component = get(TickUtils.current() % size());
+        if (isOutOfScreen(component)) {
+            component.setOrigin(Origin.TOP_LEFT);
+            component.setAnchor(Anchor.TOP_LEFT);
+            component.setWindowX(0);
+            component.setWindowY(0);
+        }
     }
 
     @Override
