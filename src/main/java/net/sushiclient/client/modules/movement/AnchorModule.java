@@ -1,6 +1,7 @@
 package net.sushiclient.client.modules.movement;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.sushiclient.client.config.Config;
 import net.sushiclient.client.config.ConfigInjector;
 import net.sushiclient.client.config.RootConfigurations;
@@ -26,8 +27,11 @@ public class AnchorModule extends BaseModule {
     @Config(id = "instant", name = "Instant")
     public Boolean instant = true;
 
+    @Config(id = "step_mode", name = "Step Mode", when = "instant")
+    public StepMode stepMode = StepMode.NCP;
+
     @Config(id = "range", name = "Range")
-    public IntRange range = new IntRange(3, 10, 1, 1);
+    public IntRange range = new IntRange(3, 8, 1, 1);
 
     @Config(id = "pitch_trigger", name = "Pitch Trigger")
     public Boolean pitchTrigger = true;
@@ -90,11 +94,14 @@ public class AnchorModule extends BaseModule {
         if (hole == null) return;
         double posY = instant ? hole.getBlockPos()[0].getY() : getPlayer().posY;
         getPlayer().motionX = 0;
-        if (instant) getPlayer().motionY = 0;
         getPlayer().motionZ = 0;
         BlockPos floorPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
-        PositionUtils.move(floorPos.getX() + 0.5, posY, floorPos.getZ() + 0.5,
+        PositionUtils.move(floorPos.getX() + 0.5, getPlayer().posY, floorPos.getZ() + 0.5,
                 0, 0, false, DesyncMode.POSITION);
+        if (instant && getPlayer().motionY < 0) {
+            Vec3d d = new Vec3d(floorPos.getX() + 0.5, posY, floorPos.getZ() + 0.5).subtract(getPlayer().getPositionVector());
+            stepMode.reverse(d.x, d.y, d.z, false);
+        }
     }
 
     private boolean canAccess(HoleInfo info) {
