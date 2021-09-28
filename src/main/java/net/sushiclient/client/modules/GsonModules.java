@@ -245,6 +245,7 @@ public class GsonModules implements Modules {
     }
 
     private void saveEnableTag() {
+        if (!enabled) return;
         for (Module module : modules) {
             if (!(module.getConfigurations() instanceof GsonRootConfigurations)) continue;
             JsonObject object = ((GsonRootConfigurations) module.getConfigurations()).save();
@@ -271,8 +272,8 @@ public class GsonModules implements Modules {
     public void disable() {
         if (!enabled) return;
         handlers.forEach(ModulesHandler::disable);
-        enabled = false;
         saveEnableTag();
+        enabled = false;
         for (Module module : modules) {
             module.setEnabled(false);
         }
