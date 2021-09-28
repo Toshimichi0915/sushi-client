@@ -114,12 +114,10 @@ public class GuiUtils {
         GlStateManager.enableAlpha();
         GlStateManager.disableTexture2D();
         GlStateManager.disableCull();
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
     }
 
     public static void release2D() {
         GlStateManager.enableTexture2D();
-        GL11.glDisable(GL11.GL_LINE_SMOOTH);
     }
 
     public static void setColor(Color color) {
