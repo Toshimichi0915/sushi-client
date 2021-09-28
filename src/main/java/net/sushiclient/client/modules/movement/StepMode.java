@@ -25,38 +25,6 @@ public enum StepMode implements Named, Step {
             return true;
         }
     },
-    @SerializedName("JP2B")
-    JP2B("2b2t.jp") {
-        @Override
-        public boolean step(double dX, double dY, double dZ, double toY, boolean phase) {
-            ArrayList<Packet<?>> packets = new ArrayList<>();
-            for (double y = 0; y < dY; y++) {
-                if (collides(0, y, 0)) {
-                    if (phase) continue;
-                    else return false;
-                }
-                packets.add(newPacket(0, y, 0));
-            }
-            packets.forEach(mc().getConnection()::sendPacket);
-            move(dX, toY, dZ);
-            return true;
-        }
-
-        @Override
-        public boolean reverse(double dX, double dY, double dZ, double toY, boolean phase) {
-            ArrayList<Packet<?>> packets = new ArrayList<>();
-            for (double y = dY; y < 0; y++) {
-                if (collides(dX, y, dZ)) {
-                    if (phase) continue;
-                    else return false;
-                }
-                packets.add(newPacket(dX, y, dY));
-            }
-            packets.forEach(mc().getConnection()::sendPacket);
-            move(dX, toY, dZ);
-            return true;
-        }
-    },
     @SerializedName("NCP")
     NCP("2B2T") {
         @Override
