@@ -26,7 +26,7 @@ public class ModuleListComponent extends BaseHudElementComponent {
 
     public ModuleListComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
-        backgroundColor = getConfiguration("background_color", "Background Color", null, EspColor.class, new EspColor(Color.BLACK, false, true));
+        backgroundColor = getConfiguration("background_color", "Background Color", null, EspColor.class, new EspColor(new Color(0, 0, 0, 100), false, true));
         margin = getConfiguration("margin", "Margin", null, IntRange.class, new IntRange(1, 10, 0, 1));
         paddingTop = getConfiguration("padding_top", "Padding Top", null, IntRange.class, new IntRange(1, 10, 0, 1));
         paddingBottom = getConfiguration("padding_bottom", "Padding Bottom", null, IntRange.class, new IntRange(1, 10, 0, 1));
@@ -84,7 +84,10 @@ public class ModuleListComponent extends BaseHudElementComponent {
 
     @Override
     protected TextSettings getDefaultTextSettings() {
-        return super.getDefaultTextSettings().setFont("sfui");
+        return super.getDefaultTextSettings()
+                .setPts(10)
+                .setColor(new EspColor(Color.WHITE, true, true))
+                .setFont("sfui");
     }
 
     @Override
