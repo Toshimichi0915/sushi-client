@@ -12,7 +12,6 @@ import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.player.PlayerUpdateEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
-import net.sushiclient.client.utils.EntityUtils;
 import net.sushiclient.client.utils.player.MovementUtils;
 
 public class SpeedModule extends BaseModule {
@@ -54,7 +53,8 @@ public class SpeedModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
-        if (forceSprint.getValue() && EntityUtils.getMotion(getPlayer()).squareDistanceTo(Vec3d.ZERO) > 0.001) {
+        if (forceSprint.getValue() &&
+                MovementUtils.getMoveInputs(getPlayer()).squareDistanceTo(Vec3d.ZERO) > 0.1) {
             getPlayer().setSprinting(true);
         }
     }
