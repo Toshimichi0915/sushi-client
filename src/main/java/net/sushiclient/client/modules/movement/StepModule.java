@@ -91,7 +91,7 @@ public class StepModule extends BaseModule implements ModuleSuffix {
     public void onPrePlayerMove(PlayerMoveEvent e) {
         motionX = getPlayer().motionX;
         motionZ = getPlayer().motionZ;
-        if (getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, -0.01, 0))) {
+        if (EntityUtils.isOnGround(getPlayer())) {
             groundY = getPlayer().posY;
         }
     }

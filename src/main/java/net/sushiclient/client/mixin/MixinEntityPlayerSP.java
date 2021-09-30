@@ -19,8 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(EntityPlayerSP.class)
 public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
-    @Shadow
-    public abstract void move(MoverType type, double x, double y, double z);
+    @Shadow(aliases = "updateAutoJump(FF)V")
+    protected abstract void updateAutoJump(float a, float b);
 
     public MixinEntityPlayerSP(World worldIn, GameProfile playerProfile) {
         super(worldIn, playerProfile);
@@ -33,7 +33,12 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         boolean changed = pre.getType() != type || pre.getX() != x || pre.getY() != y || pre.getZ() != z;
         if (pre.isCancelled() || changed) {
             ci.cancel();
-            if (changed) move(pre.getType(), pre.getX(), pre.getY(), pre.getZ());
+            if (changed) {
+                double d0 = posX;
+                double d1 = posZ;
+                super.move(pre.getType(), pre.getX(), pre.getY(), pre.getZ());
+                updateAutoJump((float) (posX - d0), (float) (posZ - d1));
+            }
             return;
         }
         PlayerMoveEvent post = new PlayerMoveEvent(EventTiming.POST, type, x, y, z);

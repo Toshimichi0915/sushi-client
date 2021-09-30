@@ -139,4 +139,16 @@ public class EntityUtils {
             return EntityType.NEUTRAL;
         }
     }
+
+    public static boolean isHittingRoof(Entity entity) {
+        return entity.world.collidesWithAnyBlock(entity.getEntityBoundingBox().offset(0, 0.01, 0));
+    }
+
+    public static boolean isOnGround(Entity entity) {
+        return entity.world.collidesWithAnyBlock(entity.getEntityBoundingBox().offset(0, -0.01, 0));
+    }
+
+    public static Vec3d getMotion(Entity entity) {
+        return new Vec3d(entity.motionX, entity.motionY, entity.motionZ);
+    }
 }

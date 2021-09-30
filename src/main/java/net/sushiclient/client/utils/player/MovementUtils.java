@@ -22,14 +22,13 @@ public class MovementUtils {
 
     public static Vec2f toWorld(Vec2f vec, float yaw) {
         if (vec.x == 0 && vec.y == 0) return new Vec2f(0, 0);
-        float invert = vec.y > 0 ? 1 : -1;
         float r = MathHelper.sqrt(vec.x * vec.x + vec.y * vec.y);
-        float cos1 = MathHelper.cos((float) (yaw * Math.PI / 180));
-        float sin1 = MathHelper.sin((float) (yaw * Math.PI / 180));
-        float cos2 = vec.x / r;
-        float sin2 = MathHelper.sqrt(1 - cos2 * cos2);
-        float cos = cos1 * cos2 + sin1 * sin2 * invert;
-        float sin = sin1 * cos2 - sin2 * cos1 * invert;
+        float yawCos = MathHelper.cos((float) (yaw * Math.PI / 180));
+        float yawSin = MathHelper.sin((float) (yaw * Math.PI / 180));
+        float vecCos = vec.x / r;
+        float vecSin = vec.y / r;
+        float cos = yawCos * vecCos + yawSin * vecSin;
+        float sin = yawSin * vecCos - vecSin * yawCos;
         return new Vec2f(-r * sin, r * cos);
     }
 }

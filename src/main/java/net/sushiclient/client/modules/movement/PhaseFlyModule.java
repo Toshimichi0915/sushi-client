@@ -101,17 +101,13 @@ public class PhaseFlyModule extends BaseModule {
         }
     }
 
-    private boolean isHittingRoof() {
-        return getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, 0.01, 0));
-    }
-
     @EventHandler(timing = EventTiming.PRE)
     public void onPlayerPacket(PlayerPacketEvent e) {
         if (!auto.getValue()) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (stage == 0 &&
                 (getPlayer().movementInput.sneak || EntityUtils.isInsideBlock(getPlayer()) ||
-                        !EntityUtils.isInsideBlock(getPlayer()) && !isHittingRoof())) return;
+                        !EntityUtils.isInsideBlock(getPlayer()) && !EntityUtils.isHittingRoof(getPlayer()))) return;
         if (stage == 0 || stage == 1) {
             player.movementInput.sneak = true;
             stage++;

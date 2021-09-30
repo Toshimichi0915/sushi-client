@@ -21,6 +21,7 @@ import net.sushiclient.client.events.player.PlayerTravelEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
 import net.sushiclient.client.modules.movement.StepMode;
+import net.sushiclient.client.utils.EntityUtils;
 import net.sushiclient.client.utils.player.*;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockPlaceUtils;
@@ -101,8 +102,7 @@ public class ScaffoldModule extends BaseModule {
         if (BlockUtils.isAir(getWorld(), floor)) return;
 
         Vec3d input = MovementUtils.getMoveInputs(getPlayer());
-        if (hasBlock && tower && input.x == 0 && input.y == 1 && input.z == 0 &&
-                getWorld().collidesWithAnyBlock(getPlayer().getEntityBoundingBox().offset(0, -0.01, 0))) {
+        if (hasBlock && tower && input.x == 0 && input.y == 1 && input.z == 0 && EntityUtils.isOnGround(getPlayer())) {
             buildingUp = true;
             e.setCancelled(true);
         }
