@@ -5,12 +5,13 @@ import net.minecraft.util.Timer;
 import net.sushiclient.client.mixin.AccessorMinecraft;
 import net.sushiclient.client.mixin.AccessorTimer;
 
-import java.util.Stack;
+import java.util.HashMap;
 
 public class TimerUtils {
-    private static final Stack<Float> timerStack = new Stack<>();
+    private static int counter;
+    private static final HashMap<Integer, Float> multipliers = new HashMap<>();
 
-    private static void setTimer(float speed) {
+    private static void setSpeed(float speed) {
         Timer timer = ((AccessorMinecraft) Minecraft.getMinecraft()).getTimer();
         ((AccessorTimer) timer).setTickLength(50 / speed);
     }
@@ -20,14 +21,20 @@ public class TimerUtils {
         return 50 / ((AccessorTimer) timer).getTickLength();
     }
 
-    public static void push(float speed) {
-        timerStack.push(getTimer());
-        setTimer(speed);
+    private static float getMultiplier() {
+        float multiplier = 1;
+        for (float f : multipliers.values()) multiplier *= f;
+        return multiplier;
     }
 
-    public static void pop() {
-        Float tickLength = timerStack.pop();
-        if (tickLength == null) tickLength = 50F;
-        setTimer(tickLength);
+    public static int push(float multiplier) {
+        multipliers.put(++counter, multiplier);
+        setSpeed(getMultiplier());
+        return counter;
+    }
+
+    public static void pop(int counter) {
+        multipliers.remove(counter);
+        setSpeed(getMultiplier());
     }
 }

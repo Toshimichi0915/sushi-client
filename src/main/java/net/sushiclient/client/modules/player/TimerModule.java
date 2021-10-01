@@ -11,6 +11,7 @@ public class TimerModule extends BaseModule {
 
     private final Configuration<DoubleRange> multiplier;
     private final Configuration<Boolean> tpsSync;
+    private int counter;
 
     public TimerModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -18,13 +19,17 @@ public class TimerModule extends BaseModule {
         tpsSync = provider.get("tps_sync", "TPS Sync", null, Boolean.class, false);
         multiplier.addHandler(d -> {
             if (!isEnabled()) return;
-            TimerUtils.pop();
+            TimerUtils.pop(counter);
             push();
         });
     }
 
     private void push() {
-        TimerUtils.push((float) (multiplier.getValue().getCurrent() * TpsUtils.getTps() / 20));
+        float m = (float) multiplier.getValue().getCurrent();
+        if (tpsSync.getValue()) {
+            m = (float) TpsUtils.getTps() / 20;
+        }
+        counter = TimerUtils.push(m);
     }
 
     @Override
@@ -34,7 +39,7 @@ public class TimerModule extends BaseModule {
 
     @Override
     public void onDisable() {
-        TimerUtils.pop();
+        TimerUtils.pop(counter);
     }
 
     @Override

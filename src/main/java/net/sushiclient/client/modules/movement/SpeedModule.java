@@ -14,6 +14,7 @@ import net.sushiclient.client.events.player.PlayerTravelEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
 import net.sushiclient.client.utils.EntityUtils;
+import net.sushiclient.client.utils.TimerUtils;
 import net.sushiclient.client.utils.player.MovementUtils;
 
 public class SpeedModule extends BaseModule {
@@ -23,7 +24,9 @@ public class SpeedModule extends BaseModule {
     private final Configuration<Boolean> forceSprint;
     private final Configuration<Boolean> enableOnJump;
     private final Configuration<Boolean> resetMotion;
+    private final Configuration<DoubleRange> factor;
     private boolean lastActive;
+    private int counter;
 
     public SpeedModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -33,17 +36,25 @@ public class SpeedModule extends BaseModule {
         forceSprint = provider.get("force_sprint", "Force Sprint", null, Boolean.class, true);
         enableOnJump = provider.get("enable_on_jump", "Enable On Jump", null, Boolean.class, false);
         resetMotion = provider.get("reset_motion", "Reset Motion", null, Boolean.class, true);
+        factor = provider.get("factor", "Factor", null, DoubleRange.class, new DoubleRange(1.1, 2, 1, 0.01, 2));
+        factor.addHandler(d -> {
+            if (!isEnabled()) return;
+            TimerUtils.pop(counter);
+            counter = TimerUtils.push((float) factor.getValue().getCurrent());
+        });
     }
 
     @Override
     public void onEnable() {
         EventHandlers.register(this);
+        counter = TimerUtils.push((float) factor.getValue().getCurrent());
     }
 
     @Override
     public void onDisable() {
         EventHandlers.unregister(this);
         resetMotion();
+        TimerUtils.pop(counter);
     }
 
     private void resetMotion() {
