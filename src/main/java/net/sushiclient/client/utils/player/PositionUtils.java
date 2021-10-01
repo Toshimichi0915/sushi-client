@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.Vec3d;
 import net.sushiclient.client.mixin.AccessorEntityPlayerSP;
-import net.sushiclient.client.utils.MathUtils;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockUtils;
 
@@ -13,11 +12,10 @@ import java.util.HashSet;
 
 public class PositionUtils {
 
-    private static final float EPSILON = 0.00001F;
-    private static final ArrayList<AutoDesyncOperator> desync = new ArrayList<>();
-    private static final HashSet<AutoDesyncOperator> temp = new HashSet<>();
+    private static final ArrayList<PositionOperator> desync = new ArrayList<>();
+    private static final HashSet<PositionOperator> temp = new HashSet<>();
     private static final ArrayList<Runnable> runnables = new ArrayList<>();
-    private static DesyncMode mode = DesyncMode.NONE;
+    private static PositionMask mode = PositionMask.NONE;
     private static double x;
     private static double y;
     private static double z;
@@ -25,7 +23,7 @@ public class PositionUtils {
     private static float pitch;
     private static boolean onGround;
 
-    public static DesyncMode getDesyncMode() {
+    public static PositionMask getDesyncMode() {
         return mode;
     }
 
@@ -64,8 +62,8 @@ public class PositionUtils {
         boolean position = false;
         boolean rotation = false;
         boolean ground = false;
-        for (AutoDesyncOperator operator : desync) {
-            DesyncMode mode = operator.getDesyncMode();
+        for (PositionOperator operator : desync) {
+            PositionMask mode = operator.getDesyncMode();
             if (mode.isPositionDesync()) {
                 x = operator.getX();
                 y = operator.getY();
@@ -88,9 +86,7 @@ public class PositionUtils {
         PositionUtils.yaw = yaw;
         PositionUtils.pitch = pitch;
         PositionUtils.onGround = onGround;
-        mode = new DesyncMode(position, rotation, ground);
-        desync.removeAll(temp);
-        temp.clear();
+        mode = new PositionMask(position, rotation, ground);
     }
 
     public static void updatePositionUpdateTicks() {
@@ -99,25 +95,25 @@ public class PositionUtils {
         ((AccessorEntityPlayerSP) player).setPositionUpdateTicks(20);
     }
 
-    public static DesyncOperator desync() {
-        DesyncOperator closeable = new DesyncOperator();
+    public static CloseablePositionOperator desync() {
+        CloseablePositionOperator closeable = new CloseablePositionOperator();
         desync.add(closeable);
         return closeable;
     }
 
-    public static AutoDesyncOperator require() {
-        AutoDesyncOperator operator = new DesyncOperator();
+    public static PositionOperator require() {
+        PositionOperator operator = new CloseablePositionOperator();
         desync.add(operator);
         temp.add(operator);
         return operator;
     }
 
-    protected static void pop(AutoDesyncOperator closeable) {
+    protected static void pop(PositionOperator closeable) {
         desync.remove(closeable);
     }
 
     protected static void move(double x, double y, double z, float yaw, float pitch, boolean onGround,
-                               DesyncMode mode, AutoDesyncOperator operator) {
+                               PositionMask mode, PositionOperator operator) {
         if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z) ||
                 !Float.isFinite(yaw) || !Float.isFinite(pitch)) {
             throw new IllegalArgumentException("Invalid movement x: " + x + " y: " + y + " z: " + z +
@@ -147,41 +143,37 @@ public class PositionUtils {
         }
     }
 
-    public static void move(Vec3d pos, float yaw, float pitch, boolean onGround, DesyncMode mode) {
+    public static void move(Vec3d pos, float yaw, float pitch, boolean onGround, PositionMask mode) {
         move(pos.x, pos.y, pos.z, yaw, pitch, onGround, mode);
     }
 
-    public static void move(double x, double y, double z, float yaw, float pitch, boolean onGround, DesyncMode mode) {
+    public static void move(double x, double y, double z, float yaw, float pitch, boolean onGround, PositionMask mode) {
         move(x, y, z, yaw, pitch, onGround, mode, null);
     }
 
-    protected static void lookAt(Vec3d loc, DesyncMode mode, AutoDesyncOperator operator) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (player == null) return;
-        Vec3d direction = loc.subtract(new Vec3d(player.posX, player.posY + player.eyeHeight, player.posZ)).normalize();
-        if (MathUtils.absMinus(direction.y, 1) < EPSILON) {
-            // workaround for Math#asin returning Double.NaN
-            direction = new Vec3d(direction.x, Math.signum(direction.y) * (1 - EPSILON), direction.z);
+    protected static void lookAt(Vec3d loc, PositionMask mode, PositionOperator operator) {
+        float[] lookVec = BlockUtils.getLookVec(loc);
+        if (lookVec != null) {
+            move(0, 0, 0, lookVec[0], lookVec[1], true, mode, operator);
         }
-        float yaw = (float) (Math.atan2(direction.z, direction.x) * 180 / Math.PI) - 90;
-        float pitch = (float) -(Math.asin(direction.y) * 180 / Math.PI);
-        move(0, 0, 0, yaw, pitch, true, mode, operator);
     }
 
-    public static void lookAt(Vec3d loc, DesyncMode mode) {
+    public static void lookAt(Vec3d loc, PositionMask mode) {
         lookAt(loc, mode, null);
     }
 
-    protected static void lookAt(BlockPlaceInfo info, AutoDesyncOperator operator) {
-        Vec3d pos = BlockUtils.toVec3d(info.getBlockPos());
-        lookAt(info.getBlockFace().getPos().add(pos).add(BlockUtils.toVec3d(info.getBlockFace().getFacing().getOpposite().getDirectionVec())), DesyncMode.LOOK, operator);
+    protected static void lookAt(BlockPlaceInfo info, PositionOperator operator) {
+        float[] lookVec = BlockUtils.getLookVec(info);
+        if (lookVec != null) {
+            move(0, 0, 0, lookVec[0], lookVec[1], true, mode, operator);
+        }
     }
 
     public static void lookAt(BlockPlaceInfo info) {
         lookAt(info, null);
     }
 
-    public static void close(DesyncOperator operator) {
+    public static void close(CloseablePositionOperator operator) {
         if (operator != null) operator.close();
     }
 
@@ -189,6 +181,8 @@ public class PositionUtils {
         ArrayList<Runnable> clone = new ArrayList<>(runnables);
         runnables.clear();
         clone.forEach(Runnable::run);
+        desync.removeAll(temp);
+        temp.clear();
     }
 
     public static void on(Runnable runnable) {

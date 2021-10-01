@@ -7,8 +7,8 @@ import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.packet.PacketSendEvent;
 import net.sushiclient.client.events.player.PlayerPacketEvent;
-import net.sushiclient.client.utils.player.DesyncMode;
 import net.sushiclient.client.utils.player.PlayerUtils;
+import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
 
 public class DesyncHandler {
@@ -22,7 +22,7 @@ public class DesyncHandler {
 
         CPacketPlayer cp = (CPacketPlayer) e.getPacket();
         PositionUtils.update();
-        DesyncMode mode = PositionUtils.getDesyncMode();
+        PositionMask mode = PositionUtils.getDesyncMode();
         boolean position = mode.isPositionDesync();
         boolean rotation = mode.isRotationDesync();
         boolean flying = mode.isOnGroundDesync();
@@ -44,7 +44,7 @@ public class DesyncHandler {
     @EventHandler(timing = EventTiming.PRE, priority = 10000)
     public void onPrePlayerPacket(PlayerPacketEvent e) {
         PositionUtils.update();
-        if (!PositionUtils.getDesyncMode().equals(DesyncMode.NONE)) {
+        if (!PositionUtils.getDesyncMode().equals(PositionMask.NONE)) {
             PositionUtils.updatePositionUpdateTicks();
         }
     }

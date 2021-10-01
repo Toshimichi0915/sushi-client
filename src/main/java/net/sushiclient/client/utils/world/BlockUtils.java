@@ -15,12 +15,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import net.sushiclient.client.utils.MathUtils;
 import net.sushiclient.client.utils.player.InventoryType;
 import net.sushiclient.client.utils.player.InventoryUtils;
 import net.sushiclient.client.utils.player.ItemSlot;
 
 public class BlockUtils {
 
+    private static final float EPSILON = 0.00001F;
     private static BlockPos breakingBlockPos;
     private static int breakingTime;
 
@@ -97,6 +99,26 @@ public class BlockUtils {
             float f2 = (float) (placeVec.z - (double) placePos.getZ());
             connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(placePos, face.getFacing(), EnumHand.MAIN_HAND, f, f1, f2));
         }
+    }
+
+    public static float[] getLookVec(Vec3d loc) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (player == null) return null;
+        Vec3d direction = loc.subtract(new Vec3d(player.posX, player.posY + player.eyeHeight, player.posZ)).normalize();
+        if (MathUtils.absMinus(direction.y, 1) < EPSILON) {
+            // workaround for Math#asin returning Double.NaN
+            direction = new Vec3d(direction.x, Math.signum(direction.y) * (1 - EPSILON), direction.z);
+        }
+        float yaw = (float) (Math.atan2(direction.z, direction.x) * 180 / Math.PI) - 90;
+        float pitch = (float) -(Math.asin(direction.y) * 180 / Math.PI);
+        return new float[]{yaw, pitch};
+    }
+
+    public static float[] getLookVec(BlockPlaceInfo info) {
+        Vec3d pos = BlockUtils.toVec3d(info.getBlockPos());
+        return getLookVec(info.getBlockFace().getPos()
+                .add(pos)
+                .add(BlockUtils.toVec3d(info.getBlockFace().getFacing().getOpposite().getDirectionVec())));
     }
 
     public static BlockPlaceInfo findBlockPlaceInfo(World world, BlockPos input, PlaceOptions... options) {

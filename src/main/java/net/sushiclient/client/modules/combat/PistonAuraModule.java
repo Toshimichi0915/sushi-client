@@ -54,7 +54,7 @@ public class PistonAuraModule extends BaseModule {
 
     private PistonAuraAttack attack;
     private EntityEnderCrystal exploded;
-    private DesyncOperator operator;
+    private CloseablePositionOperator operator;
     private boolean running;
     private int repeatCounter;
 
@@ -131,10 +131,10 @@ public class PistonAuraModule extends BaseModule {
                 .add(0, getPlayer().eyeHeight, 0)
                 .add(new Vec3d(attack.getFacing().getOpposite().getDirectionVec()));
         if (operator == null) {
-            AutoDesyncOperator fake = new AutoDesyncOperator();
-            fake.desyncMode(DesyncMode.LOOK).lookAt(lookAt);
+            PositionOperator fake = new PositionOperator();
+            fake.desyncMode(PositionMask.LOOK).lookAt(lookAt);
             sendPacket(new CPacketPlayer.Rotation(fake.getYaw(), fake.getPitch(), getPlayer().onGround));
-            operator = PositionUtils.desync().desyncMode(DesyncMode.LOOK);
+            operator = PositionUtils.desync().desyncMode(PositionMask.LOOK);
         }
         operator.lookAt(lookAt);
         final PistonAuraAttack attack = this.attack;

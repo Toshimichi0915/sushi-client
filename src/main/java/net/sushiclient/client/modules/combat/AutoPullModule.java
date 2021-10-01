@@ -20,7 +20,7 @@ import net.sushiclient.client.task.forge.TaskExecutor;
 import net.sushiclient.client.task.tasks.BlockPlaceTask;
 import net.sushiclient.client.task.tasks.ItemSwitchTask;
 import net.sushiclient.client.utils.EntityUtils;
-import net.sushiclient.client.utils.player.DesyncMode;
+import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockUtils;
@@ -124,7 +124,7 @@ public class AutoPullModule extends BaseModule {
         // rotate
         Vec3d lookAt = getPlayer().getPositionVector().add(new Vec3d(pistonFacing.getDirectionVec()));
         PositionUtils.require()
-                .desyncMode(DesyncMode.LOOK)
+                .desyncMode(PositionMask.LOOK)
                 .lookAt(lookAt);
 
         TaskExecutor.newTaskChain()

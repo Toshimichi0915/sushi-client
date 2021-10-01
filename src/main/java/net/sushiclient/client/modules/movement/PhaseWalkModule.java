@@ -16,8 +16,8 @@ import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.packet.PacketReceiveEvent;
 import net.sushiclient.client.events.player.*;
 import net.sushiclient.client.modules.*;
-import net.sushiclient.client.utils.player.DesyncMode;
 import net.sushiclient.client.utils.player.MovementUtils;
+import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -104,14 +104,14 @@ public class PhaseWalkModule extends BaseModule {
                         maxY = collision.maxY;
                     }
                 }
-                PositionUtils.move(player.posX, maxY - delta.getValue().getCurrent(), player.posZ, 0, 0, false, DesyncMode.POSITION);
+                PositionUtils.move(player.posX, maxY - delta.getValue().getCurrent(), player.posZ, 0, 0, false, PositionMask.POSITION);
                 return;
             }
         }
 
         // safe walk
-        PositionUtils.move(player.prevPosX, player.prevPosY, player.prevPosZ, 0, 0, false, DesyncMode.POSITION);
-        PositionUtils.require().desyncMode(DesyncMode.POSITION).pos(player.prevPosX, PositionUtils.getY(), player.prevPosZ);
+        PositionUtils.move(player.prevPosX, player.prevPosY, player.prevPosZ, 0, 0, false, PositionMask.POSITION);
+        PositionUtils.require().desyncMode(PositionMask.POSITION).pos(player.prevPosX, PositionUtils.getY(), player.prevPosZ);
     }
 
     @EventHandler(timing = EventTiming.PRE)

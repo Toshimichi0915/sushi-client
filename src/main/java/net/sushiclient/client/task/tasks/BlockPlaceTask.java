@@ -6,8 +6,7 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.util.EnumHand;
 import net.sushiclient.client.task.TaskAdapter;
-import net.sushiclient.client.utils.player.DesyncMode;
-import net.sushiclient.client.utils.player.PositionUtils;
+import net.sushiclient.client.utils.player.RotateMode;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockUtils;
 import net.sushiclient.client.utils.world.PlaceOptions;
@@ -45,36 +44,25 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
             stop(null);
             return;
         }
-        if (++index >= getInput().size()) {
-            stop(null);
-            return;
-        }
-        BlockPlaceInfo info = getInput().get(index);
-        if (!BlockUtils.canPlace(world, info, option)) {
-            tick();
-            return;
-        }
-        if (rotate) {
-            if (desync) {
-                PositionUtils.require()
-                        .desyncMode(DesyncMode.LOOK)
-                        .lookAt(info);
-            } else {
-                PositionUtils.lookAt(info);
+        BlockPlaceInfo info;
+        do {
+            if (++index >= getInput().size()) {
+                stop(null);
+                return;
             }
-        }
+            info = getInput().get(index);
+        } while (!BlockUtils.canPlace(world, info, option));
+
+        BlockPlaceInfo fi = info;
         Runnable task = () -> {
             NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
-            BlockUtils.place(info, packet);
+            BlockUtils.place(fi, packet);
             if (swing && connection != null) {
                 connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
             }
         };
-        if (rotate) {
-            PositionUtils.on(task);
-        } else {
-            task.run();
-        }
-        if (index >= getInput().size()) stop(null);
+        float[] vec = BlockUtils.getLookVec(info);
+        if (vec == null) return;
+        RotateMode.NCP.rotate(vec[0], vec[1], true, task, null);
     }
 }

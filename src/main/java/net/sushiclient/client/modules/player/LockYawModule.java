@@ -11,7 +11,7 @@ import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.gui.hud.TextElementComponent;
 import net.sushiclient.client.modules.*;
-import net.sushiclient.client.utils.player.DesyncMode;
+import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
 import net.sushiclient.client.utils.player.SpeedUtils;
 
@@ -51,7 +51,7 @@ public class LockYawModule extends BaseModule {
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
         float pitch = getPlayer().rotationPitch;
-        PositionUtils.lookAt(new Vec3d(x.getValue(), 0, z.getValue()), DesyncMode.LOOK);
+        PositionUtils.lookAt(new Vec3d(x.getValue(), 0, z.getValue()), PositionMask.LOOK);
         getPlayer().rotationPitch = pitch;
     }
 

@@ -137,7 +137,7 @@ public class AutoMendModule extends BaseModule {
         InventoryUtils.moveToHotbar(expBottle);
         InventoryUtils.moveHotbar(expBottle.getIndex());
         PositionUtils.require()
-                .desyncMode(DesyncMode.LOOK)
+                .desyncMode(PositionMask.LOOK)
                 .rotation(getPlayer().rotationYaw, -90);
         PositionUtils.on(() -> {
             sendPacket(new CPacketPlayerTryUseItem(EnumHand.MAIN_HAND));

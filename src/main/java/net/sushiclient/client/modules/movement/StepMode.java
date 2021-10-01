@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.sushiclient.client.config.data.Named;
-import net.sushiclient.client.utils.player.DesyncMode;
+import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
 
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public enum StepMode implements Named, Step {
     }
 
     private static void move(double dX, double toY, double dZ) {
-        PositionUtils.move(mc().player.posX + dX, toY, mc().player.posZ + dZ, 0, 0, false, DesyncMode.POSITION);
+        PositionUtils.move(mc().player.posX + dX, toY, mc().player.posZ + dZ, 0, 0, false, PositionMask.POSITION);
     }
 
     private final String name;

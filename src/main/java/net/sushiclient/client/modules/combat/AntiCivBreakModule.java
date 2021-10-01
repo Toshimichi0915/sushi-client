@@ -82,7 +82,7 @@ public class AntiCivBreakModule extends BaseModule {
             getWorld().setBlockState(floorPos, floorState);
             if (damage <= this.damage.getCurrent()) continue;
             PositionUtils.require()
-                    .desyncMode(DesyncMode.POSITION_LOOK)
+                    .desyncMode(PositionMask.POSITION_LOOK)
                     .pos(posX, getPlayer().posY + 0.2, posZ)
                     .lookAt(entity.getPositionVector());
             BlockPlaceInfo face = BlockUtils.findBlockPlaceInfo(getWorld(), BlockUtils.toBlockPos(entity.getPositionVector()),

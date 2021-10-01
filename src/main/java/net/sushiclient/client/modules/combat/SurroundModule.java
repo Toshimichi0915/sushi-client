@@ -90,7 +90,7 @@ public class SurroundModule extends BaseModule {
         if (obsidianSlot == null) return;
         if (pull.getValue()) {
             PositionUtils.move(pos.getX() + 0.5, getPlayer().posY, pos.getZ() + 0.5,
-                    0, 0, false, DesyncMode.POSITION);
+                    0, 0, false, PositionMask.POSITION);
         }
         running = true;
         TaskExecutor.newTaskChain()

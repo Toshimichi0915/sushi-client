@@ -16,8 +16,8 @@ import net.sushiclient.client.events.player.PlayerTravelEvent;
 import net.sushiclient.client.modules.*;
 import net.sushiclient.client.utils.EntityUtils;
 import net.sushiclient.client.utils.TpsUtils;
-import net.sushiclient.client.utils.player.DesyncMode;
 import net.sushiclient.client.utils.player.MovementUtils;
+import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
 
 public class PhaseFlyModule extends BaseModule {
@@ -113,7 +113,7 @@ public class PhaseFlyModule extends BaseModule {
             stage++;
         } else if (stage == 2) {
             player.movementInput.sneak = true;
-            PositionUtils.move(player.posX, player.posY + 0.1, player.posZ, 0, 0, false, DesyncMode.POSITION);
+            PositionUtils.move(player.posX, player.posY + 0.1, player.posZ, 0, 0, false, PositionMask.POSITION);
             stage++;
         } else if (stage == 3) {
             stage = 0;

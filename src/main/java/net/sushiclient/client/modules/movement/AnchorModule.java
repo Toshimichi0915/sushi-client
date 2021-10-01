@@ -12,7 +12,7 @@ import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.player.PlayerTravelEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
-import net.sushiclient.client.utils.player.DesyncMode;
+import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
 import net.sushiclient.client.utils.render.hole.HoleInfo;
 import net.sushiclient.client.utils.render.hole.HoleType;
@@ -97,7 +97,7 @@ public class AnchorModule extends BaseModule {
         getPlayer().motionZ = 0;
         BlockPos floorPos = BlockUtils.toBlockPos(getPlayer().getPositionVector());
         PositionUtils.move(floorPos.getX() + 0.5, getPlayer().posY, floorPos.getZ() + 0.5,
-                0, 0, false, DesyncMode.POSITION);
+                0, 0, false, PositionMask.POSITION);
         if (instant && getPlayer().motionY < 0) {
             Vec3d d = new Vec3d(floorPos.getX() + 0.5, posY, floorPos.getZ() + 0.5).subtract(getPlayer().getPositionVector());
             stepMode.reverse(d.x, d.y, d.z, false);

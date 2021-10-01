@@ -3,6 +3,7 @@ package net.sushiclient.client.utils.world;
 import net.minecraft.util.math.BlockPos;
 
 public class BlockPlaceInfo {
+    private static final float EPSILON = 0.00001F;
     private final BlockPos blockPos;
     private final BlockFace blockFace;
 

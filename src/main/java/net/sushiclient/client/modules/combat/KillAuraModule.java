@@ -19,9 +19,9 @@ import net.sushiclient.client.utils.EntityInfo;
 import net.sushiclient.client.utils.EntityType;
 import net.sushiclient.client.utils.EntityUtils;
 import net.sushiclient.client.utils.ReachType;
-import net.sushiclient.client.utils.player.DesyncMode;
-import net.sushiclient.client.utils.player.DesyncOperator;
+import net.sushiclient.client.utils.player.CloseablePositionOperator;
 import net.sushiclient.client.utils.player.InventoryUtils;
+import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class KillAuraModule extends BaseModule {
     private final Configuration<DoubleRange> selfPingMultiplier;
     private final Configuration<Boolean> useInputs;
     private final Configuration<Boolean> constantSpeed;
-    private DesyncOperator operator;
+    private CloseablePositionOperator operator;
 
     public KillAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -133,7 +133,7 @@ public class KillAuraModule extends BaseModule {
                 .then(new ItemSlotSwitchTask())
                 .execute();
         if (operator == null) operator = PositionUtils.desync();
-        operator.desyncMode(DesyncMode.LOOK);
+        operator.desyncMode(PositionMask.LOOK);
         operator.lookAt(target.getPositionVector().add(0, target.getEyeHeight(), 0));
         if (getPlayer().getCooledAttackStrength(0) > 0.9) {
             PositionUtils.on(() -> {

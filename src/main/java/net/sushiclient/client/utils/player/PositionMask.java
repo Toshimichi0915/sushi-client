@@ -2,19 +2,19 @@ package net.sushiclient.client.utils.player;
 
 import java.util.Objects;
 
-public class DesyncMode {
-    public static DesyncMode ALL = new DesyncMode(true, true, true);
-    public static DesyncMode POSITION = new DesyncMode(true, false, false);
-    public static DesyncMode LOOK = new DesyncMode(false, true, false);
-    public static DesyncMode POSITION_LOOK = new DesyncMode(true, true, false);
-    public static DesyncMode ON_GROUND = new DesyncMode(false, false, true);
-    public static DesyncMode NONE = new DesyncMode(false, false, false);
+public class PositionMask {
+    public static PositionMask ALL = new PositionMask(true, true, true);
+    public static PositionMask POSITION = new PositionMask(true, false, false);
+    public static PositionMask LOOK = new PositionMask(false, true, false);
+    public static PositionMask POSITION_LOOK = new PositionMask(true, true, false);
+    public static PositionMask ON_GROUND = new PositionMask(false, false, true);
+    public static PositionMask NONE = new PositionMask(false, false, false);
 
     private final boolean position;
     private final boolean rotation;
     private final boolean onGround;
 
-    DesyncMode(boolean position, boolean rotation, boolean onGround) {
+    PositionMask(boolean position, boolean rotation, boolean onGround) {
         this.position = position;
         this.rotation = rotation;
         this.onGround = onGround;
@@ -36,7 +36,7 @@ public class DesyncMode {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DesyncMode that = (DesyncMode) o;
+        PositionMask that = (PositionMask) o;
         return position == that.position && rotation == that.rotation && onGround == that.onGround;
     }
 

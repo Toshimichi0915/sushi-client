@@ -61,7 +61,7 @@ public class ScaffoldModule extends BaseModule {
     private int timeout;
     private boolean hasBlock;
     private List<BlockPlaceInfo> tasks;
-    private DesyncOperator operator;
+    private CloseablePositionOperator operator;
     private boolean buildingUp;
     private int sleep;
     private int sprintSleep;
@@ -161,7 +161,7 @@ public class ScaffoldModule extends BaseModule {
         }
         timeout = 5;
         if (operator == null) {
-            operator = PositionUtils.desync();
+            operator = PositionUtils.desync().desyncMode(PositionMask.LOOK);
         }
         sleep = delay.getCurrent();
         BlockPlaceInfo info = tasks.get(0);

@@ -23,7 +23,7 @@ import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.player.BlockLeftClickEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
-import net.sushiclient.client.utils.player.DesyncMode;
+import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
 import net.sushiclient.client.utils.world.BlockFace;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
@@ -83,7 +83,7 @@ public class AutoDupeModule extends BaseModule {
     public void onClientTick(ClientTickEvent e) {
         if (!ready) return;
         if (state == PUSHING_BUTTON) {
-            PositionUtils.lookAt(BlockUtils.toVec3d(button).add(0.5, 0.5, 0.5), DesyncMode.LOOK);
+            PositionUtils.lookAt(BlockUtils.toVec3d(button).add(0.5, 0.5, 0.5), PositionMask.LOOK);
             IBlockState buttonState = getWorld().getBlockState(button);
             BlockPlaceInfo place = new BlockFace(button, buttonState.getValue(BlockDirectional.FACING)).toBlockPlaceInfo(getWorld());
             BlockUtils.place(place, true);

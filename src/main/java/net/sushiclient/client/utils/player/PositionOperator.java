@@ -3,9 +3,9 @@ package net.sushiclient.client.utils.player;
 import net.minecraft.util.math.Vec3d;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 
-public class AutoDesyncOperator {
+public class PositionOperator {
 
-    private DesyncMode desyncMode = DesyncMode.NONE;
+    private PositionMask positionMask = PositionMask.NONE;
     private double x;
     private double y;
     private double z;
@@ -13,42 +13,42 @@ public class AutoDesyncOperator {
     private float pitch;
     private boolean onGround;
 
-    public AutoDesyncOperator desyncMode(DesyncMode desyncMode) {
-        this.desyncMode = desyncMode;
+    public PositionOperator desyncMode(PositionMask positionMask) {
+        this.positionMask = positionMask;
         return this;
     }
 
-    public AutoDesyncOperator pos(double x, double y, double z) {
+    public PositionOperator pos(double x, double y, double z) {
         setPos(x, y, z);
         return this;
     }
 
-    public AutoDesyncOperator rotation(float yaw, float pitch) {
+    public PositionOperator rotation(float yaw, float pitch) {
         setRotation(yaw, pitch);
         return this;
     }
 
-    public AutoDesyncOperator move(double x, double y, double z, float yaw, float pitch, boolean onGround) {
-        PositionUtils.move(x, y, z, yaw, pitch, onGround, desyncMode, this);
+    public PositionOperator move(double x, double y, double z, float yaw, float pitch, boolean onGround) {
+        PositionUtils.move(x, y, z, yaw, pitch, onGround, positionMask, this);
         return this;
     }
 
-    public AutoDesyncOperator lookAt(Vec3d loc) {
-        PositionUtils.lookAt(loc, desyncMode, this);
+    public PositionOperator lookAt(Vec3d loc) {
+        PositionUtils.lookAt(loc, positionMask, this);
         return this;
     }
 
-    public AutoDesyncOperator lookAt(BlockPlaceInfo info) {
+    public PositionOperator lookAt(BlockPlaceInfo info) {
         PositionUtils.lookAt(info, this);
         return this;
     }
 
-    public DesyncMode getDesyncMode() {
-        return desyncMode;
+    public PositionMask getDesyncMode() {
+        return positionMask;
     }
 
-    public void setDesyncMode(DesyncMode desyncMode) {
-        this.desyncMode = desyncMode;
+    public void setDesyncMode(PositionMask positionMask) {
+        this.positionMask = positionMask;
     }
 
     public void setPos(double x, double y, double z) {
