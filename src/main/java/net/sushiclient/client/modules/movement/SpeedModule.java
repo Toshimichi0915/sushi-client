@@ -1,5 +1,6 @@
 package net.sushiclient.client.modules.movement;
 
+import net.minecraft.util.MovementInput;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.sushiclient.client.config.Configuration;
@@ -9,9 +10,10 @@ import net.sushiclient.client.config.data.Named;
 import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
-import net.sushiclient.client.events.player.PlayerUpdateEvent;
+import net.sushiclient.client.events.player.PlayerTravelEvent;
 import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
+import net.sushiclient.client.utils.EntityUtils;
 import net.sushiclient.client.utils.player.MovementUtils;
 
 public class SpeedModule extends BaseModule {
@@ -59,8 +61,8 @@ public class SpeedModule extends BaseModule {
         }
     }
 
-    @EventHandler(timing = EventTiming.POST)
-    public void onUpdate(PlayerUpdateEvent e) {
+    @EventHandler(timing = EventTiming.PRE)
+    public void onUpdate(PlayerTravelEvent e) {
         if (enableOnJump.getValue() && !getPlayer().movementInput.jump) {
             resetMotion();
             return;
@@ -75,7 +77,13 @@ public class SpeedModule extends BaseModule {
             getPlayer().motionZ = motion.y * value;
         } else if (mode.getValue() == SpeedMode.STRAFE) {
             Vec3d vec = new Vec3d(getPlayer().motionX, 0, getPlayer().motionZ);
-            double mul = vec.distanceTo(Vec3d.ZERO);
+            double mul = Math.max(vec.distanceTo(Vec3d.ZERO), 0.1);
+            MovementInput input = getPlayer().movementInput;
+            if (!input.forwardKeyDown && EntityUtils.isOnGround(getPlayer())) {
+                mul *= 1.18;
+            } else if (!input.forwardKeyDown) {
+                mul *= 1.025;
+            }
             getPlayer().motionX = motion.x * mul;
             getPlayer().motionZ = motion.y * mul;
         }
