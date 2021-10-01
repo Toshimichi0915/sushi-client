@@ -58,8 +58,8 @@ public class StepModule extends BaseModule implements ModuleSuffix {
 
         pauseInHole = provider.get("pause_in_hole", "Pause In Hole", null, Boolean.class, true);
         pauseOnSneak = provider.get("pause_on_sneak", "Pause On Sneak", null, Boolean.class, true);
-        packetCapacity = provider.get("packet_capacity", "Packet Capacity", null, IntRange.class, new IntRange(40, 100, 20, 1));
-        packetLimit = provider.get("packet_limit", "Packet Limit", null, IntRange.class, new IntRange(22, 100, 20, 1));
+        packetCapacity = provider.get("packet_capacity", "Packet Capacity", null, IntRange.class, new IntRange(40, 100, 0, 1));
+        packetLimit = provider.get("packet_limit", "Packet Limit", null, IntRange.class, new IntRange(22, 100, 0, 1));
         packetTimer = new UpdateTimer(true, 1000);
     }
 
