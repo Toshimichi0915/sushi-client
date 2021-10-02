@@ -20,6 +20,8 @@ import net.sushiclient.client.utils.player.InventoryType;
 import net.sushiclient.client.utils.player.InventoryUtils;
 import net.sushiclient.client.utils.player.ItemSlot;
 
+import java.util.List;
+
 public class BlockUtils {
 
     private static final float EPSILON = 0.00001F;
@@ -150,7 +152,17 @@ public class BlockUtils {
         if (swap) InventoryUtils.moveHotbar(current.getIndex());
     }
 
-    public static boolean equals(BlockPos pos1, BlockPos pos2) {
-        return pos1.getX() == pos2.getX() && pos1.getY() == pos2.getY() && pos1.getZ() == pos2.getZ();
+    public static double getMaxHeight(AxisAlignedBB box) {
+        WorldClient world = Minecraft.getMinecraft().world;
+        List<AxisAlignedBB> collisions = world.getCollisionBoxes(null, box.offset(0, -1, 0));
+        boolean updated = false;
+        double maxY = 0;
+        for (AxisAlignedBB collision : collisions) {
+            if (collision.maxY > maxY) {
+                updated = true;
+                maxY = collision.maxY;
+            }
+        }
+        return updated ? maxY : Double.NaN;
     }
 }

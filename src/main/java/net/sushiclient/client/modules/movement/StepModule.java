@@ -20,8 +20,6 @@ import net.sushiclient.client.utils.UpdateTimer;
 import net.sushiclient.client.utils.render.hole.HoleUtils;
 import net.sushiclient.client.utils.world.BlockUtils;
 
-import java.util.List;
-
 public class StepModule extends BaseModule implements ModuleSuffix {
 
     private final Configuration<StepMode> stepMode;
@@ -73,20 +71,6 @@ public class StepModule extends BaseModule implements ModuleSuffix {
         EventHandlers.unregister(this);
     }
 
-    private double getMaxHeight(AxisAlignedBB box) {
-        List<AxisAlignedBB> collisions = getWorld().getCollisionBoxes(null, box.offset(0, -1, 0));
-        boolean updated = false;
-        double maxY = 0;
-        for (AxisAlignedBB collision : collisions) {
-            if (collision.maxY > maxY) {
-                updated = true;
-                maxY = collision.maxY;
-            }
-
-        }
-        return updated ? maxY : Double.NaN;
-    }
-
     @EventHandler(timing = EventTiming.PRE, priority = 50000)
     public void onPrePlayerMove(PlayerMoveEvent e) {
         motionX = getPlayer().motionX;
@@ -119,7 +103,7 @@ public class StepModule extends BaseModule implements ModuleSuffix {
                         .offset(direction)
                         .offset(0, y + 0.99, 0);
                 if (getWorld().collidesWithAnyBlock(box)) continue;
-                double height = getMaxHeight(box);
+                double height = BlockUtils.getMaxHeight(box);
                 double dY = height - getPlayer().posY;
                 if (Double.isNaN(height)) continue;
                 if (dY < y) continue;
@@ -135,7 +119,7 @@ public class StepModule extends BaseModule implements ModuleSuffix {
                         .offset(direction)
                         .offset(0, y, 0);
                 if (getWorld().collidesWithAnyBlock(box)) continue;
-                double height = getMaxHeight(box);
+                double height = BlockUtils.getMaxHeight(box);
                 double dY = height - getPlayer().posY;
                 if (Double.isNaN(height)) continue;
                 if (dY > y) continue;
