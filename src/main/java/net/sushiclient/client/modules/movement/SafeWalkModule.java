@@ -10,6 +10,7 @@ import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.player.PlayerMoveEvent;
 import net.sushiclient.client.modules.*;
+import net.sushiclient.client.utils.EntityUtils;
 
 public class SafeWalkModule extends BaseModule {
 
@@ -40,7 +41,7 @@ public class SafeWalkModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onMove(PlayerMoveEvent e) {
-        if (jump && (getPlayer().movementInput.jump || !getPlayer().onGround)) return;
+        if (jump && (getPlayer().movementInput.jump || !EntityUtils.isOnGround(getPlayer()))) return;
         if (!isSafe(getPlayer().getEntityBoundingBox())) return;
         if (isSafe(getPlayer().getEntityBoundingBox().offset(e.getX(), 0, e.getZ()))) return;
         getPlayer().motionX = 0;
