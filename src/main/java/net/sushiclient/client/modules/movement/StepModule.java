@@ -1,8 +1,8 @@
 package net.sushiclient.client.modules.movement;
 
-import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.sushiclient.client.config.Configuration;
 import net.sushiclient.client.config.RootConfigurations;
@@ -11,12 +11,11 @@ import net.sushiclient.client.config.data.IntRange;
 import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
-import net.sushiclient.client.events.packet.PacketSendEvent;
 import net.sushiclient.client.events.player.PlayerMoveEvent;
-import net.sushiclient.client.events.tick.ClientTickEvent;
 import net.sushiclient.client.modules.*;
 import net.sushiclient.client.utils.EntityUtils;
 import net.sushiclient.client.utils.UpdateTimer;
+import net.sushiclient.client.utils.player.PositionPacketUtils;
 import net.sushiclient.client.utils.render.hole.HoleUtils;
 import net.sushiclient.client.utils.world.BlockUtils;
 
@@ -39,7 +38,7 @@ public class StepModule extends BaseModule implements ModuleSuffix {
     private double motionX;
     private double motionZ;
     private double groundY;
-    private int packetCount;
+    private int threshold;
     private UpdateTimer packetTimer;
 
     public StepModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
@@ -59,6 +58,13 @@ public class StepModule extends BaseModule implements ModuleSuffix {
         packetCapacity = provider.get("packet_capacity", "Packet Capacity", null, IntRange.class, new IntRange(40, 100, 0, 1));
         packetLimit = provider.get("packet_limit", "Packet Limit", null, IntRange.class, new IntRange(22, 100, 0, 1));
         packetTimer = new UpdateTimer(true, 1000);
+        PositionPacketUtils.addListener(this, it -> {
+            threshold = MathHelper.clamp(threshold + 1, 0,
+                    packetCapacity.getValue().getCurrent() + packetLimit.getValue().getCurrent());
+            if (packetTimer.update()) {
+                threshold -= packetLimit.getValue().getCurrent();
+            }
+        });
     }
 
     @Override
@@ -82,7 +88,7 @@ public class StepModule extends BaseModule implements ModuleSuffix {
 
     @EventHandler(timing = EventTiming.POST)
     public void onPostPlayerMove(PlayerMoveEvent e) {
-        if (packetCount > packetCapacity.getValue().getCurrent()) return;
+        if (threshold > packetCapacity.getValue().getCurrent()) return;
         if (EntityUtils.isInsideBlock(getPlayer())) return;
         if (getPlayer().posY > groundY) return;
         if (getPlayer().fallDistance > 0.1) return;
@@ -131,19 +137,6 @@ public class StepModule extends BaseModule implements ModuleSuffix {
                 }
             }
         }
-    }
-
-    @EventHandler(timing = EventTiming.POST)
-    public void sendPacket(PacketSendEvent packet) {
-        if (packet.getPacket() instanceof CPacketPlayer) packetCount++;
-    }
-
-    @EventHandler(timing = EventTiming.POST)
-    public void onClientTick(ClientTickEvent e) {
-        if (packetTimer.update()) {
-            packetCount -= packetLimit.getValue().getCurrent();
-        }
-        if (packetCount < 0) packetCount = 0;
     }
 
     @Override
