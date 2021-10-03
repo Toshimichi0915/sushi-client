@@ -72,8 +72,8 @@ public class SpeedModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.PRE)
     public void onClientTick(ClientTickEvent e) {
-        if (forceSprint.getValue() &&
-                MovementUtils.getMoveInputs(getPlayer()).squareDistanceTo(Vec3d.ZERO) > 0.1) {
+        Vec3d input = MovementUtils.getMoveInputs(getPlayer());
+        if (forceSprint.getValue() && (input.x != 0 || input.z != 0)) {
             getPlayer().setSprinting(true);
         }
     }
