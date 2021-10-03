@@ -85,6 +85,9 @@ public class SpeedModule extends BaseModule {
             resetMotion();
             return;
         }
+        if (getPlayer().isInWater() ||
+                getPlayer().isInLava() ||
+                getPlayer().isOnLadder()) return;
 
         lastActive = true;
 
