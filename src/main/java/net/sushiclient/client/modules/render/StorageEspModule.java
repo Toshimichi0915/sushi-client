@@ -101,8 +101,12 @@ public class StorageEspModule extends BaseModule {
         } else if (entity instanceof TileEntityDispenser && dispenser) {
             return dispenserColor.getCurrentColor();
         } else if (entity instanceof TileEntityShulkerBox && shulkerBox) {
-            if (shulkerBoxCustomColor) shulkerBoxColor.getCurrentColor();
-            else return new Color(((TileEntityShulkerBox) entity).getColor().getColorValue());
+            if (shulkerBoxCustomColor) {
+                return shulkerBoxColor.getCurrentColor();
+            } else {
+                int value = ((TileEntityShulkerBox) entity).getColor().getColorValue();
+                return new Color((value & 0xFFFFFF) | 0x64000000, true);
+            }
         } else if (entity instanceof TileEntityFurnace && furnace) {
             return furnaceColor.getCurrentColor();
         } else if (entity instanceof TileEntityHopper && hopper) {
