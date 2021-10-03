@@ -104,7 +104,7 @@ public class HudComponent extends BasePanelComponent<HudElementComponent> {
         setHeight(GuiUtils.getHeight());
         super.onRelocate();
         HudElementComponent component = get(TickUtils.current() % size());
-        if (isOutOfScreen(component)) {
+        if (isOutOfScreen(component) && component.isVisible()) {
             component.setOrigin(Origin.TOP_LEFT);
             component.setAnchor(Anchor.TOP_LEFT);
             component.setWindowX(0);
