@@ -3,16 +3,16 @@ package net.sushiclient.client.task;
 public class FunctionalPipeTask<I, R> extends TaskAdapter<I, R> {
 
     private final PipeTask<I, R> delegate;
-    private final boolean instant;
+    private final boolean nullable;
 
-    public FunctionalPipeTask(boolean instant, PipeTask<I, R> delegate) {
+    public FunctionalPipeTask(boolean nullable, PipeTask<I, R> delegate) {
         this.delegate = delegate;
-        this.instant = instant;
+        this.nullable = nullable;
     }
 
     @Override
     public void tick() throws Exception {
         R r = delegate.tick(getInput());
-        if (r != null || instant) stop(r);
+        if (r != null || nullable) stop(r);
     }
 }
