@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CivBreakUtils {
 
-    private static CivBreakAttack find(EntityPlayer player, EntityPlayer target, BlockPos pos, double enemy, double self) {
+    private static CivBreakAttack find(EntityPlayer player, EntityPlayer target, BlockPos pos, double enemy, double self, double ratio) {
         BlockPos obsidianPos = pos.add(0, -1, 0);
         IBlockState floorState = player.world.getBlockState(obsidianPos);
         Block floorBlock = floorState.getBlock();
@@ -33,6 +33,7 @@ public class CivBreakUtils {
         if (!canInteract) return null;
         if (damage < enemy) return null;
         if (selfDamage > self) return null;
+        if (selfDamage / damage > ratio) return null;
         for (Entity crystal : player.world.loadedEntityList) {
             if (!(crystal instanceof EntityEnderCrystal)) continue;
             if (crystal.getPositionVector().squareDistanceTo(crystalPos) > 0.3) continue;
@@ -45,13 +46,13 @@ public class CivBreakUtils {
         return new CivBreakAttack(pos, obsidianPos, player, target, placed, damage, placed != null, obsidianPlaced);
     }
 
-    public static List<CivBreakAttack> find(EntityPlayer player, EntityPlayer target, double damage, double self) {
+    public static List<CivBreakAttack> find(EntityPlayer player, EntityPlayer target, double damage, double self, double ratio) {
         BlockPos origin = BlockUtils.toBlockPos(target.getPositionVector());
         ArrayList<CivBreakAttack> result = new ArrayList<>();
         for (int x = -1; x <= 1; x++) {
             for (int y = 2; y <= 4; y++) {
                 for (int z = -1; z <= 1; z++) {
-                    CivBreakAttack attack = find(player, target, new BlockPos(origin.getX() + x, origin.getY() + y, origin.getZ() + z), damage, self);
+                    CivBreakAttack attack = find(player, target, new BlockPos(origin.getX() + x, origin.getY() + y, origin.getZ() + z), damage, self, ratio);
                     if (attack != null) result.add(attack);
                 }
             }
@@ -59,10 +60,10 @@ public class CivBreakUtils {
         return result;
     }
 
-    public static List<CivBreakAttack> find(EntityPlayer player, double damage, double self) {
+    public static List<CivBreakAttack> find(EntityPlayer player, double damage, double self, double ratio) {
         ArrayList<CivBreakAttack> result = new ArrayList<>();
         for (EntityPlayer entity : EntityUtils.getNearbyPlayers(4)) {
-            result.addAll(find(player, entity, damage, self));
+            result.addAll(find(player, entity, damage, self, ratio));
         }
         return result;
     }

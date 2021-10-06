@@ -67,7 +67,7 @@ public class CivBreakHelperModule extends BaseModule {
         Module module = Sushi.getProfile().getModules().getModule(civBreakModule);
         if (!(module instanceof CivBreakModule)) return;
         CivBreakModule civBreak = (CivBreakModule) module;
-        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer(), civBreak.getEnemyDamage(), civBreak.getSelfDamage());
+        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer(), civBreak.getEnemyDamage(), civBreak.getSelfDamage(), civBreak.getDamageRatio());
         this.attack = null;
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);

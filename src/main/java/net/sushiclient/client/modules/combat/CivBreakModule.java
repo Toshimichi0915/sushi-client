@@ -11,6 +11,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.sushiclient.client.config.Configuration;
 import net.sushiclient.client.config.RootConfigurations;
+import net.sushiclient.client.config.data.DoubleRange;
 import net.sushiclient.client.config.data.IntRange;
 import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
@@ -38,6 +39,7 @@ public class CivBreakModule extends BaseModule {
     private final Configuration<Boolean> antiWeakness;
     private final Configuration<IntRange> damage;
     private final Configuration<IntRange> selfDamage;
+    private final Configuration<DoubleRange> damageRatio;
     private final UpdateTimer breakTimer;
     private BlockPos breakingBlock;
 
@@ -46,6 +48,7 @@ public class CivBreakModule extends BaseModule {
         antiWeakness = provider.get("anti_weakness", "Anti Weakness", null, Boolean.class, true);
         damage = provider.get("damage", "Damage", null, IntRange.class, new IntRange(40, 100, 10, 1));
         selfDamage = provider.get("self_damage", "Self Damage", null, IntRange.class, new IntRange(40, 100, 10, 1));
+        damageRatio = provider.get("damage_ratio", "Damage Ratio", null, DoubleRange.class, new DoubleRange(0.5, 1, 0, 0.05, 2));
         breakTimer = new UpdateTimer(false, 1);
     }
 
@@ -66,7 +69,7 @@ public class CivBreakModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onGameTick(GameTickEvent e) {
-        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer(), damage.getValue().getCurrent(), selfDamage.getValue().getCurrent());
+        List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer(), damage.getValue().getCurrent(), selfDamage.getValue().getCurrent(), damageRatio.getValue().getCurrent());
         if (attacks.isEmpty()) return;
         Collections.sort(attacks);
         CivBreakAttack attack = attacks.get(0);
@@ -125,6 +128,10 @@ public class CivBreakModule extends BaseModule {
 
     public int getSelfDamage() {
         return selfDamage.getValue().getCurrent();
+    }
+
+    public double getDamageRatio() {
+        return damageRatio.getValue().getCurrent();
     }
 
     public BlockPos getBreakingBlock() {
