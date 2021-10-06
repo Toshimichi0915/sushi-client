@@ -1,5 +1,7 @@
 package net.sushiclient.client.modules.combat;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.sushiclient.client.config.RootConfigurations;
@@ -28,6 +30,8 @@ public class CriticalsModule extends BaseModule {
     public void onPacketSend(PacketSendEvent e) {
         if (!(e.getPacket() instanceof CPacketUseEntity)) return;
         CPacketUseEntity packet = (CPacketUseEntity) e.getPacket();
+        Entity entity = packet.getEntityFromWorld(getWorld());
+        if (!(entity instanceof EntityLivingBase)) return;
         if (packet.getAction() != CPacketUseEntity.Action.ATTACK) return;
         sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY + 0.1, getPlayer().posZ, false));
         sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY, getPlayer().posZ, false));
