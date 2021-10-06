@@ -39,6 +39,7 @@ import net.sushiclient.client.utils.combat.DamageUtils;
 import net.sushiclient.client.utils.player.InventoryType;
 import net.sushiclient.client.utils.player.InventoryUtils;
 import net.sushiclient.client.utils.player.ItemSlot;
+import net.sushiclient.client.utils.player.RotateMode;
 import net.sushiclient.client.utils.render.RenderUtils;
 import net.sushiclient.client.utils.world.BlockUtils;
 
@@ -63,13 +64,14 @@ public class CrystalAuraModule extends BaseModule {
     private final Configuration<DoubleRange> damageRatio;
     private final Configuration<DoubleRange> maxSelfDamage;
     private final Configuration<DoubleRange> minSelfHp;
-    private final Configuration<Boolean> y255Attack;
 
     private final Configuration<ItemSwitchMode> switchMode;
     private final Configuration<Boolean> antiWeakness;
     private final Configuration<Boolean> silentSwitch;
 
+    private final Configuration<RotateMode> rotate;
     private final Configuration<Boolean> swing;
+    private final Configuration<Boolean> y255Attack;
 
     private final Configuration<DoubleRange> selfPingMultiplier;
     private final Configuration<Boolean> useInputs;
@@ -89,6 +91,9 @@ public class CrystalAuraModule extends BaseModule {
     private volatile CrystalAttack crystalAttack;
     private volatile CrystalAttack nearbyCrystalAttack;
     private volatile ItemSlot crystalSlot;
+
+    private Vec3d target;
+    private boolean rotateDone;
 
     public CrystalAuraModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -114,7 +119,6 @@ public class CrystalAuraModule extends BaseModule {
         damageRatio = damage.get("damage_ratio", "Damage Ratio", null, DoubleRange.class, new DoubleRange(0.5, 1, 0, 0.05, 2));
         maxSelfDamage = damage.get("max_self_damage", "Max Self Damage", null, DoubleRange.class, new DoubleRange(6, 20, 0, 0.2, 1));
         minSelfHp = damage.get("min_self_hp", "Min Self HP", null, DoubleRange.class, new DoubleRange(6, 20, 1, 0.1, 1));
-        y255Attack = damage.get("y_255_attack", "Y 255 Attack", null, Boolean.class, true);
 
         // Switch
         ConfigurationCategory switchCategory = provider.getCategory("switch", "Switch Settings", null);
@@ -124,7 +128,9 @@ public class CrystalAuraModule extends BaseModule {
 
         // Anti-Cheat
         ConfigurationCategory antiCheat = provider.getCategory("anti_cheat", "Anti Cheat", null);
-        swing = switchCategory.get("swing", "Swing", null, Boolean.class, true);
+        rotate = antiCheat.get("rotate", "Rotate", null, RotateMode.class, RotateMode.NCP);
+        swing = antiCheat.get("swing", "Swing", null, Boolean.class, true);
+        y255Attack = antiCheat.get("y_255_attack", "Y 255 Attack", null, Boolean.class, false);
 
         // Predict
         ConfigurationCategory predict = provider.getCategory("predict", "Predict Settings", null);
@@ -301,12 +307,14 @@ public class CrystalAuraModule extends BaseModule {
     }
 
     private void breakEnderCrystal(EnderCrystalInfo enderCrystal) {
-        InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> {
-            sendPacket(enderCrystal.newAttackPacket());
-            if (swing.getValue()) {
-                sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
-            }
-        });
+        rotate.getValue().rotate(enderCrystal.getPos().add(0, 0.5, 0), true, () -> {
+            InventoryUtils.antiWeakness(antiWeakness.getValue(), () -> {
+                sendPacket(enderCrystal.newAttackPacket());
+                if (swing.getValue()) {
+                    sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+                }
+            });
+        }, null);
     }
 
     private synchronized void breakCrystal() {
@@ -330,20 +338,24 @@ public class CrystalAuraModule extends BaseModule {
         EnderCrystalInfo colliding = getCollidingEnderCrystal(crystalAttack.info.getBox());
         if (colliding != null && breakTimer.update()) breakEnderCrystal(colliding);
         ItemSlot copy = crystalSlot;
-        InventoryUtils.silentSwitch(silentSwitch.getValue() && copy.getInventoryType() != InventoryType.OFFHAND,
-                copy.getIndex(), () -> {
-                    boolean offhand = copy.getInventoryType() == InventoryType.OFFHAND;
-                    if (swing.getValue()) {
-                        sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
-                    }
-                    if (y255Attack.getValue()) {
-                        sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
-                                EnumFacing.DOWN, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
-                    } else {
-                        sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
-                                EnumFacing.UP, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 1, 0.5F));
-                    }
-                });
+        Vec3d lookAt = crystalPos.add(0, -1, 0)
+                .add(0.5, y255Attack.getValue() ? 0 : 1, 0.5);
+        rotate.getValue().rotate(lookAt, true, () -> {
+            InventoryUtils.silentSwitch(silentSwitch.getValue() && copy.getInventoryType() != InventoryType.OFFHAND,
+                    copy.getIndex(), () -> {
+                        boolean offhand = copy.getInventoryType() == InventoryType.OFFHAND;
+                        if (swing.getValue()) {
+                            sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+                        }
+                        if (y255Attack.getValue()) {
+                            sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
+                                    EnumFacing.DOWN, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 0, 0.5F));
+                        } else {
+                            sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockUtils.toBlockPos(crystalPos).add(0, -1, 0),
+                                    EnumFacing.UP, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.5F, 1, 0.5F));
+                        }
+                    });
+        }, null);
     }
 
     @EventHandler(timing = EventTiming.POST)

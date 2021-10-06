@@ -9,7 +9,7 @@ public enum RotateMode implements Named, Rotate {
     VANILLA("Vanilla") {
         @Override
         public void rotate(float yaw, float pitch, boolean desync, PositionOperator operator, Runnable success, Runnable fail) {
-            success.run();
+            if (success != null) success.run();
         }
     },
 

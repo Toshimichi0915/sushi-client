@@ -61,8 +61,6 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
                 connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
             }
         };
-        float[] vec = BlockUtils.getLookVec(info);
-        if (vec == null) return;
-        RotateMode.NCP.rotate(vec[0], vec[1], true, task, null);
+        RotateMode.NCP.rotate(info, true, task, null);
     }
 }
