@@ -81,7 +81,11 @@ public class HoleEspModule extends BaseModule implements ModuleSuffix {
         maxY = minY + 1;
         maxZ = minZ + 1;
 
-        HashSet<HoleInfo> distinctHoles = new HashSet<>(target);
+        HashSet<HoleInfo> distinctHoles;
+
+        synchronized (target) {
+            distinctHoles = new HashSet<>(target);
+        }
 
         // search for holes
         target.clear();
