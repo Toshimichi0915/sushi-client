@@ -44,75 +44,86 @@ public class GsonModules implements Modules {
         this.conf = conf;
         this.categories = categories;
         this.gson = gson;
-        addModuleFactory("click_gui", ClickGuiModule::new, true);
-        addModuleFactory("no_render", NoRenderModule::new, true);
+        // Combat
+        addModuleFactory("anti_civ_break", AntiCivBreakModule::new, true);
+        addModuleFactory("anti_piston_aura", AntiPistonAuraModule::new, true);
+        addModuleFactory("anvil_miner", AnvilMinerModule::new, true);
+        addModuleFactory("auto_pull", AutoPullModule::new, true);
+        addModuleFactory("auto_totem", AutoTotemModule::new, true);
+        addModuleFactory("auto_trap", AutoTrapModule::new, true);
+        addModuleFactory("civ_break", CivBreakModule::new, true);
+        addModuleFactory("criticals", CriticalsModule::new, true);
+        addModuleFactory("crystal_aura", CrystalAuraModule::new, true);
+        addModuleFactory("death_bow", DeathBowModule::new, true);
+        addModuleFactory("hole_fill", HoleFillModule::new, true);
+        addModuleFactory("hole_miner", HoleMinerModule::new, true);
+        addModuleFactory("kill_aura", KillAuraModule::new, true);
+        addModuleFactory("offhand", OffhandModule::new, true);
+        addModuleFactory("piston_aura", PistonAuraModule::new, true);
+        addModuleFactory("surround", SurroundModule::new, true);
         addModuleFactory("velocity", VelocityModule::new, true);
-        addModuleFactory("hud", HudModule::new, true);
-        addModuleFactory("full_bright", FullBrightModule::new, true);
-        addModuleFactory("sprint", SprintModule::new, true);
-        addModuleFactory("packet_canceller", PacketCancellerModule::new, true);
+
+        // Movement
+        addModuleFactory("anchor", AnchorModule::new, true);
+        addModuleFactory("auto_walk", AutoWalkModule::new, true);
+        addModuleFactory("gui_move", GuiMoveModule::new, true);
+        addModuleFactory("no_slow", NoSlowModule::new, true);
+        addModuleFactory("packet_fly", PacketFlyModule::new, true);
         addModuleFactory("phase_fly", PhaseFlyModule::new, true);
         addModuleFactory("phase_walk", PhaseWalkModule::new, false);
-        addModuleFactory("timer", TimerModule::new, true);
-        addModuleFactory("anti_civ_break", AntiCivBreakModule::new, true);
-        addModuleFactory("no_swing", NoSwingModule::new, true);
-        addModuleFactory("lock_yaw", LockYawModule::new, true);
-        addModuleFactory("no_fall", NoFallModule::new, true);
-        addModuleFactory("surround", SurroundModule::new, true);
-        addModuleFactory("auto_totem", AutoTotemModule::new, true);
+        addModuleFactory("safe_walk", SafeWalkModule::new, true);
+        addModuleFactory("speed", SpeedModule::new, true);
+        addModuleFactory("sprint", SprintModule::new, true);
+        addModuleFactory("step", StepModule::new, true);
+
+        // Render
+        addModuleFactory("block_highlight", BlockHighlightModule::new, true);
+        addModuleFactory("civ_break_helper", CivBreakHelperModule::new, true);
+        addModuleFactory("full_bright", FullBrightModule::new, true);
+        addModuleFactory("hole_break_esp", HoleBreakEsp::new, true);
+        addModuleFactory("hole_esp", HoleEspModule::new, true);
+        addModuleFactory("hole_miner_helper", HoleMinerHelperModule::new, true);
+        addModuleFactory("name_tags", NameTagsModule::new, true);
+        addModuleFactory("no_render", NoRenderModule::new, true);
+        addModuleFactory("player_esp", PlayerEspModule::new, true);
+        addModuleFactory("search", SearchModule::new, true);
+        addModuleFactory("storage_esp", StorageEspModule::new, true);
+        addModuleFactory("tracers", TracersModule::new, true);
+
+        // Player
         addModuleFactory("anti_hunger", AntiHungerModule::new, true);
         addModuleFactory("auto_armor", AutoArmorModule::new, true);
-        addModuleFactory("scaffold", ScaffoldModule::new, true);
-        addModuleFactory("auto_walk", AutoWalkModule::new, true);
-        addModuleFactory("crystal_aura", CrystalAuraModule::new, true);
-        addModuleFactory("piston_aura", PistonAuraModule::new, true);
-        addModuleFactory("anti_error_kick", AntiErrorKickModule::new, true);
-        addModuleFactory("block_highlight", BlockHighlightModule::new, true);
-        addModuleFactory("storage_esp", StorageEspModule::new, true);
-        addModuleFactory("no_entity_trace", NoEntityTraceModule::new, true);
-        addModuleFactory("xray", XrayModule::new, true);
-        addModuleFactory("search", SearchModule::new, true);
-        addModuleFactory("anti_piston_aura", AntiPistonAuraModule::new, true);
-        addModuleFactory("civ_break", CivBreakModule::new, true);
-        addModuleFactory("civ_break_helper", CivBreakHelperModule::new, true);
-        addModuleFactory("name_tags", NameTagsModule::new, true);
-        addModuleFactory("tracers", TracersModule::new, true);
-        addModuleFactory("auto_tool", AutoToolModule::new, true);
-        addModuleFactory("hole_esp", HoleEspModule::new, true);
-        addModuleFactory("anchor", AnchorModule::new, true);
-        addModuleFactory("weather", WeatherModule::new, true);
-        addModuleFactory("no_slow", NoSlowModule::new, true);
-        addModuleFactory("auto_pull", AutoPullModule::new, true);
-        addModuleFactory("hole_miner", HoleMinerModule::new, true);
-        addModuleFactory("fake_player", FakePlayerModule::new, true);
-        addModuleFactory("hole_miner_helper", HoleMinerHelperModule::new, true);
-        addModuleFactory("step", StepModule::new, true);
-        addModuleFactory("freecam", FreecamModule::new, true);
-        addModuleFactory("kill_aura", KillAuraModule::new, true);
-        addModuleFactory("speed", SpeedModule::new, true);
-        addModuleFactory("world_time", WorldTimeModule::new, true);
-        addModuleFactory("criticals", CriticalsModule::new, true);
-        addModuleFactory("packet_fly", PacketFlyModule::new, true);
-        addModuleFactory("safe_walk", SafeWalkModule::new, true);
-        addModuleFactory("player_esp", PlayerEspModule::new, true);
-        addModuleFactory("speed_mine", SpeedMineModule::new, true);
-        addModuleFactory("anti_ghost_block", AntiGhostBlockModule::new, true);
-        addModuleFactory("gui_move", GuiMoveModule::new, true);
-        addModuleFactory("hole_break_esp", HoleBreakEsp::new, true);
-        addModuleFactory("offhand", OffhandModule::new, true);
-        addModuleFactory("refill", RefillModule::new, true);
-        addModuleFactory("fast_use", FastUseModule::new, true);
-        addModuleFactory("auto_trap", AutoTrapModule::new, true);
         addModuleFactory("auto_mend", AutoMendModule::new, true);
-        addModuleFactory("inventory_manager", InventoryManagerModule::new, true);
-        addModuleFactory("hole_fill", HoleFillModule::new, true);
+        addModuleFactory("auto_tool", AutoToolModule::new, true);
         addModuleFactory("blink", BlinkModule::new, true);
-        addModuleFactory("anvil_miner", AnvilMinerModule::new, true);
-        addModuleFactory("virtual_tp", VirtualTpModule::new, true);
-        addModuleFactory("rotation_view", RotationViewModule::new, true);
+        addModuleFactory("fast_use", FastUseModule::new, true);
+        addModuleFactory("freecam", FreecamModule::new, true);
+        addModuleFactory("inventory_manager", InventoryManagerModule::new, true);
+        addModuleFactory("lock_yaw", LockYawModule::new, true);
+        addModuleFactory("no_fall", NoFallModule::new, true);
+        addModuleFactory("no_swing", NoSwingModule::new, true);
+        addModuleFactory("packet_canceller", PacketCancellerModule::new, true);
+        addModuleFactory("refill", RefillModule::new, true);
         addModuleFactory("silent_close", SilentCloseModule::new, true);
+        addModuleFactory("timer", TimerModule::new, true);
+
+        // World
+        addModuleFactory("anti_ghost_block", AntiGhostBlockModule::new, true);
+        addModuleFactory("fake_player", FakePlayerModule::new, true);
+        addModuleFactory("no_entity_trace", NoEntityTraceModule::new, true);
+        addModuleFactory("scaffold", ScaffoldModule::new, true);
+        addModuleFactory("speed_mine", SpeedMineModule::new, true);
+        addModuleFactory("virtual_tp", VirtualTpModule::new, true);
+        addModuleFactory("weather", WeatherModule::new, true);
+        addModuleFactory("world_time", WorldTimeModule::new, true);
+        addModuleFactory("xray", XrayModule::new, true);
+
+        // Client
+        addModuleFactory("anti_error_kick", AntiErrorKickModule::new, true);
         addModuleFactory("chat_suffix", ChatSuffix::new, true);
-        addModuleFactory("death_bow", DeathBowModule::new, true);
+        addModuleFactory("click_gui", ClickGuiModule::new, true);
+        addModuleFactory("hud", HudModule::new, true);
+        addModuleFactory("rotation_view", RotationViewModule::new, true);
     }
 
     private void addModuleFactory(String id, ModuleConstructor constructor, boolean isDefault) {
