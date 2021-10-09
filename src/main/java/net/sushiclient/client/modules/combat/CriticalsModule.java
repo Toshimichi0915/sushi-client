@@ -38,7 +38,7 @@ public class CriticalsModule extends BaseModule {
         Entity entity = packet.getEntityFromWorld(getWorld());
         if (!(entity instanceof EntityLivingBase)) return;
         if (packet.getAction() != CPacketUseEntity.Action.ATTACK) return;
-        if (motionCheck.getValue() && getPlayer().motionY < 0) return;
+        if (motionCheck.getValue() && getPlayer().motionY < -0.1) return;
         sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY + 0.1, getPlayer().posZ, false));
         sendPacket(new CPacketPlayer.Position(getPlayer().posX, getPlayer().posY, getPlayer().posZ, false));
     }
