@@ -156,6 +156,9 @@ public class SushiMod {
     public void onWorldLoad(WorldLoadEvent e) {
         if (e.getClient() != null) return;
         try {
+            String profileName = Sushi.getProfiles().getName(Sushi.getProfile());
+            if (profileName != null) modConfig.setName(profileName);
+            modConfig.setTheme(Sushi.getDefaultTheme().getId());
             FileUtils.writeStringToFile(modConfigFile, gson.toJson(modConfig), StandardCharsets.UTF_8);
             for (Map.Entry<File, GsonRootConfigurations> entry : configs.entrySet()) {
                 try {

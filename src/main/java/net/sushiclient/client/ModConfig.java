@@ -15,4 +15,12 @@ class ModConfig {
     public String getTheme() {
         return theme;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
 }
