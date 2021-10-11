@@ -22,8 +22,8 @@ public class ArmorComponent extends BaseHudElementComponent {
 
     public ArmorComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
-        vertical = getConfiguration("vertical", "vertical", null, Boolean.class, true);
-        scale = getConfiguration("scale", "Scale", null, DoubleRange.class, new DoubleRange(1.5, 10, 1, 0.1, 1));
+        vertical = getConfiguration("vertical", "vertical", null, Boolean.class, false);
+        scale = getConfiguration("scale", "Scale", null, DoubleRange.class, new DoubleRange(1, 3, 0.7, 0.1, 1));
     }
 
     @Override

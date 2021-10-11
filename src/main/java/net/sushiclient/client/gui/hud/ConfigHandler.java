@@ -36,7 +36,7 @@ public class ConfigHandler implements HudElementComponentHandler {
         this.y = configurations.get("element." + id + ".y", name + " Y", "Y coordinate of " + name, Double.class, component.getY(), () -> false, false, 0);
         this.anchor = configurations.get("element." + id + ".anchor", name + " Anchor", "Anchor of " + name, Anchor.class, component.getAnchor(), () -> false, false, 0);
         this.origin = configurations.get("element." + id + ".origin", name + " Origin", "Origin of " + name, Origin.class, component.getOrigin(), () -> false, false, 0);
-        this.parent = configurations.get("element." + id + ".parent", name + " Parent", "Parent of " + name, String.class, "", () -> false, false, 0);
+        this.parent = configurations.get("element." + id + ".parent", name + " Parent", "Parent of " + name, String.class, getParentId(), () -> false, false, 0);
         this.active = configurations.get("element." + id + ".activity", name + " Activity", "Activity of " + name, Boolean.class, component.isActive(), () -> false, false, 0);
         xHandler = component::setX;
         yHandler = component::setY;
@@ -44,6 +44,12 @@ public class ConfigHandler implements HudElementComponentHandler {
         originHandler = component::setOrigin;
         parentHandler = this::setParent;
         activeHandler = this::setActive;
+    }
+
+    private String getParentId() {
+        Component parent = component.getParent();
+        if (!(parent instanceof HudElementComponent)) return "";
+        return ((HudElementComponent) parent).getId();
     }
 
     private void setParent(String parentId) {

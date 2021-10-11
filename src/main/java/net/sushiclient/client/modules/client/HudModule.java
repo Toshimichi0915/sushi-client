@@ -2,6 +2,7 @@ package net.sushiclient.client.modules.client;
 
 import net.sushiclient.client.Sushi;
 import net.sushiclient.client.config.Configuration;
+import net.sushiclient.client.config.ConfigurationsHandler;
 import net.sushiclient.client.config.RootConfigurations;
 import net.sushiclient.client.gui.Components;
 import net.sushiclient.client.gui.hud.HudComponent;
@@ -11,8 +12,8 @@ import net.sushiclient.client.modules.*;
 
 public class HudModule extends BaseModule {
     private final Theme fallbackTheme;
-    private final HudComponent hudComponent;
     private final Configuration<String> theme;
+    private HudComponent hudComponent;
 
     public HudModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -30,6 +31,15 @@ public class HudModule extends BaseModule {
                 }
             }
             Components.show(new HudEditComponent(theme, hudComponent), false, false);
+        });
+        provider.addHandler(new ConfigurationsHandler() {
+            @Override
+            public void reset() {
+                boolean enabled = isEnabled();
+                setEnabled(false);
+                hudComponent = newHudComponent(provider);
+                if (enabled) setEnabled(true);
+            }
         });
     }
 

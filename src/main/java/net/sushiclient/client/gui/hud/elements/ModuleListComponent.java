@@ -27,11 +27,11 @@ public class ModuleListComponent extends BaseHudElementComponent {
     public ModuleListComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
         backgroundColor = getConfiguration("background_color", "Background Color", null, EspColor.class, new EspColor(new Color(0, 0, 0, 100), false, true));
-        margin = getConfiguration("margin", "Margin", null, IntRange.class, new IntRange(1, 10, 0, 1));
+        margin = getConfiguration("margin", "Margin", null, IntRange.class, new IntRange(3, 10, 0, 1));
         paddingTop = getConfiguration("padding_top", "Padding Top", null, IntRange.class, new IntRange(1, 10, 0, 1));
         paddingBottom = getConfiguration("padding_bottom", "Padding Bottom", null, IntRange.class, new IntRange(1, 10, 0, 1));
-        paddingLeft = getConfiguration("padding_left", "Padding Left", null, IntRange.class, new IntRange(1, 10, 0, 1));
-        paddingRight = getConfiguration("padding_right", "Padding Right", null, IntRange.class, new IntRange(1, 10, 0, 1));
+        paddingLeft = getConfiguration("padding_left", "Padding Left", null, IntRange.class, new IntRange(2, 10, 0, 1));
+        paddingRight = getConfiguration("padding_right", "Padding Right", null, IntRange.class, new IntRange(2, 10, 0, 1));
     }
 
     @Override
