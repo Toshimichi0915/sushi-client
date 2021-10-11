@@ -27,7 +27,12 @@ public class SimpleModuleConfigComponent extends AnyPanelComponent {
                 Modules modules = Sushi.getProfile().getModules();
                 categoryComponent.add(new SimpleClickComponent(constants, "Clone this module", () -> {
                     String[] split = module.getId().split("_");
-                    String id = String.join("_", Arrays.copyOfRange(split, 0, split.length - 1));
+                    String id;
+                    if (split.length > 1) {
+                        id = String.join("_", Arrays.copyOfRange(split, 0, split.length - 1));
+                    } else {
+                        id = module.getId();
+                    }
                     int counter = 0;
                     String newId;
                     do {
