@@ -42,6 +42,7 @@ public class CivBreakModule extends BaseModule {
     private final Configuration<DoubleRange> damageRatio;
     private final UpdateTimer breakTimer;
     private BlockPos breakingBlock;
+    private boolean lastActive;
 
     public CivBreakModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
@@ -69,8 +70,10 @@ public class CivBreakModule extends BaseModule {
 
     @EventHandler(timing = EventTiming.POST)
     public void onGameTick(GameTickEvent e) {
+        lastActive = false;
         List<CivBreakAttack> attacks = CivBreakUtils.find(getPlayer(), damage.getValue().getCurrent(), selfDamage.getValue().getCurrent(), damageRatio.getValue().getCurrent());
         if (attacks.isEmpty()) return;
+        lastActive = true;
         Collections.sort(attacks);
         CivBreakAttack attack = attacks.get(0);
         if (attack.isCrystalPlaced() && !attack.isObsidianPlaced()) {
@@ -136,6 +139,10 @@ public class CivBreakModule extends BaseModule {
 
     public BlockPos getBreakingBlock() {
         return breakingBlock;
+    }
+
+    public boolean isLastActive() {
+        return lastActive;
     }
 
     @Override

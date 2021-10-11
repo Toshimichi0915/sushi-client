@@ -3,7 +3,6 @@ package net.sushiclient.client.utils.player;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
@@ -61,7 +60,6 @@ public class InventoryUtils {
 
     public static synchronized void silentSwitch(boolean b, int slot, Runnable r) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        PlayerControllerMP controller = Minecraft.getMinecraft().playerController;
         NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
         if (slot < 0 || slot >= 9) {
             r.run();

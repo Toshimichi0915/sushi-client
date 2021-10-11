@@ -34,7 +34,7 @@ public class PositionOperator {
     }
 
     public PositionOperator lookAt(Vec3d loc) {
-        PositionUtils.lookAt(loc, positionMask, this);
+        PositionUtils.lookAt(loc, this);
         return this;
     }
 

@@ -35,7 +35,6 @@ public class CivBreakHelperModule extends BaseModule {
     @Config(id = "color", name = "Color")
     public EspColor color = new EspColor(Color.RED, false, true);
 
-
     public CivBreakHelperModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         new ConfigInjector(provider).inject(this);

@@ -151,21 +151,21 @@ public class PositionUtils {
         move(x, y, z, yaw, pitch, onGround, mode, null);
     }
 
-    protected static void lookAt(Vec3d loc, PositionMask mode, PositionOperator operator) {
+    protected static void lookAt(Vec3d loc, PositionOperator operator) {
         float[] lookVec = BlockUtils.getLookVec(loc);
         if (lookVec != null) {
-            move(0, 0, 0, lookVec[0], lookVec[1], true, mode, operator);
+            move(0, 0, 0, lookVec[0], lookVec[1], true, PositionMask.LOOK, operator);
         }
     }
 
-    public static void lookAt(Vec3d loc, PositionMask mode) {
-        lookAt(loc, mode, null);
+    public static void lookAt(Vec3d loc) {
+        lookAt(loc, null);
     }
 
     protected static void lookAt(BlockPlaceInfo info, PositionOperator operator) {
         float[] lookVec = BlockUtils.getLookVec(info);
         if (lookVec != null) {
-            move(0, 0, 0, lookVec[0], lookVec[1], true, mode, operator);
+            move(0, 0, 0, lookVec[0], lookVec[1], true, PositionMask.LOOK, operator);
         }
     }
 
