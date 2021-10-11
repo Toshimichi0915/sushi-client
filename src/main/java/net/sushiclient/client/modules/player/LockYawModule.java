@@ -86,7 +86,7 @@ public class LockYawModule extends BaseModule {
 
         public EtaComponent(Configurations configurations, String id, String name) {
             super(configurations, id, name);
-            this.format = configurations.get("eta", "ETA", null, String.class, "{h} hours {m} min {s} sec (total: {tm} min");
+            this.format = getConfiguration("eta", "ETA", null, String.class, "{h} hours {m} min {s} sec (total: {tm} min");
         }
 
         @Override
