@@ -17,7 +17,7 @@ public class NetherComponent extends TextElementComponent {
     public NetherComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
         this.format = getConfiguration("format", "Format", null, String.class,
-                "nether: {x} {z}");
+                "Nether: {x} {z}");
     }
 
     @Override

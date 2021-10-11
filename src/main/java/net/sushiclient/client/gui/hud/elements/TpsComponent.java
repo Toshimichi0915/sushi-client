@@ -13,7 +13,7 @@ public class TpsComponent extends TextElementComponent {
 
     public TpsComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
-        this.format = getConfiguration("tps.format", "TPS Format", null, String.class, "{tps} TPS");
+        this.format = getConfiguration("tps.format", "TPS Format", null, String.class, "TPS: {tps}");
     }
 
     @Override

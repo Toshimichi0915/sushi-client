@@ -17,7 +17,7 @@ public class OverworldComponent extends TextElementComponent {
     public OverworldComponent(Configurations configurations, String id, String name) {
         super(configurations, id, name);
         this.format = getConfiguration("format", "Format", null, String.class,
-                "overworld: {x} {z}");
+                "Overworld: {x} {z}");
     }
 
     @Override
