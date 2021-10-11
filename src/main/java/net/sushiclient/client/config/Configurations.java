@@ -17,10 +17,10 @@ public interface Configurations {
     List<Configuration<?>> getAll();
 
     default void reset() {
-        getHandlers().forEach(ConfigurationsHandler::reset);
         for (Configuration<?> conf : getAll()) {
             conf.reset();
         }
+        getHandlers().forEach(ConfigurationsHandler::reset);
     }
 
     void addHandler(ConfigurationsHandler handler);

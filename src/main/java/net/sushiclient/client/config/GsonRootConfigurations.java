@@ -27,7 +27,7 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
     }
 
     public JsonObject save() {
-        getAll(true).forEach(it -> ((GsonConfiguration<?>) it).save());
+        getAll().forEach(it -> ((GsonConfiguration<?>) it).save());
         for (Map.Entry<String, Object> entry : objects.entrySet()) {
             setRawValue(root, entry.getKey(), entry.getValue(), true);
         }
@@ -100,6 +100,21 @@ public class GsonRootConfigurations extends GsonConfigurations implements RootCo
     @Override
     public List<ConfigurationCategory> getCategories() {
         return categories;
+    }
+
+    @Override
+    public List<Configuration<?>> getAll(boolean includeCategorized) {
+        if (!includeCategorized) return super.getAll();
+        ArrayList<Configuration<?>> result = new ArrayList<>(super.getAll());
+        for (ConfigurationCategory category : getCategories()) {
+            result.addAll(category.getAll());
+        }
+        return result;
+    }
+
+    @Override
+    public List<Configuration<?>> getAll() {
+        return getAll(true);
     }
 
     @Override

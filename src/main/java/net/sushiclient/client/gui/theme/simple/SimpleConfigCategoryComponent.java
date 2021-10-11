@@ -2,6 +2,7 @@ package net.sushiclient.client.gui.theme.simple;
 
 import net.sushiclient.client.config.Configuration;
 import net.sushiclient.client.config.Configurations;
+import net.sushiclient.client.config.RootConfigurations;
 import net.sushiclient.client.gui.AnyPanelComponent;
 import net.sushiclient.client.gui.Component;
 import net.sushiclient.client.gui.ConfigComponent;
@@ -12,6 +13,7 @@ import net.sushiclient.client.gui.theme.Theme;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SimpleConfigCategoryComponent extends AnyPanelComponent {
 
@@ -35,7 +37,13 @@ public class SimpleConfigCategoryComponent extends AnyPanelComponent {
     }
 
     private void update() {
-        for (Configuration<?> conf : configurations.getAll()) {
+        List<Configuration<?>> list;
+        if (configurations instanceof RootConfigurations) {
+            list = ((RootConfigurations) configurations).getAll(false);
+        } else {
+            list = configurations.getAll();
+        }
+        for (Configuration<?> conf : list) {
             if (!conf.isValid()) continue;
             if (contains(conf)) continue;
             ConfigComponent<?> component = theme.newConfigComponent(conf);
