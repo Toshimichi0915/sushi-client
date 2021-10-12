@@ -54,10 +54,10 @@ public class NameTagsModule extends BaseModule {
     @Config(id = "show_hp", name = "Show HP", when = "player")
     public Boolean showHealth = true;
 
-    @Config(id = "self", name = "Show self", when = "player")
+    @Config(id = "self", name = "Show Self", when = "player")
     public Boolean self = false;
 
-    @Config(id = "mob", name = "Show mobs")
+    @Config(id = "mob", name = "Show Mobs")
     public Boolean mob = false;
 
     @Config(id = "passive", name = "Show Passive Mobs", when = "mob")
@@ -105,6 +105,7 @@ public class NameTagsModule extends BaseModule {
             if (!(entity instanceof EntityLivingBase)) continue;
             EntityLivingBase entityLiving = (EntityLivingBase) entity;
             if (!EntityType.match(entityLiving, player, self, mob, passive, neutral, hostile)) continue;
+            if (entity == getClient().getRenderViewEntity()) continue;
 
             Vec2f head = RenderUtils.fromWorld(RenderUtils.getInterpolatedPos(entity).add(0, entity.height, 0));
             if (head == null) continue;
