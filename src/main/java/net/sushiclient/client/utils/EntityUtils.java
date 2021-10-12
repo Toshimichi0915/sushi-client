@@ -29,33 +29,30 @@ public class EntityUtils {
 
     private static final double WALK_SPEED = 0.0275;
 
-    public static boolean canInteract(Vec3d vec, Vec3d target, double reach, double wall, ReachType type) {
+    public static boolean canInteract(Vec3d vec, Vec3d target, Vec3d lookAt, double reach, double wall, ReachType type) {
         // vanilla interact check
         double vanillaReach = 6;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         WorldClient world = Minecraft.getMinecraft().world;
         if (player == null) return false;
-        RayTraceResult result = world.rayTraceBlocks(vec, target, false, true, false);
+        RayTraceResult result = world.rayTraceBlocks(vec, lookAt, false, true, false);
         if (result != null) {
             vanillaReach = 3;
             reach = wall;
         }
-        Vec3d floor = player.getPositionVector()
-                .add(0, player.getEyeHeight(), 0)
-                .subtract(vec)
-                .add(player.getPositionVector());
+        Vec3d floor = vec.subtract(0, player.getEyeHeight(), 0);
         if (floor.squareDistanceTo(target) > vanillaReach * vanillaReach) return false;
 
         // anti-cheat interact check
         if (type == ReachType.LEGIT &&
-                vec.squareDistanceTo(target) > reach * reach) {
+                vec.squareDistanceTo(lookAt) > reach * reach) {
             return false;
         }
         return true;
     }
 
-    public static boolean canInteract(Vec3d vec, Vec3d target, double reach, double wall) {
-        return canInteract(vec, target, reach, wall, ReachType.VANILLA);
+    public static boolean canInteract(Vec3d vec, Vec3d target, Vec3d lookAt, double reach, double wall) {
+        return canInteract(vec, target, lookAt, reach, wall, ReachType.VANILLA);
     }
 
     public static boolean isInsideBlock(EntityPlayer player) {
@@ -69,7 +66,8 @@ public class EntityUtils {
     public static boolean canInteract(Vec3d target, double reach, double wall) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) return false;
-        return canInteract(player.getPositionVector().add(0, player.getEyeHeight(), 0), target, reach, wall);
+        return canInteract(player.getPositionVector().add(0, player.getEyeHeight(), 0), target,
+                target, reach, wall);
     }
 
     public static Vec3d getPingOffset(EntityPlayer player, boolean useInputs, boolean constantSpeed, double selfPingMultiplier) {
