@@ -265,8 +265,10 @@ public class CrystalAuraModule extends BaseModule {
                     if (block != Blocks.BEDROCK && block != Blocks.OBSIDIAN) continue;
 
                     // check distance
-                    if (!EntityUtils.canInteract(vec.add(0, 1.7, 0), crystalRange.getValue().getCurrent(), wallRange.getValue().getCurrent()))
+                    if (!BlockUtils.canInteract(pos) || !EntityUtils.canInteract(vec.add(0, 1.7, 0),
+                            crystalRange.getValue().getCurrent(), wallRange.getValue().getCurrent())) {
                         continue;
+                    }
 
                     // check collisions
                     pos = pos.add(0, 1, 0);
