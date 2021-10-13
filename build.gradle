@@ -36,9 +36,6 @@ configurations {
 
 repositories {
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-    maven { url = 'https://impactdevelopment.github.io/maven/' }
-    maven { url = 'https://jitpack.io' }
-    mavenLocal()
     mavenCentral()
 }
 
