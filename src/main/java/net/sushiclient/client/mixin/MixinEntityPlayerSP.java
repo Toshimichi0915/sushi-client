@@ -10,7 +10,6 @@ import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.player.*;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -18,9 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityPlayerSP.class)
 public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
-
-    @Shadow(aliases = "updateAutoJump(FF)V")
-    protected abstract void updateAutoJump(float a, float b);
 
     public MixinEntityPlayerSP(World worldIn, GameProfile playerProfile) {
         super(worldIn, playerProfile);
@@ -37,7 +33,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
                 double d0 = posX;
                 double d1 = posZ;
                 super.move(pre.getType(), pre.getX(), pre.getY(), pre.getZ());
-                updateAutoJump((float) (posX - d0), (float) (posZ - d1));
+                ((AccessorEntityPlayerSP) this).invokeUpdateAutoJump((float) (posX - d0), (float) (posZ - d1));
             }
             return;
         }
