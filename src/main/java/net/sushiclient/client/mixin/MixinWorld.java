@@ -3,7 +3,6 @@ package net.sushiclient.client.mixin;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
 import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.client.LightUpdateEvent;
@@ -11,7 +10,6 @@ import net.sushiclient.client.events.world.RainStrengthGetEvent;
 import net.sushiclient.client.events.world.ThunderStrengthGetEvent;
 import net.sushiclient.client.events.world.WorldTimeGetEvent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -19,12 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(World.class)
 public class MixinWorld {
 
-    @Shadow(aliases = "provider")
-    private WorldProvider provider;
-
     @Inject(at = @At("HEAD"), method = "getWorldTime", cancellable = true)
     public void getWorldTime(CallbackInfoReturnable<Long> cir) {
-        WorldTimeGetEvent event = new WorldTimeGetEvent(EventTiming.PRE, provider.getWorldTime());
+        WorldTimeGetEvent event = new WorldTimeGetEvent(EventTiming.PRE, ((World) (Object) this).provider.getWorldTime());
         EventHandlers.callEvent(event);
         cir.setReturnValue(event.getWorldTime());
         cir.cancel();
