@@ -54,13 +54,12 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
         } while (!BlockUtils.canPlace(world, info, option));
 
         BlockPlaceInfo fi = info;
-        Runnable task = () -> {
+        RotateMode.NCP.rotate(info, true, () -> {
             NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
             BlockUtils.place(fi, packet);
             if (swing && connection != null) {
                 connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
             }
-        };
-        RotateMode.NCP.rotate(info, true, task, null);
+        }, null);
     }
 }
