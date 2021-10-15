@@ -21,20 +21,20 @@ abstract public class MixinEntityPlayer extends EntityLivingBase {
     }
 
     @Inject(at = @At("HEAD"), method = "onUpdate", cancellable = true)
-    public void onPrePlayerUpdate(CallbackInfo ci) {
+    public void preOnUpdate(CallbackInfo ci) {
         PlayerTickEvent event = new PlayerTickEvent(EventTiming.PRE);
         EventHandlers.callEvent(event);
         if (event.isCancelled()) ci.cancel();
     }
 
     @Inject(at = @At("TAIL"), method = "onUpdate")
-    public void onPostPlayerUpdate(CallbackInfo ci) {
+    public void postOnUpdate(CallbackInfo ci) {
         PlayerTickEvent event = new PlayerTickEvent(EventTiming.POST);
         EventHandlers.callEvent(event);
     }
 
     @Inject(at = @At("HEAD"), method = "travel", cancellable = true)
-    public void onPreTravel(float strafe, float vertical, float forward, CallbackInfo ci) {
+    public void preTravel(float strafe, float vertical, float forward, CallbackInfo ci) {
         if (!((Object) this instanceof EntityPlayerSP)) return;
         PlayerTravelEvent pre = new PlayerTravelEvent(EventTiming.PRE, strafe, vertical, forward);
         EventHandlers.callEvent(pre);
@@ -42,7 +42,7 @@ abstract public class MixinEntityPlayer extends EntityLivingBase {
     }
 
     @Inject(at = @At("TAIL"), method = "travel")
-    public void onPostTravel(float strafe, float vertical, float forward, CallbackInfo ci) {
+    public void postTravel(float strafe, float vertical, float forward, CallbackInfo ci) {
         if (!((Object) this instanceof EntityPlayerSP)) return;
         EventHandlers.callEvent(new PlayerTravelEvent(EventTiming.POST, strafe, vertical, forward));
     }

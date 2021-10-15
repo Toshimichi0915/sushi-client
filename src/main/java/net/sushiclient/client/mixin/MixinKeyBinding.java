@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 abstract public class MixinKeyBinding {
 
     @Inject(at = @At("HEAD"), method = "isKeyDown", cancellable = true)
-    public void iskeyDown(CallbackInfoReturnable<Boolean> cir) {
+    public void isKeyDown(CallbackInfoReturnable<Boolean> cir) {
         KeyBinding k = (KeyBinding) (Object) this;
         boolean pressed = ((AccessorKeyBinding) this).isPressed();
         boolean original = pressed && k.getKeyConflictContext().isActive() && k.getKeyModifier().isActive(k.getKeyConflictContext());

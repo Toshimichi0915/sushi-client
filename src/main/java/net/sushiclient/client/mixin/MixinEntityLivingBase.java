@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinEntityLivingBase {
 
     @Inject(at = @At("HEAD"), method = "onLivingUpdate", cancellable = true)
-    public void onPreLivingUpdate(CallbackInfo ci) {
+    public void preOnLivingUpdate(CallbackInfo ci) {
         if (!((Object) this instanceof EntityLivingBase)) return;
         PlayerUpdateEvent event = new PlayerUpdateEvent(EventTiming.PRE);
         EventHandlers.callEvent(event);
@@ -21,7 +21,7 @@ public class MixinEntityLivingBase {
     }
 
     @Inject(at = @At("TAIL"), method = "onLivingUpdate")
-    public void onPostLivingUpdate(CallbackInfo ci) {
+    public void postOnLivingUpdate(CallbackInfo ci) {
         if (!((Object) this instanceof EntityLivingBase)) return;
         EventHandlers.callEvent(new PlayerUpdateEvent(EventTiming.POST));
     }

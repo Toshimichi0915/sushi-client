@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinEntity {
 
     @Inject(at = @At("HEAD"), method = "applyEntityCollision", cancellable = true)
-    public void onPrePush(Entity entityIn, CallbackInfo ci) {
+    public void preApplyEntityCollision(Entity entityIn, CallbackInfo ci) {
         if (!((Object) this instanceof EntityPlayerSP)) return;
         PlayerPushEvent event = new PlayerPushEvent(EventTiming.PRE, entityIn);
         EventHandlers.callEvent(event);
@@ -24,14 +24,14 @@ public class MixinEntity {
 
 
     @Inject(at = @At("TAIL"), method = "applyEntityCollision")
-    public void onPostPush(Entity entityIn, CallbackInfo ci) {
+    public void postApplyEntityCollision(Entity entityIn, CallbackInfo ci) {
         if (!((Object) this instanceof EntityPlayerSP)) return;
         PlayerPushEvent event = new PlayerPushEvent(EventTiming.POST, entityIn);
         EventHandlers.callEvent(event);
     }
 
     @Inject(at = @At("HEAD"), method = "turn", cancellable = true)
-    public void onPreTurn(float yaw, float pitch, CallbackInfo ci) {
+    public void preTurn(float yaw, float pitch, CallbackInfo ci) {
         if (!((Object) this instanceof EntityPlayerSP)) return;
         PlayerTurnEvent event = new PlayerTurnEvent(EventTiming.PRE, yaw, pitch);
         EventHandlers.callEvent(event);
@@ -39,7 +39,7 @@ public class MixinEntity {
     }
 
     @Inject(at = @At("TAIL"), method = "turn")
-    public void onPostTurn(float yaw, float pitch, CallbackInfo ci) {
+    public void postTurn(float yaw, float pitch, CallbackInfo ci) {
         if (!((Object) this instanceof EntityPlayerSP)) return;
         PlayerTurnEvent event = new PlayerTurnEvent(EventTiming.POST, yaw, pitch);
         EventHandlers.callEvent(event);

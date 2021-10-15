@@ -23,7 +23,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     @Inject(method = "move", at = @At("HEAD"), cancellable = true)
-    public void onMove(MoverType type, double x, double y, double z, CallbackInfo ci) {
+    public void move(MoverType type, double x, double y, double z, CallbackInfo ci) {
         PlayerMoveEvent pre = new PlayerMoveEvent(EventTiming.PRE, type, x, y, z);
         EventHandlers.callEvent(pre);
         boolean changed = pre.getType() != type || pre.getX() != x || pre.getY() != y || pre.getZ() != z;
@@ -42,7 +42,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     @Inject(at = @At("HEAD"), method = "onUpdateWalkingPlayer", cancellable = true)
-    public void onPreUpdateWalkingPlayer(CallbackInfo ci) {
+    public void preOnUpdateWalkingPlayer(CallbackInfo ci) {
         PlayerPacketEvent event = new PlayerPacketEvent(EventTiming.PRE);
         EventHandlers.callEvent(event);
         if (event.isCancelled())
@@ -50,13 +50,13 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     @Inject(at = @At("TAIL"), method = "onUpdateWalkingPlayer")
-    public void onPostUpdateWalkingPlayer(CallbackInfo ci) {
+    public void postOnUpdateWalkingPlayer(CallbackInfo ci) {
         PlayerPacketEvent event = new PlayerPacketEvent(EventTiming.POST);
         EventHandlers.callEvent(event);
     }
 
     @Inject(at = @At("HEAD"), method = "pushOutOfBlocks", cancellable = true)
-    public void onPushOutBlocks(double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {
+    public void pushOutBlocks(double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {
         PlayerPushOutOfBlocksEvent e = new PlayerPushOutOfBlocksEvent(x, y, z);
         EventHandlers.callEvent(e);
         if (e.isCancelled()) {
@@ -66,7 +66,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     @Inject(at = @At("HEAD"), method = "isCurrentViewEntity", cancellable = true)
-    public void onIsCurrentViewEntity(CallbackInfoReturnable<Boolean> cir) {
+    public void isCurrentViewEntity(CallbackInfoReturnable<Boolean> cir) {
         boolean currentViewEntity = Minecraft.getMinecraft().getRenderViewEntity() == this;
         CurrentViewEntityCheckEvent event = new CurrentViewEntityCheckEvent(EventTiming.PRE, currentViewEntity);
         EventHandlers.callEvent(event);
@@ -75,7 +75,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     @Inject(at = @At("HEAD"), method = "isUser", cancellable = true)
-    public void onIsUser(CallbackInfoReturnable<Boolean> cir) {
+    public void isUser(CallbackInfoReturnable<Boolean> cir) {
         UserCheckEvent event = new UserCheckEvent(EventTiming.PRE, true);
         EventHandlers.callEvent(event);
         cir.setReturnValue(event.isUser());

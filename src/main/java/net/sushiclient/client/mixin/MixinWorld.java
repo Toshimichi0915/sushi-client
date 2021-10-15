@@ -26,7 +26,7 @@ public class MixinWorld {
     }
 
     @Inject(at = @At("HEAD"), method = "checkLightFor", cancellable = true)
-    public void onPreCheckLightFor(EnumSkyBlock lightType, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    public void preCheckLightFor(EnumSkyBlock lightType, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         LightUpdateEvent event = new LightUpdateEvent(EventTiming.PRE, lightType, pos);
         EventHandlers.callEvent(event);
         if (event.isCancelled()) {
@@ -36,20 +36,20 @@ public class MixinWorld {
     }
 
     @Inject(at = @At("TAIL"), method = "checkLightFor")
-    public void onPostCheckLightFor(EnumSkyBlock lightType, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    public void postCheckLightFor(EnumSkyBlock lightType, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         LightUpdateEvent event = new LightUpdateEvent(EventTiming.POST, lightType, pos);
         EventHandlers.callEvent(event);
     }
 
     @Inject(method = "getThunderStrength", at = @At("RETURN"), cancellable = true)
-    private void getThunderStrengthHead(float delta, CallbackInfoReturnable<Float> cir) {
+    private void getThunderStrength(float delta, CallbackInfoReturnable<Float> cir) {
         ThunderStrengthGetEvent event = new ThunderStrengthGetEvent(EventTiming.PRE, delta, cir.getReturnValueF());
         EventHandlers.callEvent(event);
         cir.setReturnValue(event.getValue());
     }
 
     @Inject(method = "getRainStrength", at = @At("RETURN"), cancellable = true)
-    private void getRainStrengthHead(float delta, CallbackInfoReturnable<Float> cir) {
+    private void getRainStrength(float delta, CallbackInfoReturnable<Float> cir) {
         RainStrengthGetEvent event = new RainStrengthGetEvent(EventTiming.PRE, delta, cir.getReturnValueF());
         EventHandlers.callEvent(event);
         cir.setReturnValue(event.getValue());

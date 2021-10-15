@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinMovementInputFromOptions {
 
     @Inject(at = @At("HEAD"), method = "updatePlayerMoveState", cancellable = true)
-    public void onPreUpdatePlayerMoveState(CallbackInfo ci) {
+    public void preUpdatePlayerMoveState(CallbackInfo ci) {
         InputUpdateEvent event = new InputUpdateEvent(EventTiming.PRE);
         EventHandlers.callEvent(event);
         if (event.isCancelled()) ci.cancel();
     }
 
     @Inject(at = @At("TAIL"), method = "updatePlayerMoveState")
-    public void onPostUpdatePlayerMoveState(CallbackInfo ci) {
+    public void postUpdatePlayerMoveState(CallbackInfo ci) {
         EventHandlers.callEvent(new InputUpdateEvent(EventTiming.POST));
     }
 }

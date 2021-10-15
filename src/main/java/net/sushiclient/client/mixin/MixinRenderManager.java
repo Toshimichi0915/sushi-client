@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinRenderManager {
 
     @Inject(at = @At("HEAD"), method = "renderEntity", cancellable = true)
-    public void onPreRenderEntity(Entity entityIn, double x, double y, double z, float yaw, float partialTicks, boolean debug, CallbackInfo ci) {
+    public void preRenderEntity(Entity entityIn, double x, double y, double z, float yaw, float partialTicks, boolean debug, CallbackInfo ci) {
         if (entityIn == null) return;
         EntityRenderEvent event = new EntityRenderEvent(EventTiming.PRE, !(entityIn instanceof EntityLivingBase),
                 entityIn, x, y, z, yaw, partialTicks, debug);
@@ -24,7 +24,7 @@ public class MixinRenderManager {
     }
 
     @Inject(at = @At("TAIL"), method = "renderEntity")
-    public void onPostRenderEntity(Entity entityIn, double x, double y, double z, float yaw, float partialTicks, boolean debug, CallbackInfo ci) {
+    public void postRenderEntity(Entity entityIn, double x, double y, double z, float yaw, float partialTicks, boolean debug, CallbackInfo ci) {
         if (entityIn == null) return;
         EntityRenderEvent event = new EntityRenderEvent(EventTiming.POST, !(entityIn instanceof EntityLivingBase),
                 entityIn, x, y, z, yaw, partialTicks, debug);

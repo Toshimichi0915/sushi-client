@@ -29,44 +29,46 @@ public class MixinMinecraft {
     }
 
     @Inject(at = @At("HEAD"), method = "setIngameFocus", cancellable = true)
-    public void onPreFocus(CallbackInfo info) {
+    public void preSetIngameFocus(CallbackInfo info) {
         if (callGameFocusEvent(EventTiming.PRE, true)) info.cancel();
     }
 
     @Inject(at = @At("HEAD"), method = "setIngameNotInFocus", cancellable = true)
-    public void onPreNotInFocus(CallbackInfo info) {
+    public void preSetIngameNotInFocus(CallbackInfo info) {
         if (callGameFocusEvent(EventTiming.PRE, false)) info.cancel();
     }
 
     @Inject(at = @At("TAIL"), method = "setIngameFocus")
-    public void onPostFocus(CallbackInfo info) {
+    public void postSetIngameFocus(CallbackInfo info) {
         callGameFocusEvent(EventTiming.POST, true);
     }
 
     @Inject(at = @At("TAIL"), method = "setIngameNotInFocus")
-    public void onPostNotInFocus(CallbackInfo info) {
+    public void postSetIngameNotInFocus(CallbackInfo info) {
         callGameFocusEvent(EventTiming.POST, false);
     }
 
     @Inject(at = @At("HEAD"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V")
-    public void onPreLoadWorld(WorldClient client, String loadingMessage, CallbackInfo ci) {
+    public void preLoadWorld(WorldClient client, String loadingMessage, CallbackInfo ci) {
         EventHandlers.callEvent(new WorldLoadEvent(EventTiming.PRE, client));
-    }
-
-    @Inject(at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Timer;updateTimer()V"), method = "runGameLoop")
-    public void updateTimer(CallbackInfo ci) {
-        GameTickEvent pre = new GameTickEvent(EventTiming.PRE);
-        EventHandlers.callEvent(pre);
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;updateDisplay()V"), method = "runGameLoop")
     public void updateDisplay(CallbackInfo ci) {
-        GameTickEvent post = new GameTickEvent(EventTiming.POST);
+        Minecraft.getMinecraft().profiler.startSection("sushiClientGameTick");
+        GameTickEvent post = new GameTickEvent(EventTiming.PRE);
         EventHandlers.callEvent(post);
     }
 
+    @Inject(at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Timer;updateTimer()V"), method = "runGameLoop")
+    public void updateTimer(CallbackInfo ci) {
+        GameTickEvent pre = new GameTickEvent(EventTiming.POST);
+        EventHandlers.callEvent(pre);
+        Minecraft.getMinecraft().profiler.endSection();
+    }
+
     @Inject(at = @At("TAIL"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V")
-    public void onPostLoadWorld(WorldClient client, String loadingMessage, CallbackInfo info) {
+    public void postLoadWorld(WorldClient client, String loadingMessage, CallbackInfo info) {
         EventHandlers.callEvent(new WorldLoadEvent(EventTiming.POST, client));
     }
 
@@ -92,7 +94,7 @@ public class MixinMinecraft {
 
 
     @Inject(at = @At("TAIL"), method = "displayGuiScreen")
-    public void onPostDisplayGuiScreen(GuiScreen guiScreenIn, CallbackInfo ci) {
+    public void displayGuiScreen(GuiScreen guiScreenIn, CallbackInfo ci) {
         GuiScreenDisplayEvent event = new GuiScreenDisplayEvent(guiScreenIn, EventTiming.POST);
         EventHandlers.callEvent(event);
     }

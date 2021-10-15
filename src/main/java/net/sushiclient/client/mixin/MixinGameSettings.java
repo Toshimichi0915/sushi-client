@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinGameSettings {
 
     @Inject(at = @At("HEAD"), method = "saveOptions", cancellable = true)
-    public void onPreSaveOptions(CallbackInfo ci) {
+    public void preSaveOptions(CallbackInfo ci) {
         GameSettingsSaveEvent event = new GameSettingsSaveEvent(EventTiming.PRE);
         EventHandlers.callEvent(event);
         if (event.isCancelled()) ci.cancel();
     }
 
     @Inject(at = @At("TAIL"), method = "saveOptions")
-    public void onPostSaveOptions(CallbackInfo ci) {
+    public void postSaveOptions(CallbackInfo ci) {
         EventHandlers.callEvent(new GameSettingsSaveEvent(EventTiming.POST));
     }
 }
