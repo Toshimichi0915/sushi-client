@@ -1,10 +1,9 @@
-package net.sushiclient.client.utils;
+package net.sushiclient.client.utils.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.sushiclient.client.config.data.EspColor;
-import net.sushiclient.client.utils.render.TextPreview;
 import org.lwjgl.opengl.GL11;
 
 public class VanillaTextPreview implements TextPreview {

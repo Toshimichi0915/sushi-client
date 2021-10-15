@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.sushiclient.client.config.data.EspColor;
 import net.sushiclient.client.gui.Component;
-import net.sushiclient.client.utils.VanillaTextPreview;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
