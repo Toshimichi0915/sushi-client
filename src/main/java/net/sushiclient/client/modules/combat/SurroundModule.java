@@ -30,6 +30,7 @@ import java.util.*;
 
 public class SurroundModule extends BaseModule {
 
+    private final Configuration<RotateMode> rotateMode;
     private final Configuration<Boolean> pull;
     private final Configuration<Boolean> disableAfter;
     private final Configuration<Boolean> disableOnJump;
@@ -40,6 +41,7 @@ public class SurroundModule extends BaseModule {
 
     public SurroundModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        rotateMode = provider.get("rotate_mode", "Rotate Mode", null, RotateMode.class, RotateMode.NCP);
         pull = provider.get("pull", "Pull", null, Boolean.class, true);
         disableAfter = provider.get("disable_after", "Disable After", null, Boolean.class, false);
         disableOnJump = provider.get("disable_on_jump", "Disable On Jump", null, Boolean.class, false);
@@ -98,7 +100,7 @@ public class SurroundModule extends BaseModule {
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
                 .supply(placeList)
-                .then(new BlockPlaceTask(true, true, packetPlace.getValue(), true))
+                .then(new BlockPlaceTask(rotateMode.getValue(), true, packetPlace.getValue(), true))
                 .last(() -> running = false)
                 .execute();
     }

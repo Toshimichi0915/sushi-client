@@ -22,6 +22,7 @@ import net.sushiclient.client.task.tasks.ItemSwitchTask;
 import net.sushiclient.client.utils.EntityUtils;
 import net.sushiclient.client.utils.player.PositionMask;
 import net.sushiclient.client.utils.player.PositionUtils;
+import net.sushiclient.client.utils.player.RotateMode;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockUtils;
 
@@ -30,6 +31,9 @@ import java.util.*;
 public class AutoPullModule extends BaseModule {
 
     private final WeakHashMap<EntityPlayer, Integer> pulledPlayers = new WeakHashMap<>();
+
+    @Config(id = "rotate_mode", name = "Rotate Mode")
+    public RotateMode rotateMode = RotateMode.NCP;
 
     @Config(id = "anti_hole", name = "Anti Hole")
     public Boolean antiHole = true;
@@ -132,12 +136,12 @@ public class AutoPullModule extends BaseModule {
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
                 .supply(Collections.singletonList(pistonPlace))
-                .then(new BlockPlaceTask(false, false))
+                .then(new BlockPlaceTask(rotateMode, true, false, true))
                 .supply(Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
                 .supply(Collections.singletonList(redstonePlace))
-                .then(new BlockPlaceTask(false, false))
+                .then(new BlockPlaceTask(rotateMode, true, false, true))
                 .execute();
         pulledPlayers.put(target, 20);
     }

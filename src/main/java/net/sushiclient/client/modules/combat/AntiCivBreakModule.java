@@ -59,7 +59,7 @@ public class AntiCivBreakModule extends BaseModule {
         InventoryUtils.silentSwitch(silentSwitch, obsidian.getIndex(), () -> {
             TaskExecutor.newTaskChain()
                     .supply(Collections.singletonList(info))
-                    .then(new BlockPlaceTask(false, true, true, true, PlaceOptions.IGNORE_ENTITY))
+                    .then(new BlockPlaceTask(RotateMode.NCP, true, false, true, PlaceOptions.IGNORE_ENTITY))
                     .execute();
         });
     }

@@ -5,6 +5,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.sushiclient.client.config.Configuration;
 import net.sushiclient.client.config.RootConfigurations;
 import net.sushiclient.client.events.EventHandler;
 import net.sushiclient.client.events.EventHandlers;
@@ -15,6 +16,7 @@ import net.sushiclient.client.task.forge.TaskExecutor;
 import net.sushiclient.client.task.tasks.BlockPlaceTask;
 import net.sushiclient.client.task.tasks.ItemSwitchTask;
 import net.sushiclient.client.utils.EntityUtils;
+import net.sushiclient.client.utils.player.RotateMode;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockPlaceUtils;
 import net.sushiclient.client.utils.world.BlockUtils;
@@ -24,10 +26,12 @@ import java.util.List;
 
 public class AutoTrapModule extends BaseModule {
 
+    private final Configuration<RotateMode> rotateMode;
     private boolean running;
 
     public AutoTrapModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
+        rotateMode = provider.get("rotate_mode", "Rotate Mode", null, RotateMode.class, RotateMode.NCP);
     }
 
     @Override
@@ -76,7 +80,7 @@ public class AutoTrapModule extends BaseModule {
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
                 .supply(target)
-                .then(new BlockPlaceTask(true, true))
+                .then(new BlockPlaceTask(rotateMode.getValue(), true, false, true))
                 .last(() -> running = false)
                 .execute();
     }

@@ -41,6 +41,7 @@ public class PistonAuraModule extends BaseModule {
     private final Configuration<IntRange> delay3;
     private final Configuration<IntRange> delay4;
     private final Configuration<IntRange> delay5;
+    private final Configuration<RotateMode> rotateMode;
     private final Configuration<IntRange> maxObsidian;
     private final Configuration<IntRange> recalculationDelay;
     private final Configuration<IntRange> obsidianDelay;
@@ -68,6 +69,7 @@ public class PistonAuraModule extends BaseModule {
         delay5 = delay.get("delay_5", "Obsidian Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
 
         ConfigurationCategory other = provider.getCategory("other", "Other Settings", null);
+        rotateMode = other.get("rotate_mode", "Rotate Mode", null, RotateMode.class, RotateMode.NCP);
         maxObsidian = other.get("max_obsidian", "Max Obsidian", null, IntRange.class, new IntRange(3, 5, 0, 1));
         recalculationDelay = other.get("recalculation_delay", "Recalculation Delay", null, IntRange.class, new IntRange(1, 40, 0, 1));
         obsidianDelay = other.get("obsidian_delay", "Obsidian Delay", null, IntRange.class, new IntRange(20, 100, 1, 1));
@@ -145,7 +147,7 @@ public class PistonAuraModule extends BaseModule {
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .supply(attack::getCrystalObsidian)
-                    .then(new BlockPlaceTask(true, true))
+                    .then(new BlockPlaceTask(rotateMode.getValue(), true, true, true))
                     .delay(() -> attack.getCrystalObsidian() == null ? 0 : delay5.getValue().getCurrent())
                     .supply(Items.END_CRYSTAL)
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))
@@ -182,7 +184,7 @@ public class PistonAuraModule extends BaseModule {
                     .then(new ItemSwitchTask(null, true))
                     .abortIfFalse()
                     .supply(attack::getPistonObsidian)
-                    .then(new BlockPlaceTask(false, false))
+                    .then(new BlockPlaceTask(rotateMode.getValue(), true, true, true))
                     .delay(attack.getPistonObsidian() == null ? 0 : delay5.getValue().getCurrent())
                     .supply(Item.getItemFromBlock(Blocks.PISTON))
                     .then(new ItemSwitchTask(null, ItemSwitchMode.INVENTORY))

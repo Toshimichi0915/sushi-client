@@ -19,6 +19,7 @@ import net.sushiclient.client.modules.render.HoleEspModule;
 import net.sushiclient.client.task.forge.TaskExecutor;
 import net.sushiclient.client.task.tasks.BlockPlaceTask;
 import net.sushiclient.client.task.tasks.ItemSwitchTask;
+import net.sushiclient.client.utils.player.RotateMode;
 import net.sushiclient.client.utils.render.hole.HoleInfo;
 import net.sushiclient.client.utils.world.BlockPlaceInfo;
 import net.sushiclient.client.utils.world.BlockUtils;
@@ -30,6 +31,7 @@ public class HoleFillModule extends BaseModule {
 
     private static final Vec3d ZERO = new Vec3d(0, 0, 0);
     private final Configuration<String> holeEspModule;
+    private final Configuration<RotateMode> rotateMode;
     private final Configuration<Boolean> doubleHole;
     private final Configuration<IntRange> theta;
     private final Configuration<DoubleRange> distance;
@@ -38,6 +40,7 @@ public class HoleFillModule extends BaseModule {
     public HoleFillModule(String id, Modules modules, Categories categories, RootConfigurations provider, ModuleFactory factory) {
         super(id, modules, categories, provider, factory);
         holeEspModule = provider.get("hole_esp_module", "Hole ESP Module", null, String.class, "hole_esp");
+        rotateMode = provider.get("rotate_mode", "Rotate Mode", null, RotateMode.class, RotateMode.NCP);
         doubleHole = provider.get("double_hole", "Double Hole", null, Boolean.class, false);
         theta = provider.get("theta", "Theta", null, IntRange.class, new IntRange(10, 90, 0, 1));
         distance = provider.get("distance", "Distance", null, DoubleRange.class, new DoubleRange(1, 4, 0, 0.1, 1));
@@ -90,7 +93,7 @@ public class HoleFillModule extends BaseModule {
                 .then(new ItemSwitchTask(null, true))
                 .abortIfFalse()
                 .supply(placeList)
-                .then(new BlockPlaceTask(true, true))
+                .then(new BlockPlaceTask(rotateMode.getValue(), true, true, true))
                 .last(() -> running = false)
                 .execute();
     }

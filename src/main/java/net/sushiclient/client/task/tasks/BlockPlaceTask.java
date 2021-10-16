@@ -17,19 +17,15 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
 
     private int index = -1;
 
-    private final boolean rotate;
+    private final RotateMode rotateMode;
     private final boolean desync;
     private final boolean swing;
     private final boolean packet;
     private final PlaceOptions[] option;
     private final WorldClient world;
 
-    public BlockPlaceTask(boolean rotate, boolean desync, PlaceOptions... option) {
-        this(rotate, desync, false, true, option);
-    }
-
-    public BlockPlaceTask(boolean rotate, boolean desync, boolean packet, boolean swing, PlaceOptions... option) {
-        this.rotate = rotate;
+    public BlockPlaceTask(RotateMode rotateMode, boolean desync, boolean packet, boolean swing, PlaceOptions... option) {
+        this.rotateMode = rotateMode;
         this.desync = desync;
         this.packet = packet;
         this.swing = swing;
@@ -54,7 +50,7 @@ public class BlockPlaceTask extends TaskAdapter<List<BlockPlaceInfo>, Object> {
         } while (!BlockUtils.canPlace(world, info, option));
 
         BlockPlaceInfo fi = info;
-        RotateMode.NCP.rotate(info, true, () -> {
+        rotateMode.rotate(info, desync, () -> {
             NetHandlerPlayClient connection = Minecraft.getMinecraft().getConnection();
             BlockUtils.place(fi, packet);
             if (swing && connection != null) {
