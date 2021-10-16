@@ -53,18 +53,16 @@ public class MixinMinecraft {
         EventHandlers.callEvent(new WorldLoadEvent(EventTiming.PRE, client));
     }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;updateDisplay()V"), method = "runGameLoop")
-    public void updateDisplay(CallbackInfo ci) {
-        Minecraft.getMinecraft().profiler.startSection("sushiClientGameTick");
+    @Inject(at = @At(value = "HEAD"), method = "runGameLoop")
+    public void preRunGameLoop(CallbackInfo ci) {
         GameTickEvent post = new GameTickEvent(EventTiming.PRE);
         EventHandlers.callEvent(post);
     }
 
-    @Inject(at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Timer;updateTimer()V"), method = "runGameLoop")
-    public void updateTimer(CallbackInfo ci) {
+    @Inject(at = @At(value = "TAIL"), method = "runGameLoop")
+    public void postRunGameLoop(CallbackInfo ci) {
         GameTickEvent pre = new GameTickEvent(EventTiming.POST);
         EventHandlers.callEvent(pre);
-        Minecraft.getMinecraft().profiler.endSection();
     }
 
     @Inject(at = @At("TAIL"), method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V")
