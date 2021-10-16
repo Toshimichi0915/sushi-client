@@ -6,7 +6,7 @@ import net.sushiclient.client.events.EventHandlers;
 import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.input.KeyPressEvent;
 import net.sushiclient.client.events.input.KeyReleaseEvent;
-import net.sushiclient.client.events.tick.RenderTickEvent;
+import net.sushiclient.client.events.tick.GameTickEvent;
 import org.lwjgl.input.Keyboard;
 
 public class KeyReleaseHandler {
@@ -24,7 +24,7 @@ public class KeyReleaseHandler {
     }
 
     @EventHandler(timing = EventTiming.PRE, priority = -100)
-    public void onRenderTick(RenderTickEvent e) {
+    public void onGameTick(GameTickEvent e) {
         for (int keyCode : new IntArrayList(heldKeys)) {
             if (Keyboard.isKeyDown(keyCode)) continue;
             KeyReleaseEvent event = new KeyReleaseEvent(keyCode);

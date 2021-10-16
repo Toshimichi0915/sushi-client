@@ -6,7 +6,7 @@ import net.sushiclient.client.events.EventTiming;
 import net.sushiclient.client.events.input.ClickType;
 import net.sushiclient.client.events.input.MousePressEvent;
 import net.sushiclient.client.events.input.MouseReleaseEvent;
-import net.sushiclient.client.events.tick.RenderTickEvent;
+import net.sushiclient.client.events.tick.GameTickEvent;
 import net.sushiclient.client.gui.Component;
 import net.sushiclient.client.gui.ComponentContext;
 import net.sushiclient.client.gui.Components;
@@ -65,7 +65,7 @@ public class ComponentMouseHandler {
     }
 
     @EventHandler(timing = EventTiming.POST, priority = -100)
-    public void onRenderTick(RenderTickEvent e) {
+    public void onGameTick(GameTickEvent e) {
         if (!GuiUtils.isGameLocked()) return;
 
         for (ClickType type : ClickType.values()) {
