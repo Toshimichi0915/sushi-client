@@ -108,7 +108,7 @@ public class KillAuraModule extends BaseModule {
             } else {
                 predicted = entity.getPositionVector();
             }
-            if (EntityUtils.canInteract(self, predicted, predicted.add(0, entity.getEyeHeight(), 0),
+            if (EntityUtils.canInteract(self.add(0, getPlayer().getEyeHeight(), 0), predicted, predicted.add(0, entity.getEyeHeight(), 0),
                     range.getValue().getCurrent(), wallRange.getValue().getCurrent(), reach.getValue())) {
                 players.add(entity);
                 if (entity.getHealth() < enemyHp.getValue().getCurrent()) {
