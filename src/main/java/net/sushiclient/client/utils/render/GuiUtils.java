@@ -146,8 +146,11 @@ public class GuiUtils {
         return prepareText(text, font, new EspColor(color, false, true), pts, shadow);
     }
 
-    public static void drawLine(double x1, double y1, double x2, double y2, Color color, double width) {
+    public static void drawLine(double x1, double y1, double x2, double y2, Color color, double width, boolean antialias) {
         prepare2D();
+        if (antialias) {
+            GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        }
 
         GlStateManager.glLineWidth((float) width);
         setColor(color);
@@ -157,6 +160,7 @@ public class GuiUtils {
         builder.pos(x1, y1, 0).endVertex();
         builder.pos(x2, y2, 0).endVertex();
         tessellator.draw();
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
 
         release2D();
     }

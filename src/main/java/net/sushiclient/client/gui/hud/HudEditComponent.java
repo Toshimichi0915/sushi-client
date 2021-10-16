@@ -54,7 +54,7 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
             CornerComponent connected = getConnectedCorner(component);
             if (connecting != null && connected != null) {
                 GuiUtils.drawLine(getCenterWindowX(connecting), getCenterWindowY(connecting),
-                        getCenterWindowX(connected), getCenterWindowY(connected), LINE_COLOR, 1);
+                        getCenterWindowX(connected), getCenterWindowY(connected), LINE_COLOR, 1, false);
             }
         }
         for (Component component : this) {
@@ -62,7 +62,7 @@ public class HudEditComponent extends BasePanelComponent<CornerComponent> {
         }
         if (corner != null) {
             GuiUtils.drawLine(holdX, holdY,
-                    currentX, currentY, LINE_COLOR, 1);
+                    currentX, currentY, LINE_COLOR, 1, false);
         }
     }
 

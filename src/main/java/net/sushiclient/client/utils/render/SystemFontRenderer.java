@@ -78,9 +78,9 @@ public class SystemFontRenderer extends SystemFont {
             } else if (charData != null) {
                 drawChar(charData, (float) x, (float) y);
                 if (strikethrough)
-                    GuiUtils.drawLine(x, y + (double) charData.height / 2, x + charData.width - getPaddingWidth(), y + (double) charData.height / 2, color, 1.0F);
+                    GuiUtils.drawLine(x, y + (double) charData.height / 2, x + charData.width - getPaddingWidth(), y + (double) charData.height / 2, color, 1.0F, false);
                 if (underline)
-                    GuiUtils.drawLine(x, y + charData.height - 2.0D, x + charData.width - getPaddingWidth(), y + charData.height - 2.0D, color, 1.0F);
+                    GuiUtils.drawLine(x, y + charData.height - 2.0D, x + charData.width - getPaddingWidth(), y + charData.height - 2.0D, color, 1.0F, false);
                 x += charData.width - getPaddingWidth();
             } else {
                 vanillaChars.add(new VanillaChar(x, y, c, color.getRGB()));
