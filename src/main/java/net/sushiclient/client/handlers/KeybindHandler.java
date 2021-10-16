@@ -48,7 +48,7 @@ public class KeybindHandler {
         int finalMaxKeys = maxKeys;
         candidates.removeIf(it -> it.getKeybind().getKeys().length < finalMaxKeys);
         for (Module module : candidates) {
-            if (heldModules.contains(module) && module.isEnabled()) return;
+            if (heldModules.contains(module)) continue;
             heldModules.add(module);
             ActivationType type = module.getKeybind().getActivationType();
             if (type == ActivationType.HOLD)
@@ -56,7 +56,6 @@ public class KeybindHandler {
             else if (type == ActivationType.TOGGLE)
                 module.setEnabled(!module.isEnabled());
         }
-        e.setCancelled(true);
     }
 
     @EventHandler(timing = EventTiming.PRE)
@@ -65,7 +64,6 @@ public class KeybindHandler {
         if (!Minecraft.getMinecraft().inGameHasFocus) return;
         for (Module module : new ArrayList<>(heldModules)) {
             if (checkKeybind(module)) continue;
-            e.setCancelled(true);
             heldModules.remove(module);
             if (module.getKeybind().getActivationType() == ActivationType.HOLD)
                 module.setEnabled(false);
