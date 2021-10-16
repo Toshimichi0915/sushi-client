@@ -7,5 +7,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(KeyBinding.class)
 public interface AccessorKeyBinding {
     @Accessor("pressed")
-    boolean isPressed();
+    boolean isPressed0();
 }
