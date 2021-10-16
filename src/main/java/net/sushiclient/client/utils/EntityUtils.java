@@ -51,23 +51,19 @@ public class EntityUtils {
         return true;
     }
 
-    public static boolean canInteract(Vec3d vec, Vec3d target, Vec3d lookAt, double reach, double wall) {
-        return canInteract(vec, target, lookAt, reach, wall, ReachType.VANILLA);
-    }
-
     public static boolean isInsideBlock(EntityPlayer player) {
         return player.world.collidesWithAnyBlock(player.getEntityBoundingBox());
     }
 
-    public static boolean canInteract(Entity entity, double reach, double wall) {
-        return canInteract(entity.getPositionVector().add(0, entity.getEyeHeight(), 0), reach, wall);
-    }
-
-    public static boolean canInteract(Vec3d target, double reach, double wall) {
+    public static boolean canInteract(Vec3d target, double reach, double wall, ReachType reachType) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (player == null) return false;
         return canInteract(player.getPositionVector().add(0, player.getEyeHeight(), 0), target,
-                target, reach, wall);
+                target, reach, wall, reachType);
+    }
+
+    public static boolean canInteract(Vec3d vec, double reach, double wall) {
+        return canInteract(vec, reach, wall, ReachType.LEGIT);
     }
 
     public static Vec3d getPingOffset(EntityPlayer player, boolean useInputs, boolean constantSpeed, double selfPingMultiplier) {

@@ -69,7 +69,7 @@ public class AntiGhostBlockModule extends BaseModule {
             for (EntityInfo<EntityEnderCrystal> crystal : EntityUtils.getNearbyEntities(p, EntityEnderCrystal.class)) {
                 BlockPos pos = BlockUtils.toBlockPos(crystal.getEntity().getPositionVector());
                 if (BlockUtils.isAir(getWorld(), pos)) continue;
-                if (!EntityUtils.canInteract(crystal.getEntity(), 6, 3))
+                if (!EntityUtils.canInteract(crystal.getEntity().getPositionVector(), 6, 3))
                     return;
                 if (assumeError) getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
                 BlockUtils.checkGhostBlock(pos);
