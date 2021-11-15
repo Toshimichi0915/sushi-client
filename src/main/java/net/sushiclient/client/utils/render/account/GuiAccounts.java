@@ -130,12 +130,17 @@ public class GuiAccounts extends GuiScreen {
     }
 
     private void login(MojangAccount acc) {
+        Session session;
         if (!acc.getPassword().isEmpty()) {
             boolean success = accounts.auth(acc);
             if (success) lastStatus = AccountStatus.VALID;
             else lastStatus = AccountStatus.INVALID;
+            session = new Session(acc.getName(), acc.getId(), acc.getAccessToken(), "mojang");
+        } else {
+            acc.setName(acc.getEmail());
+            acc.setId(acc.getEmail());
+            session = new Session(acc.getEmail(), acc.getEmail(), "", "mojang");
         }
-        Session session = new Session(acc.getName(), acc.getId(), acc.getAccessToken(), "mojang");
         SessionUtils.setSession(session);
     }
 
