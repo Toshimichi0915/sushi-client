@@ -69,7 +69,7 @@ public class PistonAuraModule extends BaseModule {
         delay5 = delay.get("delay_5", "Obsidian Place Delay", null, IntRange.class, new IntRange(1, 20, 0, 1));
 
         ConfigurationCategory other = provider.getCategory("other", "Other Settings", null);
-        rotateMode = other.get("rotate_mode", "Rotate Mode", null, RotateMode.class, RotateMode.NCP);
+        rotateMode = other.get("rotate_mode", "Rotate Mode", null, RotateMode.class, RotateMode.VANILLA);
         maxObsidian = other.get("max_obsidian", "Max Obsidian", null, IntRange.class, new IntRange(3, 5, 0, 1));
         recalculationDelay = other.get("recalculation_delay", "Recalculation Delay", null, IntRange.class, new IntRange(1, 40, 0, 1));
         obsidianDelay = other.get("obsidian_delay", "Obsidian Delay", null, IntRange.class, new IntRange(20, 100, 1, 1));
