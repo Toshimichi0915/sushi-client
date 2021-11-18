@@ -123,7 +123,7 @@ public class GsonModules implements Modules {
         addModuleFactory("chat_suffix", ChatSuffix::new, true);
         addModuleFactory("click_gui", ClickGuiModule::new, true);
         addModuleFactory("hud", HudModule::new, true);
-        addModuleFactory("ignore_abuse", IgnoreAbuseModule::new, true);
+        addModuleFactory("command_abuse", CommandAbuseModule::new, true);
         addModuleFactory("rotation_view", RotationViewModule::new, true);
     }
 
