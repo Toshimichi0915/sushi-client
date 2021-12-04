@@ -86,6 +86,7 @@ public class InventoryUtils {
         for (InventoryType type : allowed) {
             for (int i = 0; i < type.getSize(); i++) {
                 int index = i + type.getIndex();
+                if (index == -1) continue;
                 if (predicate.test(new ItemSlot(i + type.getIndex())))
                     list.add(new ItemSlot(index, Minecraft.getMinecraft().player));
             }
