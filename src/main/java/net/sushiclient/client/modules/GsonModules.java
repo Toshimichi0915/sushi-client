@@ -72,6 +72,7 @@ import net.sushiclient.client.modules.render.TracersModule;
 import net.sushiclient.client.modules.world.AntiGhostBlockModule;
 import net.sushiclient.client.modules.world.FakePlayerModule;
 import net.sushiclient.client.modules.world.NoEntityTraceModule;
+import net.sushiclient.client.modules.world.PacketRecordModule;
 import net.sushiclient.client.modules.world.ScaffoldModule;
 import net.sushiclient.client.modules.world.SpeedMineModule;
 import net.sushiclient.client.modules.world.VirtualTpModule;
@@ -176,6 +177,7 @@ public class GsonModules implements Modules {
         addModuleFactory("anti_ghost_block", AntiGhostBlockModule::new, true);
         addModuleFactory("fake_player", FakePlayerModule::new, true);
         addModuleFactory("no_entity_trace", NoEntityTraceModule::new, true);
+        addModuleFactory("packet_record", PacketRecordModule::new, true);
         addModuleFactory("scaffold", ScaffoldModule::new, true);
         addModuleFactory("speed_mine", SpeedMineModule::new, true);
         addModuleFactory("virtual_tp", VirtualTpModule::new, true);
